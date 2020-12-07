@@ -1730,7 +1730,7 @@ join: athena_procedurecode {
   }
 
   join: market_start_date{
-    sql_on: ${markets.id}=${market_start_date.market_id} ;;
+    sql_on: ${markets.id_adj}=${market_start_date.market_id} ;;
   }
 
   join: markets_state_level_metrics {
@@ -3061,7 +3061,7 @@ explore: markets {
     sql_on: ${markets.id} = ${regional_markets.market_id} ;;
   }
   join: market_start_date{
-    sql_on: ${markets.id}=${market_start_date.market_id} ;;
+    sql_on: ${markets.id_adj}=${market_start_date.market_id} ;;
   }
 
 }
