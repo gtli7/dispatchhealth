@@ -1,5 +1,5 @@
 view: timezones_intra {
-  sql_table_name: looker_scratch.timezones_intra ;;
+  sql_table_name: public.timezones_intra ;;
 
   dimension: pg_tz {
     type: string

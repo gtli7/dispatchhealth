@@ -1,5 +1,5 @@
 view: athenadwh_clinicalencounter_diagnosis {
-  view_label: "Clinical Encounter Diagnoses"
+  view_label: "ZZZZ - Athenadwh Clinical Encounter Diagnoses"
   sql_table_name: looker_scratch.athenadwh_clinicalencounter_diagnosis ;;
 
   dimension: id {

@@ -323,8 +323,16 @@ view: athena_clinicalencounter {
     description: "The count of distinct charts that were signed by the provider within 24 hours of the visit"
     type: count_distinct
     group_label: "Counts"
-    sql: ${chart_id} ;;
+    sql: ${clinical_encounter_id} ;;
     filters: [chart_signed_24_hours: "yes"]
+  }
+
+  measure: count_charts_signed_48_hours {
+    description: "The count of distinct charts that were signed by the provider within 48 hours of the visit"
+    type: count_distinct
+    group_label: "Counts"
+    sql: ${clinical_encounter_id} ;;
+    filters: [chart_signed_48_hours: "yes"]
   }
 
   measure: count {

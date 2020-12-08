@@ -127,8 +127,6 @@ view: productivity_agg {
     sql:case when ${total_complete_count}>0 then${total_complete_count_communicable_protocol}::float/${total_complete_count}::float else 0 end;;
   }
 
-
-
   measure: total_complete_count {
     type: sum_distinct
     sql: ${complete_count} ;;

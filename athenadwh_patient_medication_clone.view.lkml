@@ -1,6 +1,8 @@
 view: athenadwh_patient_medication_clone {
   sql_table_name: looker_scratch.athenadwh_patient_medication_clone ;;
 
+  view_label: "ZZZZ - Athenadwh Patient Medication Clone"
+
   dimension: administered_yn {
     hidden: yes
     type: string

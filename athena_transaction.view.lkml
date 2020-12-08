@@ -1,7 +1,7 @@
 view: athena_transaction {
   sql_table_name: athena.transaction ;;
   drill_fields: [transaction_id]
-  view_label: "Athena Transactions (DO NOT USE - Use Transaction Summary"
+  view_label: "Athena Transactions (DO NOT USE - Use Transaction Summary)"
 
   dimension: transaction_id {
     primary_key: yes

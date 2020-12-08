@@ -1,4 +1,5 @@
 view: athenadwh_social_history_flat {
+  view_label: "ZZZZ - Athenadwh Social History Flat"
   derived_table: {
     sql:
     SELECT DISTINCT

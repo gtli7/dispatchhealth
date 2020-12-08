@@ -33,6 +33,11 @@ view: non_phone_cr {
         field: care_request_flat.pafu_or_follow_up
         value: "No"
       }
+      filters: {
+        field: care_request_flat.duplicate
+        value: "No"
+      }
+
     }
     sql_trigger_value:  SELECT MAX(care_request_id) FROM ${care_request_flat.SQL_TABLE_NAME} where created_date > current_date - interval '2 days';;
     indexes: ["created_date", "market_id"]

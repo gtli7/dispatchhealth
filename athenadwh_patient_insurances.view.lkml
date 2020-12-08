@@ -1,6 +1,8 @@
 view: athenadwh_patient_insurances {
   sql_table_name: jasperdb.athenadwh_patient_insurances ;;
 
+  view_label: "ZZZZ - Athenadwh Patient Insurances"
+
   dimension: id {
     primary_key: yes
     type: number

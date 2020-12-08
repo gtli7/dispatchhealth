@@ -1,5 +1,5 @@
 view: markets_intra {
-  sql_table_name: looker_scratch.markets_intra ;;
+  sql_table_name: public.markets_intra ;;
 
   dimension: id {
     primary_key: yes

@@ -1,5 +1,5 @@
 view: target_staffing_intra {
-  sql_table_name: looker_scratch.target_staffing_intra ;;
+  sql_table_name: public.target_staffing_intra ;;
 
   dimension: dow {
     type: string

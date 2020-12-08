@@ -1,6 +1,8 @@
 view: athenadwh_medication_clone {
   sql_table_name: looker_scratch.athenadwh_medication_clone ;;
 
+  view_label: "ZZZZ - Athenadwh Medication Clone"
+
   dimension: dea_schedule {
     type: string
     sql: ${TABLE}.dea_schedule ;;

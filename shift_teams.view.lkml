@@ -118,6 +118,11 @@ view: shift_teams {
     sql: (EXTRACT(EPOCH FROM ${end_raw}) - EXTRACT(EPOCH FROM ${start_raw})) / 3600 ;;
   }
 
+  dimension: actual_shift_hours {
+    type: number
+    sql: COALESCE(${zizzl_rates_hours.clinical_hours}, ${shift_hours}, NULL) ;;
+  }
+
   measure: sum_shift_hours {
     type: sum_distinct
     value_format: "0.0"
@@ -129,27 +134,62 @@ view: shift_teams {
     }
   }
 
-  dimension: shift_hours_coalesce {
-    description: "Zizzl hours if available.  Otherwise, shift team hours"
-    type: number
-    value_format: "0.00"
-    sql: CASE WHEN ${zizzl_detailed_shift_hours.shift_team_id} IS NOT NULL
-            THEN ${zizzl_detailed_shift_hours.counter_hours}
-          ELSE ${shift_hours}
-         END ;;
-  }
-
-  measure: sum_shift_hours_coalesce {
-    description: "The sum of Zizzl hours (if available) or shift teams hours"
+  measure: sum_app_scheduled_shift_hours {
     type: sum_distinct
     value_format: "0.0"
     sql_distinct_key: ${id} ;;
-    sql: ${shift_hours_coalesce} ;;
-    filters:  {
-      field: cars.test_car
-      value: "no"
-    }
+    sql: ${shift_hours} ;;
+    filters: [cars.test_car: "no", provider_profiles.position: "advanced practice provider"]
   }
+
+  measure: sum_dhmt_scheduled_shift_hours {
+    type: sum_distinct
+    value_format: "0.0"
+    sql_distinct_key: ${id} ;;
+    sql: ${shift_hours} ;;
+    filters: [cars.test_car: "no", provider_profiles.position: "emt"]
+  }
+
+  measure: sum_shift_hours_coalesce {
+    description: "Zizzl APP hours if available.  Otherwise, shift team hours"
+    type: number
+    value_format: "0.00"
+    sql: CASE
+          WHEN ${zizzl_rates_hours.sum_direct_app_clinical_hours} > 0 THEN ${zizzl_rates_hours.sum_direct_app_clinical_hours}
+               ELSE ${sum_shift_hours}
+          END ;;
+  }
+
+  measure: sum_app_actual_shift_hours {
+    description: "Zizzl APP hours if available.  Otherwise, shift team hours"
+    type: sum_distinct
+    value_format: "0.0"
+    sql_distinct_key: ${zizzl_rates_hours.id} ;;
+    sql: ${actual_shift_hours};;
+    filters: [provider_profiles.position: "advanced practice provider"]
+  }
+
+  measure: sum_dhmt_actual_shift_hours {
+    description: "Zizzl DHMT hours if available.  Otherwise, shift team hours"
+    type: number
+    value_format: "0.00"
+    sql: CASE
+          WHEN ${zizzl_rates_hours.sum_direct_dhmt_clinical_hours} > 0 THEN ${zizzl_rates_hours.sum_direct_dhmt_clinical_hours}
+               ELSE ${sum_dhmt_scheduled_shift_hours}
+          END ;;
+  }
+
+  # measure: sum_shift_hours_coalesce {
+  #   description: "The sum of Zizzl hours (if available) or shift teams hours"
+  #   type: sum_distinct
+  #   value_format: "0.0"
+  #   sql_distinct_key: ${id} ;;
+  #   sql: ${shift_hours_coalesce} ;;
+  #   filters:  {
+  #     field: cars.test_car
+  #     value: "no"
+  #   }
+  # }
 
   measure: sum_shift_hours_no_arm_advanced {
     label: "Sum Shift Hours (no arm, advanced or tele)"
@@ -230,6 +270,11 @@ view: shift_teams {
   dimension: car_hour_id {
     type: string
     sql: CONCAT(${cars.name}, ${start_mountain_date}, ${dates_hours_reference_clone.datehour_timezone_hour_of_day});;
+  }
+
+  dimension: shift_type_id {
+    type: string
+    sql: ${TABLE}.shift_type_id ;;
   }
 
   measure: count_distinct_shifts {

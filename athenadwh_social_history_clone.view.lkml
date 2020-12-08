@@ -1,5 +1,6 @@
 view: athenadwh_social_history_clone {
   sql_table_name: looker_scratch.athenadwh_social_history_clone ;;
+  view_label: "ZZZZ - Athenadwh Social History Clone"
 
   dimension: id {
     primary_key: yes

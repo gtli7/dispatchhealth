@@ -84,7 +84,7 @@ WITH ort AS (
         max(callers.created_at) AT TIME ZONE 'UTC' AT TIME ZONE t.pg_tz AS caller_date
       FROM care_requests cr
       LEFT JOIN care_requests_shift_teams crst
-        ON cr.id = crst.care_request_id --AND crst.is_dispatched
+        ON cr.id = crst.care_request_id AND crst.is_dispatched
       LEFT JOIN care_request_statuses AS request
       ON cr.id = request.care_request_id AND request.name = 'requested' and request.deleted_at is null
       LEFT JOIN care_request_statuses schedule
@@ -512,6 +512,7 @@ WITH ort AS (
     sql: ${TABLE}.reassignment_reason_final ;;
   }
 
+
   dimension: reassignment_reason_other_final {
     type: string
     group_label: "Optimizer Details"
@@ -726,6 +727,12 @@ WITH ort AS (
     type: yesno
     hidden: yes
     sql: ${accept_date} IS NOT NULL ;;
+  }
+
+  dimension: accepted_or_scheduled {
+    label: "Accepted, Scheduled (Acute-Care) or Booked Resolved"
+    type: yesno
+    sql: ${accepted_patient} or (${scheduled_visit} and not ${pafu_or_follow_up}) or ${booked_resolved};;
   }
 
   measure: count_accepted_patients {
@@ -1728,6 +1735,30 @@ WITH ort AS (
     ]
     sql: coalesce(case when ${pafu_or_follow_up} then ${scheduled_care_raw} else null end, ${created_raw}) ;;
   }
+
+  dimension_group: scheduled_or_accepted_coalese {
+    group_label: "Scheduled/Accepted/Created Coalese"
+    type: time
+    description: "The local date/time that the care request was created."
+    convert_tz: no
+    timeframes: [
+      raw,
+      hour_of_day,
+      time_of_day,
+      date,
+      time,
+      week,
+      month,
+      year,
+      day_of_week,
+      day_of_week_index,
+      day_of_month,
+      month_num,
+      quarter
+    ]
+    sql: coalesce(${scheduled_raw}, ${accept_raw}, ${created_raw}) ;;
+  }
+
 
   measure: count_distinct_days_created {
     type: count_distinct
@@ -3021,6 +3052,13 @@ measure: avg_first_on_route_mins {
     sql: ${archive_comment} SIMILAR TO '%(Cancelled by Patient: Going to an Emergency Department|Going to Emergency Department)%' ;;
   }
 
+  dimension: duplicate {
+    type: yesno
+    sql: lower(${archive_comment}) SIMILAR TO '%(duplicate)%' and not ${accepted_or_scheduled} ;;
+
+  }
+
+
   dimension: lwbs_going_to_urgent_care {
     type: yesno
     sql: LOWER(${archive_comment}) SIMILAR TO '%(going to an urgent care|going to urgent care)%' ;;
@@ -3403,7 +3441,7 @@ measure: avg_first_on_route_mins {
     }
     filters: {
       field: care_requests.billable_est_excluding_bridge_care_and_dh_followups
-      value: "Yes"
+      value: "No"
     }
   }
 
@@ -4080,6 +4118,33 @@ measure: avg_first_on_route_mins {
     }
   }
 
+  measure: accepted_or_scheduled_count {
+    label: "Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled) Count"
+    type: sum_distinct
+    value_format: "0"
+    sql: case when ${booked_resolved} then .7 else 1 end ;;
+    sql_distinct_key:  ${care_request_id} ;;
+    filters: {
+      field: accepted_or_scheduled
+      value: "yes"
+    }
+  }
+
+  measure: accepted_or_scheduled_phone_count {
+    label: "Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled) Count"
+    type: sum_distinct
+    value_format: "0"
+    sql: case when ${booked_resolved} then .7 else 1 end ;;
+    sql_distinct_key:  ${care_request_id} ;;
+    filters: {
+      field: accepted_or_scheduled
+      value: "yes"
+    }
+    filters: {
+      field: care_requests.request_type_phone_or_other
+      value: "phone"
+    }
+  }
 
 
     measure: complete_count_medicaid {

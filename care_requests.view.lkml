@@ -240,7 +240,7 @@ view: care_requests {
 
   dimension: dashboard_athena_appt_id_match {
     type: yesno
-    sql:  ${care_requests.ehr_id} = ${athenadwh_appointments_clone.appointment_id}::VARCHAR ;;
+    sql:  ${care_requests.ehr_id} = ${athena_appointment.appointment_char} ;;
     group_label: "Dashbaord Athena Reconciliation"
   }
 
@@ -583,7 +583,10 @@ view: care_requests {
 
   dimension: place_of_service {
     type: string
-    sql: ${TABLE}.place_of_service ;;
+    sql: CASE WHEN
+      ${TABLE}.place_of_service LIKE '{:%' THEN NULL
+      ELSE ${TABLE}.place_of_service
+      END;;
   }
 
   dimension: pos_snf {
@@ -869,16 +872,10 @@ view: care_requests {
 
   measure: count_complete_visit_with_procedures {
     type: count_distinct
-    description: "The count of completed visits where the CPT code group is 'Procedure'"
+    description: "The count of completed visits where the CPT code group is Procedure, Medication or Labs"
     sql: ${id} ;;
-    filters: {
-      field: athena_procedurecode.procedure_code_group
-      value: "Procedure"
-    }
-    filters: {
-      field: complete_visit
-      value: "yes"
-    }
+    filters: [athena_cpt_codes.procedure_code_group: "Procedure, Medication, Labs",
+              complete_visit: "yes"]
   }
 
   dimension:  referred_point_of_care {
@@ -898,36 +895,14 @@ view: care_requests {
 
   dimension: billable_actual {
     type: yesno
-    sql: ${billable_est} AND ${athenadwh_appointments_clone.no_charge_entry_reason} IS NULL ;;
+    sql: ${billable_est} AND ${athena_appointment.no_charge_entry_reason} IS NULL ;;
   }
 
-  # dimension: acute_ems_population_cost_savings {
-  #   description: "Logic to idenitfy Acute Care and EMS populations based on select service lines, visit types and risk protocols"
-  #   type: string
-  #   sql: CASE
-  #   WHEN ${care_requests.post_acute_follow_up} THEN 'No'
-  #   WHEN lower(${risk_assessments.protocol_name}) in(
-  #     'covid-19 facility testing',
-  #     'covid-19 testing request (for patients without symptoms)',
-  #     'dispatchhealth education program (emergency department use education, asthma education)',
-  #     'dispatchhealth education program (emergency department use education, asthma, diabetes education)',
-  #     'post-acute patient',
-  #     'post-acute patient (post hospital discharge patient)',
-  #     'post-acute patient (post hospital/skilled nursing facility/rehabilitation facility discharge patient)',
-  #     'post-acute patient follow up (post hospital/skilled nursing facility/rehabilitation facility discharge patient)') THEN 'No'
-  #   WHEN lower(${service_lines.service_line_name_consolidated}) in(
-  #   '911 service',
-  #   'acute care',
-  #   'tele-presentation',
-  #   'virtual visit') THEN 'Yes'
-  #   ELSE 'No'
-  #   END;;
-  # }
-
   dimension: billable_est_excluding_bridge_care_and_dh_followups {
-      description: "Logic to idenitfy Billable Est excluding Bridge Care and DH Followups for Cost Savings (field retained to allow us to easily change the Cost Savings population moving forward (numerator and Denominator)"
+      label: "Exclude Bridge Care and DH Followup Cost Savings"
+      description: "Logic to Exclude Billable Est excluding Bridge Care and DH Followups for Cost Savings (field retained to allow us to easily change the Cost Savings population moving forward (numerator and Denominator)"
       type: yesno
-      sql: ${billable_est} AND NOT ${care_request_flat.pafu_or_follow_up} ;;
+      sql:  ${DHFU_follow_up} OR ${post_acute_follow_up} ;;
     }
 
   measure: count_billable_est {
@@ -948,15 +923,9 @@ view: care_requests {
       &f[care_request_flat.complete_month]={{ _filters['care_request_flat.complete_month'] | url_encode }}
       &f[drg_to_icd10_crosswalk.drg_code]={{ _filters['drg_to_icd10_crosswalk.drg_code'] | url_encode }}
       &f[insurance_coalese_crosswalk.insurance_package_name]={{ _filters['insurance_coalese_crosswalk.insurance_package_name'] | url_encode }}
-      &f[care_request_flat.lwbs]={{ _filters['care_request_flat.lwbs'] | url_encode }}
-      &f[primary_payer_dimensions_clone.insurance_reporting_category]={{ _filters['primary_payer_dimensions_clone.insurance_reporting_category'] | url_encode }}
-      &f[athenadwh_letter_recipient_provider.name]={{ _filters['athenadwh_letter_recipient_provider.name'] | url_encode }}"
-    }
-    drill_fields: [
-      athenadwh_referral_providers.name,
-      athenadwh_referral_providers.provider_category,
-      count_billable_est
-    ]
+      &f[care_request_flat.lwbs]={{ _filters['care_request_flat.lwbs'] | url_encode }}"
+
+   }
   }
 
   dimension: billable_est_numeric {
@@ -985,7 +954,11 @@ view: care_requests {
 
     filters: {
       field: billable_est_excluding_bridge_care_and_dh_followups
-      value: "Yes"
+      value: "No"
+    }
+    filters: {
+      field: billable_est
+      value: "yes"
     }
     # filters: {
     #   field: escalated_on_scene
@@ -1001,7 +974,7 @@ view: care_requests {
     sql: ${billable_est_numeric} ;;
     filters: {
       field: billable_est_excluding_bridge_care_and_dh_followups
-      value: "Yes"
+      value: "No"
     }
   }
 
@@ -1108,11 +1081,6 @@ view: care_requests {
       field: request_type_phone_or_other
       value: "phone"
     }
-    drill_fields: [
-      athenadwh_referral_providers.name,
-      athenadwh_referral_providers.provider_category,
-      count_billable_est
-    ]
   }
 
 
@@ -1130,58 +1098,25 @@ view: care_requests {
     type: count_distinct
     description: "Count of completed care requests where medications were administered"
     sql: ${id} ;;
-    filters: {
-      field: billable_est
-      value: "yes"
-    }
-    filters: {
-      field: athenadwh_documents_clone.medicine_administered_onscene
-      value: "yes"
-    }
+    filters: [billable_est: "yes", athena_patientmedication_prescriptions.administered_yn: "Y"]
   }
 
   measure: count_visits_with_onscene_labs {
     type: count_distinct
     description: "Count of completed care requests where labs were performed on-scene"
     sql: ${id} ;;
-    filters: {
-      field: billable_est
-      value: "yes"
-    }
-    filters: {
-      field: athenadwh_lab_imaging_providers.provider_category
-      value: "Performed On-Scene"
-    }
-#     filters: {
-#       field: athenadwh_lab_imaging_results.document_class
-#       value: "LABRESULT"
-#     }
-    filters: {
-      field: athenadwh_clinical_results_clone.labs_flag
-      value: "yes"
-    }
+    filters: [billable_est: "yes",
+              document_order_fulfilling_provider.provider_category: "Performed On-Scene",
+              athena_document_orders.clinical_order_type_group: "LAB"]
   }
 
   measure: count_visits_with_third_party_labs {
     type: count_distinct
     description: "Count of completed care requests where labs were performed by 3rd party"
     sql: ${id} ;;
-    filters: {
-      field: billable_est
-      value: "yes"
-    }
-    filters: {
-      field: athenadwh_lab_imaging_providers.provider_category
-      value: "Performed by Third Party"
-    }
-    # filters: {
-    #   field: athenadwh_clinical_results_clone.document_is_from_care_request
-    #   value: "yes"
-    # }
-    filters: {
-      field: athenadwh_clinical_results_clone.labs_flag
-      value: "yes"
-    }
+    filters: [billable_est: "yes",
+      document_order_fulfilling_provider.provider_category: "Performed by Third Party",
+      athena_document_orders.clinical_order_type_group: "LAB"]
   }
 
   measure: count_billable_actual {
@@ -1193,8 +1128,6 @@ view: care_requests {
       value: "yes"
     }
     drill_fields: [
-      athenadwh_referral_providers.name,
-      athenadwh_referral_providers.provider_category,
       count_billable_est
     ]
   }
@@ -1231,14 +1164,7 @@ view: care_requests {
     type: count_distinct
     description: "Count of completed care requests where 1 or more prescriptions were written"
     sql: ${id} ;;
-    filters: {
-     field: athenadwh_prescriptions.prescriptions_flag
-    value: "yes"
-    }
-    filters: {
-      field: billable_est
-      value: "yes"
-    }
+    filters: [billable_est: "yes", athena_patientmedication_prescriptions.prescribed_yn: "Y"]
   }
 
   measure: count_visits_labs {
@@ -1715,7 +1641,7 @@ measure: distinct_day_of_week {
     type: count_distinct
     sql: ${id} ;;
     filters: {
-      field: escalated_on_scene
+      field: escalated_on_scene_ed
       value: "yes"
     }
   }

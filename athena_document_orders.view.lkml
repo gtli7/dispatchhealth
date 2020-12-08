@@ -103,6 +103,14 @@ view: athena_document_orders {
     sql: ${TABLE}."clinical_order_genus" ;;
   }
 
+  dimension: imaging_clinical_order_genus {
+    type: string
+    description: "The clinical order genus associated with all imaging orders"
+    group_label: "Description"
+    sql: CASE WHEN ${clinical_order_genus} IN ('XR','US','CT','MR') AND ${status} <> 'DELETED' THEN ${clinical_order_genus}
+         ELSE NULL END;;
+  }
+
   dimension: labs_flag {
     description: "A flag indicating labs were ordered (Athena clinical order type group = 'LAB')"
     type: yesno
@@ -110,16 +118,49 @@ view: athena_document_orders {
   }
 
   dimension: imaging_flag {
-    description: "A flag indicating all non-deleted imaging and ultrasound orders (Athena clinical order genus = 'US' or 'XR')"
+    description: "A flag indicating all non-deleted imaging, CT, MRI and ultrasound orders (Athena clinical order genus = 'US' or 'XR')"
     type: yesno
-    sql: ${clinical_order_genus} IN ('US','XR') AND ${status} <> 'DELETED' ;;
+    sql: ${clinical_order_genus} IN ('US','XR', 'CT','MR') AND ${status} <> 'DELETED' ;;
   }
 
   measure: count_imaging_us_orders {
     description: "Count of all imaging and ultrasound orders"
+    group_label: "Counts"
     type: count_distinct
     sql: ${document_id} ;;
-    filters: [clinical_order_genus: "US, XR", status: "-DELETED"]
+    filters: [clinical_order_genus: "US, XR, CT, MR", status: "-DELETED"]
+  }
+
+  measure: count_xray_orders {
+    description: "Count of all X-ray orders"
+    group_label: "Counts"
+    type: count_distinct
+    sql: ${document_id} ;;
+    filters: [clinical_order_genus: "XR", status: "-DELETED"]
+  }
+
+  measure: count_ultrasound_orders {
+    description: "Count of all ultrasound orders"
+    group_label: "Counts"
+    type: count_distinct
+    sql: ${document_id} ;;
+    filters: [clinical_order_genus: "US", status: "-DELETED"]
+  }
+
+  measure: count_ct_scan_orders {
+    description: "Count of all CT scan orders"
+    group_label: "Counts"
+    type: count_distinct
+    sql: ${document_id} ;;
+    filters: [clinical_order_genus: "CT", status: "-DELETED"]
+  }
+
+  measure: count_mri_orders {
+    description: "Count of all MRI orders"
+    group_label: "Counts"
+    type: count_distinct
+    sql: ${document_id} ;;
+    filters: [clinical_order_genus: "MR", status: "-DELETED"]
   }
 
   dimension: dme_flag {
@@ -705,6 +746,50 @@ view: athena_document_orders {
     drill_fields: [document_id, patients.ehr_id, clinical_order_type, result_rcvd_to_closed]
     filters: [clinical_order_type_group: "LAB, IMAGING"]
     sql: ${result_rcvd_to_closed} ;;
+    value_format: "0.00"
+  }
+
+  dimension: result_tat_provider  {
+    type: number
+    # hidden: yes
+    value_format: "0.00"
+    sql: CASE WHEN ${athena_inbox_turnaround.received_ma_raw} IS NOT NULL
+        THEN (EXTRACT(EPOCH FROM ${athena_inbox_turnaround.received_ma_raw}) -
+              EXTRACT(EPOCH FROM ${athena_inbox_turnaround.received_provider_raw})) / 3600
+        WHEN ${athena_result_closed.result_closed_raw} IS NOT NULL
+        THEN (EXTRACT(EPOCH FROM ${athena_result_closed.result_closed_raw}) -
+         EXTRACT(EPOCH FROM ${athena_inbox_turnaround.received_provider_raw})) / 3600
+        ELSE NULL END;;
+  }
+
+  measure: average_turnaround_time_provider {
+    description: "Average result turnaround time - provider (Either sent to MA or closed)"
+    group_label: "Time Cycle Management"
+    type: average
+    drill_fields: [document_id, patients.ehr_id, clinical_order_type, result_rcvd_to_closed]
+    filters: [clinical_order_type_group: "LAB, IMAGING"]
+    sql: ${result_tat_provider} ;;
+    value_format: "0.00"
+  }
+
+  dimension: result_tat_ma  {
+    type: number
+    # hidden: yes
+    value_format: "0.00"
+    sql: CASE WHEN ${athena_inbox_turnaround.received_ma_raw} IS NOT NULL AND
+        ${athena_result_closed.result_closed_raw} IS NOT NULL
+        THEN (EXTRACT(EPOCH FROM ${athena_result_closed.result_closed_raw}) -
+         EXTRACT(EPOCH FROM ${athena_inbox_turnaround.received_ma_raw})) / 3600
+        ELSE NULL END;;
+  }
+
+  measure: average_turnaround_time_ma {
+    description: "Average result turnaround time - MA (Received by MA to closed)"
+    group_label: "Time Cycle Management"
+    type: average
+    drill_fields: [document_id, patients.ehr_id, clinical_order_type, result_rcvd_to_closed]
+    filters: [clinical_order_type_group: "LAB, IMAGING"]
+    sql: ${result_tat_ma} ;;
     value_format: "0.00"
   }
 

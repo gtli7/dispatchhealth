@@ -1,5 +1,6 @@
 view: athenadwh_fee_schedule_procedures_clone {
   sql_table_name: looker_scratch.athenadwh_fee_schedule_procedures_clone ;;
+  view_label: "ZZZZ - Athenadwh Fee Schedule Procedures Clone"
 
   dimension: id {
     primary_key: yes

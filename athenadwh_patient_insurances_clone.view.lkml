@@ -1,6 +1,8 @@
 view: athenadwh_patient_insurances_clone {
   sql_table_name: looker_scratch.athenadwh_patient_insurances_clone ;;
 
+  view_label: "ZZZZ - Athenadwh Patient Insurances Clone"
+
   dimension: id {
     primary_key: yes
     type: number

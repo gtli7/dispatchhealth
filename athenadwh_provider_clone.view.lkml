@@ -1,5 +1,6 @@
 view: athenadwh_provider_clone {
   sql_table_name: looker_scratch.athenadwh_provider_clone ;;
+  view_label: "ZZZZ - Athenadwh Provider Clone"
 
   dimension_group: created_datetime {
     type: time

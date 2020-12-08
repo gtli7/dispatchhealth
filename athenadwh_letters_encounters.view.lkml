@@ -17,6 +17,8 @@ view: athenadwh_letters_encounters {
     indexes: ["document_id", "clinical_encounter_id", "clinical_provider_recipient_id"]
   }
 
+  view_label: "ZZZZ - Athenadwh Letters Encounters"
+
   dimension: id {
     primary_key: yes
     type: number

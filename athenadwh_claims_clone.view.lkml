@@ -1,5 +1,6 @@
 view: athenadwh_claims_clone {
   sql_table_name: looker_scratch.athenadwh_claims_clone ;;
+  view_label: "ZZZZ - Athenadwh Claims Clone"
 
   dimension: id {
     primary_key: yes

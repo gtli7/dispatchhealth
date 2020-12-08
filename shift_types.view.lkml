@@ -1,5 +1,6 @@
-view: service_lines_intra {
-  sql_table_name: public.service_lines_intra ;;
+view: shift_types {
+  sql_table_name: public.shift_types ;;
+  drill_fields: [id]
 
   dimension: id {
     primary_key: yes
@@ -21,29 +22,14 @@ view: service_lines_intra {
     sql: ${TABLE}."created_at" ;;
   }
 
-  dimension: followup_14_30_day {
-    type: yesno
-    sql: ${TABLE}."followup_14_30_day" ;;
-  }
-
-  dimension: followup_3_day {
-    type: yesno
-    sql: ${TABLE}."followup_3_day" ;;
-  }
-
-  dimension: is_911 {
-    type: yesno
-    sql: ${TABLE}."is_911" ;;
+  dimension: label {
+    type: string
+    sql: ${TABLE}."label" ;;
   }
 
   dimension: name {
     type: string
     sql: ${TABLE}."name" ;;
-  }
-
-  dimension: out_of_network_insurance {
-    type: yesno
-    sql: ${TABLE}."out_of_network_insurance" ;;
   }
 
   dimension_group: updated {

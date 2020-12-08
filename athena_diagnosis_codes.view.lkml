@@ -32,7 +32,7 @@ view: athena_diagnosis_codes {
     type: string
     sql: ${TABLE}."bodily_system" ;;
     group_label: "Diagnosis Descriptions"
-    drill_fields: [diagnosis_code_group]
+    drill_fields: [diagnosis_code_group, diagnosis_description]
   }
 
   dimension: code_class {
@@ -68,11 +68,14 @@ view: athena_diagnosis_codes {
     description: "e.g. Mucopurulent chronic bronchitis"
     sql: ${TABLE}."diagnosis_code_description" ;;
     group_label: "Diagnosis Descriptions"
+    drill_fields: [bodily_system, diagnosis_code_group]
   }
 
   dimension: asymptomatic_covid_related {
     type: yesno
+    group_label: "Diagnosis Descriptions"
     sql: ${diagnosis_code}  in('Z20828', 'Z03818','Z0389', 'Z209') ;;
+    drill_fields: [diagnosis_description, bodily_system, diagnosis_code_group]
   }
 
   dimension: diagnosis_code_group {
@@ -95,6 +98,7 @@ view: athena_diagnosis_codes {
     description: "First 3 characters of the diagnosis code"
     sql: ${TABLE}."diagnosis_code_short" ;;
     group_label: "Diagnosis Codes"
+    drill_fields: [diagnosis_code]
   }
 
   dimension: drg_code {
@@ -177,6 +181,7 @@ view: athena_diagnosis_codes {
 
   dimension: symptom_based_diagnosis {
     type: yesno
+    group_label: "Diagnosis Descriptions"
     description: "A flag indicating the ICD-10 code is symptoms-based. Use only with ICD Primary Diagnosis Codes"
     sql: ${diagnosis_code} IN ('R05','R509','R197','R112','R1110','R42','T148XXA','R070','R410','K5900','R51',
       'R5383','R6889','R110','R0981','R0602','R062') AND ${athena_diagnosis_sequence.sequence_number} = 1 ;;

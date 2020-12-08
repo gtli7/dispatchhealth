@@ -3,12 +3,13 @@ view: genesys_conversation_summary {
 
   dimension: inbound_demand {
     type: yesno
-    sql:${inbound_demand_minus_market} and ${markets.id} is not null;;
+    sql:${inbound_demand_minus_market} and (${markets.id} is not null);;
   }
 
   dimension: inbound_demand_minus_market {
     type: yesno
-    sql: ${direction} ='inbound' and ${mediatype}='voice' and trim(lower(${queuename})) not like '%outbound%' and trim(lower(${queuename})) not like '%optimizer%' and trim(lower(${queuename})) not in('ma', 'rcm / billing', 'backline', 'development', 'secondary screening', 'dispatchhealth help desk', 'dispatch health nurse line', 'zzavtextest', 'pay bill', 'testing', 'initial follow up', 'rn1', 'rn2', 'rn3', 'rn4', 'rn5', 'rn6', 'rn7', 'rn8', 'rn9', 'ivr fail safe', 'covid testing results', 'ebony testing', 'ma/nurse', 'dispatchhealth help desk vendor', 'do not use ma/nurse');;
+    sql:
+    ${mediatype}='voice' and trim(lower(${queuename})) not like '%outbound%' and trim(lower(${queuename})) not like '%after hours%' and trim(lower(${queuename})) not like '%optimizer%' and trim(lower(${queuename})) not in('mobile requests','ma', 'rcm / billing', 'backline', 'development', 'secondary screening', 'dispatchhealth help desk', 'dispatch health nurse line', 'zzavtextest', 'pay bill', 'testing', 'initial follow up', 'rn1', 'rn2', 'rn3', 'rn4', 'rn5', 'rn6', 'rn7', 'rn8', 'rn9', 'ivr fail safe', 'covid testing results', 'ebony testing', 'ma/nurse', 'dispatchhealth help desk vendor', 'do not use ma/nurse', 'sem vip', 'covid task force', 'covid pierce county mass testing', 'acute care covid results & care request', 'phx', 'mobile request callbacks', 'click to call', 'dialer results');;
   }
 
   dimension: abandoned {
@@ -23,9 +24,21 @@ view: genesys_conversation_summary {
     sql: ${TABLE}."ani" ;;
   }
 
+  dimension: patient_number {
+    type: number
+    sql: case when  ${direction} ='inbound' then ${ani}
+              when ${direction} = 'outbound' then ${dnis}
+              else null end;;
+  }
+
   dimension: answered {
     type: number
-    sql: ${TABLE}."answered" ;;
+    sql: case when ${totalagenttalkduration} >0 or  ${TABLE}."answered" >0 then 1 else 0 end ;;
+  }
+
+  dimension: answered_long {
+    type: yesno
+    sql: ${totalagenttalkduration} >60000  ;;
   }
 
   dimension: campaignname {
@@ -77,7 +90,32 @@ view: genesys_conversation_summary {
 
   dimension: dnis {
     type: string
-    sql: ${TABLE}."dnis" ;;
+    sql: case when  ${direction} ='inbound' then ${TABLE}."dnis"
+              when ${direction} = 'outbound' then  ${inbound_not_answered_or_abandoned.dnis}
+              else null end
+    ;;
+  }
+
+  dimension: market_id {
+    type: string
+    sql: case when ${number_to_market.market_id} is not null then  ${number_to_market.market_id}
+     when trim(lower(${queuename})) in ('las pafu callback') then 162
+    when trim(lower(${queuename})) in ('tac pafu callback') then 170
+    when trim(lower(${queuename})) in ('phx pafu callback', 'phx') then 161
+    when trim(lower(${queuename})) in ('hrt care') then 186
+     when trim(lower(${queuename})) in ('boi regence') then 176
+    when trim(lower(${queuename})) in ('atl optum care') then 177
+    when trim(lower(${queuename})) in ('spo regence','spo post acute') then 173
+     when trim(lower(${queuename})) in ('dfw home health dallas') then 169
+     when trim(lower(${queuename})) in ('den php', 'kaiser') then 159
+    when trim(lower(${queuename})) in ('rno post acute') then 179
+    when trim(lower(${queuename})) in ('sea regence') then 174
+     when trim(lower(${queuename})) in ('por regence', 'por legacy health charity care') then 175
+     when trim(lower(${queuename})) in ('fort worth home health') then 178
+     when ${direction} = 'outbound' and trim(lower(${queuename})) in ('general care', 'partner direct', 'pafu callback', 'sweeper callback', 'dtc', 'dtc pilot', 'care web chat', 'aoc premier', 'sms dcm campaign', 'national pafu callback', 'uhc partner direct', 'humana partner direct') then 167
+
+
+    else null end;;
   }
 
   dimension: firstacdwaitduration {
@@ -103,6 +141,7 @@ view: genesys_conversation_summary {
   dimension: queuename_adj {
     type: string
     sql: case when ${queuename} in('TIER 1', 'TIER 2') then 'TIER 1/TIER 2'
+      when ${queuename} in('Partner Direct', 'ATL Optum Care', 'LAS RCC', 'Humana Partner Direct', 'BOI Regence', 'POR Regence', 'SEA Regence', 'SPO Regence', ) then 'Partner Direct (Broad)'
     else ${queuename}  end ;;
   }
 
@@ -155,7 +194,7 @@ view: genesys_conversation_summary {
 
   dimension: service_level {
     type: yesno
-    sql: ${service_level_target} is not null and ${firstacdwaitduration} < ${service_level_target} ;;
+    sql: ${service_level_target} is not null and (${firstacdwaitduration} < ${service_level_target} or ${firstacdwaitduration} is null) ;;
   }
 
   measure: count {
@@ -171,6 +210,21 @@ view: genesys_conversation_summary {
     filters: {
       field: inbound_demand
       value: "yes"
+    }
+  }
+
+  measure: count_distinct_first {
+    label: "Count Distinct (Inbound Demand First)"
+    type: count_distinct
+    sql: ${conversationid} ;;
+    sql_distinct_key:  ${conversationid};;
+    filters: {
+      field: inbound_demand
+      value: "yes"
+    }
+    filters: {
+      field: direction
+      value: "inbound"
     }
   }
 
@@ -202,18 +256,41 @@ view: genesys_conversation_summary {
       field: service_level
       value: "yes"
     }
+    filters: {
+      field: direction
+      value: "inbound"
+    }
+  }
+
+  measure: count_distinct_sla_callers {
+    label: "Count Distinct SLA (Inbound Demand)"
+    type: count_distinct
+    sql: ${patient_number} ;;
+    sql_distinct_key:  ${patient_number};;
+    filters: {
+      field: inbound_demand
+      value: "yes"
+    }
+    filters: {
+      field: service_level
+      value: "yes"
+    }
+    filters: {
+      field: direction
+      value: "inbound"
+    }
   }
 
   measure: answer_rate {
     type: number
     value_format: "0%"
-    sql: ${count_answered}::float/(nullif(${count_distinct},0))::float ;;
+    sql: ${distinct_answer_callers}::float/(nullif(${distinct_callers},0))::float ;;
   }
 
   measure: sla_percent {
     type: number
     value_format: "0%"
-    sql: ${count_distinct_sla}::float/(nullif(${count_distinct},0))::float;;
+    sql: ${count_distinct_sla}::float/(nullif(${count_distinct_first},0))::float;;
   }
 
 
@@ -248,13 +325,42 @@ view: genesys_conversation_summary {
 
   measure: distinct_callers {
     type: count_distinct
-    sql: ${ani} ;;
-    sql_distinct_key: ${ani} ;;
+    sql: concat(${patient_number}, ${conversationstarttime_hour_of_day}, ${conversationstarttime_date}) ;;
+    sql_distinct_key: concat(${patient_number}, ${conversationstarttime_hour_of_day}, ${conversationstarttime_date});;
     filters: {
       field: inbound_demand
       value: "yes"
     }
   }
+
+  measure: distinct_answer_long_callers{
+    type: count_distinct
+    sql: concat(${patient_number}, ${conversationstarttime_hour_of_day}, ${conversationstarttime_date});;
+    sql_distinct_key: concat(${patient_number}, ${conversationstarttime_hour_of_day}, ${conversationstarttime_date}) ;;
+    filters: {
+      field: inbound_demand
+      value: "yes"
+    }
+    filters: {
+      field: answered_long
+      value: "yes"
+    }
+  }
+
+  measure: distinct_answer_callers{
+    type: count_distinct
+    sql: concat(${patient_number}, ${conversationstarttime_hour_of_day}, ${conversationstarttime_date}) ;;
+    sql_distinct_key:concat(${patient_number}, ${conversationstarttime_hour_of_day}, ${conversationstarttime_date}) ;;
+    filters: {
+      field: inbound_demand
+      value: "yes"
+    }
+    filters: {
+      field: answered
+      value: "1"
+    }
+  }
+
 
   measure: distinct_repeat_callers {
     type: number
@@ -507,7 +613,7 @@ measure: percent_repeat_callers {
     label: "Sum Talk Time (Inbound Demand) Minutes"
     type: sum_distinct
     value_format: "0.00"
-    sql_distinct_key: concat(${conversationid}, ${queuename}) ;;
+    sql_distinct_key: concat(${conversationid}, ${queuename}, ${direction}, ${mediatype}) ;;
     sql: ${totalagenttalkduration}::float/1000/60 ;;
     filters: {
       field: inbound_demand
@@ -531,7 +637,7 @@ measure: percent_repeat_callers {
 
 
   measure: average_wait_time_minutes {
-    label: "Average Wait Time Minutes (Inbound Demand)"
+    label: "Average Wait Time Minutes (Inbound Demand)(First Only)"
     type: average_distinct
     value_format: "0.00"
     sql_distinct_key: concat(${conversationid}) ;;
@@ -539,6 +645,10 @@ measure: percent_repeat_callers {
     filters: {
       field: inbound_demand
       value: "yes"
+    }
+    filters: {
+      field: direction
+      value: "inbound"
     }
 
   }

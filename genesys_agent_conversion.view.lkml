@@ -11,11 +11,11 @@ view: genesys_agent_conversion {
       column: market_id {field:markets.id}
 
       column: wait_time_minutes {field: genesys_conversation_summary.average_wait_time_minutes}
-      column: inbound_phone_calls {field: genesys_conversation_summary.count_distinct}
-      column: count_answered {}
-      column: care_request_count { field: care_request_flat_number.care_request_count }
-      column: accepted_count { field: care_request_flat_number.accepted_count }
-      column: complete_count { field: care_request_flat_number.complete_count }
+      column: inbound_phone_calls {field:  genesys_conversation_summary.distinct_callers}
+      column: count_answered { field: genesys_conversation_summary.distinct_answer_long_callers}
+      column: care_request_count { field: care_request_flat.care_request_count }
+      column: accepted_count { field: care_request_flat.accepted_or_scheduled_count }
+      column: complete_count { field: care_request_flat.complete_count }
       column: agent_name { field: genesys_conversation_wrapup.username }
       filters: {
         field: genesys_conversation_summary.conversationstarttime_time
@@ -44,17 +44,19 @@ view: genesys_agent_conversion {
 
 
   dimension: inbound_phone_calls {
-    label: "Genesys Conversation Summary Count Distinct (Inbound Demand Minus Market)"
+    label: "Count Ditinct Phone Callers (Inbound Demand)"
     type: number
   }
   dimension: count_answered {
-    label: "Genesys Conversation Summary Count Answered (Inbound Demand)"
+    label: "Contacts w/ Intent"
+    description: "(Intent Queue, >1 minute talk time w/agent)"
     type: number
   }
   dimension: care_request_count {
     type: number
   }
   dimension: accepted_count {
+    label: "Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled)"
     type: number
   }
   dimension: complete_count {
@@ -87,11 +89,14 @@ view: genesys_agent_conversion {
 
   measure: sum_inbound_phone_calls {
     type: sum_distinct
+    label: "Sum Inbound Callers"
     sql: ${inbound_phone_calls} ;;
     sql_distinct_key: concat(${conversationstarttime_date}, ${queuename}, ${market_id}, ${agent_name}) ;;
   }
 
   measure: sum_inbound_answers {
+    label: "Sum Contacts w/ Intent"
+    description: "(Intent Queue, >1 minute talk time w/agent) "
     type: sum_distinct
     sql: ${count_answered} ;;
     sql_distinct_key: concat(${conversationstarttime_date}, ${queuename}, ${market_id},  ${agent_name}) ;;
@@ -105,6 +110,7 @@ view: genesys_agent_conversion {
   }
 
   measure: sum_accepted_count {
+    label: "Sum Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled)"
     type: sum_distinct
     sql: ${accepted_count} ;;
     sql_distinct_key: concat(${conversationstarttime_date}, ${queuename}, ${market_id},  ${agent_name}) ;;
@@ -117,6 +123,7 @@ view: genesys_agent_conversion {
   }
 
   measure: assigned_rate {
+    description: "Sum Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled)/Sum Contacts w/ Intent (Intent Queue, >1 minute talk time w/agent)"
     type: number
     value_format: "0%"
     sql: case when ${sum_inbound_answers} >0 then ${sum_accepted_count}::float/${sum_inbound_answers}::float else 0 end ;;

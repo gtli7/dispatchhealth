@@ -16,13 +16,14 @@ view: athena_diagnosis_sequence {
     LEFT JOIN (
         SELECT
             ced.clinical_encounter_id,
-            MIN(cedx.clinical_encounter_dx_id) AS clinical_encounter_dx_id,
+            ced.ordering,
+            MAX(cedx.clinical_encounter_dx_id) AS clinical_encounter_dx_id,
             cedx.icd_code_id
         FROM athena.clinicalencounterdiagnosis ced
         LEFT JOIN athena.clinicalencounterdxicd10 cedx
             ON ced.clinical_encounter_dx_id = cedx.clinical_encounter_dx_id
         WHERE ced.deleted_datetime IS NULL
-        GROUP BY 1,3) fced
+        GROUP BY 1,2,4) fced
         ON ce.clinical_encounter_id = fced.clinical_encounter_id
     INNER JOIN athena.clinicalencounterdiagnosis ced
         ON fced.clinical_encounter_dx_id = ced.clinical_encounter_dx_id
@@ -37,7 +38,7 @@ view: athena_diagnosis_sequence {
             WHERE deleted_datetime IS NULL) AS clmd
         ON clm.claim_id = clmd.claim_id AND ced.ordering + 1 = clmd.sequence_number
     WHERE ced.deleted_datetime IS NULL AND icd.icd_code_id IS NOT NULL
-    GROUP BY 1,2,3,4,5,6,ced.ordering;;
+    GROUP BY 1,2,3,4,5,6,ced.ordering ;;
 
     sql_trigger_value: SELECT MAX(created_at) FROM athena.clinicalencounterdiagnosis ;;
     indexes: ["appointment_id", "appointment_char", "claim_id", "clinical_encounter_id", "sequence_number", "icd_code_id"]

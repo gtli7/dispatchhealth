@@ -1,5 +1,6 @@
 view: athenadwh_documentaction {
   sql_table_name: looker_scratch.athenadwh_documentaction ;;
+  view_label: "ZZZZ - Athenadwh Documentaction"
   drill_fields: [id]
 
   dimension: id {

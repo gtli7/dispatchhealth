@@ -1,5 +1,6 @@
 view: athenadwh_clinical_encounters_clone_full {
   sql_table_name: looker_scratch.athenadwh_clinical_encounters_clone_full ;;
+  view_label: "ZZZZ - Athenadwh Clinical Encounters Clone (Full)"
 
   dimension: appointment_id {
     type: number

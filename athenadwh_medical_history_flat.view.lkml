@@ -118,6 +118,8 @@ view: athenadwh_medical_history_flat {
       indexes: ["chart_id"]
     }
 
+  view_label: "ZZZZ - Athenadwh Medical History Flat"
+
   dimension: chart_id {
     type: number
     primary_key: yes

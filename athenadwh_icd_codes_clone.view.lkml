@@ -1,5 +1,6 @@
 view: athenadwh_icd_codes_clone {
   sql_table_name: looker_scratch.athenadwh_icd_codes_clone ;;
+  view_label: "ZZZZ - Athenadwh ICD Codes Clone"
 
   dimension: id {
     primary_key: yes

@@ -1,6 +1,8 @@
 view: athenadwh_payers {
   sql_table_name: jasperdb.athenadwh_payers ;;
 
+  view_label: "ZZZZ - Athenadwh Payers"
+
   dimension: id {
     primary_key: yes
     type: number

@@ -1,5 +1,6 @@
 view: athenadwh_patientaudit {
   sql_table_name: looker_scratch.athenadwh_patientaudit ;;
+  view_label: "ZZZZ - Patient Audit"
   drill_fields: [id]
 
   dimension: id {

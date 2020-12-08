@@ -30,6 +30,8 @@ view: athenadwh_chart_closing {
   sql_trigger_value: SELECT COUNT(*) FROM athenadwh_clinical_encounters_clone ;;
   }
 
+  view_label: "ZZZZ - Athenadwh Chart Closing"
+
   dimension: clinical_encounter_id {
     type: number
     sql: ${TABLE}.clinical_encounter_id ;;

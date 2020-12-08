@@ -329,6 +329,16 @@ view: athena_document_letters {
     filters: [clinical_letters_sent_all: "yes", care_requests.billable_est: "yes"]
   }
 
+  measure: count_letters_optum_atl_fax {
+    type: count_distinct
+    group_label: "Partner Specific Counts"
+    sql: ${care_requests.id} ;;
+    sql_distinct_key: ${care_requests.id} ;;
+    filters: [clinical_letters_sent_all: "yes",
+              care_requests.billable_est: "yes",
+              athena_letter_recipient_provider.name: "OPTUM ATLANTA FAX"]
+  }
+
   measure: clinical_notes_boolean {
     type: yesno
     description: "A flag indicating that any clinical note was sent to a provider or specialist"

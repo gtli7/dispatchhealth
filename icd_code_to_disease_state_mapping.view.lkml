@@ -1,6 +1,6 @@
 view: icd_code_to_disease_state_mapping {
   sql_table_name: looker_scratch.icd_code_to_disease_state_mapping ;;
-
+  view_label: "ZZZZ - ICD Code to Disease State Mapping"
   dimension: id {
     primary_key: yes
     type: number

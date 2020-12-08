@@ -1,5 +1,6 @@
 view: athenadwh_procedure_codes {
   sql_table_name: jasperdb.athenadwh_procedure_codes ;;
+  view_label: "ZZZZ - Athenadwh Procedure Codes"
 
   dimension: id {
     primary_key: yes

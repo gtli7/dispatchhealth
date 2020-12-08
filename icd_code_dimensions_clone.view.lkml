@@ -1,5 +1,5 @@
 view: icd_code_dimensions_clone {
-  label: "ICD Code Dimensions Clone"
+  label: "ZZZZ - ICD Code Dimensions Clone"
   sql_table_name: looker_scratch.icd_code_dimensions_clone ;;
 
   dimension: id {

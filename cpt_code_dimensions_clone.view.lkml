@@ -1,5 +1,5 @@
 view: cpt_code_dimensions_clone {
-  label: "CPT Code Dimensions Clone"
+  label: "ZZZZ - CPT Code Dimensions Clone"
   sql_table_name: looker_scratch.cpt_code_dimensions_clone ;;
 
   dimension: id {

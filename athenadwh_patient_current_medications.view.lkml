@@ -17,6 +17,8 @@ view: athenadwh_patient_current_medications {
   indexes: ["patient_id", "chart_id", "medication_id"]
     }
 
+  view_label: "ZZZZ - Athenadwh Patient Current Medications"
+
   dimension: compound_primary_key {
     primary_key: yes
     hidden: yes

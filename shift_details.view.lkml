@@ -1,5 +1,6 @@
 view: shift_details {
   sql_table_name: looker_scratch.shift_details ;;
+  view_label: "ZZZZ - Shift Details"
 
   dimension: id {
     primary_key: yes

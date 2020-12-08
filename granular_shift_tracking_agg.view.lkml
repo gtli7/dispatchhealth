@@ -26,6 +26,7 @@ view: granular_shift_tracking_agg {
         column: accept_time_of_day {field: granular_shift_tracking.min_accept_time_of_day}
 
         column: address_name_agg {}
+        column: shift_type { field: shift_types.name}
         column: market_id { field: markets.id }
         column: market_name_adj { field: markets.name_adj }
         #filters: {
@@ -47,7 +48,7 @@ view: granular_shift_tracking_agg {
       week,
       month,
       quarter,
-      year
+      year, day_of_week
     ]
     convert_tz: no
     datatype: date
@@ -58,6 +59,13 @@ view: granular_shift_tracking_agg {
       type: number
     }
     dimension: car_name {}
+  dimension: shift_type {}
+  dimension: telepresentation {
+    type: yesno
+    sql: lower( ${shift_type}) like '%telepresentation%';;
+  }
+
+
     dimension: id {
       type: number
     }

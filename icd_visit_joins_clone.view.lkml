@@ -1,5 +1,5 @@
 view: icd_visit_joins_clone {
-  label: "ICD Code Visit Join Table Clone"
+  label: "ZZZZ - ICD Code Visit Join Table Clone"
   sql_table_name: looker_scratch.icd_visit_joins_clone ;;
 
   dimension: id {

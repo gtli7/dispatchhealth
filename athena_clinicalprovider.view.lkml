@@ -82,6 +82,7 @@ view: athena_clinicalprovider {
 
   dimension_group: deleted {
     type: time
+    hidden: yes
     timeframes: [
       raw,
       time,
@@ -201,6 +202,12 @@ view: athena_clinicalprovider {
   measure: last_names_aggregated {
     type: string
     sql: array_to_string(array_agg(DISTINCT ${last_name}), ' | ') ;;
+  }
+
+  measure: pcp_names_aggregated {
+    type: string
+    sql: array_to_string(array_agg(DISTINCT
+    CASE WHEN ${provider_role} = 'Primary Care Provider' THEN ${name} ELSE NULL END), ' | ') ;;
   }
 
   measure: names_aggregated {

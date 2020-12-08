@@ -1,5 +1,6 @@
 view: athenadwh_document_crosswalk_clone {
   sql_table_name: looker_scratch.athenadwh_document_crosswalk_clone ;;
+  view_label: "ZZZZ - Athenadwh Document Crosswalk Clone"
 
   dimension: document_id {
     type: number

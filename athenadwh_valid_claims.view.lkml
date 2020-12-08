@@ -1,4 +1,5 @@
 view: athenadwh_valid_claims {
+  view_label: "ZZZZ - Athenadwh Valid Claims"
     derived_table: {
       sql:
   SELECT DISTINCT

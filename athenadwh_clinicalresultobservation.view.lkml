@@ -1,5 +1,6 @@
 view: athenadwh_clinicalresultobservation {
   sql_table_name: looker_scratch.athenadwh_clinicalresultobservation ;;
+  view_label: "ZZZZ - Athenadwh Clinicalresultobservation"
   drill_fields: [id]
 
   dimension: id {

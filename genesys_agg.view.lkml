@@ -5,8 +5,11 @@ view: genesys_agg {
       explore_source: genesys_conversation_summary {
         column: conversationstarttime {  field: genesys_conversation_summary.conversationstarttime_date}
         column: market_id { field: markets.id_adj }
-        column: count_answered {}
-        column: inbound_phone_calls {field: genesys_conversation_summary.count_distinct}
+        column: count_answered {field: genesys_conversation_summary.distinct_answer_long_callers}
+        column: count_answered_raw {field: genesys_conversation_summary.distinct_answer_callers}
+        column: inbound_phone_calls {field: genesys_conversation_summary.distinct_callers}
+        column: inbound_phone_calls_first {field: genesys_conversation_summary.count_distinct_first}
+
         column: count_distinct_sla {field: genesys_conversation_summary.count_distinct_sla}
         column: wait_time_minutes {field: genesys_conversation_summary.average_wait_time_minutes}
         filters: {
@@ -39,13 +42,13 @@ view: genesys_agg {
   measure: sla_percent {
     type: number
     value_format: "0%"
-    sql: ${sum_distinct_sla}::float/(nullif(${sum_inbound_phone_calls},0))::float;;
+    sql: ${sum_distinct_sla}::float/(nullif(${sum_inbound_phone_calls_first},0))::float;;
   }
 
 
   dimension: wait_time_minutes_x_inbound_phone_calls {
     type: number
-    sql: ${wait_time_minutes}*${inbound_phone_calls} ;;
+    sql: ${wait_time_minutes}*${inbound_phone_calls_first} ;;
   }
 
   measure: sum_wait_time_minutes_x_inbound_demand {
@@ -57,27 +60,49 @@ view: genesys_agg {
   measure: avg_wait_time_minutes {
     type: number
     value_format: "0.00"
-    sql: case when ${sum_inbound_phone_calls} >0 then ${sum_wait_time_minutes_x_inbound_demand}::float/${sum_inbound_phone_calls}::float else 0 end ;;
+    sql: case when ${sum_inbound_phone_calls_first} >0 then ${sum_wait_time_minutes_x_inbound_demand}::float/${sum_inbound_phone_calls_first}::float else 0 end ;;
   }
 
   dimension: inbound_demand{
+    label: "Contacts w/ Intent"
+    description: "Intent Queue, >1 minute talk time w/agent, web/mobille care requests"
     type: number
     sql: ${count_answered} +case when ${non_phone_cr.care_request_count} is not null then ${non_phone_cr.care_request_count} else 0 end;;
   }
 
   measure: sum_inbound_demand{
+    label: "Sum Contacts w/ Intent"
+    description: "Intent Queue and >1 minute talk time w/agent, web/mobille care requests"
     type: sum_distinct
     sql: ${inbound_demand} ;;
     sql_distinct_key: concat(${conversationstarttime_date}, ${market_id}) ;;
   }
 
+  measure: sum_inbound_demand_phone{
+    label: "Sum Phone Contacts w/ Intent"
+    description: "Intent Queue and >1 minute talk time w/agent, web/mobille care requests"
+    type: sum_distinct
+    sql: ${count_answered} ;;
+    sql_distinct_key: concat(${conversationstarttime_date}, ${market_id}) ;;
+  }
+
+
 
 
   measure: assigned_rate {
+    description: "Sum Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled)/Sum Contacts w/ Intent (Intent Queue, >1 minute talk time w/agent)"
     type: number
     value_format: "0%"
     sql: case when ${sum_inbound_demand} >0 then ${accepted_agg.sum_accepted}::float/${sum_inbound_demand}::float else 0 end ;;
   }
+
+  measure: assigned_rate_phone {
+    description: "Phone Sum Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled)/Sum Contacts w/ Intent (Intent Queue, >1 minute talk time w/agent)"
+    type: number
+    value_format: "0%"
+    sql: case when ${sum_inbound_demand_phone} >0 then ${accepted_agg.sum_phone_accepted_or_scheduled_phone_count}::float/${sum_inbound_demand_phone}::float else 0 end ;;
+  }
+
 
 
     dimension_group: conversationstarttime {
@@ -100,33 +125,63 @@ view: genesys_agg {
       type: number
     }
     dimension: count_answered {
-      label: "Count Answered (Inbound Demand)"
+      label: "Count Answered Callers (Intent)"
       type: number
     }
+
+  dimension: count_answered_raw {
+    label: "Count Answered Callers (No Time Constraint) (Intent)"
+    type: number
+  }
   dimension: inbound_phone_calls {
-    label: "Count Distinct Phone Calls (Inbound Demand)"
+    label: "Count Distinct Phone Callers (Intent)"
+    type: number
+  }
+
+  dimension: inbound_phone_calls_first {
+    label: "Count Distinct Phone Callers Inbound (Intent)"
     type: number
   }
 
     measure: sum_answered {
+      label: "Sum Answered Callers"
       type: sum_distinct
       sql: ${count_answered} ;;
       sql_distinct_key: concat(${conversationstarttime_date}, ${market_id}) ;;
     }
 
+  measure: sum_answered_callers {
+    label: "Sum Answered Callers (No Time Constraint)"
+    type: sum_distinct
+    sql: ${count_answered_raw} ;;
+    sql_distinct_key: concat(${conversationstarttime_date}, ${market_id}) ;;
+  }
+
   measure: sum_inbound_phone_calls {
+    label: "Sum Inbound Callers"
     type: sum_distinct
     sql: ${inbound_phone_calls} ;;
     sql_distinct_key: concat(${conversationstarttime_date}, ${market_id}) ;;
   }
 
+  measure: sum_inbound_phone_calls_first {
+    label: "Sum Inbound Callers First"
+    type: sum_distinct
+    sql: ${inbound_phone_calls_first} ;;
+    sql_distinct_key: concat(${conversationstarttime_date}, ${market_id}) ;;
+  }
+
   measure: sum_inbound_demand_month_run_rate {
+    label: "Sum Contacts w/ Intent Month Run Rate"
+    description: "Intent Queue and >1 minute talk time w/agent, web/mobille care requests"
     type: number
     value_format: "#,##0"
     sql:  ${sum_inbound_demand}/max(${month_percent});;
   }
 
   measure: sum_inbound_demand_quarterly_run_rate {
+    label: "Sum Contacts w/ Intent Quarter Run Rate"
+    description: "Intent Queue and >1 minute talk time w/agent, web/mobille care requests"
     type: number
     value_format: "#,##0"
     sql:  ${sum_inbound_demand}/max(${quarter_percent});;
@@ -135,7 +190,7 @@ view: genesys_agg {
   measure: answer_rate {
     value_format: "0%"
     type: number
-    sql: case when ${sum_inbound_phone_calls}>0 then ${sum_answered}::float/${sum_inbound_phone_calls}::float else 0 end;;
+    sql: case when ${sum_inbound_phone_calls}>0 then ${sum_answered_callers}::float/${sum_inbound_phone_calls}::float else 0 end;;
   }
 
   measure: actuals_compared_to_projections {

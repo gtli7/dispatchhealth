@@ -1,5 +1,6 @@
 view: athenadwh_clinicalencounter_dxicd10 {
   sql_table_name: looker_scratch.athenadwh_clinicalencounter_dxicd10 ;;
+  view_label: "ZZZZ - Athenadwh Dx ICD10"
 
   dimension: id {
     primary_key: yes

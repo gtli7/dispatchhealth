@@ -14,6 +14,8 @@ group by 1,2
     indexes: ["clinical_provider_id", "fax"]
   }
 
+  view_label: "ZZZZ - Athenadwh Clinical Providers Fax Clone"
+
   dimension: clinical_provider_id {
     type: number
     sql: ${TABLE}.clinical_provider_id;;

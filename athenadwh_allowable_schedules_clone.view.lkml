@@ -1,5 +1,6 @@
 view: athenadwh_allowable_schedules_clone {
   sql_table_name: looker_scratch.athenadwh_allowable_schedules_clone ;;
+  view_label: "ZZZZ - Athenadwh Allowable Schedules Clone"
 
   dimension: id {
     primary_key: yes

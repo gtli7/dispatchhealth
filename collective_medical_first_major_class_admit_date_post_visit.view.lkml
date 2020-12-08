@@ -1,5 +1,6 @@
 view: collective_medical_first_major_class_admit_date_post_visit {
-  sql_table_name: collective_medical.first_major_class_admit_date_post_visit ;;
+  view_label: "Collective Medical First Emergency Admit Date Post Visit"
+  sql_table_name: (select * from collective_medical.first_major_class_admit_date_post_visit where lower(major_class) = 'emergency');;
   drill_fields: [id]
 
   dimension: id {
@@ -115,12 +116,12 @@ view: collective_medical_first_major_class_admit_date_post_visit {
   #   group_label: "Inpatient First Admittance Intervals"
   # }
 
-  dimension: 3_day_first_admit_observation {
-    description: "First Observation admittance recorded by Collective Medical within 3 days of the DH care request on-scene date"
-    type: yesno
-    sql: ((EXTRACT(EPOCH FROM ${first_admit_post_visit_raw})-EXTRACT(EPOCH FROM ${care_request_flat.on_scene_raw})) / 3600) <= 72 and EXTRACT(EPOCH FROM ${first_admit_post_visit_raw}) > EXTRACT(EPOCH FROM ${care_request_flat.on_scene_raw}) and lower(${major_class}) = 'observation';;
-    group_label: "Observation First Admittance Intervals"
-  }
+  # dimension: 3_day_first_admit_observation {
+  #   description: "First Observation admittance recorded by Collective Medical within 3 days of the DH care request on-scene date"
+  #   type: yesno
+  #   sql: ((EXTRACT(EPOCH FROM ${first_admit_post_visit_raw})-EXTRACT(EPOCH FROM ${care_request_flat.on_scene_raw})) / 3600) <= 72 and EXTRACT(EPOCH FROM ${first_admit_post_visit_raw}) > EXTRACT(EPOCH FROM ${care_request_flat.on_scene_raw}) and lower(${major_class}) = 'observation';;
+  #   group_label: "Observation First Admittance Intervals"
+  # }
 
   dimension: 3_day_first_admit_emergency {
     description: "First Emergency admittance recorded by Collective Medical within 3 days of the DH care request on-scene date"
@@ -143,12 +144,12 @@ view: collective_medical_first_major_class_admit_date_post_visit {
   #   group_label: "Inpatient First Admittance Intervals"
   # }
 
-  dimension: 14_day_first_admit_observation {
-    description: "First Observation admittance recorded by Collective Medical within 14 days of the DH care request on-scene date"
-    type: yesno
-    sql: ((EXTRACT(EPOCH FROM ${first_admit_post_visit_raw})-EXTRACT(EPOCH FROM ${care_request_flat.on_scene_raw})) / 3600) <= 336 and EXTRACT(EPOCH FROM ${first_admit_post_visit_raw}) > EXTRACT(EPOCH FROM ${care_request_flat.on_scene_raw}) and  lower(${major_class}) = 'observation';;
-    group_label: "Observation First Admittance Intervals"
-  }
+  # dimension: 14_day_first_admit_observation {
+  #   description: "First Observation admittance recorded by Collective Medical within 14 days of the DH care request on-scene date"
+  #   type: yesno
+  #   sql: ((EXTRACT(EPOCH FROM ${first_admit_post_visit_raw})-EXTRACT(EPOCH FROM ${care_request_flat.on_scene_raw})) / 3600) <= 336 and EXTRACT(EPOCH FROM ${first_admit_post_visit_raw}) > EXTRACT(EPOCH FROM ${care_request_flat.on_scene_raw}) and  lower(${major_class}) = 'observation';;
+  #   group_label: "Observation First Admittance Intervals"
+  # }
 
   dimension: 14_day_first_admit_emergency {
     description: "First Emergency admittance recorded by Collective Medical within 14 days of the DH care request on-scene date"
@@ -164,12 +165,12 @@ view: collective_medical_first_major_class_admit_date_post_visit {
   #   group_label: "Inpatient First Admittance Intervals"
   # }
 
-  dimension: 30_day_first_admit_observation {
-    description: "First Observation admittance recorded by Collective Medical within 30 days of the DH care request on-scene date"
-    type: yesno
-    sql: ((EXTRACT(EPOCH FROM ${first_admit_post_visit_raw})-EXTRACT(EPOCH FROM ${care_request_flat.on_scene_raw})) / 3600) <= 720 and EXTRACT(EPOCH FROM ${first_admit_post_visit_raw}) > EXTRACT(EPOCH FROM ${care_request_flat.on_scene_raw}) and  lower(${major_class}) = 'observation';;
-    group_label: "Observation First Admittance Intervals"
-  }
+  # dimension: 30_day_first_admit_observation {
+  #   description: "First Observation admittance recorded by Collective Medical within 30 days of the DH care request on-scene date"
+  #   type: yesno
+  #   sql: ((EXTRACT(EPOCH FROM ${first_admit_post_visit_raw})-EXTRACT(EPOCH FROM ${care_request_flat.on_scene_raw})) / 3600) <= 720 and EXTRACT(EPOCH FROM ${first_admit_post_visit_raw}) > EXTRACT(EPOCH FROM ${care_request_flat.on_scene_raw}) and  lower(${major_class}) = 'observation';;
+  #   group_label: "Observation First Admittance Intervals"
+  # }
 
   dimension: 30_day_first_admit_emergency {
     description: "First Emergency admittance recorded by Collective Medical within 30 days of the DH care request on-scene date"
@@ -222,16 +223,16 @@ view: collective_medical_first_major_class_admit_date_post_visit {
   #   group_label: "Inpatient First Admittance Intervals"
   # }
 
-  measure: count_3_day_first_admit_observation {
-    description: "Count First Observation admittances recorded by Collective Medical within 3 days of the DH care request on-scene date"
-    type: count_distinct
-    sql: ${care_request_flat.care_request_id}  ;;
-    filters: {
-      field: 3_day_first_admit_observation
-      value: "yes"
-    }
-    group_label: "Observation First Admittance Intervals"
-  }
+  # measure: count_3_day_first_admit_observation {
+  #   description: "Count First Observation admittances recorded by Collective Medical within 3 days of the DH care request on-scene date"
+  #   type: count_distinct
+  #   sql: ${care_request_flat.care_request_id}  ;;
+  #   filters: {
+  #     field: 3_day_first_admit_observation
+  #     value: "yes"
+  #   }
+  #   group_label: "Observation First Admittance Intervals"
+  # }
 
   measure: count_3_day_first_admit_emergency {
     description: "Count First Emergency admittances recorded by Collective Medical within 3 days of the DH care request on-scene date"
@@ -266,16 +267,16 @@ view: collective_medical_first_major_class_admit_date_post_visit {
   #   group_label: "Inpatient First Admittance Intervals"
   # }
 
-  measure: count_14_day_first_admit_observation {
-    description: "Count First Observation admittances recorded by Collective Medical within 14 days of the DH care request on-scene date"
-    type: count_distinct
-    sql: ${care_request_flat.care_request_id}  ;;
-    filters: {
-      field: 14_day_first_admit_observation
-      value: "yes"
-    }
-    group_label: "Observation First Admittance Intervals"
-  }
+  # measure: count_14_day_first_admit_observation {
+  #   description: "Count First Observation admittances recorded by Collective Medical within 14 days of the DH care request on-scene date"
+  #   type: count_distinct
+  #   sql: ${care_request_flat.care_request_id}  ;;
+  #   filters: {
+  #     field: 14_day_first_admit_observation
+  #     value: "yes"
+  #   }
+  #   group_label: "Observation First Admittance Intervals"
+  # }
 
   measure: count_14_day_first_admit_emergency {
     description: "Count First Emergency admittances recorded by Collective Medical within 14 days of the DH care request on-scene date"
@@ -299,16 +300,16 @@ view: collective_medical_first_major_class_admit_date_post_visit {
   #   group_label: "Inpatient First Admittance Intervals"
   # }
 
-  measure: count_30_day_first_admit_observation {
-    description: "Count First Observation admittances recorded by Collective Medical within 30 days of the DH care request on-scene date"
-    type: count_distinct
-    sql: ${care_request_flat.care_request_id}  ;;
-    filters: {
-      field: 30_day_first_admit_observation
-      value: "yes"
-    }
-    group_label: "Observation First Admittance Intervals"
-  }
+  # measure: count_30_day_first_admit_observation {
+  #   description: "Count First Observation admittances recorded by Collective Medical within 30 days of the DH care request on-scene date"
+  #   type: count_distinct
+  #   sql: ${care_request_flat.care_request_id}  ;;
+  #   filters: {
+  #     field: 30_day_first_admit_observation
+  #     value: "yes"
+  #   }
+  #   group_label: "Observation First Admittance Intervals"
+  # }
 
   measure: count_30_day_first_admit_emergency {
     description: "Count First Emergency admittances recorded by Collective Medical within 30 days of the DH care request on-scene date"
