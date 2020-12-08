@@ -35,7 +35,10 @@ view: genesys_queue_conversion {
       }
     }
 
-    dimension: queuename {}
+    dimension: queuename {
+    type: string
+    sql: ${TABLE}."queuename" ;;
+    }
 
     dimension: market_id {}
 
@@ -105,6 +108,13 @@ view: genesys_queue_conversion {
   dimension: wait_time_minutes_x_inbound_phone_calls {
     type: number
     sql: ${wait_time_minutes}*${inbound_phone_calls} ;;
+  }
+
+  dimension: queuename_adj {
+    type: string
+    sql: case when ${queuename} in('TIER 1', 'TIER 2') then 'TIER 1/TIER 2'
+      when ${queuename} in ('Partner Direct', 'ATL Optum Care', 'LAS RCC', 'Humana Partner Direct', 'BOI Regence', 'POR Regence', 'SEA Regence', 'SPO Regence', ) then 'Partner Direct (Broad)'
+    else ${queuename}  end ;;
   }
 
   measure: sum_inbound_phone_calls {
