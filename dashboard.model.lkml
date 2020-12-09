@@ -3891,7 +3891,8 @@ explore: shift_teams
 
   join: care_requests_shift_teams {
     relationship: many_to_one
-    sql_on: ${care_requests_shift_teams.shift_team_id} = ${shift_teams.id} ;;
+    sql_on: ${care_requests_shift_teams.shift_team_id} = ${shift_teams.id}
+    AND ${care_requests_shift_teams.is_dispatched};;
     fields: []
   }
 
@@ -3902,8 +3903,8 @@ explore: shift_teams
 
   join: care_requests {
     relationship: one_to_one
-    sql_on: ${care_requests_shift_teams.care_request_id} = ${care_requests.id} ;;
-    # AND ${care_requests_shift_teams.is_dispatched};;
+    sql_on: ${care_requests_shift_teams.care_request_id} = ${care_requests.id}
+    AND ${care_requests_shift_teams.is_dispatched};;
   }
 
   join: care_request_flat {
@@ -3923,6 +3924,7 @@ explore: shift_teams
 
   join: zizzl_rates_hours {
     relationship: one_to_many
+    type: full_outer
     sql_on: ${shift_team_members.user_id} = ${zizzl_rates_hours.employee_id}
       AND ${shift_teams.start_date} = ${zizzl_rates_hours.shift_date};;
   }
