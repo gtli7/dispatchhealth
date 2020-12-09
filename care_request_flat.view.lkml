@@ -732,7 +732,12 @@ WITH ort AS (
   dimension: accepted_or_scheduled {
     label: "Accepted, Scheduled (Acute-Care) or Booked Resolved"
     type: yesno
-    sql: ${accepted_patient} or (${scheduled_visit} and not ${pafu_or_follow_up}) or ${booked_resolved};;
+    sql: ${accepted_patient} or (${scheduled_not_pafu_or_dhfu}) or ${booked_resolved};;
+  }
+
+  dimension: scheduled_not_pafu_or_dhfu {
+    type: yesno
+    sql: (${scheduled_visit} and not ${pafu_or_follow_up}) ;;
   }
 
   measure: count_accepted_patients {
@@ -1737,7 +1742,7 @@ WITH ort AS (
   }
 
   dimension_group: scheduled_or_accepted_coalese {
-    group_label: "Scheduled/Accepted/Created Coalese"
+    group_label: "Scheduled/Accepted/Archive/Created Coalese"
     type: time
     description: "The local date/time that the care request was created."
     convert_tz: no
@@ -1756,7 +1761,7 @@ WITH ort AS (
       month_num,
       quarter
     ]
-    sql: coalesce(${scheduled_raw}, ${accept_raw}, ${created_raw}) ;;
+    sql: coalesce(${scheduled_raw}, ${accept_raw},${archive_raw}, ${created_raw}) ;;
   }
 
 
@@ -3047,6 +3052,19 @@ measure: avg_first_on_route_mins {
 
 
 
+
+
+  dimension: lwbs_accepted {
+    type: yesno
+    sql:(not ${complete}) and not ${booked_shaping_placeholder_resolved} and (${accepted});;
+  }
+
+  dimension: lwbs_scheduled {
+    type: yesno
+    sql:(not ${complete}) and not ${booked_shaping_placeholder_resolved} and (not ${accepted}) and ${scheduled_not_pafu_or_dhfu};;
+  }
+
+
   dimension: lwbs_going_to_ed {
     type: yesno
     sql: ${archive_comment} SIMILAR TO '%(Cancelled by Patient: Going to an Emergency Department|Going to Emergency Department)%' ;;
@@ -3475,9 +3493,27 @@ measure: avg_first_on_route_mins {
     }
   }
 
+  measure: lwbs_scheduled_count {
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters: {
+      field: lwbs_scheduled
+      value: "yes"
+    }
+  }
+
+  measure: lwbs_accepted_count {
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters: {
+      field: lwbs_accepted
+      value: "yes"
+    }
+  }
+
   dimension: booked_shaping_placeholder_resolved {
     type: yesno
-    sql:  lower(${archive_comment}) SIMILAR TO '%( cap|book|medicaid|tricare)%' and lower(${archive_comment}) not like '%capability%';;
+    sql:  lower(${archive_comment}) like '%book%';;
   }
 
   dimension: out_of_service_out_of_scope {
