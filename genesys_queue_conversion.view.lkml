@@ -36,6 +36,12 @@ view: genesys_queue_conversion {
       }
     }
 
+
+    dimension: queuename {
+    type: string
+    sql: ${TABLE}."queuename" ;;
+    }
+
   dimension: inbound_phone_calls_first {
     label: "Count Distinct Phone Callers First (Inbound Demand)"
     type: number
@@ -45,8 +51,6 @@ view: genesys_queue_conversion {
     label: "Count Answered Callers (No Time Constraint) (Inbound Demand)"
     type: number
   }
-    dimension: queuename {}
-
     dimension: market_id {}
     dimension: direction {}
 
@@ -123,6 +127,13 @@ view: genesys_queue_conversion {
   dimension: wait_time_minutes_x_inbound_phone_calls {
     type: number
     sql: ${wait_time_minutes}*${inbound_phone_calls_first} ;;
+  }
+
+  dimension: queuename_adj {
+    type: string
+    sql: case when ${queuename} in('TIER 1', 'TIER 2') then 'TIER 1/TIER 2'
+      when ${queuename} in ('Partner Direct', 'ATL Optum Care', 'LAS RCC', 'Humana Partner Direct', 'BOI Regence', 'POR Regence', 'SEA Regence', 'SPO Regence') then 'Partner Direct (Broad)'
+    else ${queuename}  end ;;
   }
 
   measure: sum_inbound_phone_calls {
