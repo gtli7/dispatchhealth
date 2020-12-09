@@ -226,13 +226,20 @@ measure: number_of_queued{
 }
 
 measure: exit_type_count {
-  type: count
+  type: count_distinct
   sql: ${TABLE}."customstring03" ;;
+  sql_distinct_key: ${ivrexit}
+
 }
 
 measure: exit_type_disconnect_count {
   type: count
   sql: ${ivrexitdisconnect};;
+
+measure: ivr_exit_count {
+  type: count
+  sql: ${ivrexit} ;;
+  }
 }
 
 

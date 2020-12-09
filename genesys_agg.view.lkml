@@ -134,7 +134,7 @@ view: genesys_agg {
     type: number
   }
   dimension: inbound_phone_calls {
-    label: "Count Ditinct Phone Callers (Intent)"
+    label: "Count Distinct Phone Callers (Intent)"
     type: number
   }
 

@@ -141,6 +141,7 @@ view: genesys_conversation_summary {
   dimension: queuename_adj {
     type: string
     sql: case when ${queuename} in('TIER 1', 'TIER 2') then 'TIER 1/TIER 2'
+      when ${queuename} in('Partner Direct', 'ATL Optum Care', 'LAS RCC', 'Humana Partner Direct', 'BOI Regence', 'POR Regence', 'SEA Regence', 'SPO Regence' ) then 'Partner Direct (Broad)'
     else ${queuename}  end ;;
   }
 
@@ -234,7 +235,7 @@ view: genesys_conversation_summary {
     sql_distinct_key: ${conversationid} ;;
     filters: {
       field: inbound_demand
-      value: "1"
+      value: "yes"
     }
     filters: {
       field: answered
@@ -283,7 +284,7 @@ view: genesys_conversation_summary {
   measure: answer_rate {
     type: number
     value_format: "0%"
-    sql: ${count_answered}::float/(nullif(${count_distinct},0))::float ;;
+    sql: ${distinct_answer_callers}::float/(nullif(${distinct_callers},0))::float ;;
   }
 
   measure: sla_percent {
@@ -636,7 +637,7 @@ measure: percent_repeat_callers {
 
 
   measure: average_wait_time_minutes {
-    label: "Average Wait Time Minutes (Inbound Demand)"
+    label: "Average Wait Time Minutes (Inbound Demand)(First Only)"
     type: average_distinct
     value_format: "0.00"
     sql_distinct_key: concat(${conversationid}) ;;
@@ -644,6 +645,10 @@ measure: percent_repeat_callers {
     filters: {
       field: inbound_demand
       value: "yes"
+    }
+    filters: {
+      field: direction
+      value: "inbound"
     }
 
   }
