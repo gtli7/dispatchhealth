@@ -51,12 +51,21 @@ view: geolocations_stops_by_care_request {
 
   dimension: actual_minus_predicted {
     type: number
-    group_label: "Prediction Comparisons"
+    group_label: "On Scene Predictions"
     description: "The actual car stopping time minus the predicted on-scene time"
     sql: CASE WHEN ${on_scene_time} IS NOT NULL
           THEN ${on_scene_time} - ${care_request_flat.mins_on_scene_predicted}
           ELSE NULL
         END;;
+  }
+
+  dimension: actual_minus_pred_tier {
+    type: tier
+    description: "Geolocations on-scene time minus predicted on-scene time, in 10 minute tiers"
+    group_label: "On Scene Predictions"
+    tiers: [-60,-50,-40,-30,-20,-10,0,10,20,30,40,50,60]
+    style: integer
+    sql: ${actual_minus_predicted} ;;
   }
 
   measure: total_on_scene_time {
