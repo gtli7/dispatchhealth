@@ -250,7 +250,7 @@ view: geneysis_evaluations {
 
   dimension: MA {
     type: yesno
-    sql: lower(${agentname}) like '%(ma)%' ;;
+    sql: lower(${agentname}) like '%(ma/%)%' ;;
   }
 
   dimension: optum {

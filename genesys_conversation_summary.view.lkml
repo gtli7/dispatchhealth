@@ -213,6 +213,16 @@ view: genesys_conversation_summary {
     }
   }
 
+  measure: distinct_callers_raw {
+    type: count_distinct
+    sql: ${patient_number};;
+    sql_distinct_key: ${patient_number};;
+    filters: {
+      field: inbound_demand
+      value: "yes"
+    }
+  }
+
   measure: count_distinct_first {
     label: "Count Distinct (Inbound Demand First)"
     type: count_distinct
@@ -364,7 +374,7 @@ view: genesys_conversation_summary {
 
   measure: distinct_repeat_callers {
     type: number
-    sql: ${count_distinct}-${distinct_callers} ;;
+    sql: ${count_distinct}-${distinct_callers_raw} ;;
   }
 
 
