@@ -245,7 +245,7 @@ view: genesys_conversation_summary {
     sql_distinct_key: ${conversationid} ;;
     filters: {
       field: inbound_demand
-      value: "1"
+      value: "yes"
     }
     filters: {
       field: answered
