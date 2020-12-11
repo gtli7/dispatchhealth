@@ -841,7 +841,7 @@ join: athena_patient_medical_history {
     from: athena_diagnosis_codes
     view_label: "Athena ICD10 Diagnosis Codes (Primary)"
     relationship: many_to_one
-    sql_where:  ${athena_diagnosis_sequence.sequence_number} = 1;;
+    # sql_where:  ${athena_diagnosis_sequence.sequence_number} = 1;;
     sql_on: ${athena_diagnosis_sequence.icd_code_id} = ${athena_primary_diagnosis_codes.icd_code_id}
             AND ${athena_diagnosis_sequence.sequence_number} = 1 ;;
     fields: [athena_primary_diagnosis_codes.asymptomatic_covid_related,

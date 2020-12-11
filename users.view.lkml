@@ -8,6 +8,13 @@ view: users {
     sql: ${TABLE}.id ;;
   }
 
+  dimension: documentation_training_provider {
+    type: yesno
+    sql: ${id} IN (38670,47248,37554,45743,50085,54178,45829,22934,41281,40719,35561,53968,
+                   47384,20172,42915,38958,28141,35175,42915,11376,58230,45337,36293,61509,
+                   62304,61433,16387,27008,59851) ;;
+  }
+
   dimension: authentication_token {
     type: string
     hidden: yes
