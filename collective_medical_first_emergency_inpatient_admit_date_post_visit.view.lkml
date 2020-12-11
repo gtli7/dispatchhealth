@@ -1,5 +1,5 @@
 view: collective_medical_first_emergency_inpatient_admit_date_post_visit {
-  view_label: "collective_medical_first_hospitalization_admit_date_post_visit"
+  view_label: "Collective Medical First Hospitalization Admit Date Post Visit"
   sql_table_name: collective_medical.first_emergency_inpatient_admit_date_post_visit ;;
   drill_fields: [id]
 

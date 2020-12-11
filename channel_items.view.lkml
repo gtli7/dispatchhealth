@@ -4,7 +4,7 @@ view: channel_items {
   dimension: id {
     primary_key: yes
     type: number
-    hidden: yes
+    hidden: no
     sql: ${TABLE}.id ;;
   }
 
