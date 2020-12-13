@@ -59,6 +59,26 @@ view: geolocations_stops_by_care_request {
         END;;
   }
 
+  dimension: predicted_minus_actual {
+    type: number
+    group_label: "On Scene Predictions"
+    description: "The predicted on-scene time minus the actual car stopping time minus"
+    sql: CASE WHEN ${on_scene_time} IS NOT NULL
+          THEN ${care_request_flat.mins_on_scene_predicted} - ${on_scene_time}
+          ELSE NULL
+        END;;
+  }
+
+  dimension: squared_error {
+    type:  number
+    group_label: "On Scene Predictions"
+    description: "The actual car stopping time minus the predicted on-scene time SQUARED"
+    sql: CASE WHEN ${on_scene_time} IS NOT NULL
+          THEN POWER(${on_scene_time} - ${care_request_flat.mins_on_scene_predicted}, 2)
+          ELSE NULL
+        END;;
+  }
+
   dimension: actual_minus_pred_tier {
     type: tier
     description: "Geolocations on-scene time minus predicted on-scene time, in 10 minute tiers"
@@ -68,16 +88,46 @@ view: geolocations_stops_by_care_request {
     sql: ${actual_minus_predicted} ;;
   }
 
+  dimension: pred_minus_actual_tier {
+    type: tier
+    description: "Predicted on-scene time minus geolocations on-scene time, in 10 minute tiers"
+    group_label: "On Scene Predictions"
+    tiers: [-60,-50,-40,-30,-20,-10,0,10,20,30,40,50,60]
+    style: integer
+    sql: ${actual_minus_predicted} ;;
+  }
+
+  measure: average_actual_minus_pred {
+    type: average_distinct
+    sql_distinct_key: ${primary_key} ;;
+    description: "The average car stop time - predicted on scene time (residual)"
+    sql: ${actual_minus_predicted} ;;
+  }
+
+  measure: average_pred_minus_actual {
+    type: average_distinct
+    sql_distinct_key: ${primary_key} ;;
+    description: "The average car stop time - predicted on scene time (residual)"
+    sql: ${predicted_minus_actual} ;;
+  }
+
+  measure: mse_actual_minus_pred {
+    type: average_distinct
+    sql_distinct_key: ${primary_key} ;;
+    description: "The average car stop time - predicted on scene time (residual)"
+    sql: ${squared_error} ;;
+  }
+
   measure: total_on_scene_time {
     type: sum_distinct
     description: "The sum of all car stop times for care requests"
-    sql_distinct_key: ${care_request_id} ;;
+    sql_distinct_key: ${primary_key} ;;
     sql: ${on_scene_time} ;;
   }
 
   measure: average_on_scene_time {
     type: average_distinct
-    sql_distinct_key: ${care_request_id} ;;
+    sql_distinct_key: ${primary_key} ;;
     description: "The average of all car stop times for care requests"
     sql: ${on_scene_time} ;;
   }
