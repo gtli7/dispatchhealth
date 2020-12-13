@@ -16,7 +16,7 @@ ma AS (
         MIN(created_datetime) AS received_ma,
         COUNT(*) AS num_ma_touches
         FROM athena.documentaction
-        WHERE LOWER(assigned_to) LIKE '%maonshift%'
+        WHERE LOWER(assigned_to) LIKE '%maonshif%'
             AND document_class IN ('LABRESULT','IMAGINGRESULT')
             AND status = 'REVIEW'
         GROUP BY 1),
