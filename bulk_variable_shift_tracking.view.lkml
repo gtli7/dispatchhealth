@@ -71,13 +71,13 @@ view: bulk_variable_shift_tracking {
     sql: ${shift_teams.sum_shift_hours}::float - ${sum_total_hours}::float    ;;
   }
 
-  measure: zizzl_vs_recommendation_diff {
-    type: number
-    value_format: "0.0"
-    sql: ${zizzl_detailed_shift_hours.sum_direct_hours}::float - ${sum_total_hours}::float
-    ;;
+#  measure: zizzl_vs_recommendation_diff {
+#    type: number
+#    value_format: "0.0"
+#    sql: ${zizzl_detailed_shift_hours.sum_direct_hours}::float - ${sum_total_hours}::float
+#    ;;
 
-  }
+  #}
 
 
 
