@@ -19,6 +19,7 @@ view: athena_result_created {
 
   dimension: document_id {
     type: number
+    primary_key: yes
     hidden: yes
     sql: ${TABLE}."document_id" ;;
   }

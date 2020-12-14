@@ -2,6 +2,7 @@ view: geolocations_stops_by_care_request {
   derived_table: {
     sql:
     SELECT
+    ROW_NUMBER() OVER () AS my_primary_key,
     shift_teams_id AS shift_team_id,
     car_id,
     unnest(care_request_ids) AS care_request_id,
@@ -9,14 +10,19 @@ view: geolocations_stops_by_care_request {
     ROUND(SUM(minutes_stopped)::numeric,1) AS on_scene_time,
     ROUND((SUM(minutes_stopped) / num_care_requests::float)::numeric,1) AS stop_time_per_care_request
     FROM geolocation.stops_summary
-    GROUP BY 1,2,3,4;;
+    GROUP BY 2,3,4,5;;
 
       indexes: ["shift_team_id", "car_id", "care_request_id"]
       sql_trigger_value: SELECT MAX(geolocations_id) FROM geolocation.stops_summary ;;
   }
 
-  dimension: care_request_id {
+  dimension: primary_key {
+    type: number
     primary_key: yes
+    sql: ${TABLE}.my_primary_key ;;
+  }
+
+  dimension: care_request_id {
     type: number
     sql: ${TABLE}.care_request_id ;;
   }
@@ -31,6 +37,7 @@ view: geolocations_stops_by_care_request {
     type: count_distinct
     description: "The count of all distinct care requests.  May not match billable_est
     due to inability to match certain care requests to car stops"
+    sql: ${care_request_id} ;;
   }
 
   dimension: on_scene_time {
@@ -42,16 +49,85 @@ view: geolocations_stops_by_care_request {
     sql: ${TABLE}.on_scene_time ;;
   }
 
+  dimension: actual_minus_predicted {
+    type: number
+    group_label: "On Scene Predictions"
+    description: "The actual car stopping time minus the predicted on-scene time"
+    sql: CASE WHEN ${on_scene_time} IS NOT NULL
+          THEN ${on_scene_time} - ${care_request_flat.mins_on_scene_predicted}
+          ELSE NULL
+        END;;
+  }
+
+  dimension: predicted_minus_actual {
+    type: number
+    group_label: "On Scene Predictions"
+    description: "The predicted on-scene time minus the actual car stopping time minus"
+    sql: CASE WHEN ${on_scene_time} IS NOT NULL
+          THEN ${care_request_flat.mins_on_scene_predicted} - ${on_scene_time}
+          ELSE NULL
+        END;;
+  }
+
+  dimension: squared_error {
+    type:  number
+    group_label: "On Scene Predictions"
+    description: "The actual car stopping time minus the predicted on-scene time SQUARED"
+    sql: CASE WHEN ${on_scene_time} IS NOT NULL
+          THEN POWER(${on_scene_time} - ${care_request_flat.mins_on_scene_predicted}, 2)
+          ELSE NULL
+        END;;
+  }
+
+  dimension: actual_minus_pred_tier {
+    type: tier
+    description: "Geolocations on-scene time minus predicted on-scene time, in 10 minute tiers"
+    group_label: "On Scene Predictions"
+    tiers: [-60,-50,-40,-30,-20,-10,0,10,20,30,40,50,60]
+    style: integer
+    sql: ${actual_minus_predicted} ;;
+  }
+
+  dimension: pred_minus_actual_tier {
+    type: tier
+    description: "Predicted on-scene time minus geolocations on-scene time, in 10 minute tiers"
+    group_label: "On Scene Predictions"
+    tiers: [-60,-50,-40,-30,-20,-10,0,10,20,30,40,50,60]
+    style: integer
+    sql: ${actual_minus_predicted} ;;
+  }
+
+  measure: average_actual_minus_pred {
+    type: average_distinct
+    sql_distinct_key: ${primary_key} ;;
+    description: "The average car stop time - predicted on scene time (residual)"
+    sql: ${actual_minus_predicted} ;;
+  }
+
+  measure: average_pred_minus_actual {
+    type: average_distinct
+    sql_distinct_key: ${primary_key} ;;
+    description: "The average car stop time - predicted on scene time (residual)"
+    sql: ${predicted_minus_actual} ;;
+  }
+
+  measure: mse_actual_minus_pred {
+    type: average_distinct
+    sql_distinct_key: ${primary_key} ;;
+    description: "The average car stop time - predicted on scene time (residual)"
+    sql: ${squared_error} ;;
+  }
+
   measure: total_on_scene_time {
     type: sum_distinct
     description: "The sum of all car stop times for care requests"
-    sql_distinct_key: ${care_request_id} ;;
+    sql_distinct_key: ${primary_key} ;;
     sql: ${on_scene_time} ;;
   }
 
   measure: average_on_scene_time {
     type: average_distinct
-    sql_distinct_key: ${care_request_id} ;;
+    sql_distinct_key: ${primary_key} ;;
     description: "The average of all car stop times for care requests"
     sql: ${on_scene_time} ;;
   }
