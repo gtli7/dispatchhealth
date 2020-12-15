@@ -89,6 +89,7 @@ SELECT
     sql_distinct_key: ${primary_key} ;;
     description: "Sum of APP and DHMT clinical hours"
     sql: ${actual_clinical_hours} ;;
+    filters: [actual_clinical_hours: ">0.24"]
   }
 
   measure: sum_app_clinical_hours {
@@ -98,7 +99,7 @@ SELECT
     sql_distinct_key: ${primary_key} ;;
     description: "Sum of APP clinical hours"
     sql: ${actual_clinical_hours} ;;
-    filters: [position: "advanced practice provider"]
+    filters: [position: "advanced practice provider", actual_clinical_hours: ">0.24"]
   }
 
   measure: sum_dhmt_clinical_hours {
@@ -108,7 +109,7 @@ SELECT
     sql_distinct_key: ${primary_key} ;;
     description: "Sum of DHMT clinical hours"
     sql: ${actual_clinical_hours} ;;
-    filters: [position: "emt"]
+    filters: [position: "emt", actual_clinical_hours: ">0.24"]
   }
 
 
