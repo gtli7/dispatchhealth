@@ -4074,6 +4074,10 @@ explore: ga_adwords_cost_clone{
             ;;
   }
 
+  join: inbound_not_answered_or_abandoned  {
+    sql_on: ${genesys_conversation_summary.conversationid}=${inbound_not_answered_or_abandoned.conversationid} ;;
+  }
+
   join: patients_mobile {
     sql_on:
                 ${patients_mobile.mobile_number} = ${genesys_conversation_summary.ani}
