@@ -21,6 +21,12 @@ view: adwords_campaigns_clone {
     sql: ${TABLE}.variation_eligible =1;;
   }
 
+  dimension: variation_eligible_raw {
+    type: number
+    sql: ${TABLE}.variation_eligible;;
+  }
+
+
   dimension: sem {
     type: yesno
     sql: ${campaign_name_lower} like '%search%' ;;
