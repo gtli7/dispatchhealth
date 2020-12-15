@@ -120,49 +120,49 @@ view: shift_teams {
     sql: (EXTRACT(EPOCH FROM ${end_raw}) - EXTRACT(EPOCH FROM ${start_raw})) / 3600 ;;
   }
 
-  dimension: actual_app_hours {
-    type: number
-    description: "Zizzl hours if available.  Otherwise scheduled hours"
-    sql: CASE
-          WHEN ${zizzl_rates_hours.clinical_hours} > 0
-          AND ${provider_profiles.position} = 'advanced practice provider' THEN ${zizzl_rates_hours.clinical_hours}
-         WHEN ${shift_hours} > 0.1
-        AND ${provider_profiles.position} = 'advanced practice provider' THEN ${shift_hours}
-         ELSE NULL
-         END;;
-  }
+  # dimension: actual_app_hours {
+  #   type: number
+  #   description: "Zizzl hours if available.  Otherwise scheduled hours"
+  #   sql: CASE
+  #         WHEN ${zizzl_rates_hours.clinical_hours} > 0
+  #         AND ${provider_profiles.position} = 'advanced practice provider' THEN ${zizzl_rates_hours.clinical_hours}
+  #       WHEN ${shift_hours} > 0.1
+  #       AND ${provider_profiles.position} = 'advanced practice provider' THEN ${shift_hours}
+  #       ELSE NULL
+  #       END;;
+  # }
 
-  dimension: actual_dhmt_hours {
-    type: number
-    description: "Zizzl hours if available.  Otherwise scheduled hours"
-    sql: CASE
-          WHEN ${zizzl_rates_hours.clinical_hours} > 0
-          AND ${provider_profiles.position} = 'emt' THEN ${zizzl_rates_hours.clinical_hours}
-         WHEN ${shift_hours} > 0.1
-        AND ${provider_profiles.position} = 'emt' THEN ${shift_hours}
-         ELSE NULL
-         END;;
-  }
+  # dimension: actual_dhmt_hours {
+  #   type: number
+  #   description: "Zizzl hours if available.  Otherwise scheduled hours"
+  #   sql: CASE
+  #         WHEN ${zizzl_rates_hours.clinical_hours} > 0
+  #         AND ${provider_profiles.position} = 'emt' THEN ${zizzl_rates_hours.clinical_hours}
+  #       WHEN ${shift_hours} > 0.1
+  #       AND ${provider_profiles.position} = 'emt' THEN ${shift_hours}
+  #       ELSE NULL
+  #       END;;
+  # }
 
-  measure: sum_actual_app_hours {
-    type: sum_distinct
-    sql_distinct_key: CONCAT(${id},${zizzl_rates_hours.id}) ;;
-    description: "Zizzl APP hours if available.  Otherwise, scheduled APP hours"
-    group_label: "Hours"
-    value_format: "0.00"
-    sql: ${actual_app_hours} ;;
-    filters: [cars.test_car: "no"]
-  }
+  # measure: sum_actual_app_hours {
+  #   type: sum_distinct
+  #   sql_distinct_key: CONCAT(${id},${zizzl_rates_hours.id}) ;;
+  #   description: "Zizzl APP hours if available.  Otherwise, scheduled APP hours"
+  #   group_label: "Hours"
+  #   value_format: "0.00"
+  #   sql: ${actual_app_hours} ;;
+  #   filters: [cars.test_car: "no"]
+  # }
 
-  measure: sum_actual_dhmt_hours {
-    type: sum_distinct
-    sql_distinct_key: CONCAT(${id},${zizzl_rates_hours.id}) ;;
-    description: "Zizzl DHMT hours if available.  Otherwise, scheduled DHMT hours"
-    group_label: "Hours"
-    value_format: "0.00"
-    sql: ${actual_dhmt_hours} ;;
-    filters: [cars.test_car: "no"]
-  }
+  # measure: sum_actual_dhmt_hours {
+  #   type: sum_distinct
+  #   sql_distinct_key: CONCAT(${id},${zizzl_rates_hours.id}) ;;
+  #   description: "Zizzl DHMT hours if available.  Otherwise, scheduled DHMT hours"
+  #   group_label: "Hours"
+  #   value_format: "0.00"
+  #   sql: ${actual_dhmt_hours} ;;
+  #   filters: [cars.test_car: "no"]
+  # }
 
   measure: sum_shift_hours {
     type: sum_distinct
@@ -177,16 +177,16 @@ view: shift_teams {
     }
   }
 
-  measure: sum_shift_hours_coalesce {
-    description: "DO NOT USE"
-    group_label: "Hours"
-    type: number
-    value_format: "0.00"
-    sql: CASE
-          WHEN ${zizzl_rates_hours.sum_direct_app_clinical_hours} > 0 THEN ${zizzl_rates_hours.sum_direct_app_clinical_hours}
-               ELSE ${sum_shift_hours}
-          END ;;
-  }
+  # measure: sum_shift_hours_coalesce {
+  #   description: "DO NOT USE"
+  #   group_label: "Hours"
+  #   type: number
+  #   value_format: "0.00"
+  #   sql: CASE
+  #         WHEN ${zizzl_rates_hours.sum_direct_app_clinical_hours} > 0 THEN ${zizzl_rates_hours.sum_direct_app_clinical_hours}
+  #             ELSE ${sum_shift_hours}
+  #         END ;;
+  # }
 
   measure: sum_shift_hours_no_arm_advanced {
     label: "Sum Shift Hours (no arm, advanced or tele)"

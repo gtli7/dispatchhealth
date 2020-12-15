@@ -330,7 +330,7 @@ include: "views/athena_payers.view.lkml"
 include: "athena_patient_social_history.view.lkml"
 include: "geolocations_stops_by_care_request.view.lkml"
 include: "athena_cpt_codes.view.lkml"
-include: "views/zizzl_rates_hours.view.lkml"
+include: "zizzl_shift_hours.view.lkml"
 
 include: "SEM_cost_per_complete_derived.view.lkml"
 
@@ -3922,11 +3922,11 @@ explore: shift_teams
     sql_on: ${shift_teams.id} = ${shift_team_members.shift_team_id} ;;
   }
 
-  join: zizzl_rates_hours {
-    relationship: one_to_many
-    type: full_outer
-    sql_on: ${shift_team_members.user_id} = ${zizzl_rates_hours.employee_id}
-      AND ${shift_teams.start_date} = ${zizzl_rates_hours.shift_date};;
+  join: zizzl_shift_hours {
+    relationship: one_to_one
+    sql_on: ${shift_team_members.user_id} = ${zizzl_shift_hours.user_id}
+      AND ${shift_team_members.shift_team_id} = ${zizzl_shift_hours.shift_team_id};;
+    # fields: []
   }
 
   join: shifts_by_cars {
