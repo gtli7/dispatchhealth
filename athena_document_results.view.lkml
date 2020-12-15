@@ -429,6 +429,71 @@ view: athena_document_results {
     sql: ${TABLE}."updated_at" ;;
   }
 
+  dimension: result_rcvd_to_closed  {
+    type: number
+    hidden: yes
+    value_format: "0.00"
+    sql: (EXTRACT(EPOCH FROM ${athena_result_closed.result_closed_raw}) -
+      EXTRACT(EPOCH FROM ${athena_result_created.result_created_raw})) / 3600 ;;
+  }
+
+  measure: average_result_rcvd_to_closed {
+    description: "Average time between order result received and closed (Hrs)"
+    group_label: "Time Cycle Management"
+    type: average_distinct
+    sql_distinct_key: ${id} ;;
+    drill_fields: [document_id, patients.ehr_id, clinical_order_type, result_rcvd_to_closed]
+    filters: [clinical_order_type_group: "LAB, IMAGING"]
+    sql: ${result_rcvd_to_closed} ;;
+    value_format: "0.00"
+  }
+
+  dimension: result_tat_provider  {
+    type: number
+    # hidden: yes
+    value_format: "0.00"
+    sql: CASE WHEN ${athena_inbox_turnaround.received_ma_raw} IS NOT NULL
+        THEN (EXTRACT(EPOCH FROM ${athena_inbox_turnaround.received_ma_raw}) -
+              EXTRACT(EPOCH FROM ${athena_inbox_turnaround.received_provider_raw})) / 3600
+        WHEN ${athena_result_closed.result_closed_raw} IS NOT NULL
+        THEN (EXTRACT(EPOCH FROM ${athena_result_closed.result_closed_raw}) -
+         EXTRACT(EPOCH FROM ${athena_inbox_turnaround.received_provider_raw})) / 3600
+        ELSE NULL END;;
+  }
+
+  measure: average_turnaround_time_provider {
+    description: "Average result turnaround time - provider (Either sent to MA or closed)"
+    group_label: "Time Cycle Management"
+    type: average_distinct
+    sql_distinct_key: ${id} ;;
+    drill_fields: [document_id, patients.ehr_id, clinical_order_type, result_rcvd_to_closed]
+    filters: [clinical_order_type_group: "LAB, IMAGING"]
+    sql: ${result_tat_provider} ;;
+    value_format: "0.00"
+  }
+
+  dimension: result_tat_ma  {
+    type: number
+    # hidden: yes
+    value_format: "0.00"
+    sql: CASE WHEN ${athena_inbox_turnaround.received_ma_raw} IS NOT NULL AND
+        ${athena_result_closed.result_closed_raw} IS NOT NULL
+        THEN (EXTRACT(EPOCH FROM ${athena_result_closed.result_closed_raw}) -
+         EXTRACT(EPOCH FROM ${athena_inbox_turnaround.received_ma_raw})) / 3600
+        ELSE NULL END;;
+  }
+
+  measure: average_turnaround_time_ma {
+    description: "Average result turnaround time - MA (Received by MA to closed)"
+    group_label: "Time Cycle Management"
+    type: average_distinct
+    sql_distinct_key: ${id} ;;
+    drill_fields: [document_id, patients.ehr_id, clinical_order_type, result_rcvd_to_closed]
+    filters: [clinical_order_type_group: "LAB, IMAGING"]
+    sql: ${result_tat_ma} ;;
+    value_format: "0.00"
+  }
+
   measure: count {
     type: count
     drill_fields: [detail*]

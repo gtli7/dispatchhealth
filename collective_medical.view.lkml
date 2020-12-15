@@ -100,6 +100,12 @@ view: collective_medical {
     sql: ${TABLE}."diagnosis_codes" ;;
   }
 
+  measure: diagnosis_codes_concatenated {
+    description: "Concatenated Diagnosis Codes"
+    type: string
+    sql: array_to_string(array_agg(DISTINCT ${diagnosis_codes}), ' | ') ;;
+  }
+
   dimension_group: discharge {
     type: time
     timeframes: [
@@ -127,6 +133,12 @@ view: collective_medical {
   dimension: encounter_discharge_disposition {
     type: string
     sql: ${TABLE}."encounter_discharge_disposition" ;;
+  }
+
+  measure: discharge_dispositions_concatenated {
+    description: "Concatenated Encounter Discharge Dispositions"
+    type: string
+    sql: array_to_string(array_agg(DISTINCT ${encounter_discharge_disposition}), ' | ') ;;
   }
 
   dimension: facility_hl7_identifier {

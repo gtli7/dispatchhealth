@@ -330,7 +330,7 @@ include: "views/athena_payers.view.lkml"
 include: "athena_patient_social_history.view.lkml"
 include: "geolocations_stops_by_care_request.view.lkml"
 include: "athena_cpt_codes.view.lkml"
-include: "views/zizzl_rates_hours.view.lkml"
+include: "zizzl_shift_hours.view.lkml"
 
 include: "SEM_cost_per_complete_derived.view.lkml"
 
@@ -841,7 +841,7 @@ join: athena_patient_medical_history {
     from: athena_diagnosis_codes
     view_label: "Athena ICD10 Diagnosis Codes (Primary)"
     relationship: many_to_one
-    sql_where:  ${athena_diagnosis_sequence.sequence_number} = 1;;
+    # sql_where:  ${athena_diagnosis_sequence.sequence_number} = 1;;
     sql_on: ${athena_diagnosis_sequence.icd_code_id} = ${athena_primary_diagnosis_codes.icd_code_id}
             AND ${athena_diagnosis_sequence.sequence_number} = 1 ;;
     fields: [athena_primary_diagnosis_codes.asymptomatic_covid_related,
@@ -3922,11 +3922,11 @@ explore: shift_teams
     sql_on: ${shift_teams.id} = ${shift_team_members.shift_team_id} ;;
   }
 
-  join: zizzl_rates_hours {
-    relationship: one_to_many
-    type: full_outer
-    sql_on: ${shift_team_members.user_id} = ${zizzl_rates_hours.employee_id}
-      AND ${shift_teams.start_date} = ${zizzl_rates_hours.shift_date};;
+  join: zizzl_shift_hours {
+    relationship: one_to_one
+    sql_on: ${shift_team_members.user_id} = ${zizzl_shift_hours.user_id}
+      AND ${shift_team_members.shift_team_id} = ${zizzl_shift_hours.shift_team_id};;
+    # fields: []
   }
 
   join: shifts_by_cars {

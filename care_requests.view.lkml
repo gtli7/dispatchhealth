@@ -909,6 +909,7 @@ view: care_requests {
     type: count_distinct
     description: "Count of completed care requests OR on-scene escalations"
     sql: ${id} ;;
+    drill_fields: [patients.ehr_id, id]
     filters: {
       field: billable_est
       value: "yes"
