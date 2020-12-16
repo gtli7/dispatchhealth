@@ -845,6 +845,7 @@ join: athena_patient_medical_history {
     sql_on: ${athena_diagnosis_sequence.icd_code_id} = ${athena_primary_diagnosis_codes.icd_code_id}
             AND ${athena_diagnosis_sequence.sequence_number} = 1 ;;
     fields: [athena_primary_diagnosis_codes.asymptomatic_covid_related,
+             athena_primary_diagnosis_codes.antibiotic_stewardship_diagnosis,
             athena_primary_diagnosis_codes.diagnosis_code_short,
             athena_primary_diagnosis_codes.diagnosis_code,
             athena_primary_diagnosis_codes.diagnosis_code_group,
@@ -4066,29 +4067,30 @@ explore: ga_adwords_cost_clone{
   join: number_to_market{
     sql_on: ${number_to_market.market_id} = ${markets.id} ;;
   }
+
+  join: inbound_not_answered_or_abandoned  {
+    sql_on: ${number_to_market.number}=${inbound_not_answered_or_abandoned.dnis} ;;
+  }
+
+
   join: genesys_conversation_summary {
     sql_on: ${number_to_market.number}=${genesys_conversation_summary.dnis}
+            and
+            ${genesys_conversation_summary.conversationid}=${inbound_not_answered_or_abandoned.conversationid}
             and
             ${ga_adwords_cost_clone.date_date} = ${genesys_conversation_summary.conversationstarttime_date}
             AND ${genesys_conversation_summary.queuename} = 'DTC Pilot'
             ;;
   }
 
-  join: patients_mobile {
-    sql_on:
-                ${patients_mobile.mobile_number} = ${genesys_conversation_summary.ani}
 
-               ;;
-  }
-
-  join: patients {
-    sql_on:
-                ${patients.id} = ${patients_mobile.patient_id};;
-
-  }
 
   join: care_request_flat{
     sql_on: ${genesys_conversation_summary.conversationid} =${care_request_flat.contact_id};;
+  }
+
+  join: patients {
+    sql_on: ${patients.id} =${care_request_flat.patient_id} ;;
   }
 
   join: care_requests {

@@ -108,6 +108,18 @@ view: athena_diagnosis_codes {
     group_label: "Diagnosis Codes"
   }
 
+  dimension: antibiotic_stewardship_diagnosis {
+    type: string
+    group_label: "Diagnosis Descriptions"
+    description: "The combined primary diagnoses for bronchitis, sinusitis, pharyngitis, and UTI"
+    sql: CASE
+          WHEN ${diagnosis_code_short} = 'J01' THEN 'Sinusitis'
+          WHEN ${diagnosis_code_short} = 'J02' THEN 'Pharyngitis'
+          WHEN ${diagnosis_code_short} IN ('J20','J40') OR ${unstripped_diagnosis_code} = 'J06.9' THEN 'Bronchitis'
+          ELSE 'Other'
+        END ;;
+  }
+
   dimension_group: effective {
     type: time
     hidden: yes
