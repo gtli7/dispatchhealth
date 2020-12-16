@@ -74,6 +74,15 @@ view: athena_cpt_codes {
     sql: ${TABLE}.procedure_code_description ;;
   }
 
+  dimension: cpt_code_and_description {
+    description: "The CPT code only (less prefixes and suffixes) with the description"
+    type: string
+    sql: CASE
+          WHEN ${cpt_code} IS NOT NULL THEN CONCAT(${cpt_code}, ' - ', ${procedure_code_description})
+          ELSE NULL
+        END ;;
+  }
+
   measure: procedure_descriptions_concatenated {
     description: "Concatenated CPT Code Descriptions"
     type: string
