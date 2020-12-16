@@ -845,6 +845,7 @@ join: athena_patient_medical_history {
     sql_on: ${athena_diagnosis_sequence.icd_code_id} = ${athena_primary_diagnosis_codes.icd_code_id}
             AND ${athena_diagnosis_sequence.sequence_number} = 1 ;;
     fields: [athena_primary_diagnosis_codes.asymptomatic_covid_related,
+             athena_primary_diagnosis_codes.antibiotic_stewardship_diagnosis,
             athena_primary_diagnosis_codes.diagnosis_code_short,
             athena_primary_diagnosis_codes.diagnosis_code,
             athena_primary_diagnosis_codes.diagnosis_code_group,
