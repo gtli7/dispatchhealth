@@ -4674,6 +4674,21 @@ explore: productivity_agg {
     sql_on: ${productivity_agg.start_date}=${high_overflow_days.start_date} and ${productivity_agg.name_adj}=${high_overflow_days.name_adj} ;;
   }
 
+  join: markets {
+    sql_on: ${productivity_agg.id_adj} = ${markets.id} ;;
+  }
+
+  join: adwords_covid {
+    from: adwords_campaigns_clone
+    sql_on:${markets.id} =${adwords_covid.market_id_new} and ${adwords_covid.campaign_name_lower} like '%-covid%'  and ${adwords_covid.campaign_name_lower} not like '%-symptomatic%';;
+  }
+
+  join: adwords_covid_symptomatic {
+    from: adwords_campaigns_clone
+    sql_on:${markets.id} =${adwords_covid_symptomatic.market_id_new} and ${adwords_covid_symptomatic.campaign_name_lower} like '%-covid-symptomatic%';;
+}
+
+
 
   join: market_regions {
     relationship: one_to_one
