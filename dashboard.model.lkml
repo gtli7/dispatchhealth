@@ -3054,6 +3054,10 @@ explore: ga_pageviews_clone {
     join: regional_markets {
       sql_on: ${markets.id} = ${regional_markets.market_id} ;;
     }
+    join: states {
+      relationship: many_to_one
+      sql_on: ${markets.state} = ${states.abbreviation} ;;
+    }
   }
 
 explore: markets {
