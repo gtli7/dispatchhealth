@@ -11,6 +11,7 @@ view: genesys_agg {
         column: inbound_phone_calls_first {field: genesys_conversation_summary.count_distinct_first}
 
         column: count_distinct_sla {field: genesys_conversation_summary.count_distinct_sla}
+        column: non_initiated_care {field: genesys_conversation_summary.direction}
         column: wait_time_minutes {field: genesys_conversation_summary.average_wait_time_minutes}
         filters: {
           field: genesys_conversation_summary.conversationstarttime_date
@@ -86,9 +87,6 @@ view: genesys_agg {
     sql_distinct_key: concat(${conversationstarttime_date}, ${market_id}) ;;
   }
 
-
-
-
   measure: assigned_rate {
     description: "Sum Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled)/Sum Contacts w/ Intent (Intent Queue, >1 minute talk time w/agent)"
     type: number
@@ -156,6 +154,8 @@ view: genesys_agg {
     sql: ${count_answered_raw} ;;
     sql_distinct_key: concat(${conversationstarttime_date}, ${market_id}) ;;
   }
+
+
 
   measure: sum_inbound_phone_calls {
     label: "Sum Inbound Callers"

@@ -236,11 +236,9 @@ measure: exit_type_disconnect_count {
   type: count
   sql: ${ivrexitdisconnect};;
 
-measure: ivr_exit_count {
-  type: count
-  sql: ${ivrexit} ;;
+
   }
-}
+
 
 
 }

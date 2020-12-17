@@ -4487,8 +4487,10 @@ explore: genesys_agg {
     relationship: one_to_one
     sql_on: ${markets.id_adj} = ${market_regions.market_id} ;;
   }
-
-}
+  join: geneysis_custom_conversation_attributes {
+    sql_on: ${genesys_agg.conversationstarttime_date} = ${geneysis_custom_conversation_attributes.conversationendtime_date} ;;
+  }
+  }
 
 explore: mailchimp_sends {
   join: mailchimp_activities {
