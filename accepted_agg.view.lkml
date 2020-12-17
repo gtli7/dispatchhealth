@@ -9,6 +9,7 @@ view: accepted_agg {
       column: booked_resolved_count {field: care_request_flat.booked_resolved_count}
       column: lwbs_accepted {field: care_request_flat.lwbs_accepted_count}
       column: lwbs_scheduled {field:care_request_flat.lwbs_scheduled_count}
+      column: care_request_created_count {field: care_request_flat.care_request_count}
       column: market_id { field: markets.id_adj }
       filters: {
         field: care_request_flat.scheduled_or_accepted_coalese_date
@@ -53,6 +54,10 @@ view: accepted_agg {
     type: number
   }
 
+  dimension: care_request_created_count {
+    type: number
+  }
+
   measure: sum_accepted {
     label: "Sum Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled)"
     value_format: "0"
@@ -77,5 +82,28 @@ view: accepted_agg {
     sql_distinct_key: concat(${first_accepted_date}, ${market_id}) ;;
   }
 
+  measure: sum_booked_resolved {
+    type: sum_distinct
+    sql: ${booked_resolved_count} ;;
+    sql_distinct_key: concat(${first_accepted_date}, ${market_id}) ;;
+  }
+
+  measure: sum_care_request_created {
+    type: sum_distinct
+    sql: ${care_request_created_count} ;;
+    sql_distinct_key: concat(${first_accepted_date}, ${market_id}) ;;
+  }
+
+  measure: sum_lwbs_accepted {
+    type: sum_distinct
+    sql: ${lwbs_accepted} ;;
+    sql_distinct_key: concat(${first_accepted_date}, ${market_id}) ;;
+  }
+
+  measure: sum_lwbs_scheduled {
+    type: sum_distinct
+    sql: ${lwbs_scheduled} ;;
+    sql_distinct_key: concat(${first_accepted_date}, ${market_id}) ;;
+  }
 
 }
