@@ -196,6 +196,24 @@ view: athena_document_orders {
     sql: array_to_string(array_agg(DISTINCT ${clinical_order_type}), ' | ') ;;
   }
 
+  measure: aggregated_imaging_orders {
+    type: string
+    description: "Aggregation of all document imaging orders"
+    group_label: "Description"
+    sql: array_to_string(array_agg(DISTINCT CASE WHEN ${clinical_order_type_group} = 'IMAGING' THEN ${clinical_order_type} ELSE NULL END), ' | ') ;;
+  }
+
+  measure: aggregated_external_lab_orders {
+    type: string
+    description: "Aggregation of all document lab orders sent externally"
+    group_label: "Description"
+    sql: array_to_string(array_agg(DISTINCT
+        CASE WHEN ${clinical_order_type_group} = 'LAB' AND ${labs_ordered_3rd_party}
+        THEN ${clinical_order_type} ELSE NULL END), ' | ') ;;
+  }
+
+
+
   dimension: clinical_order_type_group {
     type: string
     description: "LAB or IMAGING"
@@ -845,9 +863,10 @@ view: athena_document_orders {
     group_label: "Order Counts"
   }
 
-  measure: order_type_concat {
+  measure: aggregated_order_descriptions {
     label: "Description Of Items Ordered"
     type: string
+    group_label: "Descriptions"
     sql: string_agg(DISTINCT ${clinical_order_type}, ' | ') ;;
   }
 

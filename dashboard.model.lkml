@@ -845,6 +845,7 @@ join: athena_patient_medical_history {
     sql_on: ${athena_diagnosis_sequence.icd_code_id} = ${athena_primary_diagnosis_codes.icd_code_id}
             AND ${athena_diagnosis_sequence.sequence_number} = 1 ;;
     fields: [athena_primary_diagnosis_codes.asymptomatic_covid_related,
+             athena_primary_diagnosis_codes.antibiotic_stewardship_diagnosis,
             athena_primary_diagnosis_codes.diagnosis_code_short,
             athena_primary_diagnosis_codes.diagnosis_code,
             athena_primary_diagnosis_codes.diagnosis_code_group,
@@ -3053,6 +3054,10 @@ explore: ga_pageviews_clone {
     join: regional_markets {
       sql_on: ${markets.id} = ${regional_markets.market_id} ;;
     }
+    join: states {
+      relationship: many_to_one
+      sql_on: ${markets.state} = ${states.abbreviation} ;;
+    }
   }
 
 explore: markets {
@@ -4676,6 +4681,21 @@ explore: productivity_agg {
   join: high_overflow_days {
     sql_on: ${productivity_agg.start_date}=${high_overflow_days.start_date} and ${productivity_agg.name_adj}=${high_overflow_days.name_adj} ;;
   }
+
+  join: markets {
+    sql_on: ${productivity_agg.id_adj} = ${markets.id} ;;
+  }
+
+  join: adwords_covid {
+    from: adwords_campaigns_clone
+    sql_on:${markets.id} =${adwords_covid.market_id_new} and ${adwords_covid.campaign_name_lower} like '%-covid%'  and ${adwords_covid.campaign_name_lower} not like '%-symptomatic%';;
+  }
+
+  join: adwords_covid_symptomatic {
+    from: adwords_campaigns_clone
+    sql_on:${markets.id} =${adwords_covid_symptomatic.market_id_new} and ${adwords_covid_symptomatic.campaign_name_lower} like '%-covid-symptomatic%';;
+}
+
 
 
   join: market_regions {

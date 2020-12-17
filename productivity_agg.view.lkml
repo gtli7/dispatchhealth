@@ -179,4 +179,8 @@ view: productivity_agg {
   dimension: escalated_on_scene_count {
     type: number
   }
+
+  dimension: sem_status {
+    sql: case when ${adwords_covid.variation_eligible_raw} is not null then ${adwords_covid.variation_eligible_raw}  else 0 end   +  case when ${adwords_covid_symptomatic.variation_eligible_raw} is not null then ${adwords_covid_symptomatic.variation_eligible_raw}  else 0 end   ;;
+  }
 }

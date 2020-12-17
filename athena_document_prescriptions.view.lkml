@@ -108,7 +108,7 @@ view: athena_document_prescriptions {
     sql: ${TABLE}."clinical_order_type" ;;
   }
 
-  measure: clinical_order_type_concatenated {
+  measure: aggregated_prescriptions {
     description: "Concatenated Prescription Order Descriptions"
     type: string
     sql: array_to_string(array_agg(DISTINCT ${clinical_order_type}), ' | ') ;;
