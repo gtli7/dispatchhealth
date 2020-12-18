@@ -510,6 +510,7 @@ WITH ort AS (
     group_label: "Optimizer Details"
     description: "The reassignment reason logged by the CSC"
     sql: ${TABLE}.reassignment_reason_final ;;
+    drill_fields: [reassignment_reason_other_final]
   }
 
 
