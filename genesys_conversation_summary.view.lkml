@@ -438,6 +438,20 @@ measure: percent_repeat_callers {
     }
   }
 
+  measure: non_initiating_care_count {
+    type: count_distinct
+    sql: ${conversationid} ;;
+    sql_distinct_key:  ${conversationid};;
+    filters: {
+      field: inbound_demand
+      value: "no"
+    }
+    filters: {
+      field: direction
+      value: "inbound"
+    }
+  }
+
   measure: number_abandons {
     label: "Number of Abandons (Inbound Demand)"
     type: count_distinct

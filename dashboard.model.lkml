@@ -3054,6 +3054,10 @@ explore: ga_pageviews_clone {
     join: regional_markets {
       sql_on: ${markets.id} = ${regional_markets.market_id} ;;
     }
+    join: states {
+      relationship: many_to_one
+      sql_on: ${markets.state} = ${states.abbreviation} ;;
+    }
   }
 
 explore: markets {
@@ -4488,8 +4492,10 @@ explore: genesys_agg {
     relationship: one_to_one
     sql_on: ${markets.id_adj} = ${market_regions.market_id} ;;
   }
-
-}
+  join: geneysis_custom_conversation_attributes {
+    sql_on: ${genesys_agg.conversationstarttime_date} = ${geneysis_custom_conversation_attributes.conversationstarttime_date} ;;
+  }
+  }
 
 explore: mailchimp_sends {
   join: mailchimp_activities {

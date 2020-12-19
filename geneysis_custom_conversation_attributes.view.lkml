@@ -225,22 +225,29 @@ measure: number_of_queued{
   }
 }
 
+
+
+measure: ivr_deflection {
+  type: count
+  sql: ${customstring02} ;;
+  sql_distinct_key: ${conversationid} ;;
+}
+
 measure: exit_type_count {
-  type: count_distinct
+  type: count
   sql: ${TABLE}."customstring03" ;;
-  sql_distinct_key: ${ivrexit}
+  sql_distinct_key: ${conversationid} ;;
 
 }
+
 
 measure: exit_type_disconnect_count {
   type: count
   sql: ${ivrexitdisconnect};;
 
-measure: ivr_exit_count {
-  type: count
-  sql: ${ivrexit} ;;
+
   }
-}
+
 
 
 }

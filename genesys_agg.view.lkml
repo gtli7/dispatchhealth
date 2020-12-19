@@ -27,6 +27,14 @@ view: genesys_agg {
     type: number
   }
 
+  dimension: non_initiated_care {
+    type: number
+  }
+
+  dimension: direction {
+    type: string
+  }
+
   dimension: count_distinct_sla {
     label: "Count Distinct SLA (Inbound Demand)"
     type: number
@@ -86,9 +94,6 @@ view: genesys_agg {
     sql_distinct_key: concat(${conversationstarttime_date}, ${market_id}) ;;
   }
 
-
-
-
   measure: assigned_rate {
     description: "Sum Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled)/Sum Contacts w/ Intent (Intent Queue, >1 minute talk time w/agent)"
     type: number
@@ -103,6 +108,10 @@ view: genesys_agg {
     sql: case when ${sum_inbound_demand_phone} >0 then ${accepted_agg.sum_phone_accepted_or_scheduled_phone_count}::float/${sum_inbound_demand_phone}::float else 0 end ;;
   }
 
+  measure: sum_non_initiated {
+    type: sum
+    sql: ${non_initiated_care} ;;
+  }
 
 
     dimension_group: conversationstarttime {
@@ -156,6 +165,8 @@ view: genesys_agg {
     sql: ${count_answered_raw} ;;
     sql_distinct_key: concat(${conversationstarttime_date}, ${market_id}) ;;
   }
+
+
 
   measure: sum_inbound_phone_calls {
     label: "Sum Inbound Callers"
