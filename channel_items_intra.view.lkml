@@ -1,5 +1,5 @@
 view: channel_items_intra {
-  sql_table_name: looker_scratch.channel_items_intra ;;
+  sql_table_name: public.channel_items_intra ;;
 
   dimension: id {
     primary_key: yes
