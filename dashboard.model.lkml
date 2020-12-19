@@ -4493,7 +4493,7 @@ explore: genesys_agg {
     sql_on: ${markets.id_adj} = ${market_regions.market_id} ;;
   }
   join: geneysis_custom_conversation_attributes {
-    sql_on: ${genesys_agg.conversationstarttime_date} = ${geneysis_custom_conversation_attributes.conversationendtime_date} ;;
+    sql_on: ${genesys_agg.conversationstarttime_date} = ${geneysis_custom_conversation_attributes.conversationstarttime_date} ;;
   }
   }
 

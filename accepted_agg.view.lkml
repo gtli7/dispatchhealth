@@ -5,7 +5,7 @@ view: accepted_agg {
       column: accepted_count { field: care_request_flat.accepted_or_scheduled_count }
       column: accepted_or_scheduled_phone_count { field: care_request_flat.accepted_or_scheduled_phone_count }
       column: complete_count { field: care_request_flat.complete_count }
-      column: booked_resolved {field: care_request_flat.booked_resolved_count}
+
       column: booked_resolved_count {field: care_request_flat.booked_resolved_count}
       column: lwbs_accepted {field: care_request_flat.lwbs_accepted_count}
       column: lwbs_scheduled {field:care_request_flat.lwbs_scheduled_count}
