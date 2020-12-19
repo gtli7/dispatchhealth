@@ -11,7 +11,6 @@ view: genesys_agg {
         column: inbound_phone_calls_first {field: genesys_conversation_summary.count_distinct_first}
 
         column: count_distinct_sla {field: genesys_conversation_summary.count_distinct_sla}
-        column: direction {field: genesys_conversation_summary.direction}
         column: wait_time_minutes {field: genesys_conversation_summary.average_wait_time_minutes}
         filters: {
           field: genesys_conversation_summary.conversationstarttime_date
