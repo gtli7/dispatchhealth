@@ -11,6 +11,8 @@ view: genesys_agg {
         column: inbound_phone_calls_first {field: genesys_conversation_summary.count_distinct_first}
 
         column: count_distinct_sla {field: genesys_conversation_summary.count_distinct_sla}
+        column: non_initiating_care_count{field: genesys_conversation_summary.non_initiating_care_count}
+        column: count_distinct {field:genesys_conversation_summary.count_distinct}
         column: wait_time_minutes {field: genesys_conversation_summary.average_wait_time_minutes}
         filters: {
           field: genesys_conversation_summary.conversationstarttime_date
@@ -27,7 +29,11 @@ view: genesys_agg {
     type: number
   }
 
-  dimension: non_initiated_care {
+  dimension: non_initiating_care_count {
+    type: number
+  }
+
+  dimension: count_distinct {
     type: number
   }
 
@@ -108,10 +114,6 @@ view: genesys_agg {
     sql: case when ${sum_inbound_demand_phone} >0 then ${accepted_agg.sum_phone_accepted_or_scheduled_phone_count}::float/${sum_inbound_demand_phone}::float else 0 end ;;
   }
 
-  measure: sum_non_initiated {
-    type: sum
-    sql: ${non_initiated_care} ;;
-  }
 
 
     dimension_group: conversationstarttime {
@@ -164,6 +166,11 @@ view: genesys_agg {
     type: sum_distinct
     sql: ${count_answered_raw} ;;
     sql_distinct_key: concat(${conversationstarttime_date}, ${market_id}) ;;
+  }
+
+  measure: sum_unanswered_care {
+    type: number
+    sql: ${count_distinct}-${count_answered};;
   }
 
 

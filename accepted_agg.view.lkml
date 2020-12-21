@@ -66,6 +66,11 @@ view: accepted_agg {
     sql_distinct_key: concat(${first_accepted_date}, ${market_id}) ;;
   }
 
+  measure: resolved_wo_accepted_scheduled_booked{
+    type: number
+    sql: ${care_request_created_count}-${lwbs_accepted}-${lwbs_scheduled}-${booked_resolved_count}-${complete_count} ;;
+  }
+
 
 
   measure: sum_phone_accepted_or_scheduled_phone_count {

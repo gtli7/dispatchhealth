@@ -230,7 +230,7 @@ measure: number_of_queued{
 measure: ivr_deflection {
   type: count
   sql: ${customstring02} ;;
-  sql_distinct_key: ${conversationid} ;;
+  sql_distinct_key: ${conversationid}  ;;
 }
 
 measure: exit_type_count {
