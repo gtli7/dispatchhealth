@@ -5020,6 +5020,36 @@ end  ;;
     }
   }
 
+  measure: lwbs_minus_accepted_scheduled_booked_overflow {
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    sql_distinct_key: ${care_request_id} ;;
+    filters: {
+      field: lwbs
+      value: "yes"
+    }
+    filters: {
+      field: overflow_visit
+      value: "no"
+    }
+    filters: {
+      field: escalated_on_phone
+      value: "no"
+    }
+    filters: {
+      field: accepted
+      value: "no"
+    }
+    filters: {
+      field: scheduled_visit
+      value: "no"
+    }
+    filters: {
+      field: booked_resolved
+      value: "no"
+    }
+  }
+
   measure: no_answer_no_show_count_minus_overflow{
     type: count_distinct
     sql: ${care_request_id} ;;
