@@ -222,6 +222,7 @@ view: zizzl_rates_hours {
     sql: ${counter_hours} ;;
     filters: [counter_name: "Regular, Overtime, Salary Plus, Holiday, Time and Half",
       provider_type: "APP", latest: "yes", clinical_position_flag: "yes"]
+    drill_fields: [first_name, last_name, shift_date, shift_position, clinical_hours]
   }
 
   measure: sum_direct_dhmt_clinical_hours {
@@ -232,6 +233,7 @@ view: zizzl_rates_hours {
     sql: ${counter_hours} ;;
     filters: [counter_name: "Regular, Overtime, Salary Plus, Holiday, Time and Half",
       provider_type: "DHMT", latest: "yes", clinical_position_flag: "yes"]
+    drill_fields: [first_name, last_name, shift_date, shift_position, clinical_hours]
   }
 
   measure: count {

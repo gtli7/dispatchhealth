@@ -1031,7 +1031,7 @@ join: result_closing_provider {
 join: athena_order_created {
   relationship: one_to_one
   sql_on: ${athena_document_orders.document_id} = ${athena_order_created.document_id} ;;
-  fields: []
+  # fields: []
 }
 
   join: athena_prescription_created {
@@ -1063,7 +1063,7 @@ join: athena_first_result {
 join: athena_result_created {
   relationship: one_to_one
   sql_on:  ${athena_document_results.document_id} = ${athena_result_created.document_id};;
-  fields: []
+  # fields: []
 }
 
 join: athena_result_closed {

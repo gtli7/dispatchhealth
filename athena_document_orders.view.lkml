@@ -694,7 +694,8 @@ view: athena_document_orders {
   measure: average_created_to_submitted {
     description: "Average time between order created and submitted (Hrs)"
     group_label: "Time Cycle Management"
-    type: average
+    type: average_distinct
+    sql_distinct_key: ${id} ;;
     drill_fields: [document_id, patients.ehr_id, clinical_order_type, order_created_to_submitted]
     filters: [clinical_order_type_group: "LAB, IMAGING"]
     sql: ${order_created_to_submitted} ;;
@@ -718,7 +719,7 @@ view: athena_document_orders {
 
   dimension: order_submitted_to_result_rcvd  {
     type: number
-    hidden: yes
+    hidden: no
     value_format: "0.00"
     sql: (EXTRACT(EPOCH FROM ${athena_result_created.result_created_raw}) -
       EXTRACT(EPOCH FROM ${athena_order_submitted.order_submitted_raw})) / 3600 ;;
@@ -760,7 +761,8 @@ view: athena_document_orders {
   measure: average_result_rcvd_to_closed {
     description: "Average time between order result received and closed (Hrs)"
     group_label: "Time Cycle Management"
-    type: average
+    type: average_distinct
+    sql_distinct_key: ${id} ;;
     drill_fields: [document_id, patients.ehr_id, clinical_order_type, result_rcvd_to_closed]
     filters: [clinical_order_type_group: "LAB, IMAGING"]
     sql: ${result_rcvd_to_closed} ;;
