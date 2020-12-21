@@ -270,7 +270,7 @@ view: funnel_agg {
     type: number
     label: "Overflow+Booked (.7) Percent"
     value_format: "0%"
-    sql: ${booked_shaping_percent}::float+${overflow_percent}::float*.7;;
+    sql: ${booked_shaping_percent}::float*.7+${overflow_percent}::float;;
   }
 
 

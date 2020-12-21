@@ -19,7 +19,8 @@ view: athena_order_submitted {
 
   dimension: document_id {
     type: number
-    hidden: yes
+    primary_key: yes
+    hidden: no
     sql: ${TABLE}."document_id" ;;
   }
 
