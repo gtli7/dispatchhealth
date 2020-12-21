@@ -90,6 +90,7 @@ SELECT
     description: "Sum of APP and DHMT clinical hours"
     sql: ${actual_clinical_hours} ;;
     filters: [actual_clinical_hours: ">0.24"]
+    drill_fields: [users.first_name, users.last_name, shift_teams.start_date, position, cars.name, actual_clinical_hours]
   }
 
   measure: sum_app_clinical_hours {
@@ -100,6 +101,7 @@ SELECT
     description: "Sum of APP clinical hours"
     sql: ${actual_clinical_hours} ;;
     filters: [position: "advanced practice provider", actual_clinical_hours: ">0.24"]
+    drill_fields: [users.first_name, users.last_name, shift_teams.start_date, position, cars.name, actual_clinical_hours]
   }
 
   measure: sum_dhmt_clinical_hours {
@@ -110,6 +112,7 @@ SELECT
     description: "Sum of DHMT clinical hours"
     sql: ${actual_clinical_hours} ;;
     filters: [position: "emt", actual_clinical_hours: ">0.24"]
+    drill_fields: [users.first_name, users.last_name, shift_teams.start_date, position, cars.name, actual_clinical_hours]
   }
 
 
