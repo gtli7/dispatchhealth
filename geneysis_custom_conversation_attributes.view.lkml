@@ -201,6 +201,11 @@ view: geneysis_custom_conversation_attributes {
     sql:  reverse(split_part(reverse(${customstring04}), '|', 2));;
   }
 
+  dimension: ivr_deflection {
+    type: yesno
+    sql: (lower(${customstring02}) like '%abandon%' or ${customstring02} is null) and (lower(${customstring03}) like '%abandon%' or ${customstring03} is null) ;;
+  }
+
   measure: count {
     type: count
     drill_fields: [participantname]
@@ -227,10 +232,14 @@ measure: number_of_queued{
 
 
 
-measure: ivr_deflection {
-  type: count
-  sql: ${customstring02} ;;
+measure: ivr_deflection_count {
+  type: count_distinct
+  sql: ${conversationid} ;;
   sql_distinct_key: ${conversationid}  ;;
+  filters: {
+    field: ivr_deflection
+    value: "yes"
+  }
 }
 
 measure: exit_type_count {

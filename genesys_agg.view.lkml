@@ -170,10 +170,8 @@ view: genesys_agg {
 
   measure: sum_unanswered_care {
     type: number
-    sql: ${count_distinct}-${count_answered};;
+    sql: ${sum_count_distinct}-${sum_answered};;
   }
-
-
 
   measure: sum_inbound_phone_calls {
     label: "Sum Inbound Callers"
@@ -203,6 +201,13 @@ view: genesys_agg {
     type: number
     value_format: "#,##0"
     sql:  ${sum_inbound_demand}/max(${quarter_percent});;
+  }
+
+  measure: sum_non_initiating_care_count {}
+
+  measure: sum_count_distinct {
+    type: sum
+    sql: ${count_distinct} ;;
   }
 
   measure: answer_rate {
