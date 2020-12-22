@@ -203,11 +203,18 @@ view: genesys_agg {
     sql:  ${sum_inbound_demand}/max(${quarter_percent});;
   }
 
-  measure: sum_non_initiating_care_count {}
+  measure: sum_non_initiating_care_count {
+    type: sum_distinct
+    sql:  ${non_initiating_care_count};;
+    sql_distinct_key: concat(${conversationstarttime_date}, ${market_id})  ;;
+
+  }
 
   measure: sum_count_distinct {
-    type: sum
+    type: sum_distinct
     sql: ${count_distinct} ;;
+    sql_distinct_key: concat(${conversationstarttime_date}, ${market_id}) ;;
+
   }
 
   measure: answer_rate {
