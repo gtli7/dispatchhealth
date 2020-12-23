@@ -336,6 +336,8 @@ include: "SEM_cost_per_complete_derived.view.lkml"
 
 include: "on_call_tracking.view.lkml"
 include: "intraday_monitoring.view.lkml"
+include: "geneysis_custom_conversation_attributes_agg.view.lkml"
+
 
 
 include: "*.dashboard.lookml"  # include all dashboards in this project
@@ -3785,6 +3787,10 @@ explore: genesys_conversation_summary {
     and ${genesys_conversation_summary.queuename}=${care_team_projected_volume.queue};;
   }
 
+  join: geneysis_custom_conversation_attributes {
+    sql_on: ${genesys_conversation_summary.conversationstarttime_date} = ${geneysis_custom_conversation_attributes.conversationstarttime_date} ;;
+  }
+
   join: patients_mobile {
     sql_on:   (
                 ${patients_mobile.mobile_number} = ${genesys_conversation_summary.patient_number}
@@ -4492,9 +4498,10 @@ explore: genesys_agg {
     relationship: one_to_one
     sql_on: ${markets.id_adj} = ${market_regions.market_id} ;;
   }
-  join: geneysis_custom_conversation_attributes {
-    sql_on: ${genesys_agg.conversationstarttime_date} = ${geneysis_custom_conversation_attributes.conversationstarttime_date} ;;
+  join: geneysis_custom_conversation_attributes_agg {
+    sql_on: ${genesys_agg.conversationstarttime_date} = ${geneysis_custom_conversation_attributes_agg.conversationstarttime_date} ;;
   }
+
   }
 
 explore: mailchimp_sends {

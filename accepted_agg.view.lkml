@@ -115,4 +115,11 @@ view: accepted_agg {
     type: number
     sql: ${sum_complete}+${sum_lwbs_accepted} ;;
   }
+  measure: captured_sum {
+    label: "Capture (Accepted, Scheduled Acute, .7*Booked)"
+    type: number
+    value_format: "0"
+    sql:
+      ${sum_lwbs_accepted}+${sum_lwbs_scheduled}+${sum_booked_resolved}::float*.7+${sum_complete};;
+  }
 }
