@@ -1013,7 +1013,7 @@ join: narrow_network_orders {
 }
 
 join: athena_document_results {
-  relationship: one_to_one
+  relationship: one_to_many
   sql_on: ${athena_document_orders.document_id} = ${athena_document_results.order_document_id} ;;
 }
 
@@ -1062,13 +1062,13 @@ join: athena_first_result {
 
 join: athena_result_created {
   relationship: one_to_one
-  sql_on:  ${athena_document_results.document_id} = ${athena_result_created.document_id};;
+  sql_on:  ${athena_document_orders.document_id} = ${athena_result_created.order_document_id};;
   # fields: []
 }
 
 join: athena_result_closed {
   relationship: one_to_one
-  sql_on: ${athena_document_results.document_id} = ${athena_result_closed.document_id} ;;
+  sql_on: ${athena_document_orders.document_id} = ${athena_result_closed.order_document_id} ;;
   # fields: []
 }
 

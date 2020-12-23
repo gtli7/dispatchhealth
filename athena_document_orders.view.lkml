@@ -752,7 +752,7 @@ view: athena_document_orders {
 
   dimension: result_rcvd_to_closed  {
     type: number
-    hidden: yes
+    hidden: no
     value_format: "0.00"
     sql: (EXTRACT(EPOCH FROM ${athena_result_closed.result_closed_raw}) -
       EXTRACT(EPOCH FROM ${athena_result_created.result_created_raw})) / 3600 ;;
@@ -766,6 +766,25 @@ view: athena_document_orders {
     drill_fields: [document_id, patients.ehr_id, clinical_order_type, result_rcvd_to_closed]
     filters: [clinical_order_type_group: "LAB, IMAGING"]
     sql: ${result_rcvd_to_closed} ;;
+    value_format: "0.00"
+  }
+
+  dimension: order_submitted_to_result_closed  {
+    type: number
+    hidden: no
+    value_format: "0.00"
+    sql: (EXTRACT(EPOCH FROM ${athena_result_closed.result_closed_raw}) -
+      EXTRACT(EPOCH FROM ${athena_order_submitted.order_submitted_raw})) / 3600 ;;
+  }
+
+  measure: average_order_submitted_to_closed {
+    description: "Average time between order submitted and result closed (Hrs) - Patient wait time"
+    group_label: "Time Cycle Management"
+    type: average_distinct
+    sql_distinct_key: ${id} ;;
+    drill_fields: [document_id, patients.ehr_id, clinical_order_type, result_rcvd_to_closed]
+    filters: [clinical_order_type_group: "LAB, IMAGING"]
+    sql: ${order_submitted_to_result_closed} ;;
     value_format: "0.00"
   }
 
