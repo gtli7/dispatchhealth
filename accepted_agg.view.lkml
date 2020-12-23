@@ -68,7 +68,7 @@ view: accepted_agg {
 
   measure: resolved_wo_accepted_scheduled_booked{
     type: number
-    sql: ${care_request_created_count}-${lwbs_accepted}-${lwbs_scheduled}-${booked_resolved_count}-${complete_count} ;;
+    sql: ${sum_care_request_created}-${sum_lwbs_accepted}-${sum_lwbs_scheduled}-${sum_booked_resolved}-${sum_complete} ;;
   }
 
 
@@ -111,4 +111,15 @@ view: accepted_agg {
     sql_distinct_key: concat(${first_accepted_date}, ${market_id}) ;;
   }
 
+  measure: accepted_care_requests{
+    type: number
+    sql: ${sum_complete}+${sum_lwbs_accepted} ;;
+  }
+  measure: captured_sum {
+    label: "Capture (Accepted, Scheduled Acute, .7*Booked)"
+    type: number
+    value_format: "0"
+    sql:
+      ${sum_lwbs_accepted}+${sum_lwbs_scheduled}+${sum_booked_resolved}::float*.7+${sum_complete};;
+  }
 }

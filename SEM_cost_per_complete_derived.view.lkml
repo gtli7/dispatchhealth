@@ -44,7 +44,10 @@
             value: "Yes"
           }
         }
+        sql_trigger_value: SELECT count(*) FROM looker_scratch.genesys_conversation_summary  where genesys_conversation_summary.conversationstarttime > current_date - interval '2 day';;
+        indexes: ["date"]
       }
+
       dimension: short_name_adj {
         description: "Market short name where WMFR is included in Denver"
       }
