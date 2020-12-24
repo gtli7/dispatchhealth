@@ -119,6 +119,8 @@ include: "letter_recipient_dimensions_clone.view.lkml"
 include: "athenadwh_clinical_providers_clone.view.lkml"
 include: "sf_markets_mapping.view.lkml"
 include: "credit_cards.view.lkml"
+include: "views/onboarding_care_request_credit_cards.view.lkml"
+include: "views/onboarding_credit_cards.view.lkml"
 include: "shifts_end_of_shift_times.view.lkml"
 include: "athenadwh_clinical_letters_clone.view.lkml"
 include: "thpg_satellite_locations.view.lkml"
@@ -1514,6 +1516,18 @@ join: athena_procedurecode {
   join: credit_cards {
     relationship: one_to_one
     sql_on: ${care_requests.id} = ${credit_cards.care_request_id} ;;
+  }
+
+  join: onboarding_care_request_credit_cards {
+    relationship: one_to_many
+    sql_on: ${care_requests.id} = ${onboarding_care_request_credit_cards.care_request_id} ;;
+    fields: []
+  }
+
+  join: onboarding_credit_cards {
+    relationship: many_to_one
+    view_label: "CARE Team Captured Credit Cards"
+    sql_on: ${onboarding_care_request_credit_cards.credit_card_id} = ${onboarding_credit_cards.id} ;;
   }
 
   join: care_request_network_referrals {
