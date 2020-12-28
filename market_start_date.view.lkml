@@ -67,4 +67,10 @@ view: market_start_date {
     value_format: "0"
     sql: floor(${market_age}/3) ;;
   }
+
+  dimension: market_age_year {
+    type: number
+    value_format: "0"
+    sql: floor(${market_age}/12) ;;
+  }
 }
