@@ -215,6 +215,31 @@ view: athena_clinicalprovider {
     sql: array_to_string(array_agg(DISTINCT ${name}), ' | ') ;;
   }
 
+  measure: npi_aggregated {
+    type: string
+    sql: array_to_string(array_agg(DISTINCT ${npi}), ' | ') ;;
+  }
+
+  dimension: thpg_provider_flag {
+    description: "A flag indicating the provider is THPG - Use only with the Athena letter recipient provider view"
+    type: yesno
+    sql: COALESCE(${thpg_providers.last_name}, NULL) IS NOT NULL ;;
+  }
+
+  measure: thpg_provider_count {
+    description: "A flag indicating the provider is THPG - Use only with the Athena letter recipient provider view"
+    type: count_distinct
+    hidden: yes
+    sql: ${thpg_providers.npi} ;;
+  }
+
+  measure: thpg_provider_boolean {
+    description: "A flag indicating the provider is THPG - Use only with the Athena letter recipient provider view"
+    type: yesno
+    group_label: "Personal/Practice Information"
+    sql: ${thpg_provider_count} > 0 ;;
+  }
+
   measure: count {
     type: count
     drill_fields: [name, first_name, middle_name, last_name]
