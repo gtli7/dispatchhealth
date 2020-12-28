@@ -758,10 +758,26 @@ view: athena_document_orders {
       EXTRACT(EPOCH FROM ${athena_result_created.result_created_raw})) / 3600 ;;
   }
 
+  dimension: result_closed_within_18hours {
+    type: yesno
+    sql: ${result_rcvd_to_closed} <= 18 ;;
+  }
+
   measure: average_result_rcvd_to_closed {
     description: "Average time between order result received and closed (Hrs)"
     group_label: "Time Cycle Management"
     type: average_distinct
+    sql_distinct_key: ${id} ;;
+    drill_fields: [document_id, patients.ehr_id, clinical_order_type, result_rcvd_to_closed]
+    filters: [clinical_order_type_group: "LAB, IMAGING"]
+    sql: ${result_rcvd_to_closed} ;;
+    value_format: "0.00"
+  }
+
+  measure: median_result_rcvd_to_closed {
+    description: "Median time between order result received and closed (Hrs)"
+    group_label: "Time Cycle Management"
+    type: median_distinct
     sql_distinct_key: ${id} ;;
     drill_fields: [document_id, patients.ehr_id, clinical_order_type, result_rcvd_to_closed]
     filters: [clinical_order_type_group: "LAB, IMAGING"]
