@@ -255,4 +255,11 @@ view: athena_diagnosis_codes {
     type: count
     drill_fields: []
   }
+
+  measure: count_distinct_diagnosis_codes {
+    description: "Counts the number of distinct ICD-10 diagnosis codes assigned to a care request"
+    type: count_distinct
+    sql: ${care_requests.id}||${diagnosis_code} ;;
+  }
+
 }
