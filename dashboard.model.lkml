@@ -331,6 +331,7 @@ include: "athena_patient_social_history.view.lkml"
 include: "geolocations_stops_by_care_request.view.lkml"
 include: "athena_cpt_codes.view.lkml"
 include: "zizzl_shift_hours.view.lkml"
+include: "views/shift_admin_hours.view.lkml"
 
 include: "SEM_cost_per_complete_derived.view.lkml"
 
@@ -4839,4 +4840,15 @@ explore:  on_call_tracking
 
   explore: sem_cost_per_complete_derived {
 
+  }
+
+  explore: shift_admin_hours {
+    join: markets {
+      sql_on: ${markets.id} = ${shift_admin_hours.market_id} ;;
+    }
+    join: target_staffing {
+      sql_on: ${markets.id} = ${target_staffing.market_id} and
+      ${target_staffing.dow} = ${shift_admin_hours.shift_day_day_of_week} and
+      ${target_staffing.month_month} = ${shift_admin_hours.shift_day_month};;
+    }
   }
