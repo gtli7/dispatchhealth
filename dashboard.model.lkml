@@ -598,10 +598,10 @@ explore: care_requests {
   }
 
   join: athenadwh_clinical_providers_clone {
-    type: inner
-    relationship: one_to_one
+    # type: inner
+    relationship: many_to_one
     sql_on: ${athenadwh_documents_clone.clinical_provider_id} = ${athenadwh_clinical_providers_clone.clinical_provider_id} ;;
-    fields: []
+    # fields: []
   }
 
   join: athenadwh_referrals {
@@ -2212,8 +2212,6 @@ explore: zizzl_detailed_shift_hours {
     relationship: one_to_many
     sql_on: ${shift_team_members.user_id} = ${users.id} ;;
   }
-
-
 
   join: shift_teams {
     relationship: one_to_many
