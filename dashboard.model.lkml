@@ -119,6 +119,8 @@ include: "letter_recipient_dimensions_clone.view.lkml"
 include: "athenadwh_clinical_providers_clone.view.lkml"
 include: "sf_markets_mapping.view.lkml"
 include: "credit_cards.view.lkml"
+include: "views/onboarding_care_request_credit_cards.view.lkml"
+include: "views/onboarding_credit_cards.view.lkml"
 include: "shifts_end_of_shift_times.view.lkml"
 include: "athenadwh_clinical_letters_clone.view.lkml"
 include: "thpg_satellite_locations.view.lkml"
@@ -337,6 +339,8 @@ include: "SEM_cost_per_complete_derived.view.lkml"
 
 include: "on_call_tracking.view.lkml"
 include: "intraday_monitoring.view.lkml"
+include: "geneysis_custom_conversation_attributes_agg.view.lkml"
+
 
 
 include: "*.dashboard.lookml"  # include all dashboards in this project
@@ -595,10 +599,10 @@ explore: care_requests {
   }
 
   join: athenadwh_clinical_providers_clone {
-    type: inner
-    relationship: one_to_one
+    # type: inner
+    relationship: many_to_one
     sql_on: ${athenadwh_documents_clone.clinical_provider_id} = ${athenadwh_clinical_providers_clone.clinical_provider_id} ;;
-    fields: []
+    # fields: []
   }
 
   join: athenadwh_referrals {
@@ -1014,7 +1018,7 @@ join: narrow_network_orders {
 }
 
 join: athena_document_results {
-  relationship: one_to_one
+  relationship: one_to_many
   sql_on: ${athena_document_orders.document_id} = ${athena_document_results.order_document_id} ;;
 }
 
@@ -1063,13 +1067,13 @@ join: athena_first_result {
 
 join: athena_result_created {
   relationship: one_to_one
-  sql_on:  ${athena_document_results.document_id} = ${athena_result_created.document_id};;
+  sql_on:  ${athena_document_orders.document_id} = ${athena_result_created.order_document_id};;
   # fields: []
 }
 
 join: athena_result_closed {
   relationship: one_to_one
-  sql_on: ${athena_document_results.document_id} = ${athena_result_closed.document_id} ;;
+  sql_on: ${athena_document_orders.document_id} = ${athena_result_closed.order_document_id} ;;
   # fields: []
 }
 
@@ -1513,6 +1517,18 @@ join: athena_procedurecode {
   join: credit_cards {
     relationship: one_to_one
     sql_on: ${care_requests.id} = ${credit_cards.care_request_id} ;;
+  }
+
+  join: onboarding_care_request_credit_cards {
+    relationship: one_to_many
+    sql_on: ${care_requests.id} = ${onboarding_care_request_credit_cards.care_request_id} ;;
+    fields: []
+  }
+
+  join: onboarding_credit_cards {
+    relationship: many_to_one
+    view_label: "CARE Team Captured Credit Cards"
+    sql_on: ${onboarding_care_request_credit_cards.credit_card_id} = ${onboarding_credit_cards.id} ;;
   }
 
   join: care_request_network_referrals {
@@ -2197,8 +2213,6 @@ explore: zizzl_detailed_shift_hours {
     relationship: one_to_many
     sql_on: ${shift_team_members.user_id} = ${users.id} ;;
   }
-
-
 
   join: shift_teams {
     relationship: one_to_many
@@ -3786,6 +3800,10 @@ explore: genesys_conversation_summary {
     and ${genesys_conversation_summary.queuename}=${care_team_projected_volume.queue};;
   }
 
+  join: geneysis_custom_conversation_attributes {
+    sql_on: ${genesys_conversation_summary.conversationstarttime_date} = ${geneysis_custom_conversation_attributes.conversationstarttime_date} ;;
+  }
+
   join: patients_mobile {
     sql_on:   (
                 ${patients_mobile.mobile_number} = ${genesys_conversation_summary.patient_number}
@@ -4493,9 +4511,10 @@ explore: genesys_agg {
     relationship: one_to_one
     sql_on: ${markets.id_adj} = ${market_regions.market_id} ;;
   }
-  join: geneysis_custom_conversation_attributes {
-    sql_on: ${genesys_agg.conversationstarttime_date} = ${geneysis_custom_conversation_attributes.conversationstarttime_date} ;;
+  join: geneysis_custom_conversation_attributes_agg {
+    sql_on: ${genesys_agg.conversationstarttime_date} = ${geneysis_custom_conversation_attributes_agg.conversationstarttime_date} ;;
   }
+
   }
 
 explore: mailchimp_sends {

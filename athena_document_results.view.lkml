@@ -494,8 +494,10 @@ view: athena_document_results {
     value_format: "0.00"
   }
 
-  measure: count {
-    type: count
+  measure: count_distinct_results {
+    type: count_distinct
+    description: "Count of distinct order results"
+    sql: ${document_id} ;;
     drill_fields: [detail*]
   }
 

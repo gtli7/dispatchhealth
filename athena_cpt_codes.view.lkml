@@ -8,21 +8,29 @@ view: athena_cpt_codes {
     pc.procedure_code_description,
     pc.procedure_code_group,
     em.em_patient_type,
-    CASE WHEN em.em_care_level = '' THEN NULL ELSE em.em_care_level::int END AS em_care_level
+    CASE WHEN em.em_care_level = '' THEN NULL ELSE em.em_care_level::int END AS em_care_level,
+    ROW_NUMBER() OVER () AS primary_key
     FROM (
         SELECT
             claim_id,
             unnest(procedure_codes) AS procedure_code,
             split_part(unnest(procedure_codes),' ',1) AS cpt_code
-            FROM ${athena_transaction_summary.SQL_TABLE_NAME}) AS ts
+            FROM athena.transactions_summary) AS ts
     LEFT JOIN athena.procedurecode pc
         ON ts.procedure_code = pc.procedure_code
     LEFT JOIN looker_scratch.cpt_em_references_clone em
         ON ts.cpt_code = em.cpt_code;;
 
-      indexes: ["claim_id", "procedure_code"]
+      indexes: ["primary_key","claim_id", "procedure_code"]
       sql_trigger_value: SELECT MAX(claim_id) FROM athena.claim ;;
     }
+
+  dimension: primary_key {
+    type: number
+    primary_key: yes
+    hidden: yes
+    sql: ${TABLE}.primary_key ;;
+  }
 
   dimension: claim_id {
     type: number

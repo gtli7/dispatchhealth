@@ -7,9 +7,9 @@ view: genesys_agg {
         column: market_id { field: markets.id_adj }
         column: count_answered {field: genesys_conversation_summary.distinct_answer_long_callers}
         column: count_answered_raw {field: genesys_conversation_summary.distinct_answer_callers}
+        column: count_answered_raw_dupes {field: genesys_conversation_summary.count_answered}
         column: inbound_phone_calls {field: genesys_conversation_summary.distinct_callers}
         column: inbound_phone_calls_first {field: genesys_conversation_summary.count_distinct_first}
-
         column: count_distinct_sla {field: genesys_conversation_summary.count_distinct_sla}
         column: non_initiating_care_count{field: genesys_conversation_summary.non_initiating_care_count}
         column: count_distinct {field:genesys_conversation_summary.count_distinct}
@@ -30,6 +30,11 @@ view: genesys_agg {
   }
 
   dimension: non_initiating_care_count {
+    type: number
+  }
+
+  dimension: count_answered_raw_dupes {
+    label: "Answered Calls (No Time Constraint)"
     type: number
   }
 
@@ -85,7 +90,7 @@ view: genesys_agg {
   }
 
   measure: sum_inbound_demand{
-    label: "Sum Contacts w/ Intent"
+    label: "Contacts w/ Intent"
     description: "Intent Queue and >1 minute talk time w/agent, web/mobille care requests"
     type: sum_distinct
     sql: ${inbound_demand} ;;
@@ -100,9 +105,11 @@ view: genesys_agg {
     sql_distinct_key: concat(${conversationstarttime_date}, ${market_id}) ;;
   }
 
+
   measure: assigned_rate {
     description: "Sum Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled)/Sum Contacts w/ Intent (Intent Queue, >1 minute talk time w/agent)"
-    type: number
+    label: "Percent Capture"
+   type: number
     value_format: "0%"
     sql: case when ${sum_inbound_demand} >0 then ${accepted_agg.sum_accepted}::float/${sum_inbound_demand}::float else 0 end ;;
   }
@@ -168,12 +175,24 @@ view: genesys_agg {
     sql_distinct_key: concat(${conversationstarttime_date}, ${market_id}) ;;
   }
 
-  measure: sum_unanswered_care {
-    type: number
-    sql: ${count_distinct}-${count_answered};;
+  measure: sum_answered_calls {
+    label: "Sum Answered Calls (No Time Constraint)"
+    type: sum_distinct
+    sql: ${count_answered_raw_dupes} ;;
+    sql_distinct_key: concat(${conversationstarttime_date}, ${market_id}) ;;
   }
 
+  measure: all_answered_calls_touching_care_queue {
+    label: "Answered Calls Touching Care Queue or Web/Mobile Request"
+    type: number
+    sql: ${sum_inbound_demand}+${answered_calls_related_to_care_dupe_or_short}  ;;
+  }
 
+  measure: sum_unanswered_care {
+    label: "Sum Unanswered Care Calls"
+    type: number
+    sql: ${sum_count_distinct}-${sum_answered_calls};;
+  }
 
   measure: sum_inbound_phone_calls {
     label: "Sum Inbound Callers"
@@ -205,11 +224,49 @@ view: genesys_agg {
     sql:  ${sum_inbound_demand}/max(${quarter_percent});;
   }
 
+    measure: sum_non_initiating_care_count {
+    type: sum_distinct
+    sql:  ${non_initiating_care_count};;
+    sql_distinct_key: concat(${conversationstarttime_date}, ${market_id})  ;;
+
+
+  }
+
+  measure: answered_calls_related_to_care_dupe_or_short{
+    type: number
+    sql: ${sum_answered_calls}-${sum_answered} ;;
+  }
+
+  measure: contacts_w_intent_care_request_not_created {
+    type: number
+    sql: ${sum_inbound_demand}-${accepted_agg.sum_care_request_created} ;;
+  }
+  measure: sum_count_distinct {
+    type: sum_distinct
+    sql: ${count_distinct} ;;
+    sql_distinct_key: concat(${conversationstarttime_date}, ${market_id}) ;;
+
+  }
+
   measure: answer_rate {
     value_format: "0%"
     type: number
     sql: case when ${sum_inbound_phone_calls}>0 then ${sum_answered_callers}::float/${sum_inbound_phone_calls}::float else 0 end;;
   }
+
+  measure: answer_rate_raw {
+    label: "Percent Answer or Web/Mobile Request"
+    value_format: "0%"
+    type: number
+    sql: case when ${sum_count_distinct}>0 then (${sum_answered_calls}::float+${non_phone_cr.sum_care_request_count}::float)/(${sum_count_distinct}::float+${non_phone_cr.sum_care_request_count}::float) else 0 end;;
+  }
+
+  measure: percent_care_request_created {
+    type: number
+    value_format: "0%"
+    sql: case when ${sum_inbound_demand}>0 then ${accepted_agg.sum_care_request_created}/${sum_inbound_demand} else 0 end ;;
+  }
+
 
   measure: actuals_compared_to_projections {
     value_format: "0%"
@@ -260,6 +317,28 @@ view: genesys_agg {
        (  CAST(date_trunc('quarter',  ${conversationstarttime_raw})  + interval '3 months' - interval '1 day' AS date) - CAST( ${yesterday_mountain_date} AS date))
 ;;
   }
+  measure: all_contacts {
+    type: number
+    sql: ${geneysis_custom_conversation_attributes_agg.sum_ivr_deflections}+${sum_non_initiating_care_count}+${sum_unanswered_care}+${answered_calls_related_to_care_dupe_or_short}+${contacts_w_intent_care_request_not_created}+
+      ${accepted_agg.resolved_wo_accepted_scheduled_booked}+${accepted_agg.sum_lwbs_accepted}+${accepted_agg.sum_lwbs_scheduled}+${accepted_agg.sum_booked_resolved}+${accepted_agg.sum_complete};;
+  }
 
+  measure: all_contacts_touching_queue {
+    label: "Contacts Touching Queue"
+    type: number
+    sql: ${sum_non_initiating_care_count}+${sum_unanswered_care}+${answered_calls_related_to_care_dupe_or_short}+${contacts_w_intent_care_request_not_created}+${accepted_agg.resolved_wo_accepted_scheduled_booked}+${accepted_agg.sum_lwbs_accepted}+${accepted_agg.sum_lwbs_scheduled}+${accepted_agg.sum_booked_resolved}+${accepted_agg.sum_complete};;
+  }
+
+  measure: all_contacts_touching_care_initating_queue {
+    label: "Contacts Touching Care Initating Queue"
+    type: number
+    sql: ${sum_unanswered_care}+${answered_calls_related_to_care_dupe_or_short}+${contacts_w_intent_care_request_not_created}+${accepted_agg.resolved_wo_accepted_scheduled_booked}+${accepted_agg.sum_lwbs_accepted}+${accepted_agg.sum_lwbs_scheduled}+${accepted_agg.sum_booked_resolved}+${accepted_agg.sum_complete};;
+  }
+
+  measure: percent_touching_care_initating_queue {
+    type:  number
+    value_format: "0%"
+    sql: ${all_contacts_touching_care_initating_queue}/${all_contacts} ;;
+  }
 
   }
