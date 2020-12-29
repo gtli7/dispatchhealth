@@ -203,7 +203,10 @@ view: genesys_agg {
     sql:  ${sum_inbound_demand}/max(${quarter_percent});;
   }
 
-  measure: sum_non_initiating_care_count {}
+  measure: sum_non_initiating_care_count {
+    type: sum
+
+  }
 
   measure: sum_count_distinct {
     type: sum
