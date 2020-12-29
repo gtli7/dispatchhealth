@@ -65,6 +65,12 @@ view: last_documentaction {
     sql: ${TABLE}."created_at" ;;
   }
 
+  dimension: open_orders {
+    type: yesno
+    description: "A flag indicating last document status is not CLOSED or DELETED"
+    sql: ${status} NOT IN ('CLOSED','DELETED') AND ${status} IS NOT NULL ;;
+  }
+
   dimension: order_to_close_hours {
     description: "Number of hours from order created to closed"
     type: number
