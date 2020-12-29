@@ -82,6 +82,7 @@ view: accepted_agg {
   }
 
   measure: sum_complete {
+    label: "Complete Care Requests"
     type: sum_distinct
     sql: ${complete_count} ;;
     sql_distinct_key: concat(${first_accepted_date}, ${market_id}) ;;
@@ -94,6 +95,8 @@ view: accepted_agg {
   }
 
   measure: sum_care_request_created {
+    label: "Care Requests Created"
+
     type: sum_distinct
     sql: ${care_request_created_count} ;;
     sql_distinct_key: concat(${first_accepted_date}, ${market_id}) ;;
@@ -115,4 +118,24 @@ view: accepted_agg {
     type: number
     sql: ${sum_complete}+${sum_lwbs_accepted} ;;
   }
+  measure: captured_sum {
+    label: "Capture (Accepted, Scheduled Acute, .7*Booked)"
+    type: number
+    value_format: "#,##0"
+    sql:
+      ${sum_lwbs_accepted}+${sum_lwbs_scheduled}+${sum_booked_resolved}::float*.7+${sum_complete};;
+  }
+  measure: percent_loss_after_capture {
+    label: "Percent Accepted"
+    type: number
+    value_format: "0%"
+    sql: case when ${captured_sum} >0 then ${accepted_care_requests}::float/${captured_sum}::float else 0 end;;
+  }
+  measure: lwbs_rate {
+    label: "Percent LWBS"
+    type: number
+    value_format: "0%"
+    sql: (1-case when ${accepted_care_requests} >0 then ${sum_complete}::float/${accepted_care_requests}::float else 0 end);;
+  }
+
 }
