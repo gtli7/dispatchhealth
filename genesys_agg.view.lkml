@@ -224,7 +224,7 @@ view: genesys_agg {
     sql:  ${sum_inbound_demand}/max(${quarter_percent});;
   }
 
-
+    measure: sum_non_initiating_care_count {
     type: sum_distinct
     sql:  ${non_initiating_care_count};;
     sql_distinct_key: concat(${conversationstarttime_date}, ${market_id})  ;;
@@ -340,8 +340,5 @@ view: genesys_agg {
     value_format: "0%"
     sql: ${all_contacts_touching_care_initating_queue}/${all_contacts} ;;
   }
-
-
-
 
   }
