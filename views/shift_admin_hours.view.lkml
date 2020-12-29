@@ -222,15 +222,20 @@ view: shift_admin_hours {
     sql: lower(${shift_name}) like '%on%call%' ;;
   }
 
+  dimension: total_shift_hours {
+    type: number
+    sql: ${TABLE}."shift_hours" * ${TABLE}."num_shifts" ;;
+  }
+
   measure: sum_shift_hours {
     type: sum_distinct
-    sql:  ${shift_hours} ;;
+    sql:  ${total_shift_hours} ;;
     sql_distinct_key: ${primary_key} ;;
   }
 
   measure: sum_shift_app_hours {
     type: sum_distinct
-    sql: ${shift_hours} ;;
+    sql: ${total_shift_hours} ;;
     sql_distinct_key: ${primary_key} ;;
     filters: [app_shift: "yes"]
     label: "APP Scheduled Hours"
@@ -238,7 +243,7 @@ view: shift_admin_hours {
 
   measure: sum_shift_dhmt_hours {
     type: sum_distinct
-    sql: ${shift_hours} ;;
+    sql: ${total_shift_hours} ;;
     sql_distinct_key: ${primary_key} ;;
     filters: [dhmt_shift: "yes"]
     label: "DHMT Scheduled Hours"
