@@ -227,6 +227,12 @@ view: shift_admin_hours {
     sql: ${TABLE}."shift_hours" * ${TABLE}."num_shifts" ;;
   }
 
+  dimension: months_out {
+    type: number
+    sql: (DATE_PART('year', ${shift_day_date}) - DATE_PART('year', now()::date)) * 12 +
+              (DATE_PART('month', ${shift_day_date}::date) - DATE_PART('month', now()::date)) ;;
+  }
+
   measure: sum_shift_hours {
     type: sum_distinct
     sql:  ${total_shift_hours} ;;
