@@ -718,7 +718,7 @@ explore: care_requests {
 
   join: thpg_providers {
     relationship: one_to_one
-    sql_on: ${athenadwh_letter_recipient_provider.npi}::int = ${thpg_providers.npi} ;;
+    sql_on: ${athena_letter_recipient_provider.npi}::int = ${thpg_providers.npi} ;;
   }
 
   join: multicare_providers {
@@ -921,7 +921,7 @@ join: athena_providergroup {
 
 join: athena_claim {
   relationship: one_to_one
-  sql_on: ${athena_clinicalencounter.appointment_id} = ${athena_claim.claim_appointment_id} ;;
+  sql_on: ${athena_appointment.appointment_id} = ${athena_claim.claim_appointment_id} ;;
 }
 
   join: athena_valid_claims {
@@ -3965,6 +3965,24 @@ explore: shift_teams
   join: provider_fit_testing {
     relationship: one_to_one
     sql_on: ${users.id} = ${provider_fit_testing.user_id} ;;
+  }
+
+  join: secondary_screening_provider {
+    from: users
+    relationship: one_to_one
+    sql_on:  ${secondary_screenings.provider_id} = ${secondary_screening_provider.id};;
+  }
+
+  join: secondary_screening_provider_profile {
+    from: provider_profiles
+    relationship: many_to_one
+    sql_on: ${secondary_screening_provider.id} = ${secondary_screening_provider_profile.user_id} ;;
+  }
+
+  join: secondary_screenings {
+    relationship: one_to_many
+    sql_on: ${users.id} = ${secondary_screenings.provider_id}
+    AND ${secondary_screenings.provider_updated_date} = ${shift_teams.start_date};;
   }
 
 #  join: zizzl_detailed_shift_hours {
