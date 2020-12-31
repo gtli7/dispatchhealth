@@ -145,7 +145,7 @@ view: markets {
 
   dimension: name_adj {
     type: string
-    description: "Market name where WMFR is included as part of Denver"
+    description: "Market name where WMFR/SMFR are included as part of Denver"
     sql: case when ${TABLE}.name = 'West Metro Fire Rescue'
       OR ${TABLE}.name = 'South Metro Fire Rescue' then 'Denver'
     else ${name} end;;
@@ -154,8 +154,9 @@ view: markets {
 
   dimension: name_adj_dfw {
     type: string
-    description: "Market name where WMFR is included as part of Denver and merges Dallas FTW"
+    description: "Market name where WMFR/SMFR are included as part of Denver and merges Dallas FTW"
     sql: case when ${TABLE}.name = 'West Metro Fire Rescue' then 'Denver'
+    when ${TABLE}.name = 'South Metro Fire Rescue' then 'Denver'
     when ${TABLE}.name in('Dallas', 'Fort Worth') then 'Dallas/Fort Worth'
       else ${name} end;;
 
@@ -163,8 +164,9 @@ view: markets {
 
   dimension: name_adj_dual {
     type: string
-    description: "Market name where WMFR is included as part of Denver, and merges dual markets Tacoma/Olympia and Ridgewood/Morristown"
+    description: "Market name where WMFR/SMFR are included as part of Denver, and merges dual markets Tacoma/Olympia and Ridgewood/Morristown"
     sql: case when ${TABLE}.name = 'West Metro Fire Rescue' then 'Denver'
+          when ${TABLE}.name = 'South Metro Fire Rescue' then 'Denver'
           when ${TABLE}.name in('Tacoma', 'Olympia') then 'Tacoma/Olympia'
           when ${TABLE}.name in('Ridgewood', 'Morristown') then 'Ridgewood/Morristown'
             else ${name} end;;
