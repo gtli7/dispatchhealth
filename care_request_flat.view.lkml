@@ -1134,7 +1134,16 @@ WITH ort AS (
     type: yesno
     description: "A flag indicating the 3-day follow-up call was completed"
     sql: ${complete_date} IS NOT NULL AND
-    ${followup_3day_result} is NOT NULL AND ${followup_3day_result} != 'patient_called_but_did_not_answer' ;;
+    ${followup_3day_result} is NOT NULL AND
+    ${followup_3day_result} != 'patient_called_but_did_not_answer' AND
+    ${followup_3day_result} != 'no_hie_data' ;;
+  }
+
+  dimension: followup_3day_attempt {
+    type: yesno
+    description: "A flag indicating the 3-day follow-up call was attempted (includes completed calls and no answer calls"
+    sql: ${complete_date} IS NOT NULL AND
+      ${followup_3day_result} is NOT NULL ;;
   }
 
   dimension: followup_3day_id {
@@ -1575,6 +1584,15 @@ WITH ort AS (
     sql: ${care_request_id} ;;
     filters: {
       field: followup_3day
+      value: "yes"
+    }
+  }
+
+  measure: count_3day_followup_attempts {
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters: {
+      field: followup_3day_attempt
       value: "yes"
     }
   }
