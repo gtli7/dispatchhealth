@@ -262,4 +262,10 @@ view: athena_diagnosis_codes {
     sql: ${care_requests.id}||${diagnosis_code} ;;
   }
 
+  measure: count_distinct_bodily_systems {
+    description: "Counts the number of distinct ICD-10 diagnosis codes assigned to a care request"
+    type: count_distinct
+    sql: ${care_requests.id}||${bodily_system} ;;
+  }
+
 }
