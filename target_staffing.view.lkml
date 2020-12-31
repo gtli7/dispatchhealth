@@ -20,13 +20,15 @@ view: target_staffing {
     type: time
     timeframes: [
       raw,
-      time,
       date,
       week,
       month,
       quarter,
-      year
+      year,
+      day_of_week
     ]
+    convert_tz: no
+    datatype: date
     sql: ${TABLE}."month" ;;
   }
 
@@ -34,6 +36,33 @@ view: target_staffing {
     type: number
     sql: ${TABLE}."target_hours" ;;
   }
+
+  dimension: tele_hours {
+    type: number
+    sql: ${TABLE}."tele_hours" ;;
+  }
+
+  dimension: arm_hours {
+    type: number
+    sql: ${TABLE}."arm_hours" ;;
+  }
+
+  dimension: other_hours {
+    type: number
+    sql: ${TABLE}."other_hours" ;;
+  }
+
+  dimension: app_hours {
+    type: number
+    sql: ${TABLE}."target_hours" + ${TABLE}."arm_hours" ;;
+  }
+
+  dimension: dhmt_hours {
+    type: number
+    sql: ${TABLE}."target_hours" + ${TABLE}."tele_hours" ;;
+  }
+
+
   measure: sum_target_hours {
     type: sum_distinct
     sql_distinct_key: concat(${shift_teams.start_date}::varchar, ${markets.name});;
@@ -56,5 +85,19 @@ view: target_staffing {
   measure: count {
     type: count
     drill_fields: []
+  }
+
+  measure: sum_app_hours {
+    type: sum_distinct
+    sql_distinct_key: concat(${dates_rolling.day_date}::varchar, ${markets.id_adj_dual}) ;;
+    sql: ${app_hours} ;;
+    label: "APP Target Hours"
+  }
+
+  measure: sum_dhmt_hours {
+    type: sum_distinct
+    sql_distinct_key: concat(${dates_rolling.day_date}::varchar, ${markets.id_adj_dual}) ;;
+    sql: ${dhmt_hours} ;;
+    label: "DHMT Target Hours"
   }
 }
