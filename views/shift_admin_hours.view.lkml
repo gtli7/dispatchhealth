@@ -209,17 +209,24 @@ view: shift_admin_hours {
 
   dimension: app_shift {
     type: yesno
-    sql: lower(${shift_short_name}) like '%np/pa%' ;;
+    sql: ${shift_short_name} ~* 'np\/pa.*(?:\d{2,}|smfr|wmfr).*' and ${shift_name} !~* '.*pierce county.*' ;;
+    #sql: lower(${shift_short_name}) like '%np/pa%' ;;
   }
 
   dimension: dhmt_shift {
     type: yesno
-    sql: lower(${shift_short_name}) like '%dhmt%' ;;
+    sql: ${shift_short_name} ~* 'dhmt.*(?:\d{2,}|smfr|wmfr).*' and ${shift_name} !~* '.*pierce county.*' ;;
+    #sql: lower(${shift_short_name}) like '%dhmt%' ;;
   }
 
   dimension: on_call_shift {
     type: yesno
     sql: lower(${shift_name}) like '%on%call%' ;;
+  }
+
+  dimension: mfr_shift {
+    type: yesno
+    sql: ${facility_short_name} IN ('SMFR', 'WMFR') ;;
   }
 
   dimension: total_shift_hours {

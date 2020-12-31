@@ -334,6 +334,7 @@ include: "geolocations_stops_by_care_request.view.lkml"
 include: "athena_cpt_codes.view.lkml"
 include: "zizzl_shift_hours.view.lkml"
 include: "views/shift_admin_hours.view.lkml"
+include: "dates_rolling.view.lkml"
 
 include: "SEM_cost_per_complete_derived.view.lkml"
 
@@ -4861,13 +4862,20 @@ explore:  on_call_tracking
 
   }
 
-  explore: shift_admin_hours {
-    join: markets {
-      sql_on: ${markets.id} = ${shift_admin_hours.market_id} ;;
+  explore: target_staffing {
+    join: dates_rolling {
+      type: inner
+      sql_on: ${target_staffing.month_date} = ${dates_rolling.month_date} and
+      lower(trim(${target_staffing.dow})) = lower(trim(${dates_rolling.dow})) ;;
     }
-    join: target_staffing {
-      sql_on: ${markets.id} = ${target_staffing.market_id} and
+    join: markets {
+      type: inner
+      sql_on: ${target_staffing.market_id} = ${markets.id_adj_dual} ;;
+    }
+    join: shift_admin_hours {
+      sql_on: ${markets.id} = ${shift_admin_hours.market_id} and
       ${target_staffing.dow} = ${shift_admin_hours.shift_day_day_of_week} and
-      ${target_staffing.month_month} = ${shift_admin_hours.shift_day_month};;
+      ${target_staffing.month_month} = ${shift_admin_hours.shift_day_month} and
+      ${dates_rolling.day_date} = ${shift_admin_hours.shift_day_date};;
     }
   }

@@ -89,14 +89,14 @@ view: target_staffing {
 
   measure: sum_app_hours {
     type: sum_distinct
-    sql_distinct_key: concat(${shift_admin_hours.shift_day_date}::varchar, ${markets.id}) ;;
+    sql_distinct_key: concat(${dates_rolling.day_date}::varchar, ${markets.id_adj_dual}) ;;
     sql: ${app_hours} ;;
     label: "APP Target Hours"
   }
 
   measure: sum_dhmt_hours {
     type: sum_distinct
-    sql_distinct_key: concat(${shift_admin_hours.shift_day_date}::varchar, ${markets.id}) ;;
+    sql_distinct_key: concat(${dates_rolling.day_date}::varchar, ${markets.id_adj_dual}) ;;
     sql: ${dhmt_hours} ;;
     label: "DHMT Target Hours"
   }
