@@ -108,5 +108,142 @@
         type: yesno
       }
 
+      measure: total_adcost_sum {
+        type: sum_distinct
+        sql: ${sum_total_adcost} ;;
+        sql_distinct_key: ${date} ;;
+      }
+
+    measure: sum_count_distinct_inbound {
+      type: sum_distinct
+      sql: ${count_distinct} ;;
+      sql_distinct_key: ${date} ;;
+    }
+
+    measure: sum_count_answered_inbound {
+      type: sum_distinct
+      sql: ${count_answered} ;;
+      sql_distinct_key: ${date} ;;
+    }
+
+    measure: sum_accepted_count {
+      type: sum_distinct
+      sql: ${accepted_count} ;;
+      sql_distinct_key: ${date} ;;
+    }
+
+    measure: sum_complete_count {
+      type: sum_distinct
+      sql: ${complete_count} ;;
+      sql_distinct_key: ${date} ;;
+    }
+
+    measure: sum_diversion_savings_911 {
+      type: sum_distinct
+      sql: ${diversion_savings_911} ;;
+      sql_distinct_key: ${date} ;;
+    }
+
+    measure: sum_total_expected_allowable_test {
+      type: sum_distinct
+      sql: ${total_expected_allowable_test} ;;
+      sql_distinct_key: ${date} ;;
+    }
+
+    measure: sum_total_count_claims {
+      type: sum_distinct
+      sql: ${count_claims} ;;
+      sql_distinct_key: ${date} ;;
+    }
+
+    measure: sum_diversion_savings_er {
+      type: sum_distinct
+      sql: ${diversion_savings_er} ;;
+      sql_distinct_key: ${date} ;;
+    }
+
+    measure: sum_diversions_savings_hospitalization {
+      type: sum_distinct
+      sql: ${diversion_savings_hospitalization} ;;
+      sql_distinct_key: ${date} ;;
+    }
+
+    measure: sum_diversion_savings_obs {
+      type: sum_distinct
+      sql: ${diversion_savings_obs} ;;
+      sql_distinct_key: ${date} ;;
+    }
+
+    measure: total_ad_clicks_sum {
+      type: sum_distinct
+      sql: ${sum_total_adclicks} ;;
+      sql_distinct_key: ${date} ;;
+    }
+
+    measure: total_cost_savings {
+      type: number
+      sql: ${sum_diversion_savings_911}+${sum_diversion_savings_er}+${sum_diversions_savings_hospitalization}+${sum_diversions_savings_hospitalization} ;;
+    }
+
+    measure: total_cost_savings_romi {
+      type: number
+      sql: ((${total_cost_savings}-${total_adcost_sum}/${total_adcost_sum}))+1 ;;
+    }
+
+    measure: call_to_answer_rate {
+      type: number
+      sql: ${sum_count_answered_inbound}/${sum_count_distinct_inbound} ;;
+    }
+
+    measure: answer_to_assign_rate {
+      type: number
+      sql: ${sum_accepted_count}/${sum_count_distinct_inbound} ;;
+    }
+
+    measure: assigned_to_complete_rate {
+      type: number
+      sql: ${sum_complete_count}/${sum_accepted_count} ;;
+    }
+
+    measure: cost_per_call {
+      type: number
+      sql: ${total_adcost_sum}/${sum_count_distinct_inbound} ;;
+    }
+
+    measure: cost_per_answered {
+      type: number
+      sql: ${total_adcost_sum}/${sum_count_answered_inbound} ;;
+    }
+
+    measure: cost_per_complete {
+      type: number
+      sql: ${total_adcost_sum}/${sum_complete_count} ;;
+    }
+
+    measure: average_expected_allowable {
+      type: number
+      sql: ${sum_total_expected_allowable_test}/${sum_total_count_claims}  ;;
+    }
+
+    measure: expected_allowable_savings {
+      type: number
+      sql: ${average_expected_allowable}*${sum_complete_count} ;;
+    }
+
+    measure: expected_allowable_romi {
+      type: number
+      sql: ((${expected_allowable_savings}-${total_adcost_sum})/${total_adcost_sum})+1 ;;
+    }
+
+    measure: expected_allowable_romi_200_visit {
+      type: number
+      sql: (((${sum_complete_count}*200)-${total_adcost_sum})/${total_adcost_sum}))+1 ;;
+    }
+
+    measure: cost_per_click {
+      type: number
+      sql: ${total_adcost_sum}/${total_ad_clicks_sum} ;;
+    }
+
 
     }
