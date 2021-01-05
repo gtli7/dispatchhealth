@@ -719,7 +719,7 @@ explore: care_requests {
 
   join: thpg_providers {
     relationship: one_to_one
-    sql_on: ${athena_letter_recipient_provider.npi}::int = ${thpg_providers.npi} ;;
+    sql_on: ${athena_letter_recipient_provider.npi}::bigint = ${thpg_providers.npi} ;;
   }
 
   join: multicare_providers {
