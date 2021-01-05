@@ -2,6 +2,7 @@ view: athena_cpt_codes {
   derived_table: {
     sql:
     SELECT
+    claim.claim_appointment_id AS appointment_id,
     ts.claim_id,
     ts.procedure_code,
     ts.cpt_code,
@@ -10,18 +11,21 @@ view: athena_cpt_codes {
     em.em_patient_type,
     CASE WHEN em.em_care_level = '' THEN NULL ELSE em.em_care_level::int END AS em_care_level,
     ROW_NUMBER() OVER () AS primary_key
-    FROM (
+    FROM athena.claim
+    INNER JOIN
+        (
         SELECT
             claim_id,
             unnest(procedure_codes) AS procedure_code,
             split_part(unnest(procedure_codes),' ',1) AS cpt_code
             FROM athena.transactions_summary) AS ts
+        ON claim.claim_id = ts.claim_id
     LEFT JOIN athena.procedurecode pc
         ON ts.procedure_code = pc.procedure_code
     LEFT JOIN looker_scratch.cpt_em_references_clone em
         ON ts.cpt_code = em.cpt_code;;
 
-      indexes: ["primary_key","claim_id", "procedure_code"]
+      indexes: ["appointment_id","primary_key","claim_id", "procedure_code"]
       sql_trigger_value: SELECT MAX(claim_id) FROM athena.claim ;;
     }
 
@@ -30,6 +34,11 @@ view: athena_cpt_codes {
     primary_key: yes
     hidden: yes
     sql: ${TABLE}.primary_key ;;
+  }
+
+  dimension: appointment_id {
+    type: number
+    sql: ${TABLE}.appointment_id ;;
   }
 
   dimension: claim_id {

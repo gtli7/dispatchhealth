@@ -937,7 +937,7 @@ join: athena_claim {
 
   join: athena_cpt_codes {
     relationship: one_to_many
-    sql_on: ${athena_claim.claim_id} = ${athena_cpt_codes.claim_id} ;;
+    sql_on: ${athena_appointment.appointment_id} = ${athena_cpt_codes.appointment_id} ;;
   }
 
 # join: athena_claimdiagnosis {
@@ -4801,3 +4801,4 @@ explore:  on_call_tracking
       ${dates_rolling.day_date} = ${shift_admin_hours.shift_day_date};;
     }
   }
+explore: most_recent_intraday {}
