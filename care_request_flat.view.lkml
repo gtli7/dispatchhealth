@@ -256,7 +256,7 @@ WITH ort AS (
     # Run trigger every 2 hours
     sql_trigger_value:  SELECT MAX(id) FROM public.care_requests  where care_requests.created_at > current_date - interval '2 day';;
 
-    indexes: ["care_request_id", "patient_id", "origin_phone", "created_date", "on_scene_date", "complete_date", "first_accepted_date"]
+    indexes: ["care_request_id", "patient_id", "origin_phone", "created_date", "on_scene_date", "complete_date", "first_accepted_date", "contact_id"]
   }
 
   dimension: care_request_id {
@@ -287,11 +287,7 @@ WITH ort AS (
   dimension: contact_id {
     type: string
     group_label: "IDs"
-    sql:
-    case
-          when ${TABLE}.contact_id  ='' then null
-          else ${TABLE}.contact_id
-         end;;
+    sql: ${TABLE}.contact_id;;
   }
 
   measure: complete_count_seasonal_adj {

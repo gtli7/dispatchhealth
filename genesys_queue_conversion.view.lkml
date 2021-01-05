@@ -12,18 +12,26 @@ view: genesys_queue_conversion {
         column: market_id {field:markets.id}
         column: count_distinct_sla {field: genesys_conversation_summary.count_distinct_sla}
         column: wait_time_minutes {field: genesys_conversation_summary.average_wait_time_minutes}
+        column: count_distinct {field:genesys_conversation_summary.count_distinct}
         column: inbound_phone_calls {field: genesys_conversation_summary.distinct_callers}
         column: count_answered { field: genesys_conversation_summary.distinct_answer_long_callers}
         column: care_request_count { field: care_request_flat.care_request_count }
         column: accepted_count { field: care_request_flat.accepted_or_scheduled_count }
+        column: accepted_count_raw { field: care_request_flat.accepted_count }
         column: complete_count { field: care_request_flat.complete_count }
         column: count_answered_raw {field: genesys_conversation_summary.distinct_answer_callers}
-        column: inbound_phone_calls_first {field: genesys_conversation_summary.count_distinct_first}
+        column: count_answered_raw_dupes {field: genesys_conversation_summary.count_answered}
 
+        column: inbound_phone_calls_first {field: genesys_conversation_summary.count_distinct_first}
         column: sem_covid {field: number_to_market.sem_covid}
+        column: diversion_savings_911 { field: diversions_by_care_request.diversion_savings_911 }
+        column: diversion_savings_er { field: diversions_by_care_request.diversion_savings_er }
+        column: diversion_savings_hospitalization { field: diversions_by_care_request.diversion_savings_hospitalization }
+        column: diversion_savings_obs { field: diversions_by_care_request.diversion_savings_obs }
+        column: expected_allowable { field: athena_transaction_summary.total_expected_allowable }
         filters: {
           field: genesys_conversation_summary.conversationstarttime_time
-          value: "180 days ago for 180 days"
+          value: "210 days ago for 210 days"
         }
         filters: {
           field: genesys_conversation_summary.distinct_answer_long_callers
@@ -43,7 +51,32 @@ view: genesys_queue_conversion {
     }
 
   dimension: inbound_phone_calls_first {
-    label: "Count Distinct Phone Callers First (Inbound Demand)"
+    type: number
+  }
+
+  dimension: diversion_savings_911 {
+    type: number
+  }
+
+  dimension: diversion_savings_er {
+    type: number
+  }
+
+  dimension: diversion_savings_hospitalization {
+    type: number
+  }
+
+  dimension: diversion_savings_obs {
+    type: number
+  }
+
+  dimension: diversion_savings {
+    type: number
+    sql: ${diversion_savings_911}+${diversion_savings_er}+${diversion_savings_hospitalization}+${diversion_savings_obs}  ;;
+  }
+
+
+  dimension: expected_allowable {
     type: number
   }
 
@@ -67,13 +100,35 @@ view: genesys_queue_conversion {
     dimension: care_request_count {
       type: number
     }
+
+
     dimension: accepted_count {
       label: "Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled)"
       type: number
     }
+
+  dimension: accepted_count_raw {
+    type: number
+  }
     dimension: complete_count {
       type: number
     }
+
+  dimension: count_distinct {
+    label: "Calls (Intent Queue)"
+    type: number
+  }
+
+  dimension: count_answered_raw_dupes {
+    label: "Answered Calls (No Time Constraint)"
+    type: number
+  }
+  measure: sum_answered_calls {
+    label: "Sum Answered Calls (No Time Constraint)"
+    type: sum_distinct
+    sql: ${count_answered_raw_dupes} ;;
+    sql_distinct_key: ${primary_key};;
+  }
 
 
   dimension: count_distinct_sla {
@@ -96,6 +151,27 @@ view: genesys_queue_conversion {
     sql: ${count_distinct_sla} ;;
     sql_distinct_key: ${primary_key} ;;
     }
+
+  measure: sum_count_distinct{
+    type: sum_distinct
+    label: "Sum Calls (Intent Queue)"
+    sql: ${count_distinct} ;;
+    sql_distinct_key: ${primary_key} ;;
+  }
+
+  measure: sum_expected_allowable {
+    value_format:"$#;($#)"
+    type: sum_distinct
+    sql: ${expected_allowable} ;;
+    sql_distinct_key: ${primary_key} ;;
+  }
+
+  measure: sum_savings {
+    value_format:"$#;($#)"
+    type: sum_distinct
+    sql: ${diversion_savings} ;;
+    sql_distinct_key: ${primary_key} ;;
+  }
 
   measure: sla_percent {
     type: number
@@ -179,6 +255,25 @@ view: genesys_queue_conversion {
     sql_distinct_key: ${primary_key} ;;
   }
 
+  measure: sum_accepted_count_raw {
+    type: sum_distinct
+    sql: ${accepted_count_raw} ;;
+    sql_distinct_key: ${primary_key} ;;
+  }
+
+  measure: sum_care_request_count {
+    type: sum_distinct
+    sql: ${care_request_count} ;;
+    sql_distinct_key: ${primary_key} ;;
+  }
+
+  measure: sum_complete_count {
+    type: sum_distinct
+    sql: ${complete_count} ;;
+    sql_distinct_key: ${primary_key} ;;
+  }
+
+
   measure: avg_wait_time_minutes {
     type: number
     value_format: "0.00"
@@ -193,15 +288,51 @@ view: genesys_queue_conversion {
   }
 
   measure: answer_rate {
-    type: number
     value_format: "0%"
+    type: number
     sql: case when ${sum_inbound_phone_calls}>0 then ${sum_answered_callers}::float/${sum_inbound_phone_calls}::float else 0 end;;
-
   }
+
   measure: actuals_compared_to_projections {
     value_format: "0%"
     type: number
     sql: case when ${care_team_projected_volume.sum_projected}>0 then ${sum_inbound_phone_calls}::float/${care_team_projected_volume.sum_projected}::float else 0 end;;
+  }
+
+  measure: total_cost_savings_romi {
+    value_format: "$0.00"
+    type: number
+    sql: case when ${ga_adwords_cost_clone.sum_total_adcost}>0 then ((${sum_savings}-${ga_adwords_cost_clone.sum_total_adcost})/${ga_adwords_cost_clone.sum_total_adcost}) else 0 end ;;
+  }
+
+  measure: capture_to_complete_rate{
+    value_format: "0%"
+    type: number
+    sql: case when ${sum_accepted_count}>0 then ${sum_complete_count}/${sum_accepted_count} else 0 end;;
+  }
+
+  measure: cost_per_caller {
+    value_format: "$0"
+    type: number
+    sql: case when ${sum_inbound_phone_calls}>0 then (${ga_adwords_cost_clone.sum_total_adcost}/${sum_inbound_phone_calls}) else 0 end ;;
+  }
+
+  measure: cost_per_answered_caller {
+    value_format: "$0"
+    type: number
+    sql: case when ${sum_answered_callers}>0 then (${ga_adwords_cost_clone.sum_total_adcost}/${sum_answered_callers}) else 0 end ;;
+  }
+
+  measure: cost_per_contact_w_intent {
+    value_format: "$0"
+    type: number
+    sql: case when ${sum_inbound_answers}>0 then (${ga_adwords_cost_clone.sum_total_adcost}/${sum_inbound_answers}) else 0 end ;;
+  }
+
+  measure: cost_per_complete {
+    value_format: "$0"
+    type: number
+    sql: case when ${sum_complete_count}>0 then (${ga_adwords_cost_clone.sum_total_adcost}/${sum_complete_count}) else 0 end ;;
   }
 
 

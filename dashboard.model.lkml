@@ -343,7 +343,6 @@ include: "intraday_monitoring.view.lkml"
 include: "geneysis_custom_conversation_attributes_agg.view.lkml"
 
 
-
 include: "*.dashboard.lookml"  # include all dashboards in this project
 
 datagroup: care_request_datagroup {
@@ -3882,6 +3881,22 @@ explore: genesys_conversation_summary {
   }
 
 
+  join: athenadwh_appointments_clone {
+    relationship: one_to_one
+    sql_on: ${athenadwh_clinical_encounters_clone.appointment_id} = ${athenadwh_appointments_clone.appointment_id} ;;
+  }
+  join: athena_appointment {
+    relationship: one_to_one
+    sql_on: ${care_requests.ehr_id} = ${athena_appointment.appointment_char} ;;
+  }
+  join: athena_claim {
+    relationship: one_to_one
+    sql_on: ${athena_appointment.appointment_id} = ${athena_claim.claim_appointment_id} ;;
+  }
+  join: athena_transaction_summary {
+    relationship: one_to_one
+    sql_on: ${athena_claim.claim_id} = ${athena_transaction_summary.claim_id} ;;
+  }
 }
 explore: propensity_by_zip {
   join: zipcodes {
@@ -4106,120 +4121,9 @@ explore: ga_adwords_cost_clone{
   join: markets {
     sql_on: ${adwords_campaigns_clone.market_id_new} =${markets.id} ;;
   }
-  join: number_to_market{
-    sql_on: ${number_to_market.market_id} = ${markets.id} ;;
-  }
-
-  join: inbound_not_answered_or_abandoned  {
-    sql_on: ${number_to_market.number}=${inbound_not_answered_or_abandoned.dnis} ;;
-  }
-
-
-  join: genesys_conversation_summary {
-    sql_on: ${number_to_market.number}=${genesys_conversation_summary.dnis}
-            and
-            ${genesys_conversation_summary.conversationid}=${inbound_not_answered_or_abandoned.conversationid}
-            and
-            ${ga_adwords_cost_clone.date_date} = ${genesys_conversation_summary.conversationstarttime_date}
-            AND ${genesys_conversation_summary.queuename} = 'DTC Pilot'
-            ;;
-  }
-
-
-
-  join: care_request_flat{
-    sql_on: ${genesys_conversation_summary.conversationid} =${care_request_flat.contact_id};;
-  }
-
-  join: patients {
-    sql_on: ${patients.id} =${care_request_flat.patient_id} ;;
-  }
-
-  join: care_requests {
-    sql_on: ${care_request_flat.care_request_id} =${care_requests.id} ;;
-  }
-
-  join: service_lines {
-    sql_on: ${care_requests.service_line_id} =${service_lines.id} ;;
-  }
-
-  join: ga_adwords_stats_clone {
-    sql_on:   ${ga_adwords_stats_clone.adwordscampaignid} =${ga_adwords_cost_clone.adwordscampaignid}
-                and ${ga_adwords_stats_clone.adwordscreativeid} =${ga_adwords_cost_clone.adwordscreativeid}
-                and ${ga_adwords_stats_clone.keyword} =${ga_adwords_cost_clone.keyword}
-                and ${ga_adwords_stats_clone.adwordsadgroupid} =${ga_adwords_cost_clone.adwordsadgroupid}
-                and ${ga_adwords_stats_clone.admatchtype} =${ga_adwords_cost_clone.admatchtype}
-                      and ${ga_adwords_stats_clone.page_timestamp_date} =${ga_adwords_cost_clone.date_date}
-
-                ;;
-  }
-  join: ga_pageviews_clone {
-    sql_on: ${ga_adwords_stats_clone.client_id} = ${ga_pageviews_clone.client_id}
-      and ${ga_adwords_stats_clone.page_timestamp_raw} = ${ga_pageviews_clone.timestamp_raw};;
-  }
-
-  join: diversions_by_care_request {
-    relationship: one_to_one
-    sql_on: ${care_requests.id} = ${diversions_by_care_request.care_request_id} ;;
-  }
-
-  join: channel_items {
-    relationship: many_to_one
-    sql_on:  ${care_requests.channel_item_id} = ${channel_items.id} ;;
-  }
-
-  join: risk_assessments {
-    relationship: one_to_many
-    sql_on: ${care_requests.id} = ${risk_assessments.care_request_id} and ${risk_assessments.score} is not null ;;
-  }
-
-  join: athenadwh_clinical_encounters_clone {
-    relationship:  one_to_one
-    sql_on: ${care_requests.ehr_id} = ${athenadwh_clinical_encounters_clone.appointment_id}::varchar;;
-  }
-
-
-  join: athenadwh_claims_clone {
-    relationship: one_to_one
-    # type: inner
-    sql_on: ${athenadwh_clinical_encounters_clone.appointment_id} = ${athenadwh_claims_clone.claim_appointment_id} ;;
-  }
-
-  join: athenadwh_transactions_clone {
-    relationship: one_to_many
-    sql_on: ${athenadwh_claims_clone.claim_id} = ${athenadwh_transactions_clone.claim_id} ;;
-  }
-
-  join: athenadwh_valid_claims {
-    relationship: one_to_one
-    sql_on: ${athenadwh_claims_clone.claim_id} = ${athenadwh_valid_claims.claim_id} ;;
-  }
-
-  join: athenadwh_patient_insurances_clone {
-    relationship: one_to_many
-    sql_on: ${patients.ehr_id} = ${athenadwh_patient_insurances_clone.patient_id}::varchar
-          AND ${athenadwh_patient_insurances_clone.cancellation_date} IS NULL
-          AND (${athenadwh_patient_insurances_clone.sequence_number}::int = 1 OR ${athenadwh_patient_insurances_clone.insurance_package_id}::int = -100)
-            /*AND ${athenadwh_patient_insurances_clone.insurance_package_id}::int != 0 */ ;;
-  }
-  join: insurance_coalese {
-    relationship: many_to_one
-    sql_on: ${insurance_coalese.care_request_id} = ${care_requests.id} ;;
-  }
-
-
-  join: insurance_coalese_crosswalk {
-    from: primary_payer_dimensions_clone
-    relationship: many_to_one
-    sql_on: ${insurance_coalese.package_id_coalese} = ${insurance_coalese_crosswalk.insurance_package_id}
-      AND ${insurance_coalese_crosswalk.custom_insurance_grouping} IS NOT NULL;;
-  }
-  join: athenadwh_appointments_clone {
-    relationship: one_to_one
-    sql_on: ${athenadwh_clinical_encounters_clone.appointment_id} = ${athenadwh_appointments_clone.appointment_id} ;;
-  }
-
-
+ join: genesys_queue_conversion {
+   sql_on: ${genesys_queue_conversion.market_id} = ${markets.id} and ${genesys_queue_conversion.conversationstarttime_date} =${ga_adwords_cost_clone.date_date} and ${genesys_queue_conversion.queuename} ='DTC Pilot';;
+ }
 
 
   #join: web_care_requests {
