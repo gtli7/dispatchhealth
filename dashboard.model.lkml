@@ -4897,3 +4897,4 @@ explore:  on_call_tracking
       ${dates_rolling.day_date} = ${shift_admin_hours.shift_day_date};;
     }
   }
+explore: most_recent_intraday {}
