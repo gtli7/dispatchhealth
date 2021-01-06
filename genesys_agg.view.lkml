@@ -83,14 +83,14 @@ view: genesys_agg {
   }
 
   dimension: inbound_demand{
-    label: "Contacts w/ Intent"
+    label: "Answered Contacts Requesting Care, Deduped"
     description: "Intent Queue, >1 minute talk time w/agent, web/mobille care requests"
     type: number
     sql: ${count_answered} +case when ${non_phone_cr.care_request_count} is not null then ${non_phone_cr.care_request_count} else 0 end;;
   }
 
   measure: sum_inbound_demand{
-    label: "Contacts w/ Intent"
+    label: "Answered Contacts Requesting Care, Deduped"
     description: "Intent Queue and >1 minute talk time w/agent, web/mobille care requests"
     type: sum_distinct
     sql: ${inbound_demand} ;;
@@ -107,8 +107,8 @@ view: genesys_agg {
 
 
   measure: assigned_rate {
-    description: "Sum Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled)/Sum Contacts w/ Intent (Intent Queue, >1 minute talk time w/agent)"
-    label: "Percent Capture"
+    description: "Sum Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled)/Answered Contacts Requesting Care, Deduped"
+    label: "Capture/Answered Contacts Requesting Care, Deduped"
    type: number
     value_format: "0%"
     sql: case when ${sum_inbound_demand} >0 then ${accepted_agg.sum_accepted}::float/${sum_inbound_demand}::float else 0 end ;;
@@ -183,7 +183,7 @@ view: genesys_agg {
   }
 
   measure: all_answered_calls_touching_care_queue {
-    label: "Answered Calls Touching Care Queue or Web/Mobile Request"
+    label: "Answered Contacts Requesting Care"
     type: number
     sql: ${sum_inbound_demand}+${answered_calls_related_to_care_dupe_or_short}  ;;
   }
@@ -255,7 +255,7 @@ view: genesys_agg {
   }
 
   measure: answer_rate_raw {
-    label: "Percent Answer or Web/Mobile Request"
+    label: "Percent Answered Contacts Requesting Care, Deduped"
     value_format: "0%"
     type: number
     sql: case when ${sum_count_distinct}>0 then (${sum_answered_calls}::float+${non_phone_cr.sum_care_request_count}::float)/(${sum_count_distinct}::float+${non_phone_cr.sum_care_request_count}::float) else 0 end;;
@@ -324,18 +324,19 @@ view: genesys_agg {
   }
 
   measure: all_contacts_touching_queue {
-    label: "Contacts Touching Queue"
+    label: "Contacts After IVR"
     type: number
     sql: ${sum_non_initiating_care_count}+${sum_unanswered_care}+${answered_calls_related_to_care_dupe_or_short}+${contacts_w_intent_care_request_not_created}+${accepted_agg.resolved_wo_accepted_scheduled_booked}+${accepted_agg.sum_lwbs_accepted}+${accepted_agg.sum_lwbs_scheduled}+${accepted_agg.sum_booked_resolved}+${accepted_agg.sum_complete};;
   }
 
   measure: all_contacts_touching_care_initating_queue {
-    label: "Contacts Touching Care Initating Queue"
+    label: "Contacts Requesting Care"
     type: number
     sql: ${sum_unanswered_care}+${answered_calls_related_to_care_dupe_or_short}+${contacts_w_intent_care_request_not_created}+${accepted_agg.resolved_wo_accepted_scheduled_booked}+${accepted_agg.sum_lwbs_accepted}+${accepted_agg.sum_lwbs_scheduled}+${accepted_agg.sum_booked_resolved}+${accepted_agg.sum_complete};;
   }
 
   measure: percent_touching_care_initating_queue {
+    label: "Percent Contacts Requesting Care"
     type:  number
     value_format: "0%"
     sql: ${all_contacts_touching_care_initating_queue}/${all_contacts} ;;
