@@ -5,7 +5,7 @@ view: dates_rolling {
         date_trunc('month', date_trunc('day', dd))::date as month,
         to_char(date_trunc('day', dd), 'Day') as dow
       FROM generate_series
-              (current_date,
+              ((date_trunc('month', current_date) - interval '2 month')::date,
                (date_trunc('month', current_date) + interval '3 month' - interval '1 day')::date,
                '1 day'::interval) dd
        ;;
@@ -69,6 +69,11 @@ view: dates_rolling {
     type: number
     sql: (DATE_PART('year', ${day_date}) - DATE_PART('year', current_date)) * 12 +
       (DATE_PART('month', ${day_date}::date) - DATE_PART('month', current_date)) ;;
+  }
+
+  dimension: present_or_future {
+    type: yesno
+    sql: ${day_date} >= current_date ;;
   }
 
 
