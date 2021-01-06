@@ -335,6 +335,7 @@ include: "athena_cpt_codes.view.lkml"
 include: "zizzl_shift_hours.view.lkml"
 include: "views/shift_admin_hours.view.lkml"
 include: "dates_rolling.view.lkml"
+include: "clia_licensure_dh.view.lkml"
 
 include: "SEM_cost_per_complete_derived.view.lkml"
 
@@ -1606,6 +1607,11 @@ join: athena_procedurecode {
   join: cars {
     relationship: many_to_one
     sql_on: ${shift_teams.car_id} = ${cars.id} ;;
+  }
+
+  join: clia_licensure_dh {
+    relationship: many_to_one
+    sql_on: UPPER(regexp_replace(${cars.name}, '[^a-zA-Z]', '', 'g')) = UPPER(regexp_replace(${clia_licensure_dh.car_naming}, '[^a-zA-Z]', '', 'g'));;
   }
 
   join: users {
