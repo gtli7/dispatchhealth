@@ -13,7 +13,8 @@ view: clia_licensure_dh {
     sql: ${TABLE}."car_naming" ;;
   }
 
-  dimension: clia_number {
+  dimension: dh_clia_number {
+    description: "Only valid for labs conducted in-house by DispatchHealth"
     type: string
     sql: ${TABLE}."clia_number" ;;
   }
