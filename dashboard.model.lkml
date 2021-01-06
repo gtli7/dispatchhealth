@@ -335,6 +335,7 @@ include: "athena_cpt_codes.view.lkml"
 include: "zizzl_shift_hours.view.lkml"
 include: "views/shift_admin_hours.view.lkml"
 include: "dates_rolling.view.lkml"
+include: "clia_licensure_dh.view.lkml"
 
 include: "SEM_cost_per_complete_derived.view.lkml"
 
