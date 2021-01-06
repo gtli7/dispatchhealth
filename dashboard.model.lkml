@@ -1609,6 +1609,11 @@ join: athena_procedurecode {
     sql_on: ${shift_teams.car_id} = ${cars.id} ;;
   }
 
+  join: clia_licensure_dh {
+    relationship: many_to_one
+    sql_on: UPPER(regexp_replace(${cars.name}, '[^a-zA-Z]', '', 'g')) = UPPER(regexp_replace(${clia_licensure_dh.car_naming}, '[^a-zA-Z]', '', 'g'));;
+  }
+
   join: users {
     relationship: one_to_one
     sql_on:  ${shift_team_members.user_id} = ${users.id};;
