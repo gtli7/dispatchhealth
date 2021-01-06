@@ -647,12 +647,21 @@ view: athena_document_orders {
     sql: ${TABLE}."status" ;;
   }
 
+  # measure: thr_pcp_referral  {
+  #   type: max
+  #   description: "A boolean indicating the patient has received a PCP referral to THR"
+  #   sql: CASE
+  #           WHEN ${clinical_order_type} = 'PRIMARY CARE REFERRAL' AND
+  #               ${status} <> 'DELETED' AND ${document_order_fulfilling_provider.name} = 'THR ACCESS CENTER' THEN 1
+  #           ELSE 0
+  #         END ;;
+  # }
+
   measure: thr_pcp_referral  {
     type: max
     description: "A boolean indicating the patient has received a PCP referral to THR"
     sql: CASE
-            WHEN ${clinical_order_type} = 'PRIMARY CARE REFERRAL' AND
-                 ${status} <> 'DELETED' AND ${document_order_fulfilling_provider.name} = 'THR ACCESS CENTER' THEN 1
+            WHEN ${clinical_order_type} = 'PRIMARY CARE REFERRAL' THEN 1
             ELSE 0
           END ;;
   }
