@@ -1,6 +1,22 @@
 view: athena_claim {
-  sql_table_name: athena.claim ;;
-  drill_fields: [original_claim_id]
+  # sql_table_name: athena.claim ;;
+  # drill_fields: [original_claim_id]
+  derived_table: {
+    sql:
+    SELECT
+    c1.*
+    FROM athena.claim c1
+    INNER JOIN (
+        SELECT
+            claim_appointment_id,
+            MAX(claim_id) AS claim_id
+            FROM athena.claim
+            WHERE claim_appointment_id IS NOT NULL
+            GROUP BY 1) AS c2
+        ON c1.claim_id = c2.claim_id;;
+  sql_trigger_value: SELECT MAX(claim_id) FROM athena.claim ;;
+  indexes: ["claim_appointment_id", "claim_id"]
+  }
   view_label: "Athena Claims"
 
   dimension: id {

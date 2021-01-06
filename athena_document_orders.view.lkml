@@ -647,12 +647,21 @@ view: athena_document_orders {
     sql: ${TABLE}."status" ;;
   }
 
+  # measure: thr_pcp_referral  {
+  #   type: max
+  #   description: "A boolean indicating the patient has received a PCP referral to THR"
+  #   sql: CASE
+  #           WHEN ${clinical_order_type} = 'PRIMARY CARE REFERRAL' AND
+  #               ${status} <> 'DELETED' AND ${document_order_fulfilling_provider.name} = 'THR ACCESS CENTER' THEN 1
+  #           ELSE 0
+  #         END ;;
+  # }
+
   measure: thr_pcp_referral  {
     type: max
     description: "A boolean indicating the patient has received a PCP referral to THR"
     sql: CASE
-            WHEN ${clinical_order_type} = 'PRIMARY CARE REFERRAL' AND
-                 ${status} <> 'DELETED' AND ${document_order_fulfilling_provider.name} = 'THR ACCESS CENTER' THEN 1
+            WHEN ${clinical_order_type} = 'PRIMARY CARE REFERRAL' THEN 1
             ELSE 0
           END ;;
   }
@@ -771,6 +780,14 @@ view: athena_document_orders {
   dimension: result_closed_within_18hours {
     type: yesno
     sql: ${result_rcvd_to_closed} <= 18 ;;
+  }
+
+  dimension: result_rcvd_to_closed_tiers {
+    type: tier
+    description: "Result received-to-closed Hrs: <=6, 6-12, 12-18, 18-24, 24-48, 48-72, 72+"
+    tiers: [6, 12, 18, 24, 48, 72]
+    style: relational
+    sql: ${result_rcvd_to_closed} ;;
   }
 
   measure: average_result_rcvd_to_closed {
@@ -913,7 +930,7 @@ view: athena_document_orders {
   measure: aggregated_order_descriptions {
     label: "Description Of Items Ordered"
     type: string
-    group_label: "Descriptions"
+    group_label: "Description"
     sql: string_agg(DISTINCT ${clinical_order_type}, ' | ') ;;
   }
 
