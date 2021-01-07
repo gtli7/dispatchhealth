@@ -95,7 +95,8 @@ view: accepted_agg {
   }
 
   measure: sum_care_request_created {
-    label: "Care Requests Created"
+    label: "Contacts w/ Intent"
+    description: "Care Requests Created"
 
     type: sum_distinct
     sql: ${care_request_created_count} ;;
@@ -119,12 +120,22 @@ view: accepted_agg {
     sql: ${sum_complete}+${sum_lwbs_accepted} ;;
   }
   measure: captured_sum {
-    label: "Capture (Accepted, Scheduled Acute, .7*Booked)"
+    label: "Captured Care Requests"
+    description: "Capture (Accepted, Scheduled Acute, .7*Booked)"
     type: number
     value_format: "#,##0"
     sql:
       ${sum_lwbs_accepted}+${sum_lwbs_scheduled}+${sum_booked_resolved}::float*.7+${sum_complete};;
   }
+
+  measure: assigned_rate {
+    description: "Sum Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled)/Contacts w/Intent"
+    label: "Percent Captured"
+    type: number
+    value_format: "0%"
+    sql: case when ${sum_care_request_created} >0 then ${sum_accepted}::float/${sum_care_request_created}::float else 0 end ;;
+  }
+
   measure: percent_loss_after_capture {
     label: "Percent Accepted"
     type: number
