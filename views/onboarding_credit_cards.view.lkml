@@ -100,7 +100,24 @@ view: onboarding_credit_cards {
 
   measure: count_visits_with_credit_cards {
     type: count_distinct
-    description: "Count of distinct care requests where a credit card was captured"
+    description: "Count of distinct care requests where a credit card was captured onboarding"
     sql: ${onboarding_care_request_credit_cards.care_request_id} ;;
+  }
+
+  measure: count_visits_with_credit_cards_complete {
+    type: count_distinct
+    description: "Count of complete care requests where a credit card was captured onboarding"
+    sql: ${onboarding_care_request_credit_cards.care_request_id} ;;
+    sql_distinct_key: ${onboarding_care_request_credit_cards.care_request_id};;
+    filters: {
+      field: care_request_flat.complete
+      value: "yes"
+    }
+  }
+
+  measure: percent_credit_card_captured_complete {
+    type: number
+    description: "Percent of complete care requests where a credit card was captured onboarding"
+    sql: case when ${care_request_flat.complete_count}>0 then ${count_visits_with_credit_cards_complete}::float/${care_request_flat.complete_count}::float else 0 end;;
   }
 }
