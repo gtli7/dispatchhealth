@@ -137,10 +137,10 @@ view: accepted_agg {
   }
 
   measure: percent_loss_after_capture {
-    label: "Percent Accepted"
+    label: "Percent Capacity Constrainted"
     type: number
     value_format: "0%"
-    sql: case when ${captured_sum} >0 then ${accepted_care_requests}::float/${captured_sum}::float else 0 end;;
+    sql: (1-case when ${captured_sum} >0 then ${accepted_care_requests}::float/${captured_sum}::float else 0 end);;
   }
   measure: lwbs_rate {
     label: "Percent LWBS"
