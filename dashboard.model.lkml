@@ -4096,6 +4096,10 @@ explore: shift_teams
     sql_on: ${notes_aggregated.care_request_id}=${care_request_flat.care_request_id} ;;
   }
 
+  join: dates_rolling {
+    type: left_outer
+    sql_on: ${shift_teams.start_date} = ${dates_rolling.day_date} ;;
+  }
 
 }
 
