@@ -96,6 +96,7 @@ include: "uhc_hotspot.view.lkml"
 include: "hartford_zips.view.lkml"
 include: "uhc_member_data.view.lkml"
 include: "tuscon_data.view.lkml"
+include: "views/springfield_data.view.lkml"
 
 explore: visit_facts {
 
@@ -594,3 +595,4 @@ explore: tampa_wellmed_optum {}
 explore: hartford_zips {}
 explore: uhc_member_data {}
 explore: tuscon_data {}
+explore: springfield_data {}
