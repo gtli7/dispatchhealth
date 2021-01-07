@@ -2184,6 +2184,9 @@ join: ga_pageviews_clone {
   join: high_overflow_days {
     sql_on: ${shift_teams.start_date}=${high_overflow_days.start_date} and ${markets.name_adj}=${high_overflow_days.name_adj} ;;
   }
+  join: dates_rolling {
+    sql_on: ${care_requests.created_date} = ${dates_rolling.day_date} ;;
+  }
 
 }
 
