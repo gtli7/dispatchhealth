@@ -105,6 +105,27 @@ view: athena_medication_details {
     sql: ${TABLE}."hic3_description" ;;
   }
 
+  dimension: antibiotic_medication {
+    type: yesno
+    group_label: "Descriptions"
+    sql: ${hic3_description} IN
+          ('AMINOGLYCOSIDE ANTIBIOTICS',
+      'ANTIBIOTICS, MISCELLANEOUS, OTHER',
+      'ANTITUBERCULAR ANTIBIOTICS',
+      'CEPHALOSPORIN ANTIBIOTICS - 1ST GENERATION',
+      'CEPHALOSPORIN ANTIBIOTICS - 2ND GENERATION',
+      'CEPHALOSPORIN ANTIBIOTICS - 3RD GENERATION',
+      'CEPHALOSPORIN ANTIBIOTICS - 4TH GENERATION',
+      'LINCOSAMIDE ANTIBIOTICS',
+      'MACROLIDE ANTIBIOTICS',
+      'OXAZOLIDINONE ANTIBIOTICS',
+      'PENICILLIN ANTIBIOTICS',
+      'QUINOLONE ANTIBIOTICS',
+      'RIFAMYCINS AND RELATED DERIVATIVE ANTIBIOTICS',
+      'TETRACYCLINE ANTIBIOTICS',
+      'VANCOMYCIN ANTIBIOTICS AND DERIVATIVES');;
+  }
+
   dimension: hic4_ingredient_base {
     type: string
     hidden: yes
