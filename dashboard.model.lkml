@@ -61,6 +61,7 @@ include: "corhio.view.lkml"
 include: "er_admits_prior_visit.view.lkml"
 include: "eligible_patients.view.lkml"
 include: "eligible_patients_full_table.view.lkml"
+include: "eligibility_files.view.lkml"
 include: "shift_planning_shifts_clone.view.lkml"
 include: "channel_items.view.lkml"
 include: "channel_attribution.view.lkml"
@@ -4820,6 +4821,10 @@ explore: eligible_patients_full_table {
   join: channel_items {
     relationship: one_to_many
     sql_on:  ${channel_items.id} = ${eligible_patients_full_table.channel_item_id};;
+  }
+  join: eligibility_files {
+    relationship: one_to_many
+    sql_on: ${eligibility_files.id} = ${eligible_patients_full_table.eligibility_file_id} ;;
   }
 
 

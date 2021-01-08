@@ -9,6 +9,11 @@ view: eligible_patients_full_table {
     sql: ${TABLE}.id ;;
   }
 
+  dimension: eligibility_file_id {
+    type: number
+    sql:  ${TABLE}.eligibility_file_id ;;
+  }
+
   dimension: distinct_patient {
     type: string
     sql: UPPER(concat(replace(${last_name}, '''', '')::text, to_char(${dob_date}, 'MM/DD/YYYY'), ${gender})) ;;
@@ -71,6 +76,20 @@ view: eligible_patients_full_table {
       year
     ]
     sql: ${TABLE}."deleted_at" ;;
+  }
+
+  dimension_group: updated {
+    type: time
+    timeframes: [
+      raw,
+      time,
+      date,
+      week,
+      month,
+      quarter,
+      year
+    ]
+    sql: ${TABLE}."updated_at" ;;
   }
 
   dimension: first_name {
