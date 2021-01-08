@@ -60,6 +60,7 @@ include: "collective_medical_first_emergency_inpatient_admit_date_post_visit.vie
 include: "corhio.view.lkml"
 include: "er_admits_prior_visit.view.lkml"
 include: "eligible_patients.view.lkml"
+include: "eligible_patients_full_table.view.lkml"
 include: "shift_planning_shifts_clone.view.lkml"
 include: "channel_items.view.lkml"
 include: "channel_attribution.view.lkml"
@@ -4815,3 +4816,12 @@ explore:  on_call_tracking
     }
   }
 explore: most_recent_intraday {}
+
+explore: eligible_patients_full_table {
+  join: channel_items {
+    relationship: one_to_many
+    sql_on:  ${channel_items.id} = ${eligible_patients_full_table.channel_item_id};;
+  }
+
+
+}
