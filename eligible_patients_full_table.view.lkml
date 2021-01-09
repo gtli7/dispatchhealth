@@ -157,6 +157,66 @@ view: eligible_patients_full_table {
     sql: ${TABLE}.zipcode ;;
   }
 
+  dimension: missing_or_invalid_dob {
+    type: yesno
+    sql: ${dob_raw} IS NULL OR (substring(${dob_date}::VARCHAR,1,4) > extract(YEAR from now())::VARCHAR OR substring(${dob_date}::VARCHAR,1,4) < '1900') ;;
+  }
+
+  dimension: ins_member_id {
+    type: string
+    sql: ${TABLE}.ins_member_id ;;
+  }
+
+  dimension: ssn {
+    type: string
+    sql: ${TABLE}.ssn ;;
+  }
+
+  measure: count_missing_dob_or_invalid {
+    type: count_distinct
+    sql: ${id} ;;
+    filters: {
+      field: missing_or_invalid_dob
+      value: "yes"
+    }
+  }
+
+  measure: count_missing_last_name {
+    type: count_distinct
+    sql: ${id} ;;
+    filters: {
+      field: last_name
+      value: "NULL"
+    }
+  }
+
+  measure: count_missing_first_name {
+    type: count_distinct
+    sql: ${id} ;;
+    filters: {
+      field: first_name
+      value: "NULL"
+    }
+  }
+
+  measure: count_missing_ssn {
+    type: count_distinct
+    sql: ${id} ;;
+    filters: {
+      field: ssn
+      value: "NULL"
+    }
+  }
+
+  measure: count_ins_member_id {
+    type: count_distinct
+    sql: ${id} ;;
+    filters: {
+      field: ins_member_id
+      value: "NULL"
+    }
+  }
+
   measure: count {
     type: count
     drill_fields: [id, first_name, last_name]
