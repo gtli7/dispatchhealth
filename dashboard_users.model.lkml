@@ -3,6 +3,7 @@ connection: "dashboard"
 include: "care_request_flat.view.lkml"
 include: "care_requests_user.view.lkml"
 include: "most_recent_intraday.view.lkml"
+include: "markets.view.lkml"
 # include all views in this project
 # include: "my_dashboard.dashboard.lookml"   # include a LookML dashboard called my_dashboard
 
@@ -18,4 +19,8 @@ explore: care_requests_user {
 
 }
 
-explore: most_recent_intraday {}
+explore: most_recent_intraday {
+  join: markets {
+    sql_on: ${markets.name} =${most_recent_intraday.market}  ;;
+  }
+}
