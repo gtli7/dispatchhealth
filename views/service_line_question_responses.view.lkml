@@ -68,9 +68,20 @@ dimension: ethnicity {
   sql: (((${TABLE}.responses #>> '{}')::jsonb ->> 1)::json ->> 'response')::boolean IS TRUE;;
 }
 
+  dimension: ethnicity_question_asked {
+    type: yesno
+    description: "Do you identify as Hispanic or Latino?"
+    sql: (((${TABLE}.responses #>> '{}')::jsonb ->> 1)::json ->> 'response') IS NOT NULL;;
+  }
+
   dimension: race_raw {
     type: string
     sql: UPPER(TRIM((((${TABLE}.responses #>> '{}')::jsonb ->> 2)::json ->> 'response')::varchar)) ;;
+  }
+
+  dimension: race_question_asked {
+    type: yesno
+    sql: UPPER(TRIM((((${TABLE}.responses #>> '{}')::jsonb ->> 2)::json ->> 'response')::varchar)) IS NOT NULL ;;
   }
 
   dimension: race {
