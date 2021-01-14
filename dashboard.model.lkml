@@ -338,6 +338,7 @@ include: "zizzl_shift_hours.view.lkml"
 include: "views/shift_admin_hours.view.lkml"
 include: "dates_rolling.view.lkml"
 include: "clia_licensure_dh.view.lkml"
+include: "care_requests_post_visit.view.lkml"
 
 include: "SEM_cost_per_complete_derived.view.lkml"
 
@@ -1425,6 +1426,12 @@ join: athena_procedurecode {
     # AND ${transaction_facts_clone.voided_date} IS NULL ;;
   }
 
+  join: care_requests_post_visit {
+    relationship: one_to_many
+    sql_on: ${care_requests_post_visit.anchor_care_request_id} = ${care_requests.id};;
+  }
+
+
   join: care_request_toc_predictions {
     relationship: one_to_one
     sql_on: ${care_request_toc_predictions.care_request_id} = ${care_requests.id} ;;
@@ -2336,7 +2343,7 @@ explore: care_request_3day_bb {
     sql_on: ${care_requests.id} = ${care_request_3day_bb.care_request_id} ;;
   }
 
-  join: users{
+join: users{
     relationship: one_to_many
     sql_on: ${users.id} = ${care_request_3day_bb.commentor_id};;
   }
