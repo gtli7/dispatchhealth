@@ -97,7 +97,7 @@ SELECT
     type: string
     group_label: "Partner Specific Descriptions"
     sql:  CASE WHEN  lower(${channel_name}) LIKE '%bon secours%' OR
-          ${population_health_channel_name} = 'bon secours mssp' THEN 'Bon Secours'
+          lower(${population_health_channel_name}) = 'bon secours mssp' THEN 'Bon Secours'
 
           WHEN substring(lower(${channel_name}),1,3) = 'ou ' OR
           lower(${channel_name}) LIKE '%stephenson cancer center%' THEN 'OUMI & OU Physicians'
@@ -106,7 +106,7 @@ SELECT
           lower(${referral_provider}) LIKE '%vcuhs%' THEN 'VCU Health'
 
           WHEN lower(${channel_name}) LIKE '%renown%' OR
-          ${population_health_channel_name} = 'bon secours mssp' THEN 'Renown Medical Group'
+          lower(${population_health_channel_name}) = '%renown%' THEN 'Renown Medical Group'
 
 
           WHEN (lower(${channel_name}) = 'healthcare provider' AND lower(${provider_network}) = 'bon secours medical group') THEN 'Bon Secours'
