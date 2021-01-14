@@ -2427,13 +2427,20 @@ explore: productivity_data_clone {
 }
 
 explore: channel_items {
-  join: care_requests {
-    sql_on:  ${channel_items.id} =${care_requests.channel_item_id} ;;
-  }
 
+
+  join: channels {
+    relationship: many_to_one
+    sql_on:  ${channels.id} = ${channel_items.channel_id};;
+  }
   join: markets {
     relationship: many_to_one
-    sql_on: ${care_requests.market_id} = ${markets.id} ;;
+    sql_on: ${channels.market_id} = ${markets.id} ;;
+  }
+
+
+  join: care_requests {
+    sql_on:  ${channel_items.id} =${care_requests.channel_item_id} ;;
   }
 
   join: care_request_flat {
@@ -2441,10 +2448,6 @@ explore: channel_items {
     sql_on: ${care_request_flat.care_request_id} = ${care_requests.id} ;;
   }
 
-  join: channels {
-    relationship: many_to_one
-    sql_on:  ${channels.id} = ${channel_items.channel_id};;
-  }
 
   join: channel_item_emr_providers {
     relationship: many_to_one
