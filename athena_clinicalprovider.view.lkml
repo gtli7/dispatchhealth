@@ -189,6 +189,29 @@ view: athena_clinicalprovider {
     END;;
   }
 
+  dimension: network_provider_flag
+  { hidden: no
+    description: "A flag indicating that the provider belongs to the selected provider network"
+    type: yesno
+    sql: {% condition provider_network.provider_network_select %}
+      ${provider_network.name} {% endcondition %} ;;
+  }
+
+  measure: count_provider {
+    type: count_distinct
+    description: "Count of distinct provider roster NPI's"
+    sql: ${provider_roster.npi} ;;
+    filters:
+
+    { field: network_provider_flag value: "yes" }
+  }
+
+  measure: network_provider_boolean {
+    description: "A flag indicating the provider is in the network roster - Use only with the Athena document fulfilling provider view"
+    type: yesno
+    sql: ${count_provider} > 0 ;;
+  }
+
   dimension: provider_role {
     type: string
     sql: ${athena_clinicalletter.role} ;;

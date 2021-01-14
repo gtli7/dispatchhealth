@@ -712,7 +712,7 @@ explore: care_requests {
 
   join: provider_roster {
     relationship: one_to_one
-    sql_on: ${athenadwh_letter_recipient_provider.npi} = ${provider_roster.npi}::varchar ;;
+    sql_on: ${athena_letter_recipient_provider.npi} = ${provider_roster.npi}::varchar ;;
   }
 
   join: provider_network {
