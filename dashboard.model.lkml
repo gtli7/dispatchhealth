@@ -969,6 +969,13 @@ join: athena_document_orders {
   sql_on: ${athena_clinicalencounter.clinical_encounter_id} = ${athena_document_orders.clinical_encounter_id} ;;
 }
 
+  join: athena_lab_imaging_orders {
+    from: athena_document_orders
+    relationship: one_to_many
+    sql_on: ${athena_clinicalencounter.clinical_encounter_id} = ${athena_lab_imaging_orders.clinical_encounter_id}
+      AND ${athena_lab_imaging_orders.clinical_order_type_group} IN ('LAB','IMAGING');;
+  }
+
 join: athena_document_order_provider {
   from: athena_provider
   view_label: "Athena Document Ordering Provider"
