@@ -230,6 +230,13 @@ view: athena_diagnosis_codes {
     group_label: "Diagnosis Codes"
   }
 
+  measure: diagnosis_codes_parent_concatenated {
+    description: "Concatenated ICD-10 Diagnosis Codes"
+    type: string
+    sql: array_to_string(array_agg(DISTINCT ${parent_diagnosis_code}), ' | ') ;;
+    group_label: "Diagnosis Codes"
+  }
+
   measure: disease_states_concatenated {
     label: "Concatenated Disease State(s)"
     type: string

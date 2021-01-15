@@ -189,6 +189,29 @@ view: athena_document_orders {
         'URINALYSIS COMPLETE') ;;
   }
 
+  measure: third_party_lab_imaging {
+    type: max
+    description: "A flag indicating that third party labs or imaging were ordered"
+    sql: CASE
+          WHEN ${document_class} = 'ORDER' AND ${document_order_fulfilling_provider.provider_category} = 'Performed by Third Party' THEN 1
+          ELSE 0
+        END ;;
+  }
+
+  dimension: pending_order_description {
+    type: string
+    hidden: yes
+    sql: CASE WHEN ${document_class} = 'ORDER' AND ${status} LIKE 'SUBMIT%' AND ${clinical_order_type} NOT LIKE '%REFERRAL%' THEN ${clinical_order_type}
+      ELSE NULL END  ;;
+  }
+
+  measure: pending_order_descriptions {
+    type: string
+    group_label: "Description"
+    description: "The descriptions of all pending lab/imaging order"
+    sql: array_to_string(array_agg(DISTINCT ${pending_order_description}), ' | ')  ;;
+  }
+
   measure: aggregated_orders {
     type: string
     description: "Aggregation of all document orders"

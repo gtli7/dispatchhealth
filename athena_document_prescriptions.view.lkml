@@ -346,6 +346,11 @@ view: athena_document_prescriptions {
     sql: ${TABLE}."patient_note" ;;
   }
 
+  dimension: prescriptions_flag {
+    type: yesno
+    sql: ${document_id} IS NOT NULL ;;
+  }
+
   dimension: priority {
     type: string
     sql: ${TABLE}."priority" ;;

@@ -446,7 +446,7 @@ LEFT JOIN (
 
     dimension: safety_feeling {
       type: string
-      hidden: yes
+      hidden: no
       description: "Social Support: Do you feel safe?"
       sql: ${TABLE}.safety_feeling ;;
     }
@@ -535,7 +535,7 @@ LEFT JOIN (
 
     dimension: cost_concerns {
       type: string
-      hidden: yes
+      hidden: no
       sql: ${TABLE}.cost_concerns ;;
       description: "In the past year, have you been unable to get any of the following when it was really needed?"
     }

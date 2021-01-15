@@ -23,39 +23,43 @@ SELECT
 SELECT
     cr.id AS care_request_id,
     COALESCE(
-    CASE WHEN cr.request_type = 9
-        OR trim(lower(gcs.queuename)) = 'dtc pilot' THEN 'DH Express/DTC Pilot' ELSE NULL END,
+    CASE WHEN cr.request_type = 9 THEN 'DH Express' ELSE NULL END,
     CASE WHEN ep.patient_id IS NOT NULL
         OR pn.provider_network IS NOT NULL THEN 'Pop Health/Provider Network' ELSE NULL END,
     CASE WHEN cr.place_of_service LIKE '%Facility%' THEN 'Senior Living Facility' ELSE NULL END,
-    CASE WHEN gcs.queuename IS NOT NULL THEN 'SEM Phone Number' ELSE NULL END,
+    CASE WHEN lower(gcs.queuename) = 'dtc pilot' THEN 'SEM Phone Number' ELSE NULL END,
+    CASE WHEN gcs.queuename in('Partner Direct', 'ATL Optum Care', 'LAS RCC', 'Humana Partner Direct', 'BOI Regence', 'POR Regence', 'SEA Regence', 'SPO Regence' ) THEN 'Partner Phone Number' ELSE NULL END,
+
     CASE WHEN ci.name IS NOT NULL THEN 'CARE Team Channel' ELSE NULL END
     ) AS primary_channel,
     CASE
-        WHEN cr.request_type = 9 OR trim(lower(gcs.queuename)) = 'dtc pilot'
+        WHEN cr.request_type = 9
         THEN COALESCE(
             CASE WHEN ep.patient_id IS NOT NULL
                 OR pn.provider_network IS NOT NULL THEN 'Pop Health/Provider Network' ELSE NULL END,
             CASE WHEN cr.place_of_service LIKE '%Facility%' THEN 'Senior Living Facility' ELSE NULL END,
-            CASE WHEN gcs.queuename IS NOT NULL THEN 'SEM Phone Number' ELSE NULL END,
+            CASE WHEN gcs.queuename = 'DTC Pilot' THEN 'SEM Phone Number' ELSE NULL END,
+            CASE WHEN gcs.queuename in('Partner Direct', 'ATL Optum Care', 'LAS RCC', 'Humana Partner Direct', 'BOI Regence', 'POR Regence', 'SEA Regence', 'SPO Regence' ) THEN 'Partner Phone Number' ELSE NULL END,
             CASE WHEN ci.name IS NOT NULL THEN 'CARE Team Channel' ELSE NULL END
             )
         WHEN ep.patient_id IS NOT NULL OR pn.provider_network IS NOT NULL
         THEN COALESCE(
             CASE WHEN cr.place_of_service LIKE '%Facility%' THEN 'Senior Living Facility' ELSE NULL END,
-            CASE WHEN gcs.queuename IS NOT NULL THEN 'SEM Phone Number' ELSE NULL END,
+            CASE WHEN gcs.queuename = 'DTC Pilot' THEN 'SEM Phone Number' ELSE NULL END,
+            CASE WHEN gcs.queuename in('Partner Direct', 'ATL Optum Care', 'LAS RCC', 'Humana Partner Direct', 'BOI Regence', 'POR Regence', 'SEA Regence', 'SPO Regence' ) THEN 'Partner Phone Number' ELSE NULL END,
             CASE WHEN ci.name IS NOT NULL THEN 'CARE Team Channel' ELSE NULL END
             )
         WHEN cr.place_of_service LIKE '%Facility%'
         THEN COALESCE(
-            CASE WHEN gcs.queuename IS NOT NULL THEN 'SEM Phone Number' ELSE NULL END,
+            CASE WHEN gcs.queuename = 'DTC Pilot' THEN 'SEM Phone Number' ELSE NULL END,
+            CASE WHEN gcs.queuename in('Partner Direct', 'ATL Optum Care', 'LAS RCC', 'Humana Partner Direct', 'BOI Regence', 'POR Regence', 'SEA Regence', 'SPO Regence' ) THEN 'Partner Phone Number' ELSE NULL END,
             CASE WHEN ci.name IS NOT NULL THEN 'CARE Team Channel' ELSE NULL END
             )
         WHEN gcs.queuename IS NOT NULL THEN 'CARE Team Channel'
         ELSE NULL
     END AS secondary_channel,
     CASE
-        WHEN cr.request_type = 9 OR trim(lower(gcs.queuename)) = 'dtc pilot'
+        WHEN cr.request_type = 9
         THEN
             CASE
                 WHEN ep.patient_id IS NOT NULL OR pn.provider_network IS NOT NULL
@@ -114,22 +118,35 @@ SELECT
     sql: ${TABLE}.care_request_id ;;
   }
 
-  dimension: primary_channel {
+  dimension: primary_channel_source {
     type: string
-    description: "The primary channel attributed to the patient"
+    description: "The primary channel source to the patient"
     sql: ${TABLE}.primary_channel ;;
   }
 
-  dimension: secondary_channel {
+  dimension: secondary_channel_source {
     type: string
-    description: "The secondary channel attributed to the patient"
+    description: "The secondary channel source to the patient"
     sql: ${TABLE}.secondary_channel ;;
   }
 
-  dimension: tertiary_channel {
+  dimension: tertiary_channel_source {
     type: string
-    description: "The tertiary channel attributed to the patient"
+    description: "The tertiary channel source to the patient"
     sql: ${TABLE}.tertiary_channel ;;
+  }
+
+  dimension: primary_channel_attribution {
+    type: string
+    sql: case when ${primary_channel_source} in('DH Express', 'Senior Living Facility') then 'Community'
+              when ${primary_channel_source}  in('Pop Health/Provider Network', 'Partner Phone Number') then 'Strategic'
+              when ${primary_channel_source} in('SEM Phone Number') then 'Direct to Consumer'
+              when ${channel_items.high_level_category_new} in('Strategic', 'Provider Group') then 'Strategic'
+              when ${channel_items.high_level_category_new} in('Family or Friends','Direct to Consumer')  then 'Direct to Consumer'
+              when ${channel_items.high_level_category_new} in('Home Health', 'Senior Care','Provider (Generic)')  then 'Community'
+              else 'None Attributed' end
+
+              ;;
   }
 
 }
