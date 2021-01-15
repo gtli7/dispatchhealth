@@ -115,6 +115,48 @@ SELECT
     drill_fields: [users.first_name, users.last_name, shift_teams.start_date, position, cars.name, actual_clinical_hours]
   }
 
+  measure: sum_app_clinical_hours_no_advanced_mc {
+    type: sum_distinct
+    value_format: "0.00"
+    sql_distinct_key: ${primary_key} ;;
+    label: "APP Paid Hrs (no advanced, multicare)"
+    sql: ${actual_clinical_hours} ;;
+    filters: [position: "advanced practice provider",
+      actual_clinical_hours: ">0.24",
+      cars.test_car: "no",
+      cars.advanced_care_car: "no",
+      shift_types.name: "-multicare",
+      cars.name: "-NULL"]
+  }
+
+  measure: sum_dhmt_clinical_hours_no_advanced_mc {
+    type: sum_distinct
+    value_format: "0.00"
+    sql_distinct_key: ${primary_key} ;;
+    label: "DHMT Paid Hrs (no advanced, multicare)"
+    sql: ${actual_clinical_hours} ;;
+    filters: [position: "emt",
+      actual_clinical_hours: ">0.24",
+      cars.test_car: "no",
+      cars.advanced_care_car: "no",
+      shift_types.name: "-multicare",
+      cars.name: "-NULL"]
+  }
+
+  measure: pct_app_clinical_hours_paid {
+    type: number
+    sql: ${sum_app_clinical_hours_no_advanced_mc} / nullif(${shift_teams.sum_app_hours_no_advanced_mc}, 0) ;;
+    value_format: "0.00%"
+    label: "% APP Paid / Actual"
+  }
+
+  measure: pct_dhmt_clinical_hours_paid {
+    type: number
+    sql: ${sum_dhmt_clinical_hours_no_advanced_mc} / nullif(${shift_teams.sum_dhmt_hours_no_advanced_mc}, 0) ;;
+    value_format: "0.00%"
+    label: "% DHMT Paid / Actual"
+  }
+
 
 
   }

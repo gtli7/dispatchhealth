@@ -4807,11 +4807,44 @@ explore:  on_call_tracking
       type: inner
       sql_on: ${target_staffing.market_id} = ${markets.id_adj_dual} ;;
     }
+    join: market_start_date {
+      type: inner
+      sql_on: ${markets.id_adj_dual} = ${market_start_date.market_id} and
+      ${dates_rolling.day_date} >= ${market_start_date.market_start_date};;
+    }
     join: shift_admin_hours {
       sql_on: ${markets.id} = ${shift_admin_hours.market_id} and
       ${target_staffing.dow} = ${shift_admin_hours.shift_day_day_of_week} and
       ${target_staffing.month_month} = ${shift_admin_hours.shift_day_month} and
       ${dates_rolling.day_date} = ${shift_admin_hours.shift_day_date};;
     }
+    join: timezones {
+      sql_on: ${markets.sa_time_zone} = ${timezones.rails_tz} ;;
+    }
+    join: shift_teams {
+      sql_on: ${markets.id} = ${shift_teams.market_id} and
+      ${dates_rolling.day_date} = ${shift_teams.start_date};;
+    }
+    join: cars {
+      sql_on: ${shift_teams.car_id} = ${cars.id} ;;
+    }
+    join: shift_types {
+      sql_on: ${shift_teams.shift_type_id} = ${shift_types.id} ;;
+    }
+    join: shift_team_members {
+      sql_on: ${shift_teams.id} = ${shift_team_members.shift_team_id} ;;
+    }
+    join: users {
+      sql_on: ${shift_team_members.user_id} = ${users.id} ;;
+    }
+    join: provider_profiles {
+      sql_on: ${users.id} = ${provider_profiles.user_id} and
+      ${provider_profiles.position} is not null;;
+    }
+    join: zizzl_shift_hours {
+      sql_on: ${shift_team_members.shift_team_id} = ${zizzl_shift_hours.shift_team_id} and
+      ${shift_team_members.user_id} = ${zizzl_shift_hours.user_id};;
+    }
   }
+
 explore: most_recent_intraday {}
