@@ -38,17 +38,77 @@ sql_trigger_value: SELECT COUNT(*) FROM care_requests ;;
 indexes: ["patient_id", "anchor_care_request_id", "anchor_service_line_id", "anchor_on_scene_time", "post_anchor_care_request_id", "post_anchor_service_line_id", "post_anchor_on_scene_time"]
   }
 
+  dimension: concat_anchor_post_care_request_id {
+    primary_key: yes
+    description: "Concatenated base care request id and future care request id for a given patient"
+    type: string
+    sql:  ${anchor_care_request_id} || '-' || ${post_anchor_care_request_id} ;;
+  }
+
   dimension: patient_id {
     description: "DH Patient Id"
     type: number
     sql:  ${TABLE}.patient_id ;;
   }
 
-
   dimension: anchor_care_request_id {
-    description: "Care Request Id"
+    description: "Base Care Request Id of which future visits will be counted for a given patient"
     type: number
     sql:  ${TABLE}.anchor_care_request_id ;;
   }
+
+  dimension: anchor_service_line_id {
+    description: "Base visit service Line Id of which future visits will be counted for a given patient"
+    type: string
+    sql:  ${TABLE}.anchor_service_line_id ;;
+  }
+
+  dimension: anchor_on_scene_time {
+    description: "Base visit on-scene time of which future visits will be counted for a given patient"
+    type: date_time
+    sql:  ${TABLE}.anchor_on_scene_time ;;
+  }
+
+  dimension: post_anchor_care_request_id {
+    description: "Future Care Request Id (occurring after base visit) for a given patient"
+    type: number
+    sql:  ${TABLE}.post_anchor_care_request_id ;;
+  }
+
+  dimension: post_anchor_service_line_id {
+    description: "Future visit Service Line Id (occurring after base visit) for a given patient"
+    type: string
+    sql:  ${TABLE}.post_anchor_service_line_id ;;
+  }
+
+  dimension: post_anchor_on_scene_time {
+    description: "Future visit on-scene time (occurring after base visit) for a given patient"
+    type: date_time
+    sql:  ${TABLE}.post_anchor_on_scene_time ;;
+  }
+
+  dimension: seconds_from_anchor_visit {
+    description: "Future visit seconds from base visit time (occurring after base visit) for a given patient"
+    type: number
+    sql:  ${TABLE}.seconds_from_anchor_visit ;;
+  }
+
+  dimension: visits_within_30_days_of_base_visit {
+    description: "Identifies future visits that occur wihtin 30 days after the base visit "
+    type: yesno
+    sql: ${seconds_from_anchor_visit} / 3600 <= 720 ;;
+  }
+
+  measure:  count_visits_within_30_days_of_base_visit {
+    description: "Count the number of future visits that occur within 30 days afterthe base visit"
+    type: count_distinct
+    sql: ${concat_anchor_post_care_request_id} ;;
+    filters: {
+      field: visits_within_30_days_of_base_visit
+      value: "yes"
+    }
+
+    }
+
 
  }
