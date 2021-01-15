@@ -52,19 +52,19 @@ indexes: ["patient_id", "anchor_care_request_id", "anchor_service_line_id", "anc
   }
 
   dimension: anchor_care_request_id {
-    description: "Base Care Request Id of which future visits will be counted for a given patient"
+    description: "Base Care Request Id for which future visits will be counted for a given patient"
     type: number
     sql:  ${TABLE}.anchor_care_request_id ;;
   }
 
   dimension: anchor_service_line_id {
-    description: "Base visit service Line Id of which future visits will be counted for a given patient"
+    description: "Base visit service Line Id for which future visits will be counted for a given patient"
     type: string
     sql:  ${TABLE}.anchor_service_line_id ;;
   }
 
   dimension: anchor_on_scene_time {
-    description: "Base visit on-scene time of which future visits will be counted for a given patient"
+    description: "Base visit on-scene time for which future visits will be counted for a given patient"
     type: date_time
     sql:  ${TABLE}.anchor_on_scene_time ;;
   }
@@ -88,7 +88,7 @@ indexes: ["patient_id", "anchor_care_request_id", "anchor_service_line_id", "anc
   }
 
   dimension: seconds_from_anchor_visit {
-    description: "Future visit seconds from base visit time (occurring after base visit) for a given patient"
+    description: "Future visit time in seconds from base visit time (occurring after base visit) for a given patient"
     type: number
     sql:  ${TABLE}.seconds_from_anchor_visit ;;
   }
