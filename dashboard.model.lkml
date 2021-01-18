@@ -72,6 +72,7 @@ include: "mailchimp_lists.view.lkml"
 include: "callers.view.lkml"
 include: "care_request_statuses.view.lkml"
 include: "views/zizzl_detailed_shift_hours.view.lkml"
+include: "views/zizzl_employee_roster_details.view.lkml"
 include: "humanity_dashboard_provider_id_crosswalk.view.lkml"
 include: "athenadwh_clinical_results_clone.view.lkml"
 include: "athenadwh_clinical_providers_fax_clone.view.lkml"
@@ -969,6 +970,13 @@ join: athena_document_orders {
   relationship: one_to_many
   sql_on: ${athena_clinicalencounter.clinical_encounter_id} = ${athena_document_orders.clinical_encounter_id} ;;
 }
+
+  join: athena_lab_imaging_orders {
+    from: athena_document_orders
+    relationship: one_to_many
+    sql_on: ${athena_clinicalencounter.clinical_encounter_id} = ${athena_lab_imaging_orders.clinical_encounter_id}
+      AND ${athena_lab_imaging_orders.clinical_order_type_group} IN ('LAB','IMAGING');;
+  }
 
 join: athena_document_order_provider {
   from: athena_provider
@@ -4206,6 +4214,7 @@ explore: mbo_metrics {
 explore: mbo_metrics_quarterly_goals {}
 
 explore: zizzl_employee_roster {}
+explore: zizzl_employee_roster_details {}
 
 explore: sf_accounts {
   sql_always_where: ( ${markets.name} != 'West Metro Fire Rescue' or  ${markets.name} is null and lower(${sf_accounts.account_name}) not like '%test%');;

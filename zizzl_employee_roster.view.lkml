@@ -1,5 +1,5 @@
 view: zizzl_employee_roster {
-  sql_table_name: looker_scratch.zizzl_employee_roster ;;
+  sql_table_name: zizzl.employee_summary ;;
   drill_fields: [id]
 
   dimension: id {
@@ -34,6 +34,16 @@ view: zizzl_employee_roster {
   measure: sum_involuntary_terminations {
     type: sum
     sql: ${count_involuntary_terminations} ;;
+  }
+
+  dimension: count_other_terminations {
+    type: number
+    sql: ${TABLE}."count_other_terminations" ;;
+  }
+
+  measure: sum_other_terminations {
+    type: sum
+    sql: ${count_other_terminations} ;;
   }
 
   dimension: count_voluntary_terminations {
