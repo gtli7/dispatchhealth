@@ -345,7 +345,7 @@ include: "SEM_cost_per_complete_derived.view.lkml"
 include: "on_call_tracking.view.lkml"
 include: "intraday_monitoring.view.lkml"
 include: "geneysis_custom_conversation_attributes_agg.view.lkml"
-
+include: "views/category_budget_visits.view.lkml"
 
 include: "*.dashboard.lookml"  # include all dashboards in this project
 
@@ -2011,6 +2011,14 @@ join: resolved_reasons_summary {
   join: channel_attribution {
     relationship: one_to_one
     sql_on: ${care_requests.id} = ${channel_attribution.care_request_id} ;;
+  }
+
+  join: category_budget_visits {
+    sql_on: ${category_budget_visits.category} = ${channel_attribution.primary_channel_attribution}
+                and
+            ${category_budget_visits.month_month} = ${care_request_flat.on_scene_month}
+                and
+            ${markets.id} = ${category_budget_visits.market_id};;
   }
 
   join: partner_population {
