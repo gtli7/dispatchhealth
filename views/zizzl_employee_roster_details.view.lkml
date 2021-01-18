@@ -1,15 +1,17 @@
-view: employee_roster {
+view: zizzl_employee_roster_details {
   sql_table_name: zizzl.employee_roster ;;
   drill_fields: [id]
 
   dimension: id {
     primary_key: yes
+    hidden: yes
     type: number
     sql: ${TABLE}."id" ;;
   }
 
   dimension_group: __file {
     type: time
+    hidden: yes
     timeframes: [
       raw,
       date,
@@ -25,11 +27,13 @@ view: employee_roster {
 
   dimension: __from_file {
     type: string
+    hidden: yes
     sql: ${TABLE}."__from_file" ;;
   }
 
   dimension_group: __turnover_file {
     type: time
+    hidden: yes
     timeframes: [
       raw,
       date,
@@ -45,11 +49,13 @@ view: employee_roster {
 
   dimension: __turnover_from_file {
     type: string
+    hidden: yes
     sql: ${TABLE}."__turnover_from_file" ;;
   }
 
   dimension_group: __turnover_processed {
     type: time
+    hidden: yes
     timeframes: [
       raw,
       time,
@@ -64,6 +70,7 @@ view: employee_roster {
 
   dimension_group: created {
     type: time
+    hidden: yes
     timeframes: [
       raw,
       time,
@@ -76,33 +83,49 @@ view: employee_roster {
     sql: ${TABLE}."created_at" ;;
   }
 
-  dimension: date_hired {
-    type: string
+  dimension_group: date_hired {
+    type: time
+    timeframes: [
+      date,
+      week,
+      month,
+      quarter,
+      year
+    ]
     sql: ${TABLE}."date_hired" ;;
   }
 
-  dimension: date_re_hired {
-    type: string
+  dimension_group: date_re_hired {
+    type: time
+    timeframes: [
+      date,
+      week,
+      month,
+      quarter,
+      year
+    ]
     sql: ${TABLE}."date_re_hired" ;;
   }
 
-  dimension: default_jobs_full_path {
+  dimension: employee_position {
     type: string
     sql: ${TABLE}."default_jobs_full_path" ;;
   }
 
-  dimension: default_location_full_path {
+  dimension: employee_location {
     type: string
     sql: ${TABLE}."default_location_full_path" ;;
   }
 
   dimension: default_provider_type_full_path {
     type: string
+    hidden: yes
     sql: ${TABLE}."default_provider_type_full_path" ;;
   }
 
   dimension: employee_ein {
     type: string
+    hidden: yes
     sql: ${TABLE}."employee_ein" ;;
   }
 
@@ -113,6 +136,7 @@ view: employee_roster {
 
   dimension: employee_status {
     type: string
+    hidden: no
     sql: ${TABLE}."employee_status" ;;
   }
 
@@ -126,18 +150,27 @@ view: employee_roster {
     sql: ${TABLE}."last_name" ;;
   }
 
-  dimension: termination_date {
-    type: string
+  dimension_group: termination_date {
+    type: time
+    timeframes: [
+      date,
+      week,
+      month,
+      quarter,
+      year
+    ]
     sql: ${TABLE}."termination_date" ;;
   }
 
   dimension: termination_reason {
     type: string
+    hidden: yes
     sql: ${TABLE}."termination_reason" ;;
   }
 
   dimension_group: updated {
     type: time
+    hidden: yes
     timeframes: [
       raw,
       time,

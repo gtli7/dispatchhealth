@@ -72,6 +72,7 @@ include: "mailchimp_lists.view.lkml"
 include: "callers.view.lkml"
 include: "care_request_statuses.view.lkml"
 include: "views/zizzl_detailed_shift_hours.view.lkml"
+include: "views/zizzl_employee_roster_details.view.lkml"
 include: "humanity_dashboard_provider_id_crosswalk.view.lkml"
 include: "athenadwh_clinical_results_clone.view.lkml"
 include: "athenadwh_clinical_providers_fax_clone.view.lkml"
@@ -4213,6 +4214,7 @@ explore: mbo_metrics {
 explore: mbo_metrics_quarterly_goals {}
 
 explore: zizzl_employee_roster {}
+explore: zizzl_employee_roster_details {}
 
 explore: sf_accounts {
   sql_always_where: ( ${markets.name} != 'West Metro Fire Rescue' or  ${markets.name} is null and lower(${sf_accounts.account_name}) not like '%test%');;
