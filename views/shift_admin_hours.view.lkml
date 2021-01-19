@@ -209,14 +209,14 @@ view: shift_admin_hours {
 
   dimension: app_shift {
     type: yesno
-    sql: lower(${shift_short_name}) like '%np/pa%' or lower(${shift_short_name}) like '%app%' ;;
-    #sql: ${shift_short_name} ~* 'np\/pa.*(?:\d{2,}|smfr|wmfr).*' ;;
+    sql: ${shift_short_name} ~* '(?:np\/pa|app).*(?:\d{2,}|smfr|wmfr).*' ;;
+    #sql: lower(${shift_short_name}) like '%np/pa%' or lower(${shift_short_name}) like '%app%' ;;
   }
 
   dimension: dhmt_shift {
     type: yesno
-    sql: lower(${shift_short_name}) like '%dhmt%' ;;
-    #sql: ${shift_short_name} ~* 'dhmt.*(?:\d{2,}|smfr|wmfr).*' and ${shift_name} !~* '.*pierce county.*' ;;
+    sql: ${shift_short_name} ~* 'dhmt.*(?:\d{2,}|smfr|wmfr).*' ;;
+    #sql: lower(${shift_short_name}) like '%dhmt%' ;;
   }
 
   dimension: tele_shift {
@@ -260,7 +260,13 @@ view: shift_admin_hours {
     type: sum_distinct
     sql: ${total_shift_hours} ;;
     sql_distinct_key: ${primary_key} ;;
-    filters: [app_shift: "yes", pierce_county_shift: "no", tele_shift: "no"]
+    filters: [
+      app_shift: "yes",
+      pierce_county_shift: "no",
+      on_call_shift: "no",
+      count_as_shift: "1",
+      tele_shift: "no"
+      ]
     label: "APP Scheduled Hrs"
   }
 
@@ -268,7 +274,12 @@ view: shift_admin_hours {
     type: sum_distinct
     sql: ${total_shift_hours} ;;
     sql_distinct_key: ${primary_key} ;;
-    filters: [dhmt_shift: "yes", pierce_county_shift: "no"]
+    filters: [
+      dhmt_shift: "yes",
+      pierce_county_shift: "no",
+      on_call_shift: "no",
+      count_as_shift: "1"
+      ]
     label: "DHMT Scheduled Hrs"
   }
 
