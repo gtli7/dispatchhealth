@@ -350,7 +350,7 @@ WITH ort AS (
 
   dimension: reasonable_call_to_accepted_time {
     type: yesno
-    sql: ${time_call_to_accepted_minutes} < 120 ;;
+    sql: ${time_call_to_accepted_minutes} < 120 and ${time_call_to_accepted_minutes}> 5  ;;
   }
 
   dimension: assigned_time_seconds {
