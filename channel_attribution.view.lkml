@@ -141,9 +141,9 @@ SELECT
     sql: case when ${primary_channel_source} in('DH Express', 'Senior Living Facility') then 'Community'
               when ${primary_channel_source}  in('Pop Health/Provider Network', 'Partner Phone Number') then 'Strategic'
               when ${primary_channel_source} in('SEM Phone Number') then 'Direct to Consumer'
+              when ${channel_items.high_level_category_new} in('Home Health', 'Senior Care','Provider (Generic)')  then 'Community'
               when ${channel_items.high_level_category_new} in('Strategic', 'Provider Group') then 'Strategic'
               when ${channel_items.high_level_category_new} in('Family or Friends','Direct to Consumer')  then 'Direct to Consumer'
-              when ${channel_items.high_level_category_new} in('Home Health', 'Senior Care','Provider (Generic)')  then 'Community'
               else 'None Attributed' end
 
               ;;

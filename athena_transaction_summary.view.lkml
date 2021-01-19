@@ -232,7 +232,7 @@ ELSE NULL END ;;
 
   dimension: work_rvu {
     type: number
-    hidden: yes
+    hidden: no
     group_label: "RVUs"
     value_format: "0.00"
     sql: ${TABLE}.work_rvu ;;
@@ -256,21 +256,21 @@ ELSE NULL END ;;
     filters: [is_valid_claim: "yes"]
   }
 
-  # dimension: practice_expense_rvu {
-  #   type: number
-  #   hidden: yes
-  #   group_label: "RVUs"
-  #   value_format: "0.00"
-  #   sql: ${TABLE}.practice_expense_rvu ;;
-  # }
+  dimension: practice_expense_rvu {
+    type: number
+    hidden: no
+    group_label: "RVUs"
+    value_format: "0.00"
+    sql: ${TABLE}.practice_expense_rvu ;;
+  }
 
-  # dimension: malpractice_rvu {
-  #   type: number
-  #   hidden: yes
-  #   group_label: "RVUs"
-  #   value_format: "0.00"
-  #   sql: ${TABLE}.malpractice_rvu ;;
-  # }
+  dimension: malpractice_rvu {
+    type: number
+    hidden: no
+    group_label: "RVUs"
+    value_format: "0.00"
+    sql: ${TABLE}.malpractice_rvu ;;
+  }
 
   # measure: sum_practice_expense_rvu {
   #   type: sum_distinct
@@ -370,32 +370,32 @@ ELSE NULL END ;;
     filters: [is_valid_claim: "yes"]
   }
 
-  # dimension: work_expected_allowable {
-  #   type: number
-  #   description: "Expected allowable associated with provider work (excludes transactions where work RVU is zero)"
-  #   value_format: "0.00"
-  #   group_label: "Expected Allowable"
-  #   sql: ${TABLE}.work_expected_allowable ;;
-  # }
+  dimension: work_expected_allowable {
+    type: number
+    description: "Expected allowable associated with provider work (excludes transactions where work RVU is zero)"
+    value_format: "0.00"
+    group_label: "Expected Allowable"
+    sql: ${TABLE}.work_expected_allowable ;;
+  }
 
-  # measure: total_work_expected_allowable {
-  #   type: sum_distinct
-  #   description: "Expected allowable associated with provider work (excludes transactions where work RVU is zero)"
-  #   group_label: "Expected Allowable"
-  #   value_format: "$#,##0.00"
-  #   sql_distinct_key: ${claim_id} ;;
-  #   sql: ${work_expected_allowable} ;;
-  # }
+  measure: total_work_expected_allowable {
+    type: sum_distinct
+    description: "Expected allowable associated with provider work (excludes transactions where work RVU is zero)"
+    group_label: "Expected Allowable"
+    value_format: "$#,##0.00"
+    sql_distinct_key: ${claim_id} ;;
+    sql: ${work_expected_allowable} ;;
+  }
 
-  # measure: average_work_expected_allowable {
-  #   type: average_distinct
-  #   description: "Expected allowable associated with provider work (excludes transactions where work RVU is zero)"
-  #   group_label: "Expected Allowable"
-  #   value_format: "$#,##0.00"
-  #   sql_distinct_key: ${claim_id} ;;
-  #   sql: ${work_expected_allowable} ;;
-  #   filters: [is_valid_claim: "yes"]
-  # }
+  measure: average_work_expected_allowable {
+    type: average_distinct
+    description: "Expected allowable associated with provider work (excludes transactions where work RVU is zero)"
+    group_label: "Expected Allowable"
+    value_format: "$#,##0.00"
+    sql_distinct_key: ${claim_id} ;;
+    sql: ${work_expected_allowable} ;;
+    filters: [is_valid_claim: "yes"]
+  }
 
   dimension: patient_responsibility {
     type: number
