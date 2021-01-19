@@ -209,14 +209,19 @@ view: shift_admin_hours {
 
   dimension: app_shift {
     type: yesno
-    sql: ${shift_short_name} ~* 'np\/pa.*(?:\d{2,}|smfr|wmfr).*' and ${shift_name} !~* '.*pierce county.*' ;;
-    #sql: lower(${shift_short_name}) like '%np/pa%' ;;
+    sql: lower(${shift_short_name}) like '%np/pa%' or lower(${shift_short_name}) like '%app%' ;;
+    #sql: ${shift_short_name} ~* 'np\/pa.*(?:\d{2,}|smfr|wmfr).*' ;;
   }
 
   dimension: dhmt_shift {
     type: yesno
-    sql: ${shift_short_name} ~* 'dhmt.*(?:\d{2,}|smfr|wmfr).*' and ${shift_name} !~* '.*pierce county.*' ;;
-    #sql: lower(${shift_short_name}) like '%dhmt%' ;;
+    sql: lower(${shift_short_name}) like '%dhmt%' ;;
+    #sql: ${shift_short_name} ~* 'dhmt.*(?:\d{2,}|smfr|wmfr).*' and ${shift_name} !~* '.*pierce county.*' ;;
+  }
+
+  dimension: tele_shift {
+    type: yesno
+    sql: lower(${shift_short_name}) like '%tele%'  ;;
   }
 
   dimension: on_call_shift {
@@ -227,6 +232,11 @@ view: shift_admin_hours {
   dimension: mfr_shift {
     type: yesno
     sql: ${facility_short_name} IN ('SMFR', 'WMFR') ;;
+  }
+
+  dimension: pierce_county_shift {
+    type: yesno
+    sql: lower(${shift_name}) like '%pierce county%'  ;;
   }
 
   dimension: total_shift_hours {
@@ -250,7 +260,7 @@ view: shift_admin_hours {
     type: sum_distinct
     sql: ${total_shift_hours} ;;
     sql_distinct_key: ${primary_key} ;;
-    filters: [app_shift: "yes"]
+    filters: [app_shift: "yes", pierce_county_shift: "no", tele_shift: "no"]
     label: "APP Scheduled Hrs"
   }
 
@@ -258,7 +268,7 @@ view: shift_admin_hours {
     type: sum_distinct
     sql: ${total_shift_hours} ;;
     sql_distinct_key: ${primary_key} ;;
-    filters: [dhmt_shift: "yes"]
+    filters: [dhmt_shift: "yes", pierce_county_shift: "no"]
     label: "DHMT Scheduled Hrs"
   }
 
