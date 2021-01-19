@@ -251,7 +251,7 @@ view: shift_admin_hours {
     sql: ${total_shift_hours} ;;
     sql_distinct_key: ${primary_key} ;;
     filters: [app_shift: "yes"]
-    label: "APP Scheduled Hours"
+    label: "APP Scheduled Hrs"
   }
 
   measure: sum_shift_dhmt_hours {
@@ -259,7 +259,7 @@ view: shift_admin_hours {
     sql: ${total_shift_hours} ;;
     sql_distinct_key: ${primary_key} ;;
     filters: [dhmt_shift: "yes"]
-    label: "DHMT Scheduled Hours"
+    label: "DHMT Scheduled Hrs"
   }
 
   measure: pct_target_app_hours {
@@ -267,7 +267,7 @@ view: shift_admin_hours {
     sql: ${shift_admin_hours.sum_shift_app_hours} / nullif(${target_staffing.sum_app_hours}, 0) ;;
     value_format: "0.00%"
     order_by_field: pct_target_app_hours_order
-    label: "% of APP Target Hours Scheduled"
+    label: "% APP Scheduled / Target"
   }
 
   measure: pct_target_app_hours_order {
@@ -280,12 +280,26 @@ view: shift_admin_hours {
     sql: ${shift_admin_hours.sum_shift_dhmt_hours} / nullif(${target_staffing.sum_dhmt_hours}, 0) ;;
     value_format: "0.00%"
     order_by_field: pct_target_dhmt_hours_order
-    label: "% of DHMT Target Hours Scheduled"
+    label: "% DHMT Scheduled / Target"
   }
 
   measure: pct_target_dhmt_hours_order {
     type: number
     sql: case when ${shift_admin_hours.pct_target_dhmt_hours} is null then -1 else ${shift_admin_hours.pct_target_dhmt_hours} end ;;
+  }
+
+  measure: pct_scheduled_app_hours {
+    type: number
+    sql: ${shift_teams.sum_app_hours_no_advanced_mc} / nullif(${shift_admin_hours.sum_shift_app_hours}, 0) ;;
+    value_format: "0.00%"
+    label: "% APP Actual / Scheduled"
+  }
+
+  measure: pct_scheduled_dhmt_hours {
+    type: number
+    sql: ${shift_teams.sum_dhmt_hours_no_advanced_mc} / nullif(${shift_admin_hours.sum_shift_dhmt_hours}, 0) ;;
+    value_format: "0.00%"
+    label: "% DHMT Actual / Scheduled"
   }
 
   measure: count {

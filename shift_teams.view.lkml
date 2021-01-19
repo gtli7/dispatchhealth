@@ -93,6 +93,11 @@ view: shift_teams {
     else ${goals_by_day_of_week.weekday_goal} end;;
   }
 
+  dimension: market_id {
+    type: number
+    sql: ${TABLE}.market_id ;;
+  }
+
   measure: sum_goal_volume {
     type: sum_distinct
     sql: ${goal_volume} ;;
@@ -164,6 +169,52 @@ view: shift_teams {
   #   filters: [cars.test_car: "no"]
   # }
 
+  dimension: st_app_hours {
+    type: number
+    sql: case when ${provider_profiles.position} = 'advanced practice provider'
+          and ${shift_hours} >= 0
+        then ${shift_hours}
+        else 0 end;;
+  }
+
+  dimension: st_dhmt_hours {
+    type: number
+    sql: case when ${provider_profiles.position} = 'emt'
+          and ${shift_hours} >= 0
+        then ${shift_hours}
+        else 0 end;;
+  }
+
+  measure: sum_app_hours_no_advanced_mc {
+    type: sum_distinct
+    value_format: "0.00"
+    sql: ${st_app_hours} ;;
+    sql_distinct_key: ${id} ;;
+    label: "APP Actual Hrs (no advanced, multicare)"
+    filters: [st_app_hours: ">0.24",
+              cars.test_car: "no",
+              cars.advanced_care_car: "no",
+              cars.name: "-NULL",
+              shift_types.name: "-multicare",
+              provider_profiles.position: "advanced practice provider"]
+
+  }
+
+  measure: sum_dhmt_hours_no_advanced_mc {
+    type: sum_distinct
+    value_format: "0.00"
+    sql: ${st_dhmt_hours} ;;
+    sql_distinct_key: ${id} ;;
+    label: "DHMT Actual Hrs (no advanced, multicare)"
+    filters: [st_dhmt_hours: ">0.24",
+      cars.test_car: "no",
+      cars.advanced_care_car: "no",
+      cars.name: "-NULL",
+      shift_types.name: "-multicare",
+      provider_profiles.position: "emt"]
+
+  }
+
   measure: sum_shift_hours {
     type: sum_distinct
     value_format: "0.00"
@@ -175,6 +226,19 @@ view: shift_teams {
       field: cars.test_car
       value: "no"
     }
+  }
+
+  measure: sum_shift_hours_no_advanced_mc {
+    type: sum_distinct
+    value_format: "0.00"
+    label: "Shift Hours (no advanced, multicare)"
+    sql_distinct_key: ${id} ;;
+    sql: ${shift_hours} ;;
+    filters:  [shift_hours: ">0.24",
+      cars.test_car: "no",
+      cars.advanced_care_car: "no",
+      cars.name: "-NULL",
+      shift_types.name: "-multicare"]
   }
 
   # measure: sum_shift_hours_coalesce {

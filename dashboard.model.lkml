@@ -72,6 +72,7 @@ include: "mailchimp_lists.view.lkml"
 include: "callers.view.lkml"
 include: "care_request_statuses.view.lkml"
 include: "views/zizzl_detailed_shift_hours.view.lkml"
+include: "views/zizzl_employee_roster_details.view.lkml"
 include: "humanity_dashboard_provider_id_crosswalk.view.lkml"
 include: "athenadwh_clinical_results_clone.view.lkml"
 include: "athenadwh_clinical_providers_fax_clone.view.lkml"
@@ -969,6 +970,13 @@ join: athena_document_orders {
   relationship: one_to_many
   sql_on: ${athena_clinicalencounter.clinical_encounter_id} = ${athena_document_orders.clinical_encounter_id} ;;
 }
+
+  join: athena_lab_imaging_orders {
+    from: athena_document_orders
+    relationship: one_to_many
+    sql_on: ${athena_clinicalencounter.clinical_encounter_id} = ${athena_lab_imaging_orders.clinical_encounter_id}
+      AND ${athena_lab_imaging_orders.clinical_order_type_group} IN ('LAB','IMAGING');;
+  }
 
 join: athena_document_order_provider {
   from: athena_provider
@@ -4206,6 +4214,7 @@ explore: mbo_metrics {
 explore: mbo_metrics_quarterly_goals {}
 
 explore: zizzl_employee_roster {}
+explore: zizzl_employee_roster_details {}
 
 explore: sf_accounts {
   sql_always_where: ( ${markets.name} != 'West Metro Fire Rescue' or  ${markets.name} is null and lower(${sf_accounts.account_name}) not like '%test%');;
@@ -4827,13 +4836,46 @@ explore:  on_call_tracking
       type: inner
       sql_on: ${target_staffing.market_id} = ${markets.id_adj_dual} ;;
     }
+    join: market_start_date {
+      type: inner
+      sql_on: ${markets.id_adj_dual} = ${market_start_date.market_id} and
+      ${dates_rolling.day_date} >= ${market_start_date.market_start_date};;
+    }
     join: shift_admin_hours {
       sql_on: ${markets.id} = ${shift_admin_hours.market_id} and
       ${target_staffing.dow} = ${shift_admin_hours.shift_day_day_of_week} and
       ${target_staffing.month_month} = ${shift_admin_hours.shift_day_month} and
       ${dates_rolling.day_date} = ${shift_admin_hours.shift_day_date};;
     }
+    join: timezones {
+      sql_on: ${markets.sa_time_zone} = ${timezones.rails_tz} ;;
+    }
+    join: shift_teams {
+      sql_on: ${markets.id} = ${shift_teams.market_id} and
+      ${dates_rolling.day_date} = ${shift_teams.start_date};;
+    }
+    join: cars {
+      sql_on: ${shift_teams.car_id} = ${cars.id} ;;
+    }
+    join: shift_types {
+      sql_on: ${shift_teams.shift_type_id} = ${shift_types.id} ;;
+    }
+    join: shift_team_members {
+      sql_on: ${shift_teams.id} = ${shift_team_members.shift_team_id} ;;
+    }
+    join: users {
+      sql_on: ${shift_team_members.user_id} = ${users.id} ;;
+    }
+    join: provider_profiles {
+      sql_on: ${users.id} = ${provider_profiles.user_id} and
+      ${provider_profiles.position} is not null;;
+    }
+    join: zizzl_shift_hours {
+      sql_on: ${shift_team_members.shift_team_id} = ${zizzl_shift_hours.shift_team_id} and
+      ${shift_team_members.user_id} = ${zizzl_shift_hours.user_id};;
+    }
   }
+
 
 explore: eligible_patients_full_table {
   join: channel_items {

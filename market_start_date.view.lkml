@@ -73,4 +73,11 @@ view: market_start_date {
     value_format: "0"
     sql: floor(${market_age}/12) ;;
   }
+
+  dimension: launched {
+    type: yesno
+    sql: ${market_start_month} <= ${dates_rolling.day_month} ;;
+  }
+
+
 }
