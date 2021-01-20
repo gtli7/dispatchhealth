@@ -183,6 +183,14 @@ view: athena_document_results {
     value_format: "0.00"
   }
 
+  measure: median_hours_result_open {
+    type: median
+    group_label: "Time Cycle Management"
+    description: "Median hours between result created to today (use with filter status != 'CLOSED'"
+    sql: ${hours_result_rcvd_to_today} ;;
+    value_format: "0.00"
+  }
+
   dimension: result_rcvd_to_today_tiers {
     type: tier
     description: "Result received until today in hours tiers: <=6, 6-12, 12-18, 18-24, 24-48, 48-72, 72+"
