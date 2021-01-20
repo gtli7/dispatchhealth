@@ -535,21 +535,13 @@ view: athena_document_results {
   # ----- Sets of fields for drilling ------
   set: detail {
     fields: [
-      id,
-      provider_username,
-      interface_vendor_name,
-      out_of_network_ref_reason_name,
-      patient.first_name,
-      patient.last_name,
-      patient.new_patient_id,
-      patient.guarantor_first_name,
-      patient.guarantor_last_name,
-      patient.emergency_contact_name,
-      department.department_name,
-      department.billing_name,
-      department.gpci_location_name,
-      department.department_id,
-      document_orders.count
+      document_id,
+      created_date,
+      patients.ehr_id,
+      clinical_order_type,
+      clinical_order_type_group,
+      status,
+      assigned_to
     ]
   }
 }
