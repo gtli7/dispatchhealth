@@ -160,6 +160,37 @@ view: athena_document_results {
     sql: ${TABLE}."created_datetime" ;;
   }
 
+  dimension_group: result_rcvd_to_today {
+    type: duration
+    description: "Time period between document result received to today (9:00 AM)"
+    intervals: [hour, day, week, month, quarter, year]
+    sql_start:  ${athena_result_created.result_created_raw};;
+    sql_end: CURRENT_DATE + TIME '09:00:00';;
+  }
+
+  dimension: result_open {
+    type: yesno
+    description: "A flag indicating that the result is still open (!= CLOSED, DELETED, and not NULL)"
+    hidden: no
+    sql: ${status} NOT IN ('CLOSED','DELETED') AND ${status} IS NOT NULL ;;
+  }
+
+  measure: average_hours_result_open {
+    type: average
+    group_label: "Time Cycle Management"
+    description: "Average hours between result created to today (use with filter status != 'CLOSED'"
+    sql: ${hours_result_rcvd_to_today} ;;
+    value_format: "0.00"
+  }
+
+  dimension: result_rcvd_to_today_tiers {
+    type: tier
+    description: "Result received until today in hours tiers: <=6, 6-12, 12-18, 18-24, 24-48, 48-72, 72+"
+    tiers: [6, 12, 18, 24, 48, 72]
+    style: relational
+    sql: ${hours_result_rcvd_to_today} ;;
+  }
+
   dimension: deactivated_by {
     type: string
     group_label: "User Actions"
@@ -360,19 +391,19 @@ view: athena_document_results {
     sql: ${TABLE}."provider_username" ;;
   }
 
-  dimension_group: received {
-    type: time
-    timeframes: [
-      raw,
-      time,
-      date,
-      week,
-      month,
-      quarter,
-      year
-    ]
-    sql: ${TABLE}."received_datetime" ;;
-  }
+  # dimension_group: received {
+  #   type: time
+  #   timeframes: [
+  #     raw,
+  #     time,
+  #     date,
+  #     week,
+  #     month,
+  #     quarter,
+  #     year
+  #   ]
+  #   sql: ${TABLE}."received_datetime" ;;
+  # }
 
   dimension: result_notes {
     type: string
