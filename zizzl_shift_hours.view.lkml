@@ -93,6 +93,24 @@ SELECT
     drill_fields: [users.first_name, users.last_name, shift_teams.start_date, position, cars.name, actual_clinical_hours]
   }
 
+  measure: sum_clinical_hours_no_arm_advanced_only {
+    type: sum_distinct
+    value_format: "0.00"
+    group_label: "Hours Worked"
+    sql_distinct_key: ${primary_key} ;;
+    description: "Sum of shift clinical hours (no arm, advanced)"
+    sql: case when lower(${shift_types.name}) like '%tele%' and ${position} = 'emt' then ${actual_clinical_hours}
+              when lower(${shift_types.name}) not like '%tele%' and ${position} = 'advanced practice provider' then ${actual_clinical_hours}
+              else 0 end;;
+    filters: [
+      actual_clinical_hours: ">0.24",
+      cars.mfr_flex_car: "no",
+      cars.advanced_care_car: "no",
+      cars.test_car: "no"
+      ]
+    drill_fields: [users.first_name, users.last_name, shift_teams.start_date, position, cars.name, actual_clinical_hours]
+  }
+
   measure: sum_app_clinical_hours {
     type: sum_distinct
     value_format: "0.00"
