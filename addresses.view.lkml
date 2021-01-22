@@ -57,7 +57,7 @@ view: addresses {
   dimension: state {
     type: string
     group_label: "Description"
-    sql: ${TABLE}.state ;;
+    sql: UPPER(TRIM(${TABLE}.state)) ;;
   }
 
   dimension: street_address_1 {
