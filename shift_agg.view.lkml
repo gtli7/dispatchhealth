@@ -93,6 +93,10 @@ view: shift_agg {
     type: number
     sql: ${shift_end_last_cr_diff_adj}*-1 ;;
   }
+  dimension: dead_time_after_last_complete_greater_than_60{
+    type: yesno
+    sql: ${shift_end_last_cr_diff_positive} > 1 ;;
+  }
   dimension: first_accepted_decimal {
     description: "The first accepted time of day, represented as a decimal"
     value_format: "0.00"
@@ -316,6 +320,15 @@ view: shift_agg {
     sql: ${primary_key} ;;
     sql_distinct_key: ${primary_key} ;;
   }
+
+  measure: count_distinct_dead_time_after_last_complete_greater_than_60 {
+    type: count_distinct
+    value_format: "0"
+    sql: ${primary_key} ;;
+    sql_distinct_key: ${primary_key} ;;
+    filters: [dead_time_after_last_complete_greater_than_60: "yes"]
+  }
+
 
   measure: avg_on_scene_hours{
     label: "On-Scene Time Minutes (avg)"

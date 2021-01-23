@@ -136,6 +136,14 @@ view: accepted_agg {
     sql: case when ${sum_care_request_created} >0 then ${sum_accepted}::float/${sum_care_request_created}::float else 0 end ;;
   }
 
+  measure: conversion_rate {
+    description: "Complete/Contacts w/Intent"
+    label: "Percent Converted"
+    type: number
+    value_format: "0%"
+    sql: case when ${sum_care_request_created} >0 then ${sum_complete}::float/${sum_care_request_created}::float else 0 end ;;
+  }
+
   measure: percent_loss_after_capture {
     label: "Percent Capacity Constrainted"
     type: number

@@ -108,7 +108,7 @@ view: genesys_agg {
 
   measure: assigned_rate {
     description: "Sum Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled)/Answered Contacts Requesting Care, Deduped"
-    label: "Capture/Answered Contacts Requesting Care, Deduped"
+    label: "Percent Qualified"
    type: number
     value_format: "0%"
     sql: case when ${sum_inbound_demand} >0 then ${accepted_agg.sum_accepted}::float/${sum_inbound_demand}::float else 0 end ;;
@@ -255,7 +255,8 @@ view: genesys_agg {
   }
 
   measure: answer_rate_raw {
-    label: "Percent Answered Contacts Requesting Care, Deduped"
+    label: "Percent Answered (or Web/Mobile)"
+    description: "Percent Answered Contacts Requesting Care, Deduped"
     value_format: "0%"
     type: number
     sql: case when ${sum_count_distinct}>0 then (${sum_answered_calls}::float+${non_phone_cr.sum_care_request_count}::float)/(${sum_count_distinct}::float+${non_phone_cr.sum_care_request_count}::float) else 0 end;;
