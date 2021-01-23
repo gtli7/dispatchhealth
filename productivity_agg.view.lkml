@@ -10,6 +10,7 @@ view: productivity_agg {
     explore_source: shift_teams {
       column: start { field: shift_teams.start_date}
       column: sum_shift_hours_no_arm_advanced { field:  shift_teams.sum_shift_hours_no_arm_advanced_only}
+      column: sum_clinical_hours_no_arm_advanced { field: zizzl_shift_hours.sum_clinical_hours_no_arm_advanced_only }
       column: complete_count { field: care_request_flat.complete_count }
       column: complete_count_no_arm_advanced { field: care_request_flat.complete_count_no_arm_only }
       column: count_wmfr_billable { field: care_requests.count_wmfr_billable }
@@ -63,7 +64,13 @@ view: productivity_agg {
 
 
   dimension: sum_shift_hours_no_arm_advanced {
-    label: "Shift Teams Sum Shift Hours (no arm, advanced or tele)"
+    label: "Shift Teams Sum Shift Hours (no arm, advanced)"
+    value_format: "0.0"
+    type: number
+  }
+
+  dimension: sum_clinical_hours_no_arm_advanced {
+    label: "Zizzl Sum Shift Hours (no arm, advanced)"
     value_format: "0.0"
     type: number
   }
@@ -79,11 +86,19 @@ view: productivity_agg {
     sql: ${sum_shift_hours_no_arm_advanced} ;;
     sql_distinct_key: concat(${start_date}, ${name_adj}) ;;
   }
+
+  measure: total_clinical_hours_no_arm_advanced {
+    type: sum_distinct
+    value_format: "0"
+    sql: ${sum_clinical_hours_no_arm_advanced} ;;
+    sql_distinct_key: concat(${start_date}, ${name_adj}) ;;
+  }
+
   dimension: complete_count {
     type: number
   }
   dimension: complete_count_no_arm_advanced {
-    label: "Care Request Flat Complete Count (no arm, advanced or tele)"
+    label: "Care Request Flat Complete Count (no arm, advanced)"
     type: number
   }
   measure: total_complete_count_no_arm_advanced {
@@ -141,9 +156,18 @@ view: productivity_agg {
 
   measure: total_productivity {
     type: number
+    label: "Dashboard Productivity"
     value_format: "0.00"
     sql: case when ${total_shift_hours_no_arm_advanced}>0 then ${total_complete_count_no_arm_advanced}::float/${total_shift_hours_no_arm_advanced}::float else 0 end ;;
   }
+
+  measure: clinical_productivity {
+    type: number
+    label: "Zizzl Productivity"
+    value_format: "0.00"
+    sql: case when ${total_clinical_hours_no_arm_advanced}>0 then ${total_complete_count_no_arm_advanced}::float/${total_clinical_hours_no_arm_advanced}::float else 0 end ;;
+  }
+
   dimension: count_wmfr_billable {
     type: number
   }

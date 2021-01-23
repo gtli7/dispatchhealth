@@ -183,6 +183,14 @@ view: athena_document_results {
     value_format: "0.00"
   }
 
+  measure: median_hours_result_open {
+    type: median
+    group_label: "Time Cycle Management"
+    description: "Median hours between result created to today (use with filter status != 'CLOSED'"
+    sql: ${hours_result_rcvd_to_today} ;;
+    value_format: "0.00"
+  }
+
   dimension: result_rcvd_to_today_tiers {
     type: tier
     description: "Result received until today in hours tiers: <=6, 6-12, 12-18, 18-24, 24-48, 48-72, 72+"
@@ -535,21 +543,13 @@ view: athena_document_results {
   # ----- Sets of fields for drilling ------
   set: detail {
     fields: [
-      id,
-      provider_username,
-      interface_vendor_name,
-      out_of_network_ref_reason_name,
-      patient.first_name,
-      patient.last_name,
-      patient.new_patient_id,
-      patient.guarantor_first_name,
-      patient.guarantor_last_name,
-      patient.emergency_contact_name,
-      department.department_name,
-      department.billing_name,
-      department.gpci_location_name,
-      department.department_id,
-      document_orders.count
+      document_id,
+      created_date,
+      patients.ehr_id,
+      clinical_order_type,
+      clinical_order_type_group,
+      status,
+      assigned_to
     ]
   }
 }

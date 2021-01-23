@@ -287,7 +287,7 @@ view: shift_teams {
   measure: productivity {
     type: number
     value_format: "0.00"
-    sql: case when ${sum_shift_hours_no_arm_advanced}>0 then ${care_request_flat.complete_count_no_arm_advanced}/${sum_shift_hours_no_arm_advanced} else 0 end ;;
+    sql: case when ${sum_shift_hours_no_arm_advanced_only}>0 then ${care_request_flat.complete_count_no_arm_advanced}/${sum_shift_hours_no_arm_advanced_only} else 0 end ;;
     }
 
   dimension_group: updated {
