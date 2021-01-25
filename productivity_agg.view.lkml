@@ -33,6 +33,10 @@ view: productivity_agg {
         field: service_lines.name
         value: "-COVID-19 Facility Testing,-Advanced Care"
       }
+      filters: {
+        field: cars.name
+        value: "-%Screening%,-%Swab%,-%Test%"
+      }
 
     }
   }
