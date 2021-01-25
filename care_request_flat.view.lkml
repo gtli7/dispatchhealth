@@ -4836,7 +4836,7 @@ end  ;;
 
   dimension: contact_id_not_populated {
     type: yesno
-    sql: ${contact_id} IS NULL;;
+    sql: ${contact_id} IS NULL or trim(${contact_id})='';;
   }
 
   measure: contact_id_populated_count {
