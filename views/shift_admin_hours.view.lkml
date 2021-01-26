@@ -146,60 +146,14 @@ view: shift_admin_hours {
     sql: ${TABLE}."shift_start" ;;
   }
 
+  dimension: short_note {
+    type: string
+    sql: ${TABLE}."short_note" ;;
+  }
+
   dimension: user_id {
     type: number
     sql: ${TABLE}."user_id" ;;
-  }
-
-  dimension_group: work_day {
-    type: time
-    timeframes: [
-      raw,
-      date,
-      week,
-      month,
-      quarter,
-      year,
-      day_of_week
-    ]
-    convert_tz: no
-    datatype: date
-    sql: ${TABLE}."work_day" ;;
-  }
-
-  dimension_group: work_end {
-    type: time
-    timeframes: [
-      raw,
-      time,
-      date,
-      week,
-      month,
-      quarter,
-      year,
-      day_of_week
-    ]
-    sql: ${TABLE}."work_end" ;;
-  }
-
-  dimension: work_hours {
-    type: number
-    sql: ${TABLE}."work_hours" ;;
-  }
-
-  dimension_group: work_start {
-    type: time
-    timeframes: [
-      raw,
-      time,
-      date,
-      week,
-      month,
-      quarter,
-      year,
-      day_of_week
-    ]
-    sql: ${TABLE}."work_start" ;;
   }
 
   dimension: primary_key {
