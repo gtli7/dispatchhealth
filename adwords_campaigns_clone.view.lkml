@@ -78,6 +78,7 @@ view: adwords_campaigns_clone {
           when ${campaign_name_lower}  like '%-nsh%' then 191
           when ${campaign_name_lower}  like '%-knx%' then 192
           when ${campaign_name_lower}  like '%-mia%' then 193
+          when ${campaign_name_lower}  like '%-sat%' then 194
           else null end;;
   }
 
