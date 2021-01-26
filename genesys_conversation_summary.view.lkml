@@ -843,14 +843,21 @@ measure: percent_repeat_callers {
 
   dimension: onboard_delay {
     type: number
-    sql: EXTRACT(EPOCH FROM (${care_request_flat.accept_mountain_intial_raw} - ${conversationstarttime_raw}));;
+    sql: (EXTRACT(EPOCH FROM (${care_request_flat.accept_mountain_intial_raw} - ${conversationstarttime_raw}))-${firstacdwaitduration}/1000)/60;;
+  }
+
+  measure: median_onboard_delay {
+    type: median_distinct
+    value_format: "0.0"
+    sql_distinct_key: concat(${conversationid}, ${care_request_flat.care_request_id}) ;;
+    sql: ${onboard_delay} ;;
   }
 
   measure: average_onboard_delay {
     type: average_distinct
     value_format: "0.0"
     sql_distinct_key: concat(${conversationid}, ${care_request_flat.care_request_id}) ;;
-    sql: ${onboard_delay}/60 ;;
+    sql: ${onboard_delay} ;;
   }
 
   dimension: anthem_eligible {

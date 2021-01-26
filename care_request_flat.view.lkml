@@ -2093,6 +2093,27 @@ WITH ort AS (
     sql: ${TABLE}.on_scene_date AT TIME ZONE ${pg_tz} AT TIME ZONE 'US/Mountain' ;;
   }
 
+  dimension_group: requested_mountain {
+    type: time
+    description: "The mountain time that the care request team arrived on-scene"
+    convert_tz: no
+    timeframes: [
+      raw,
+      hour_of_day,
+      time_of_day,
+      date,
+      time,
+      week,
+      month,
+      month_num,
+      day_of_week,
+      day_of_week_index,
+      day_of_month,quarter,
+      hour
+    ]
+    sql: ${TABLE}.requested_date AT TIME ZONE ${pg_tz} AT TIME ZONE 'US/Mountain' ;;
+  }
+
   dimension_group: accept_mountain_intial {
     type: time
     description: "The mountain time that the care request team arrived on-scene"
@@ -2621,6 +2642,7 @@ WITH ort AS (
     ]
     sql: ${TABLE}.shift_end_time ;;
   }
+
 
   measure: max_shift_end_time{
     sql: max(${shift_end_raw}) ;;
