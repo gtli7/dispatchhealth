@@ -8,7 +8,7 @@ view: geneysis_custom_conversation_attributes_agg {
         value: "365 days ago for 365 days"
       }
     }
-    sql_trigger_value: SELECT count(*) FROM looker_scratch.geneysis_custom_conversation_attributes  where genesys_conversation_summary.conversationstarttime > current_date - interval '2 day';;
+    sql_trigger_value: SELECT count(*) FROM looker_scratch.geneysis_custom_conversation_attributes  where geneysis_custom_conversation_attributes.conversationstarttime > current_date - interval '2 day';;
     indexes: ["conversationstarttime"]
   }
   dimension_group: conversationstarttime {

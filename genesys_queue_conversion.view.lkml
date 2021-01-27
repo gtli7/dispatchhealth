@@ -3,7 +3,11 @@ view: genesys_queue_conversion {
 # If necessary, uncomment the line below to include explore_source.
 # include: "dashboard.model.lkml"
     derived_table: {
-      sql_trigger_value: SELECT count(*) FROM looker_scratch.genesys_conversation_summary  where genesys_conversation_summary.conversationstarttime > current_date - interval '2 day';;
+      sql_trigger_value: select sum(num) from
+      (SELECT count(*) as num FROM looker_scratch.genesys_conversation_summary  where genesys_conversation_summary.conversationstarttime > current_date - interval '2 day'
+      UNION ALL
+      SELECT MAX(care_request_id) as num FROM ${care_request_flat.SQL_TABLE_NAME} where created_date > current_date - interval '2 days')lq
+      ;;
       indexes: ["conversationstarttime", "queuename", "market_id"]
       explore_source: genesys_conversation_summary {
         column: conversationstarttime {field: genesys_conversation_summary.conversationstarttime_date}
