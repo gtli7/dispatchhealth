@@ -288,8 +288,9 @@ view: athena_document_letters {
   }
 
   dimension: clinical_letters_sent_all {
-    description: "Identifies clinical letters sent to any recipient"
-    hidden: yes
+    label: "Clinical Letter Sent"
+    description: "Identifies clinical letters sent to provider or specialist"
+    hidden: no
     type: yesno
     sql: (upper(${document_subclass}) != 'LETTER_PATIENTCORRESPONDENCE' OR ${document_subclass} IS NULL) and upper(${status}) != 'DELETED' ;;
   }
