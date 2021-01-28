@@ -95,8 +95,7 @@ view: accepted_agg {
   }
 
   measure: sum_care_request_created {
-    label: "Contacts w/ Intent"
-    description: "Care Requests Created"
+    label: "Care Requests Created"
 
     type: sum_distinct
     sql: ${care_request_created_count} ;;
@@ -110,6 +109,7 @@ view: accepted_agg {
   }
 
   measure: sum_lwbs_scheduled {
+    label: "Sum Scheduled Overflow Acute Resolved"
     type: sum_distinct
     sql: ${lwbs_scheduled} ;;
     sql_distinct_key: concat(${first_accepted_date}, ${market_id}) ;;
@@ -129,7 +129,7 @@ view: accepted_agg {
   }
 
   measure: assigned_rate {
-    description: "Sum Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled)/Contacts w/Intent"
+    description: "Sum Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled)/Care Requests Created"
     label: "Percent Captured"
     type: number
     value_format: "0%"
@@ -137,7 +137,7 @@ view: accepted_agg {
   }
 
   measure: conversion_rate {
-    description: "Complete/Contacts w/Intent"
+    description: "Complete/Care Requests Created"
     label: "Percent Converted"
     type: number
     value_format: "0%"
