@@ -193,6 +193,11 @@ view: shift_admin_hours {
     sql: lower(${shift_name}) like '%pierce county%'  ;;
   }
 
+  dimension: delta_shift {
+    type: yesno
+    sql: lower(${shift_name}) like '%delta%'  ;;
+  }
+
   dimension: total_shift_hours {
     type: number
     sql: ${TABLE}."shift_hours" * ${TABLE}."num_shifts" ;;
@@ -217,6 +222,7 @@ view: shift_admin_hours {
     filters: [
       app_shift: "yes",
       pierce_county_shift: "no",
+      delta_shift: "no",
       on_call_shift: "no",
       count_as_shift: "1",
       tele_shift: "no"
@@ -231,6 +237,7 @@ view: shift_admin_hours {
     filters: [
       dhmt_shift: "yes",
       pierce_county_shift: "no",
+      delta_shift: "no",
       on_call_shift: "no",
       count_as_shift: "1"
       ]
