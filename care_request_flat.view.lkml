@@ -2093,6 +2093,27 @@ WITH ort AS (
     sql: ${TABLE}.on_scene_date AT TIME ZONE ${pg_tz} AT TIME ZONE 'US/Mountain' ;;
   }
 
+  dimension_group: requested_mountain {
+    type: time
+    description: "The mountain time that the care request team arrived on-scene"
+    convert_tz: no
+    timeframes: [
+      raw,
+      hour_of_day,
+      time_of_day,
+      date,
+      time,
+      week,
+      month,
+      month_num,
+      day_of_week,
+      day_of_week_index,
+      day_of_month,quarter,
+      hour
+    ]
+    sql: ${TABLE}.requested_date AT TIME ZONE ${pg_tz} AT TIME ZONE 'US/Mountain' ;;
+  }
+
   dimension_group: accept_mountain_intial {
     type: time
     description: "The mountain time that the care request team arrived on-scene"
@@ -2621,6 +2642,7 @@ WITH ort AS (
     ]
     sql: ${TABLE}.shift_end_time ;;
   }
+
 
   measure: max_shift_end_time{
     sql: max(${shift_end_raw}) ;;
@@ -3236,7 +3258,33 @@ measure: avg_first_on_route_mins {
       field: resolved_no_answer_no_show
       value: "yes"
     }
+
   }
+
+
+  measure: no_answer_no_show_count_funnel {
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters: {
+      field: resolved_no_answer_no_show
+      value: "yes"
+    }
+    filters: {
+      field: lwbs_accepted
+      value: "no"
+    }
+    filters: {
+      field: lwbs_scheduled
+      value: "no"
+    }
+    filters: {
+      field: booked_resolved
+      value: "no"
+    }
+
+  }
+
+
 
   measure: no_show_count {
     type: count_distinct
@@ -3341,29 +3389,35 @@ measure: avg_first_on_route_mins {
 
   }
 
-  measure: resolved_other_count {
+  measure: clinical_service_not_offered_funnel{
     type: count_distinct
     sql: ${care_request_id} ;;
+    sql_distinct_key: ${care_request_id} ;;
     filters: {
-      field: care_requests.billable_est
+      field: clinical_service_not_offered
+      value: "yes"
+    }
+    filters: {
+      field: complete
       value: "no"
     }
     filters: {
-      field: lwbs
+      field: lwbs_accepted
+      value: "no"
+    }
+    filters: {
+      field: lwbs_scheduled
+      value: "no"
+    }
+    filters: {
+      field: booked_resolved
       value: "no"
     }
     filters: {
       field: escalated_on_phone
       value: "no"
     }
-    filters: {
-      field: resolved_911_divert
-      value: "no"
-    }
-    filters: {
-      field: booked_shaping_placeholder_resolved
-      value: "no"
-    }
+
     filters: {
       field: resolved_no_answer_no_show
       value: "no"
@@ -3378,10 +3432,225 @@ measure: avg_first_on_route_mins {
       field: not_resolved_or_complete
       value: "no"
     }
-    drill_fields: [
-      secondary_resolved_reason,
-      care_request_count
-    ]
+
+  }
+
+
+
+  measure: insurance_resolved_funnel{
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    sql_distinct_key: ${care_request_id} ;;
+    filters: {
+      field: insurance_resolved
+      value: "yes"
+    }
+
+    filters: {
+      field: complete
+      value: "no"
+    }
+    filters: {
+      field: lwbs_accepted
+      value: "no"
+    }
+    filters: {
+      field: lwbs_scheduled
+      value: "no"
+    }
+    filters: {
+      field: booked_resolved
+      value: "no"
+    }
+    filters: {
+      field: escalated_on_phone
+      value: "no"
+    }
+
+    filters: {
+      field: resolved_no_answer_no_show
+      value: "no"
+    }
+
+    filters: {
+      field: complete
+      value: "no"
+    }
+
+    filters: {
+      field: not_resolved_or_complete
+      value: "no"
+    }
+    filters: {
+      field: clinical_service_not_offered
+      value: "no"
+  }
+}
+  measure: poa_resolved_funnel{
+      type: count_distinct
+      sql: ${care_request_id} ;;
+      sql_distinct_key: ${care_request_id} ;;
+      filters: {
+        field: poa_resolved
+        value: "yes"
+      }
+    filters: {
+      field: complete
+      value: "no"
+    }
+    filters: {
+      field: lwbs_accepted
+      value: "no"
+    }
+    filters: {
+      field: lwbs_scheduled
+      value: "no"
+    }
+    filters: {
+      field: booked_resolved
+      value: "no"
+    }
+    filters: {
+      field: escalated_on_phone
+      value: "no"
+    }
+
+    filters: {
+      field: resolved_no_answer_no_show
+      value: "no"
+    }
+
+    filters: {
+      field: complete
+      value: "no"
+    }
+
+    filters: {
+      field: not_resolved_or_complete
+      value: "no"
+    }
+    filters: {
+      field: clinical_service_not_offered
+      value: "no"
+    }
+    filters: {
+      field: insurance_resolved
+      value: "no"
+    }
+  }
+
+    measure: zipcode_funnel{
+      label: "Zipcode Resolved Funnel"
+      type: count_distinct
+      sql: ${care_request_id} ;;
+      sql_distinct_key: ${care_request_id} ;;
+      filters: {
+        field: zipcode_resolved
+        value: "yes"
+      }
+      filters: {
+        field: complete
+        value: "no"
+      }
+      filters: {
+        field: lwbs_accepted
+        value: "no"
+      }
+      filters: {
+        field: lwbs_scheduled
+        value: "no"
+      }
+      filters: {
+        field: booked_resolved
+        value: "no"
+      }
+      filters: {
+        field: escalated_on_phone
+        value: "no"
+      }
+
+      filters: {
+        field: resolved_no_answer_no_show
+        value: "no"
+      }
+
+      filters: {
+        field: complete
+        value: "no"
+      }
+
+      filters: {
+        field: not_resolved_or_complete
+        value: "no"
+      }
+      filters: {
+        field: clinical_service_not_offered
+        value: "no"
+      }
+      filters: {
+        field: insurance_resolved
+        value: "no"
+      }
+      filters: {
+        field: poa_resolved
+        value: "no"
+      }
+    }
+
+  measure: resolved_other_count {
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters: {
+      field: complete
+      value: "no"
+    }
+    filters: {
+      field: lwbs_accepted
+      value: "no"
+    }
+    filters: {
+      field: lwbs_scheduled
+      value: "no"
+    }
+    filters: {
+      field: booked_resolved
+      value: "no"
+    }
+    filters: {
+      field: escalated_on_phone
+      value: "no"
+    }
+
+    filters: {
+      field: resolved_no_answer_no_show
+      value: "no"
+    }
+
+    filters: {
+      field: complete
+      value: "no"
+    }
+
+    filters: {
+      field: not_resolved_or_complete
+      value: "no"
+    }
+    filters: {
+      field: clinical_service_not_offered
+      value: "no"
+    }
+    filters: {
+      field: insurance_resolved
+      value: "no"
+    }
+    filters: {
+      field: poa_resolved
+      value: "no"
+    }
+    filters: {
+      field: zipcode_resolved
+      value: "no"
+    }
   }
 
   measure: resolved_other_wo_shaping_booked_placeholder_count {
@@ -3541,6 +3810,7 @@ measure: avg_first_on_route_mins {
   }
 
   measure: lwbs_scheduled_count {
+    label: "Resolved Acute Scheduled (Overflow)"
     type: count_distinct
     sql: ${care_request_id} ;;
     filters: {
@@ -3575,7 +3845,7 @@ measure: avg_first_on_route_mins {
 
   dimension: booked_resolved {
     type: yesno
-    sql:  lower(${archive_comment}) like '%book%' and not ${shaping_resolved} ;;
+    sql:  lower(${archive_comment}) like '%book%' and not ${shaping_resolved};;
   }
 
   dimension: placeholder_resolved {
@@ -3637,6 +3907,35 @@ measure: avg_first_on_route_mins {
     }
   }
 
+  measure: screened_escalated_phone_count_funnel {
+    description: "Care requests secondary screened and escalated over the phone"
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters: {
+      field: escalated_on_phone
+      value: "yes"
+    }
+    filters: {
+      field: secondary_screening
+      value: "yes"
+    }
+    filters: {
+      field: lwbs_accepted
+      value: "no"
+    }
+    filters: {
+      field: lwbs_scheduled
+      value: "no"
+    }
+    filters: {
+      field: booked_resolved
+      value: "no"
+    }
+  }
+
+
+
+
   measure: screened_escalated_ed_phone_count {
     description: "Care requests secondary screened and escalated over the phone ED"
     type: count_distinct
@@ -3677,7 +3976,36 @@ measure: avg_first_on_route_mins {
       field: secondary_screening
       value: "no"
     }
+
   }
+
+
+  measure: non_screened_escalated_phone_count_funnel {
+    description: "Care requests NOT secondary screened and escalated over the phone"
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters: {
+      field: escalated_on_phone
+      value: "yes"
+    }
+    filters: {
+      field: secondary_screening
+      value: "no"
+    }
+    filters: {
+      field: lwbs_accepted
+      value: "no"
+    }
+    filters: {
+      field: lwbs_scheduled
+      value: "no"
+    }
+    filters: {
+      field: booked_resolved
+      value: "no"
+    }
+  }
+
 
   measure: non_screened_escalated_phone_count_ed {
     description: "Care requests NOT secondary screened and escalated over the phone to the ED"
@@ -4214,7 +4542,7 @@ measure: avg_first_on_route_mins {
   }
 
   measure: accepted_or_scheduled_phone_count {
-    label: "Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled) Count"
+    label: "Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled) Phone Count"
     type: sum_distinct
     value_format: "0"
     sql: case when ${booked_resolved} then .7 else 1 end ;;
@@ -4836,7 +5164,7 @@ end  ;;
 
   dimension: contact_id_not_populated {
     type: yesno
-    sql: ${contact_id} IS NULL;;
+    sql: ${contact_id} IS NULL or trim(${contact_id})='';;
   }
 
   measure: contact_id_populated_count {

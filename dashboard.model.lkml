@@ -350,7 +350,7 @@ include: "geneysis_custom_conversation_attributes_agg.view.lkml"
 include: "views/category_budget_visits.view.lkml"
 
 include: "*.dashboard.lookml"  # include all dashboards in this project
-
+include: "granular_full_shift_agg.view.lkml"
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
   max_cache_age: "6 hours"
@@ -4922,3 +4922,5 @@ explore: eligible_patients_full_table {
 
 
 }
+
+explore: granular_full_shift_agg {}

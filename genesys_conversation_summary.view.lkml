@@ -9,7 +9,7 @@ view: genesys_conversation_summary {
   dimension: inbound_demand_minus_market {
     type: yesno
     sql:
-    ${mediatype}='voice' and trim(lower(${queuename})) not like '%outbound%' and trim(lower(${queuename})) not like '%after hours%' and trim(lower(${queuename})) not like '%optimizer%' and trim(lower(${queuename})) not in('mobile requests','ma', 'rcm / billing', 'backline', 'development', 'secondary screening', 'dispatchhealth help desk', 'dispatch health nurse line', 'zzavtextest', 'pay bill', 'testing', 'initial follow up', 'rn1', 'rn2', 'rn3', 'rn4', 'rn5', 'rn6', 'rn7', 'rn8', 'rn9', 'ivr fail safe', 'covid testing results', 'ebony testing', 'ma/nurse', 'dispatchhealth help desk vendor', 'do not use ma/nurse', 'sem vip', 'covid task force', 'covid pierce county mass testing', 'acute care covid results & care request', 'phx', 'mobile request callbacks', 'click to call', 'dialer results', 'cancels', 'care team escalations', 'rn10', 'advance care fax queue');;
+    ${mediatype}='voice' and trim(lower(${queuename})) not like '%outbound%' and trim(lower(${queuename})) not like '%after hours%' and trim(lower(${queuename})) not like '%optimizer%' and trim(lower(${queuename})) not in('mobile requests','ma', 'rcm / billing', 'backline', 'development', 'secondary screening', 'dispatchhealth help desk', 'dispatch health nurse line', 'zzavtextest', 'pay bill', 'testing', 'initial follow up', 'rn1', 'rn2', 'rn3', 'rn4', 'rn5', 'rn6', 'rn7', 'rn8', 'rn9', 'ivr fail safe', 'covid testing results', 'ebony testing', 'ma/nurse', 'dispatchhealth help desk vendor', 'do not use ma/nurse', 'sem vip', 'covid task force', 'covid pierce county mass testing', 'acute care covid results & care request', 'phx', 'mobile request callbacks', 'click to call', 'dialer results', 'cancels', 'care team escalations', 'rn10', 'advance care fax queue', 'rn11', 'rn12', 'rn13', 'spanish ivr');;
 
   }
 
@@ -843,14 +843,21 @@ measure: percent_repeat_callers {
 
   dimension: onboard_delay {
     type: number
-    sql: EXTRACT(EPOCH FROM (${care_request_flat.accept_mountain_intial_raw} - ${conversationstarttime_raw}));;
+    sql: (EXTRACT(EPOCH FROM (${care_request_flat.accept_mountain_intial_raw} - ${conversationstarttime_raw}))-${firstacdwaitduration}/1000)/60;;
+  }
+
+  measure: median_onboard_delay {
+    type: median_distinct
+    value_format: "0.0"
+    sql_distinct_key: concat(${conversationid}, ${care_request_flat.care_request_id}) ;;
+    sql: ${onboard_delay} ;;
   }
 
   measure: average_onboard_delay {
     type: average_distinct
     value_format: "0.0"
     sql_distinct_key: concat(${conversationid}, ${care_request_flat.care_request_id}) ;;
-    sql: ${onboard_delay}/60 ;;
+    sql: ${onboard_delay} ;;
   }
 
   dimension: anthem_eligible {

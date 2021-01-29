@@ -236,6 +236,18 @@ view: users {
     sql: ${TABLE}.in_contact_agent_id ;;
   }
 
+  dimension: genesys_id {
+    type: number
+    sql: ${TABLE}.genesys_id ;;
+  }
+
+  dimension: genesys_token {
+    type: number
+    sql: ${TABLE}.genesys_token ;;
+  }
+
+
+
 
   dimension: unconfirmed_email {
     type: string
