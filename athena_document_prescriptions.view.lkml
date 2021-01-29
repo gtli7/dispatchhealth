@@ -114,6 +114,16 @@ view: athena_document_prescriptions {
     sql: array_to_string(array_agg(DISTINCT ${clinical_order_type}), ' | ') ;;
   }
 
+  # measure: prescription_info_concat {
+  #   label: "Description Of Prescription Medications"
+  #   type: string
+  #   sql: array_to_string(array_agg(DISTINCT
+  #           CONCAT(${clinical_order_type}, ': ',
+  #           ${dosage_route}, ': ',
+  #           ${frequency})
+  #           ), ' | ')  ;;
+  # }
+
   dimension: clinical_order_type_group {
     type: string
     group_label: "Descriptions"
