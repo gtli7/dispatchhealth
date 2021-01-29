@@ -279,7 +279,15 @@ view: markets {
 
   measure: count {
     type: count
+    group_label: "Counts"
     drill_fields: [id, name, provider_group_name, short_name, care_requests.count]
+  }
+
+  measure: count_distinct_market_adj {
+    description: "Count of the distinct number of markets (groups Metro Fire Districts into parent market)"
+    type: count_distinct
+    sql: ${id_adj} ;;
+    group_label: "Counts"
   }
 
   dimension: cpr_market {

@@ -73,6 +73,7 @@ include: "callers.view.lkml"
 include: "care_request_statuses.view.lkml"
 include: "views/zizzl_detailed_shift_hours.view.lkml"
 include: "views/zizzl_employee_roster_details.view.lkml"
+include: "views/zizzl_rates_hours.view.lkml"
 include: "humanity_dashboard_provider_id_crosswalk.view.lkml"
 include: "athenadwh_clinical_results_clone.view.lkml"
 include: "athenadwh_clinical_providers_fax_clone.view.lkml"
@@ -129,7 +130,6 @@ include: "athenadwh_clinical_letters_clone.view.lkml"
 include: "thpg_satellite_locations.view.lkml"
 include: "timezones.view.lkml"
 include: "overflow_by_day_market.view.lkml"
-include: "geo_locations.view.lkml"
 include: "days_in_month_adj.view.lkml"
 include: "athenadwh_clinicalresultobservation.view.lkml"
 include: "dates_hours_reference_clone.view.lkml"
@@ -341,6 +341,7 @@ include: "dates_rolling.view.lkml"
 include: "clia_licensure_dh.view.lkml"
 include: "care_requests_post_visit.view.lkml"
 include: "zizzl_shift_hours_daily.view.lkml"
+include: "stops_summary.view.lkml"
 
 include: "SEM_cost_per_complete_derived.view.lkml"
 
@@ -1612,11 +1613,6 @@ join: athena_procedurecode {
     sql_on: ${shift_teams.car_id_start_date_id} = ${shifts_by_cars.car_id_start_date_id} ;;
   }
 
-  join: geo_locations {
-    relationship: one_to_many
-    sql_on: ${shift_teams.car_id} = ${geo_locations.car_id} AND ${shift_teams.start_date} = ${geo_locations.created_date} ;;
-  }
-
   join: shifts{
     relationship: many_to_one
     sql_on:  ${shift_teams.id}  =  ${shifts.id};;
@@ -2215,6 +2211,43 @@ join: ga_pageviews_clone {
   }
 
 }
+
+explore: stops_summary {
+
+  join: shift_team_members {
+    relationship: many_to_one
+    sql_on: ${stops_summary.shift_teams_id} = ${shift_team_members.shift_team_id} ;;
+    fields: []
+  }
+
+  join: users {
+    view_label: "Shift Employees"
+    relationship: many_to_one
+    sql_on: ${shift_team_members.user_id} = ${users.id} ;;
+    fields: [users.first_name, users.last_name]
+  }
+
+  join: provider_profiles {
+    relationship: one_to_one
+    view_label: "Shift Positions"
+    sql_on: ${users.id} = ${provider_profiles.user_id} ;;
+    fields: [provider_profiles.position]
+  }
+
+  join: cars {
+    relationship: many_to_one
+    sql_on: ${stops_summary.car_id} = ${cars.id} ;;
+    fields: [cars.name]
+  }
+
+  join: markets {
+    relationship: one_to_one
+    sql_on: ${cars.market_id} = ${markets.id} ;;
+    fields: [markets.name]
+  }
+}
+
+explore: zizzl_rates_hours {}
 
 explore: athenadwh_transactions_clone {}
 
