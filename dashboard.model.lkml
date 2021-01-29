@@ -340,6 +340,7 @@ include: "views/shift_admin_hours.view.lkml"
 include: "dates_rolling.view.lkml"
 include: "clia_licensure_dh.view.lkml"
 include: "care_requests_post_visit.view.lkml"
+include: "zizzl_shift_hours_daily.view.lkml"
 
 include: "SEM_cost_per_complete_derived.view.lkml"
 
@@ -4557,6 +4558,15 @@ explore: bulk_variable_shift_tracking {
     sql_on: ${shift_teams.id} = ${shift_team_members.shift_team_id} ;;
   }
 
+  join: shift_types {
+    sql_on: ${shift_teams.shift_type_id} = ${shift_types.id} ;;
+  }
+
+  join: zizzl_shift_hours {
+    sql_on: ${shift_team_members.shift_team_id} = ${zizzl_shift_hours.shift_team_id} and
+      ${shift_team_members.user_id} = ${zizzl_shift_hours.user_id};;
+  }
+
   join: zizzl_detailed_shift_hours {
     relationship: one_to_many
     sql_on: ${users.id} = ${zizzl_detailed_shift_hours.employee_id} AND
@@ -4804,7 +4814,6 @@ explore:  on_call_tracking
     sql_on: ${on_call_tracking.market_id}=${markets.id} ;;
   }
 
-
   join: timezones {
     relationship: many_to_one
     sql_on: ${timezones.rails_tz} = ${markets.sa_time_zone} ;;
@@ -4819,6 +4828,11 @@ explore:  on_call_tracking
     from: intraday_monitoring
     sql_on: ${intraday_monitoring_after.market} = ${markets.name} and ${intraday_monitoring_after.created_date}=${on_call_tracking.date_date} and
       ${intraday_monitoring_after.created_hour_timezone} = 13;;
+  }
+
+  join: zizzl_shift_hours_daily {
+    sql_on: ${on_call_tracking.date_date} = ${zizzl_shift_hours_daily.start_date} and
+    ${on_call_tracking.market_id} = ${zizzl_shift_hours_daily.market_id} ;;
   }
   }
 
