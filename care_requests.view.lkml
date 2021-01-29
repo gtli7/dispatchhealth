@@ -743,6 +743,13 @@ view: care_requests {
     }
   }
 
+  measure: count_mobile_web_dhexpress_care_requests {
+    description: "Counts the number of created care requests for request types mobile, web or DispcathExpress"
+    type: count_distinct
+    sql: ${id} ;;
+    filters: [request_type: "mobile%, web, dispatchhealth express"]
+  }
+
   dimension: chart_signed {
     type: yesno
     sql: ${TABLE}.signed ;;
