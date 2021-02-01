@@ -97,6 +97,8 @@ view: genesys_conversation_summary {
     ;;
   }
 
+
+
   dimension: market_id {
     type: string
     sql: case when ${number_to_market.market_id} is not null then  ${number_to_market.market_id}

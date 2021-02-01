@@ -5448,7 +5448,7 @@ end  ;;
 
   dimension: clinical_service_not_offered {
     type: yesno
-    sql: lower(${archive_comment}) LIKE '%clinical service not offered (scope)%' and not ${covid_resolved};;
+    sql: lower(${archive_comment}) LIKE '%clinical service not offered (scope)%';;
   }
   measure: clinical_service_not_offered_minus_overflow{
     type: count_distinct

@@ -3799,6 +3799,17 @@ explore: genesys_conversation_summary {
     sql_on: ${genesys_conversation_summary.conversationid}=${genesys_conversation_wrapup.conversationid} ;;
   }
 
+  join:  genesys_conversation_summary_same_day {
+    from: genesys_conversation_summary
+    sql_on: ${genesys_conversation_summary_same_day.ani}=${genesys_conversation_summary.ani} and ${genesys_conversation_summary_same_day.conversationstarttime_date}=${genesys_conversation_summary.conversationstarttime_date}
+      and ${genesys_conversation_summary_same_day.conversationstarttime_raw}>${genesys_conversation_summary.conversationstarttime_raw}
+      and ${genesys_conversation_summary_same_day.direction} ='inbound' and ${genesys_conversation_summary.direction} = 'inbound'
+      and ${genesys_conversation_summary.inbound_demand}
+
+      ;;
+
+  }
+
   join: markets {
     relationship: one_to_one
     sql_on: (${markets.id}=${genesys_conversation_summary.market_id}) ;;

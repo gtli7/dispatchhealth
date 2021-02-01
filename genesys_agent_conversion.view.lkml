@@ -127,6 +127,7 @@ view: genesys_agent_conversion {
   }
 
   measure: assigned_rate {
+    label: "Qualified Rate"
     description: "Sum Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled)/Sum Contacts w/ Intent (Intent Queue, >1 minute talk time w/agent)"
     type: number
     value_format: "0%"

@@ -70,6 +70,7 @@ view: target_staffing {
   }
 
   measure: sum_car_hours {
+    label: "Sum Target Car Hours"
     type: sum_distinct
     sql_distinct_key: concat(${shift_teams.start_date}::varchar, ${markets.name});;
     sql: ${target_hours} + ${tele_hours} ;;
