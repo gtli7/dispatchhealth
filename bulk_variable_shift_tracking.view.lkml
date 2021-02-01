@@ -34,6 +34,10 @@ view: bulk_variable_shift_tracking {
     type: yesno
     sql: ${recommendation} <0 ;;
   }
+  dimension: positive_recommendation {
+    type: yesno
+    sql: ${recommendation} >0 ;;
+  }
   dimension: recommendation_total_hours {
     type: number
     sql: ${total_hours} + ${recommendation} ;;
