@@ -62,13 +62,25 @@ view: bulk_variable_shift_tracking {
   measure: actual_diff_to_recommendation {
     type: number
     value_format: "0.0"
-    sql:  ${sum_recommendation_total_hours}::float - ${shift_teams.sum_shift_hours}::float    ;;
+    sql:  ${sum_recommendation_total_hours}::float - ${shift_teams.sum_shift_hours_no_arm_advanced_only}::float    ;;
   }
 
   measure: actual_recommendation_captured {
     type: number
     value_format: "0.0"
-    sql: ${shift_teams.sum_shift_hours}::float - ${sum_total_hours}::float    ;;
+    sql: ${shift_teams.sum_shift_hours_no_arm_advanced_only}::float - ${sum_total_hours}::float    ;;
+  }
+
+  measure: zizzl_diff_to_recommendation {
+    type: number
+    value_format: "0.0"
+    sql: ${sum_recommendation_total_hours}::float - ${zizzl_shift_hours.sum_clinical_hours_no_arm_advanced_only}::float ;;
+  }
+
+  measure: zizzl_vs_recommendation_diff {
+    type: number
+    value_format: "0.0"
+    sql: ${zizzl_shift_hours.sum_clinical_hours_no_arm_advanced_only}::float - ${sum_total_hours}::float ;;
   }
 
 #  measure: zizzl_vs_recommendation_diff {
