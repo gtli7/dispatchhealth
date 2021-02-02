@@ -1149,6 +1149,13 @@ join: athena_document_prescriptions {
   # fields: []
 }
 
+join: athena_prescription_fulfilling_pharmacy {
+  from: athena_clinicalprovider
+  relationship: many_to_one
+  sql_on: ${athena_document_prescriptions.clinical_provider_id} = ${athena_prescription_fulfilling_pharmacy.clinical_provider_id} ;;
+  fields: [name, city, state, address1, address2, zip]
+}
+
   join: athena_patientmedication_prescriptions {
     relationship: one_to_one
     sql_on: ${athena_document_prescriptions.document_id} = ${athena_patientmedication_prescriptions.document_id} ;;
