@@ -1,6 +1,6 @@
 view: athena_clinicalprovider {
   sql_table_name: athena.clinicalprovider ;;
-  view_label: "Athena Clinical Provider"
+  # view_label: "Athena Clinical Provider"
 
   dimension: __batch_id {
     type: string

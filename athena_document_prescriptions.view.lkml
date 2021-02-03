@@ -456,6 +456,12 @@ view: athena_document_prescriptions {
     drill_fields: [detail*]
   }
 
+  measure: count_prescriptions {
+    type: count_distinct
+    description: "Count distinct prescriptions written"
+    sql: ${document_id} ;;
+  }
+
   # ----- Sets of fields for drilling ------
   set: detail {
     fields: [

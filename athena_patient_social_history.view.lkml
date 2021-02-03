@@ -746,6 +746,23 @@ LEFT JOIN (
           ;;
     }
 
+  dimension: positive_response_to_one_or_more_primary_sdoh {
+    type: yesno
+    group_label: "Social Determinants of Health"
+    description: "Patient answered 'yes' to one or more of the 10 primary SDOH questions"
+    sql:  ${cost_concerns_flag} OR
+          lower(${fall_risk_unsteady}) LIKE 'y%' OR
+          lower(${safety_feeling}) LIKE 'n%' OR
+          lower(${food_insecurity}) LIKE 'y%' OR
+          lower(${food_insecurity_worry}) LIKE 'y%' OR
+          ${housing_insecurity_flag} OR
+          ${lack_of_transportation_flag} OR
+          lower(${social_interactions}) = 'less than once per week' OR
+          ${resource_requested_flag} OR
+          lower(${activities_daily_living}) LIKE 'y%'
+          ;;
+  }
+
     measure: avg_questions_asked_primary_10_sdoh {
       type: average_distinct
       description: "Average number of 10 primary SDOH questions asked"
