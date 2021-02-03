@@ -1707,6 +1707,33 @@ WITH ort AS (
     sql: ${TABLE}.first_accepted_date ;;
   }
 
+  dimension: pushed_overflow_note {
+    type: yesno
+    sql:    ${notes_aggregated.notes_aggregated}  like '%pushed pt: market delay%';;
+  }
+  measure: count_pushed_overflow_note {
+    type: count_distinct
+    sql:  ${care_request_id} ;;
+    sql_distinct_key:  ${care_request_id} ;;
+    filters: [pushed_overflow_note: "yes"]
+  }
+
+
+  dimension: pushed_overflow {
+    type: yesno
+    sql:   (not ${pafu_or_follow_up}) and ${scheduled_visit} and lower(${service_lines.name}) like '%acute%' and
+     ${created_date} != ${scheduled_care_date}
+         and ${first_accepted_date}=${created_date} AND
+        ${notes_aggregated.notes_aggregated} not like '%pushed pt: pt availability%';;
+  }
+  measure: count_pushed_overflow {
+    type: count_distinct
+    sql:  ${care_request_id} ;;
+    sql_distinct_key:  ${care_request_id} ;;
+    filters: [pushed_overflow: "yes"]
+  }
+
+
   dimension: accepted_cr_at_shift_start {
     description: "Flag indicating if the shift had an accepted care request time occurring before or equal to the shirt start time"
     type: yesno
@@ -3180,6 +3207,11 @@ measure: avg_first_on_route_mins {
       ${lwbs_wait_time_too_long} OR ${lwbs_no_longer_need_care} OR ${lwbs_going_to_pcp}) and not ${booked_shaping_placeholder_resolved} ;;
   }
 
+  dimension: lwbs_not_accepted {
+    type: yesno
+    sql: ${lwbs} and not ${accepted} ;;
+  }
+
   dimension: resolved_no_answer_no_show {
     type: yesno
     sql: (${archive_comment} LIKE '%No Answer%' OR ${archive_comment} LIKE '%No Show%') and not ${booked_shaping_placeholder_resolved};;
@@ -3539,6 +3571,7 @@ measure: avg_first_on_route_mins {
     }
   }
 
+
     measure: zipcode_funnel{
       label: "Zipcode Resolved Funnel"
       type: count_distinct
@@ -3597,6 +3630,134 @@ measure: avg_first_on_route_mins {
       }
     }
 
+  measure: cancelled_by_patient_other_resolved_count{
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    sql_distinct_key: ${care_request_id} ;;
+
+    filters: {
+      field: cancelled_by_patient_other_resolved
+      value: "yes"
+    }
+    filters: {
+      field: zipcode_resolved
+      value: "no"
+    }
+    filters: {
+      field: complete
+      value: "no"
+    }
+    filters: {
+      field: lwbs_accepted
+      value: "no"
+    }
+    filters: {
+      field: lwbs_scheduled
+      value: "no"
+    }
+    filters: {
+      field: booked_resolved
+      value: "no"
+    }
+    filters: {
+      field: escalated_on_phone
+      value: "no"
+    }
+
+    filters: {
+      field: resolved_no_answer_no_show
+      value: "no"
+    }
+
+    filters: {
+      field: complete
+      value: "no"
+    }
+
+    filters: {
+      field: not_resolved_or_complete
+      value: "no"
+    }
+    filters: {
+      field: clinical_service_not_offered
+      value: "no"
+    }
+    filters: {
+      field: insurance_resolved
+      value: "no"
+    }
+    filters: {
+      field: poa_resolved
+      value: "no"
+    }
+  }
+
+  measure: lwbs_not_accepted_count {
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    sql_distinct_key: ${care_request_id} ;;
+
+    filters: {
+      field: lwbs
+      value: "yes"
+    }
+    filters: {
+      field: cancelled_by_patient_other_resolved
+      value: "no"
+    }
+    filters: {
+      field: zipcode_resolved
+      value: "no"
+    }
+    filters: {
+      field: complete
+      value: "no"
+    }
+    filters: {
+      field: lwbs_accepted
+      value: "no"
+    }
+    filters: {
+      field: lwbs_scheduled
+      value: "no"
+    }
+    filters: {
+      field: booked_resolved
+      value: "no"
+    }
+    filters: {
+      field: escalated_on_phone
+      value: "no"
+    }
+
+    filters: {
+      field: resolved_no_answer_no_show
+      value: "no"
+    }
+
+    filters: {
+      field: complete
+      value: "no"
+    }
+
+    filters: {
+      field: not_resolved_or_complete
+      value: "no"
+    }
+    filters: {
+      field: clinical_service_not_offered
+      value: "no"
+    }
+    filters: {
+      field: insurance_resolved
+      value: "no"
+    }
+    filters: {
+      field: poa_resolved
+      value: "no"
+    }
+  }
+
   measure: resolved_other_count {
     type: count_distinct
     sql: ${care_request_id} ;;
@@ -3649,6 +3810,14 @@ measure: avg_first_on_route_mins {
     }
     filters: {
       field: zipcode_resolved
+      value: "no"
+    }
+    filters: {
+      field: cancelled_by_patient_other_resolved
+      value: "no"
+    }
+    filters: {
+      field: lwbs
       value: "no"
     }
   }
