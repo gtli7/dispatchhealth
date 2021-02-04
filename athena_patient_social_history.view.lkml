@@ -763,6 +763,17 @@ LEFT JOIN (
           ;;
   }
 
+  measure: count_positive_response_to_one_or_more_primary_sdoh {
+    type: count_distinct
+    group_label: "Social Determinants of Health"
+    description: "Count Patient answered 'yes' to one or more of the 10 primary SDOH questions"
+    sql: ${chart_id} ;;
+    filters: {
+      field: positive_response_to_one_or_more_primary_sdoh
+      value: "yes"
+    }
+  }
+
     measure: avg_questions_asked_primary_10_sdoh {
       type: average_distinct
       description: "Average number of 10 primary SDOH questions asked"
