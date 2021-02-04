@@ -1,6 +1,8 @@
 view: adt_first_encounter_report {
   sql_table_name: external_adt_merged.adt_first_encounter_report ;;
 
+# Pending view updates. Consider changing all measures using count_distinct sql to use the adt_first_encounter_report.careR_equest_id.
+
   dimension_group: care_request_begin {
     type: time
     timeframes: [
