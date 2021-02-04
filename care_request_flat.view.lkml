@@ -451,6 +451,7 @@ WITH ort AS (
 
   dimension: shift_team_id_initial {
     type: number
+    value_format: "0"
     group_label: "IDs"
     description: "The shift team ID of the team initially assigned to the care request"
     sql: ${TABLE}.shift_team_id_initial ;;
@@ -4710,6 +4711,13 @@ measure: avg_first_on_route_mins {
     }
   }
 
+  measure: capture_rate {
+    type: number
+    value_format: "0%"
+    sql: case when ${care_request_count}=0 then 0 else ${accepted_or_scheduled_count}::float/${care_request_count}::float end ;;
+
+  }
+
   measure: accepted_or_scheduled_phone_count {
     label: "Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled) Phone Count"
     type: sum_distinct
@@ -4724,6 +4732,15 @@ measure: avg_first_on_route_mins {
       field: care_requests.request_type_phone_or_other
       value: "phone"
     }
+  }
+
+  dimension: agent_of_record {
+    type: string
+    sql: trim(coalesce(case when trim(${accept_employee_full_name})='' then null else ${accept_employee_full_name} end,
+                      case when trim( ${csc_risk_assessments.csc_name})='' then null else  ${csc_risk_assessments.csc_name} end,
+                      case when trim(${resolved_employee_full_name})='' then null else  ${resolved_employee_full_name} end,
+                      case when trim(${csc_created.csc_name})='' then null else  ${csc_created.csc_name} end
+                      )) ;;
   }
 
 

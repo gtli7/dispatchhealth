@@ -2,6 +2,7 @@ view: geneysis_custom_conversation_attributes_agg {
   derived_table: {
     explore_source: geneysis_custom_conversation_attributes {
       column: conversationstarttime {field: geneysis_custom_conversation_attributes.conversationstarttime_date}
+      column: market_id {field: markets.id}
       column: ivr_deflection_count {}
       filters: {
         field: geneysis_custom_conversation_attributes.conversationstarttime_date
@@ -30,11 +31,14 @@ view: geneysis_custom_conversation_attributes_agg {
   dimension: ivr_deflection_count {
     type: number
   }
+  dimension: market_id {
+    type: number
+  }
 
   measure: sum_ivr_deflections {
     type: sum_distinct
     sql:${ivr_deflection_count};;
-    sql_distinct_key: ${conversationstarttime_date} ;;
+    sql_distinct_key: concat(${conversationstarttime_date}, ${market_id}) ;;
 
   }
 }

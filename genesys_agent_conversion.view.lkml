@@ -120,6 +120,12 @@ view: genesys_agent_conversion {
     sql_distinct_key: concat(${conversationstarttime_date}, ${queuename}, ${market_id},  ${agent_name}) ;;
   }
 
+  measure: sum_care_request_count {
+    type: sum_distinct
+    sql: ${care_request_count} ;;
+    sql_distinct_key: concat(${conversationstarttime_date}, ${queuename}, ${market_id},  ${agent_name}) ;;
+  }
+
   measure: avg_wait_time_minutes {
     type: number
     value_format: "0.00"
@@ -132,6 +138,12 @@ view: genesys_agent_conversion {
     type: number
     value_format: "0%"
     sql: case when ${sum_inbound_answers} >0 then ${sum_accepted_count}::float/${sum_inbound_answers}::float else 0 end ;;
+  }
+
+  measure: care_request_created_rate {
+    type: number
+    value_format: "0%"
+    sql: case when ${sum_inbound_answers} >0 then ${sum_care_request_count}::float/${sum_inbound_answers}::float else 0 end ;;
   }
 
   measure: answer_rate {
