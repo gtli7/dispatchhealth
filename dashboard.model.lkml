@@ -58,6 +58,7 @@ include: "collective_medical_first_major_class_admit_date_post_visit.view.lkml"
 include: "collective_medical_admit_emergency_and_inpatient_within_24_hours.view.lkml"
 include: "collective_medical_first_emergency_inpatient_admit_date_post_visit.view.lkml"
 include: "corhio.view.lkml"
+include: "adt_first_encounter_report.view.lkml"
 include: "er_admits_prior_visit.view.lkml"
 include: "eligible_patients.view.lkml"
 include: "eligible_patients_full_table.view.lkml"
@@ -707,6 +708,11 @@ explore: care_requests {
     relationship: many_to_one
     sql_on: ${care_requests.id} = ${collective_medical_admit_emergency_and_inpatient_within_24_hours.care_request_id};;
     fields: []
+  }
+
+  join: adt_first_encounter_report {
+    relationship: one_to_one
+    sql_on: ${care_requests.id} = ${adt_first_encounter_report.care_request_id};;
   }
 
   join: er_admits_prior_visit {
