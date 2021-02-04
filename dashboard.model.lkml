@@ -352,6 +352,7 @@ include: "views/category_budget_visits.view.lkml"
 
 include: "*.dashboard.lookml"  # include all dashboards in this project
 include: "granular_full_shift_agg.view.lkml"
+include: "views/genesys_conversation_summary_null.view.lkml"
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
   max_cache_age: "6 hours"
@@ -4529,7 +4530,8 @@ explore: genesys_agg {
     sql_on: ${markets.id_adj} = ${market_regions.market_id} ;;
   }
   join: geneysis_custom_conversation_attributes_agg {
-    sql_on: ${genesys_agg.conversationstarttime_date} = ${geneysis_custom_conversation_attributes_agg.conversationstarttime_date} ;;
+    sql_on: ${genesys_agg.conversationstarttime_date} = ${geneysis_custom_conversation_attributes_agg.conversationstarttime_date}
+    and ${markets.id}=${geneysis_custom_conversation_attributes_agg.market_id};;
   }
 
   }
@@ -4818,6 +4820,16 @@ explore: bounce_back_risk_3day_models {
 explore: geneysis_custom_conversation_attributes {
   join: genesys_conversation_summary {
     sql_on: ${genesys_conversation_summary.conversationid} = ${geneysis_custom_conversation_attributes.conversationid} ;;
+  }
+  join: genesys_conversation_summary_null {
+    sql_on: ${genesys_conversation_summary.conversationid} = ${genesys_conversation_summary_null.conversationid} ;;
+
+  }
+  join: number_to_market {
+    sql_on: ${number_to_market.number} = ${genesys_conversation_summary_null.dnis} ;;
+  }
+  join: markets {
+    sql_on: ${number_to_market.market_id}=${markets.id} ;;
   }
 }
 
