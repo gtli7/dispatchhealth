@@ -451,6 +451,7 @@ WITH ort AS (
 
   dimension: shift_team_id_initial {
     type: number
+    value_format: "0"
     group_label: "IDs"
     description: "The shift team ID of the team initially assigned to the care request"
     sql: ${TABLE}.shift_team_id_initial ;;
