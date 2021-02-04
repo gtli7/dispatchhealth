@@ -263,8 +263,8 @@ view: athena_patientmedication_prescriptions {
     description: "Identifies new first-time prescription/s written on-scene"
     type: yesno
     hidden: yes
-    sql:  upper(${document_prescriptions.document_subclass}) = 'PRESCRIPTION_NEW'
-          AND ${prescribed_yn} = 'Y' AND upper(${document_prescriptions.status}) != 'DELETED';;
+    sql:  upper(${athena_document_prescriptions.document_subclass}) = 'PRESCRIPTION_NEW'
+          AND ${prescribed_yn} = 'Y' AND upper(${athena_document_prescriptions.status}) != 'DELETED';;
   }
 
   measure: count_appointments_with_prescriptions {
