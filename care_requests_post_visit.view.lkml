@@ -3,35 +3,50 @@ view:care_requests_post_visit {
     sql:
 
 WITH pi AS (
+  SELECT
+  cr.id AS care_request_id,
+  cr.service_line_id,
+  cr.patient_id,
+  cr.chief_complaint,
+  rp.protocol_name,
+  crs.on_scene_time
+  FROM public.care_requests cr
+  INNER JOIN (
+  SELECT
+    care_request_id,
+    MIN(created_at) AS on_scene_time
+  FROM public.care_request_statuses
+  WHERE name = 'complete'
+  GROUP BY 1) AS crs
+  ON cr.id = crs.care_request_id
+  LEFT JOIN (
+  SELECT care_request_id,
+    protocol_name,
+    updated_at,
+    ROW_NUMBER() OVER (PARTITION BY care_request_id ORDER BY updated_at DESC) AS rownum
+  FROM public.risk_assessments
+  WHERE score IS NOT NULL
+  GROUP BY 1,2,3) as rp
+  ON cr.id = rp.care_request_id and rp.rownum = 1)
+
 SELECT
-cr.id AS care_request_id,
-cr.service_line_id,
-cr.patient_id,
-crs.on_scene_time
-FROM public.care_requests cr
-INNER JOIN (
-SELECT
-care_request_id,
-MIN(created_at) AS on_scene_time
-FROM public.care_request_statuses
-WHERE name = 'complete'
-GROUP BY 1) AS crs
-ON cr.id = crs.care_request_id)
-SELECT
-pi1.patient_id,
-pi1.care_request_id as anchor_care_request_id,
-pi1.service_line_id as anchor_service_line_id,
-pi1.on_scene_time as anchor_on_scene_time,
-pi2.care_request_id as post_anchor_care_request_id,
-pi2.service_line_id as post_anchor_service_line_id,
-pi2.on_scene_time as post_anchor_on_scene_time,
-(extract(epoch from pi2.on_scene_time) -  extract(epoch from pi1.on_scene_time))::INT AS seconds_from_anchor_visit
+  pi1.patient_id,
+  pi1.care_request_id as anchor_care_request_id,
+  pi1.service_line_id as anchor_service_line_id,
+  pi1.on_scene_time as anchor_on_scene_time,
+  pi2.care_request_id as post_anchor_care_request_id,
+  pi2.service_line_id as post_anchor_service_line_id,
+  pi2.protocol_name as post_anchor_risk_protocol_name,
+  pi2.chief_complaint as post_anchor_chief_complaint,
+  pi2.on_scene_time as post_anchor_on_scene_time,
+  (extract(epoch from pi2.on_scene_time) -  extract(epoch from pi1.on_scene_time))::INT AS seconds_from_anchor_visit
 FROM pi AS pi1
 LEFT JOIN pi AS pi2
 ON pi1.patient_id = pi2.patient_id
 WHERE pi2.on_scene_time > pi1.on_scene_time
-GROUP BY 1,2,3,4,5,6,7,8
-ORDER BY 1,2,3,4,5,6,7,8;;
+GROUP BY 1,2,3,4,5,6,7,8,9
+ORDER BY 1,2,3,4,5,6,7,8,9;;
+
 
 sql_trigger_value: SELECT COUNT(*) FROM care_requests ;;
 
@@ -81,6 +96,18 @@ indexes: ["patient_id", "anchor_care_request_id", "anchor_service_line_id", "anc
     sql:  ${TABLE}.post_anchor_service_line_id ;;
   }
 
+  dimension: post_anchor_risk_protocol_name {
+    description: "Future visit Risk Protocol Name (occurring after base visit) for a given patient"
+    type: string
+    sql:  ${TABLE}.post_anchor_risk_protocol_name ;;
+  }
+
+  dimension: post_anchor_chief_complaint {
+    description: "Future visit Chief Complaint (occurring after base visit) for a given patient"
+    type: string
+    sql:  ${TABLE}.post_anchor_chief_complaint ;;
+  }
+
   dimension: post_anchor_on_scene_time {
     description: "Future visit on-scene time (occurring after base visit) for a given patient"
     type: date_time
@@ -99,6 +126,14 @@ indexes: ["patient_id", "anchor_care_request_id", "anchor_service_line_id", "anc
     sql: ${seconds_from_anchor_visit} / 3600 <= 720 ;;
   }
 
+  dimension: dhfu_visits_within_30_days_of_base_visit {
+    description: "Identifies DHFU visits for the same patient occurring within 30 days of the base visit (DHFU identified by Risk Protocol Name and Cheif Complaint)"
+    type: yesno
+    sql: ${seconds_from_anchor_visit} / 3600 <= 720 AND
+    (lower(trim(${post_anchor_chief_complaint})) SIMILAR TO '%(dhfu|dh followup|dh follow up|dh follow-up|dh f/u|dispatchhealth followup|dispatchhealth follow up|dispatchhealth follow-up)%' OR
+         trim(${post_anchor_risk_protocol_name}) SIMILAR TO 'DispatchHealth Acute Care - follow up visit%');;
+  }
+
   measure:  count_visits_within_30_days_of_base_visit {
     description: "Count the number of future visits that occur within 30 days afterthe base visit"
     type: count_distinct
@@ -107,8 +142,17 @@ indexes: ["patient_id", "anchor_care_request_id", "anchor_service_line_id", "anc
       field: visits_within_30_days_of_base_visit
       value: "yes"
     }
+  }
 
+  measure:  count_dhfu_visits_within_30_days_of_base_visit {
+    description: "Count DHFU visits for the same patient occurring within 30 days of the base visit (DHFU identified by Risk Protocol Name and Cheif Complaint)"
+    type: count_distinct
+    sql: ${concat_anchor_post_care_request_id} ;;
+    filters: {
+      field: dhfu_visits_within_30_days_of_base_visit
+      value: "yes"
     }
+  }
 
 
  }

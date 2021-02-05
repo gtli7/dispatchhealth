@@ -81,7 +81,7 @@ view: care_requests {
     type: yesno
     description: " - Dispatch Health Follow Up - The string 'dhfu' occurs in Chief Complaint OR Risk Assessment protocol_name = 'Dispatchhealth Acute Care - Follow Up Visit' (Does NOT include Post-Acute)"
     sql:  ${chief_complaint_trimmed} SIMILAR TO '%(dhfu|dh followup|dh follow up|dh follow-up|dh f/u|dispatchhealth followup|dispatchhealth follow up|dispatchhealth follow-up)%' OR
-          ${risk_assessments.protocol_name} = 'Dispatchhealth Acute Care - Follow Up Visit';;
+          ${risk_assessments.protocol_name} SIMILAR TO 'Dispatchhealth Acute Care - Follow Up Visit%';;
   }
 
 
