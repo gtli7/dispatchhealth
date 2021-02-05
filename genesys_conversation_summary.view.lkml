@@ -9,7 +9,7 @@ view: genesys_conversation_summary {
   dimension: inbound_demand_minus_market {
     type: yesno
     sql:
-    ${mediatype}='voice' and trim(lower(${queuename})) not like '%outbound%' and trim(lower(${queuename})) not like '%after hours%' and trim(lower(${queuename})) not like '%optimizer%' and trim(lower(${queuename})) not in('mobile requests','ma', 'rcm / billing', 'backline', 'development', 'secondary screening', 'dispatchhealth help desk', 'dispatch health nurse line', 'zzavtextest', 'pay bill', 'testing', 'initial follow up', 'rn1', 'rn2', 'rn3', 'rn4', 'rn5', 'rn6', 'rn7', 'rn8', 'rn9', 'ivr fail safe', 'covid testing results', 'ebony testing', 'ma/nurse', 'dispatchhealth help desk vendor', 'do not use ma/nurse', 'sem vip', 'covid task force', 'covid pierce county mass testing', 'acute care covid results & care request', 'phx', 'mobile request callbacks', 'click to call', 'dialer results', 'cancels', 'care team escalations', 'rn10', 'advance care fax queue', 'rn11', 'rn12', 'rn13', 'spanish ivr');;
+    ${mediatype}='voice' and trim(lower(${queuename})) not like '%outbound%' and trim(lower(${queuename})) not like '%after hours%' and trim(lower(${queuename})) not like '%optimizer%' and trim(lower(${queuename})) not in('mobile requests','ma', 'rcm / billing', 'backline', 'development', 'secondary screening', 'dispatchhealth help desk', 'dispatch health nurse line', 'zzavtextest', 'pay bill', 'testing', 'initial follow up', 'rn1', 'rn2', 'rn3', 'rn4', 'rn5', 'rn6', 'rn7', 'rn8', 'rn9', 'ivr fail safe', 'covid testing results', 'ebony testing', 'ma/nurse', 'dispatchhealth help desk vendor', 'do not use ma/nurse', 'sem vip', 'covid task force', 'covid pierce county mass testing', 'acute care covid results & care request', 'phx', 'mobile request callbacks', 'click to call', 'dialer results', 'cancels', 'care team escalations', 'rn10', 'advance care fax queue', 'rn11', 'rn12', 'rn13', 'spanish ivr', 'vip help line');;
 
   }
 
@@ -145,6 +145,7 @@ view: genesys_conversation_summary {
     type: string
     sql: case when ${queuename} in('TIER 1', 'TIER 2') then 'TIER 1/TIER 2'
       when ${queuename} in('Partner Direct', 'ATL Optum Care', 'LAS RCC', 'Humana Partner Direct', 'BOI Regence', 'POR Regence', 'SEA Regence', 'SPO Regence' ) then 'Partner Direct (Broad)'
+      when ${queuename} in('DEN LAS SEM VIP', 'DTC Pilot') then 'DTC Pilot'
     else ${queuename}  end ;;
   }
 

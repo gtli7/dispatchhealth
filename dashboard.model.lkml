@@ -354,6 +354,7 @@ include: "views/category_budget_visits.view.lkml"
 include: "*.dashboard.lookml"  # include all dashboards in this project
 include: "granular_full_shift_agg.view.lkml"
 include: "views/genesys_conversation_summary_null.view.lkml"
+include: "capture_rate_by_market.view.lkml"
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
   max_cache_age: "6 hours"
@@ -4591,6 +4592,7 @@ explore: mailchimp_sends {
 }
 
 explore: day_of_week_variation {}
+explore: capture_rate_by_market {}
 
 explore: bulk_variable_shift_tracking {
   join: cars {
