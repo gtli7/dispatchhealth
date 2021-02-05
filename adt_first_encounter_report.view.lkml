@@ -210,7 +210,7 @@ view: adt_first_encounter_report {
     label: "24 Hour First Admit Hospitalization"
     description: "First Hospitalization admittance (transer from Emergency) identified within 24 hours of the DH care request on-scene date (3rd party vendor reported)"
     type: yesno
-    sql: extract(epoch from ${cr_to_er_diff})/3600 <= 24 ;;
+    sql: extract(epoch from ${cr_to_hosp_diff})/3600 <= 24 ;;
     group_label: "Inpatient Emergency Admittance Intervals"
   }
 
@@ -218,7 +218,7 @@ view: adt_first_encounter_report {
     label: "3 Day First Admit Hospitalization"
     description: "First Hospitalization admittance (transer from Emergency) identified within 3 days of the DH care request on-scene date (3rd party vendor reported)"
     type: yesno
-    sql: extract(epoch from ${cr_to_er_diff})/3600 <= 72 ;;
+    sql: extract(epoch from ${cr_to_hosp_diff})/3600 <= 72 ;;
     group_label: "Inpatient Emergency Admittance Intervals"
   }
 
@@ -226,7 +226,7 @@ view: adt_first_encounter_report {
     label: "7 Day First Admit Hospitalization"
     description: "First Hospitalization admittance (transer from Emergency) identified within 7 days of the DH care request on-scene date (3rd party vendor reported)"
     type: yesno
-    sql: extract(epoch from ${cr_to_er_diff})/3600 <= 168 ;;
+    sql: extract(epoch from ${cr_to_hosp_diff})/3600 <= 168 ;;
     group_label: "Inpatient Emergency Admittance Intervals"
   }
 
@@ -234,7 +234,7 @@ view: adt_first_encounter_report {
     label: "14 Day First Admit Hospitalization"
     description: "First Hospitalization admittance (transer from Emergency) identified within 14 days of the DH care request on-scene date (3rd party vendor reported)"
     type: yesno
-    sql: extract(epoch from ${cr_to_er_diff})/3600 <= 336 ;;
+    sql: extract(epoch from ${cr_to_hosp_diff})/3600 <= 336 ;;
     group_label: "Inpatient Emergency Admittance Intervals"
   }
 
@@ -242,7 +242,7 @@ view: adt_first_encounter_report {
     label: "30 Day First Admit Hospitalization"
     description: "First Hospitalization admittance (transer from Emergency) identified within 30 days of the DH care request on-scene date (3rd party vendor reported)"
     type: yesno
-    sql: extract(epoch from ${cr_to_er_diff})/3600 <= 720 ;;
+    sql: extract(epoch from ${cr_to_hosp_diff})/3600 <= 720 ;;
     group_label: "Inpatient Emergency Admittance Intervals"
   }
 
