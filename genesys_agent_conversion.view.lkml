@@ -11,7 +11,7 @@ view: genesys_agent_conversion {
     indexes: ["conversationstarttime", "queuename", "market_id", "agent_name"]
     explore_source: genesys_conversation_summary {
       column: conversationstarttime {field: genesys_conversation_summary.conversationstarttime_date}
-      column: queuename {}
+      column: queuename {field:genesys_conversation_summary.queuename_adj}
       column: market_id {field:markets.id}
 
       column: wait_time_minutes {field: genesys_conversation_summary.average_wait_time_minutes}

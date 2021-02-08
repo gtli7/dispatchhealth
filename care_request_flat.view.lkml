@@ -1710,7 +1710,8 @@ WITH ort AS (
 
   dimension: pushed_overflow_note {
     type: yesno
-    sql:    ${notes_aggregated.notes_aggregated}  like '%pushed pt: market delay%';;
+    sql:    ${notes_aggregated.notes_aggregated}  like '%pushed pt, market delay%'
+    or ${notes_aggregated.notes_aggregated}  like '%pushed pt: market delay%';;
   }
   measure: count_pushed_overflow_note {
     type: count_distinct
@@ -1725,7 +1726,9 @@ WITH ort AS (
     sql:   (not ${pafu_or_follow_up}) and ${scheduled_visit} and lower(${service_lines.name}) like '%acute%' and
      ${created_date} != ${scheduled_care_date}
          and ${first_accepted_date}=${created_date} AND
-        ${notes_aggregated.notes_aggregated} not like '%pushed pt: pt availability%';;
+        ${notes_aggregated.notes_aggregated} not like '%pushed pt: pt availability%'
+        and
+         ${notes_aggregated.notes_aggregated} not like '%pushed pt, pt availability%';;
   }
   measure: count_pushed_overflow {
     type: count_distinct

@@ -130,7 +130,7 @@ view: users {
   dimension: csc_name {
     label: "Full Name"
     type: string
-    sql: initcap(concat(trim(${first_name}), ' ', trim(${last_name})));;
+    sql: case when initcap(concat(trim(${first_name}), ' ', trim(${last_name}))) = ' ' then null else initcap(concat(trim(${first_name}), ' ', trim(${last_name}))) end;;
   }
 
   filter: provider_select {
