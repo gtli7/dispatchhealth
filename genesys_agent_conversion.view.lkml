@@ -99,7 +99,7 @@ view: genesys_agent_conversion {
   }
 
   measure: sum_inbound_answers {
-    label: "Sum Contacts w/ Intent"
+    label: "Answered Calls Requesting Care, Dedupe"
     description: "(Intent Queue, >1 minute talk time w/agent) "
     type: sum_distinct
     sql: ${count_answered} ;;
