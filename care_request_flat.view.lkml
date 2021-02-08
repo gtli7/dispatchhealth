@@ -3992,6 +3992,19 @@ measure: avg_first_on_route_mins {
     }
   }
 
+  measure: lwbs_scheduled_count_address {
+    label: "Resolved Acute Scheduled (Overflow) (Unique Address)"
+    type: count_distinct
+    sql_distinct_key: ${addresses.street_address_1} ;;
+    sql: ${addresses.street_address_1} ;;
+
+    filters: {
+      field: lwbs_scheduled
+      value: "yes"
+    }
+  }
+
+
   measure: lwbs_accepted_count {
     type: count_distinct
     sql: ${care_request_id} ;;
@@ -4055,6 +4068,19 @@ measure: avg_first_on_route_mins {
       value: "yes"
     }
   }
+  measure: booked_resolved_count_address {
+    description: "Care requests resolved for booked (Unique on Address)"
+    type: count_distinct
+    sql: ${addresses.street_address_1} ;;
+    sql_distinct_key: ${addresses.street_address_1} ;;
+
+    filters: {
+      field: booked_resolved
+      value: "yes"
+    }
+  }
+
+
 
   measure: placeholder_resolved_count {
     description: "Care requests resolved with placeholder"
@@ -4421,6 +4447,18 @@ measure: avg_first_on_route_mins {
     }
   }
 
+  measure: complete_count_address {
+    type: count_distinct
+    sql: ${addresses.street_address_1} ;;
+    sql_distinct_key: ${addresses.street_address_1} ;;
+    filters: {
+      field: complete
+      value: "yes"
+    }
+  }
+
+
+
   measure: complete_count_dx {
     type: count_distinct
     sql: ${care_request_id} ;;
@@ -4702,12 +4740,35 @@ measure: avg_first_on_route_mins {
     }
   }
 
+
+  measure: accepted_count_address {
+    type: count_distinct
+    sql: ${addresses.street_address_1} ;;
+    sql_distinct_key: ${addresses.street_address_1} ;;
+    filters: {
+      field: accepted
+      value: "yes"
+    }
+  }
+
   measure: accepted_or_scheduled_count {
     label: "Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled) Count"
     type: sum_distinct
     value_format: "0"
     sql: case when ${booked_resolved} then .7 else 1 end ;;
     sql_distinct_key:  ${care_request_id} ;;
+    filters: {
+      field: accepted_or_scheduled
+      value: "yes"
+    }
+  }
+
+  measure: accepted_or_scheduled_count_address {
+    label: "Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled) Count (Unique Address)"
+    type: sum_distinct
+    value_format: "0"
+    sql: case when ${booked_resolved} then .7 else 1 end ;;
+    sql_distinct_key: ${addresses.street_address_1} ;;
     filters: {
       field: accepted_or_scheduled
       value: "yes"
@@ -4943,6 +5004,15 @@ measure: avg_first_on_route_mins {
     type: count_distinct
     sql: ${care_request_id} ;;
   }
+
+  measure: care_request_count_address {
+    type: count_distinct
+    sql: ${addresses.street_address_1} ;;
+    sql_distinct_key: ${addresses.street_address_1} ;;
+
+  }
+
+
 
   measure: care_request_count_uhc {
     type: count_distinct
