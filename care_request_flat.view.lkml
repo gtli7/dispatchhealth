@@ -348,10 +348,34 @@ WITH ort AS (
     sql: ${time_call_to_accepted_seconds}/60.0 ;;
   }
 
+  dimension: time_call_to_creation_seconds {
+    type: number
+    hidden: yes
+    value_format: "0"
+    description: "The number of seconds between accepted time and call time"
+    sql: EXTRACT(EPOCH FROM ${call_time_raw})-EXTRACT(EPOCH FROM ${created_raw}) ;;
+  }
+
+  dimension: time_call_to_creation_minutes {
+    type: number
+    hidden: yes
+    value_format: "0.0"
+    description: "The number of minutes between accepted time and call time"
+    sql: ${time_call_to_accepted_seconds}/60.0 ;;
+  }
+
+
   dimension: reasonable_call_to_accepted_time {
     type: yesno
     sql: ${time_call_to_accepted_minutes} < 120 and ${time_call_to_accepted_minutes}> 5  ;;
   }
+
+
+  dimension: reasonable_call_creation_time {
+    type: yesno
+    sql: ${time_call_to_creation_minutes} < 120   ;;
+  }
+
 
   dimension: assigned_time_seconds {
     type: number
@@ -861,6 +885,16 @@ WITH ort AS (
     sql_distinct_key: concat(${care_request_id}) ;;
     sql: ${time_to_call_minutes} ;;
   }
+
+  measure:  median_time_to_call_creation_minutes{
+    type: median_distinct
+    label: "Median Time to Caller Creation (Call Created-Created TS)"
+    value_format: "0.00"
+    sql_distinct_key: concat(${care_request_id}) ;;
+    sql: ${time_call_to_creation_minutes} ;;
+    filters: [reasonable_call_creation_time: "yes"]
+  }
+
 
   measure:  median_time_call_to_accepted_minutes{
     type: median_distinct
