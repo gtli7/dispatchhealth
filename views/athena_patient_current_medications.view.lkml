@@ -274,6 +274,12 @@ view: athena_patient_current_medications {
     sql: ${TABLE}."updated_at" ;;
   }
 
+  dimension: medication_name_short {
+    description: "The first word of the medication name"
+    type: string
+    sql: INITCAP(split_part(${medication_name}, ' ', 1)) ;;
+  }
+
   measure: count {
     type: count
     drill_fields: [id, medication_name, pharmacy_name]
