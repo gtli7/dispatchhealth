@@ -3994,6 +3994,15 @@ explore: genesys_conversation_summary {
     relationship: one_to_one
     sql_on: ${athena_claim.claim_id} = ${athena_transaction_summary.claim_id} ;;
   }
+  join: addressable_items {
+    relationship: one_to_one
+    sql_on: ${addressable_items.addressable_type} = 'CareRequest' and ${care_requests.id} = ${addressable_items.addressable_id};;
+    fields: []
+  }
+  join: addresses {
+    relationship: many_to_one
+    sql_on:  ${addressable_items.address_id} = ${addresses.id} ;;
+  }
 }
 explore: propensity_by_zip {
   join: zipcodes {

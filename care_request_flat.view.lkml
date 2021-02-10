@@ -348,10 +348,34 @@ WITH ort AS (
     sql: ${time_call_to_accepted_seconds}/60.0 ;;
   }
 
+  dimension: time_call_to_creation_seconds {
+    type: number
+    hidden: yes
+    value_format: "0"
+    description: "The number of seconds between accepted time and call time"
+    sql: EXTRACT(EPOCH FROM ${call_time_raw})-EXTRACT(EPOCH FROM ${created_raw}) ;;
+  }
+
+  dimension: time_call_to_creation_minutes {
+    type: number
+    hidden: yes
+    value_format: "0.0"
+    description: "The number of minutes between accepted time and call time"
+    sql: ${time_call_to_accepted_seconds}/60.0 ;;
+  }
+
+
   dimension: reasonable_call_to_accepted_time {
     type: yesno
     sql: ${time_call_to_accepted_minutes} < 120 and ${time_call_to_accepted_minutes}> 5  ;;
   }
+
+
+  dimension: reasonable_call_creation_time {
+    type: yesno
+    sql: ${time_call_to_creation_minutes} < 120   ;;
+  }
+
 
   dimension: assigned_time_seconds {
     type: number
@@ -861,6 +885,16 @@ WITH ort AS (
     sql_distinct_key: concat(${care_request_id}) ;;
     sql: ${time_to_call_minutes} ;;
   }
+
+  measure:  median_time_to_call_creation_minutes{
+    type: median_distinct
+    label: "Median Time to Caller Creation (Call Created-Created TS)"
+    value_format: "0.00"
+    sql_distinct_key: concat(${care_request_id}) ;;
+    sql: ${time_call_to_creation_minutes} ;;
+    filters: [reasonable_call_creation_time: "yes"]
+  }
+
 
   measure:  median_time_call_to_accepted_minutes{
     type: median_distinct
@@ -1710,7 +1744,8 @@ WITH ort AS (
 
   dimension: pushed_overflow_note {
     type: yesno
-    sql:    ${notes_aggregated.notes_aggregated}  like '%pushed pt: market delay%';;
+    sql:    ${notes_aggregated.notes_aggregated}  like '%pushed pt, market delay%'
+    or ${notes_aggregated.notes_aggregated}  like '%pushed pt: market delay%';;
   }
   measure: count_pushed_overflow_note {
     type: count_distinct
@@ -1725,7 +1760,9 @@ WITH ort AS (
     sql:   (not ${pafu_or_follow_up}) and ${scheduled_visit} and lower(${service_lines.name}) like '%acute%' and
      ${created_date} != ${scheduled_care_date}
          and ${first_accepted_date}=${created_date} AND
-        ${notes_aggregated.notes_aggregated} not like '%pushed pt: pt availability%';;
+        ${notes_aggregated.notes_aggregated} not like '%pushed pt: pt availability%'
+        and
+         ${notes_aggregated.notes_aggregated} not like '%pushed pt, pt availability%';;
   }
   measure: count_pushed_overflow {
     type: count_distinct
@@ -3989,6 +4026,19 @@ measure: avg_first_on_route_mins {
     }
   }
 
+  measure: lwbs_scheduled_count_address {
+    label: "Resolved Acute Scheduled (Overflow) (Unique Address)"
+    type: count_distinct
+    sql_distinct_key: ${addresses.street_address_1} ;;
+    sql: ${addresses.street_address_1} ;;
+
+    filters: {
+      field: lwbs_scheduled
+      value: "yes"
+    }
+  }
+
+
   measure: lwbs_accepted_count {
     type: count_distinct
     sql: ${care_request_id} ;;
@@ -4052,6 +4102,19 @@ measure: avg_first_on_route_mins {
       value: "yes"
     }
   }
+  measure: booked_resolved_count_address {
+    description: "Care requests resolved for booked (Unique on Address)"
+    type: count_distinct
+    sql: ${addresses.street_address_1} ;;
+    sql_distinct_key: ${addresses.street_address_1} ;;
+
+    filters: {
+      field: booked_resolved
+      value: "yes"
+    }
+  }
+
+
 
   measure: placeholder_resolved_count {
     description: "Care requests resolved with placeholder"
@@ -4418,6 +4481,18 @@ measure: avg_first_on_route_mins {
     }
   }
 
+  measure: complete_count_address {
+    type: count_distinct
+    sql: ${addresses.street_address_1} ;;
+    sql_distinct_key: ${addresses.street_address_1} ;;
+    filters: {
+      field: complete
+      value: "yes"
+    }
+  }
+
+
+
   measure: complete_count_dx {
     type: count_distinct
     sql: ${care_request_id} ;;
@@ -4699,12 +4774,35 @@ measure: avg_first_on_route_mins {
     }
   }
 
+
+  measure: accepted_count_address {
+    type: count_distinct
+    sql: ${addresses.street_address_1} ;;
+    sql_distinct_key: ${addresses.street_address_1} ;;
+    filters: {
+      field: accepted
+      value: "yes"
+    }
+  }
+
   measure: accepted_or_scheduled_count {
     label: "Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled) Count"
     type: sum_distinct
     value_format: "0"
     sql: case when ${booked_resolved} then .7 else 1 end ;;
     sql_distinct_key:  ${care_request_id} ;;
+    filters: {
+      field: accepted_or_scheduled
+      value: "yes"
+    }
+  }
+
+  measure: accepted_or_scheduled_count_address {
+    label: "Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled) Count (Unique Address)"
+    type: sum_distinct
+    value_format: "0"
+    sql: case when ${booked_resolved} then .7 else 1 end ;;
+    sql_distinct_key: ${addresses.street_address_1} ;;
     filters: {
       field: accepted_or_scheduled
       value: "yes"
@@ -4940,6 +5038,15 @@ measure: avg_first_on_route_mins {
     type: count_distinct
     sql: ${care_request_id} ;;
   }
+
+  measure: care_request_count_address {
+    type: count_distinct
+    sql: ${addresses.street_address_1} ;;
+    sql_distinct_key: ${addresses.street_address_1} ;;
+
+  }
+
+
 
   measure: care_request_count_uhc {
     type: count_distinct

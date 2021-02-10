@@ -433,7 +433,7 @@ view: channel_items {
   dimension: growth_target {
     type: yesno
     group_label: "Description"
-    sql: ${sf_accounts.priority_account_timestamp_raw} >=  date_trunc('month', now())::date - 30 ;;
+    sql: ${sf_accounts.priority_account_timestamp_year} =  '2021';;
   }
 
   dimension: generic_organization {
