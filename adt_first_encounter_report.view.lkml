@@ -307,4 +307,83 @@ view: adt_first_encounter_report {
     group_label: "Inpatient Emergency Admittance Intervals"
   }
 
+  dimension: 30day_emergency_admittance_framework {
+    description: "Categorizes the first recorded Emergency admittance by day for the first 30 days from the DH on-scene date"
+    type: string
+    sql: CASE WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 24 THEN '01'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 48 THEN '02'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 72 THEN '03'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 96 THEN '04'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 120 THEN '05'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 144 THEN '06'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 168 THEN '07'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 192 THEN '08'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 216 THEN '09'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 240 THEN '10'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 264 THEN '11'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 288 THEN '12'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 312 THEN '13'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 336 THEN '14'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 360 THEN '15'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 384 THEN '16'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 408 THEN '17'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 432 THEN '18'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 456 THEN '19'
+          WHEN  extract(epoch from ${cr_to_er_diff})/3600 <= 480 THEN '20'
+          WHEN  extract(epoch from ${cr_to_er_diff})/3600 <= 504 THEN '21'
+          WHEN  extract(epoch from ${cr_to_er_diff})/3600 <= 528 THEN '22'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 552 THEN '23'
+          WHEN  extract(epoch from ${cr_to_er_diff})/3600 <= 576 THEN '24'
+          WHEN  extract(epoch from ${cr_to_er_diff})/3600 <= 600 THEN '25'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 624 THEN '26'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 648 THEN '27'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 672 THEN '28'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 696 THEN '29'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 720 THEN '30'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 > 720 THEN 'Greater then 30 Days'
+          ELSE NULL
+          END
+          ;;
+
+    }
+  dimension: 30day_emergency_hospitalization_admittance_framework {
+    description: "Categorizes the first recorded Hospitalization admittance (defined as transfer from Emergency admittance) by day for the first 30 days from the DH on-scene date"
+    type: string
+    sql: CASE WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 24 THEN '01'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 48 THEN '02'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 72 THEN '03'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 96 THEN '04'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 120 THEN '05'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 144 THEN '06'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 168 THEN '07'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 192 THEN '08'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 216 THEN '09'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 240 THEN '10'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 264 THEN '11'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 288 THEN '12'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 312 THEN '13'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 336 THEN '14'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 360 THEN '15'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 384 THEN '16'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 408 THEN '17'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 432 THEN '18'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 456 THEN '19'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 480 THEN '20'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 504 THEN '21'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 528 THEN '22'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 552 THEN '23'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 576 THEN '24'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 600 THEN '25'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 624 THEN '26'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 648 THEN '27'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 672 THEN '28'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 696 THEN '29'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 720 THEN '30'
+          WHEN extract(epoch from ${cr_to_hosp_diff})/3600 > 720 THEN 'Greater then 30 Days'
+          ELSE NULL
+          END
+          ;;
+
+    }
+
 }
