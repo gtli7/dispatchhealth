@@ -4129,7 +4129,9 @@ explore: shift_teams
 
   join: athena_inbox_review_provider {
     relationship: one_to_many
-    sql_on: ${provider_profiles.npi} = ${athena_inbox_review_provider.npi} ;;
+    sql_on: ${provider_profiles.npi} = ${athena_inbox_review_provider.npi}
+      AND ${athena_inbox_review_provider.created_raw} <= ${shift_teams.end_raw}
+      AND ${athena_inbox_review_provider.created_raw} >= ${shift_teams.start_raw};;
   }
 
   join: shift_team_market_assignment_logs {

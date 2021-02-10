@@ -18,7 +18,7 @@ view: athena_document_results {
 
   dimension_group: __file {
     type: time
-    hidden: yes
+    hidden: no
     timeframes: [
       raw,
       time,
