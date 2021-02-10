@@ -328,19 +328,30 @@ view: geneysis_evaluations {
     }
   }
 
+  measure: number_of_ma_adherence_evaluations {
+    type: count_distinct
+    sql: ${conversationid} ;;
+    sql_distinct_key: ${conversationid} ;;
+    filters: {
+      field: evaluationformname
+      value: "MA - Adherence and Unique Features Quality Assessment"
+    }
+  }
+
 
   measure: avg_total_evaluation_score {
     type: average_distinct
-    value_format: "0.00"
-    sql: ${totalevaluationscore} ;;
+    value_format: "0%"
+    sql: ${totalevaluationscore}::float/100.0 ;;
     sql_distinct_key: ${primary_key} ;;
   }
 
 
   measure: avg_total_evaluation_critical {
+    label: "Avg Total Evaluation Critical Score"
     type: average_distinct
-    value_format: "0.00"
-    sql: ${totalevaluationcriticalscore} ;;
+    value_format: "0%"
+    sql: ${totalevaluationcriticalscore}::float/100.0 ;;
     sql_distinct_key: ${primary_key} ;;
   }
 
@@ -366,6 +377,7 @@ view: geneysis_evaluations {
   }
 
   measure: body_avg_total_evaluation_score {
+    label: "Body Avg Question Score"
     type: average_distinct
     value_format: "0%"
     sql: ${questionscore} ;;
@@ -399,9 +411,11 @@ view: geneysis_evaluations {
   }
 
   measure: close_avg_total_evaluation_score {
+    label: "Close Avg Total Question Score"
+
     type: average_distinct
     value_format: "0%"
-    sql: ${questionscore} ;;
+    sql: ${questionscore}::float;;
     sql_distinct_key: ${primary_key} ;;
     filters: {
       field: questiongroupname
@@ -410,9 +424,10 @@ view: geneysis_evaluations {
   }
 
   measure: caller_experience_avg_total_evaluation_score {
+    label: "Caller Experience Avg Total Question Score"
     type: average_distinct
-    value_format: "#0%"
-    sql: ${questionscore} ;;
+    value_format: "0%"
+    sql: ${questionscore}::float/10.0;;
     sql_distinct_key: ${primary_key} ;;
     filters: {
       field: questiongroupname
@@ -436,6 +451,29 @@ view: geneysis_evaluations {
     sql: ${evaluationformid} ;;
     sql_distinct_key: ${primary_key} ;;
   }
+
+  measure: number_of_evaluations_read {
+    type: count_distinct
+    sql: ${evaluationformid} ;;
+    sql_distinct_key: ${primary_key} ;;
+    filters: {
+      field: agenthasread
+      value: "true"
+    }
+  }
+
+
+  measure: number_of_evaluations_unread {
+    type: count_distinct
+    sql: ${evaluationformid} ;;
+    sql_distinct_key: ${primary_key} ;;
+    filters: {
+      field: agenthasread
+      value: "false"
+    }
+  }
+
+
 
 
 
