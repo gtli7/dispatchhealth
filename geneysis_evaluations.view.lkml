@@ -189,6 +189,19 @@ view: geneysis_evaluations {
     sql: case when ${questiongroupname} = 'Caller Experience' then ${TABLE}."questionscore"::float/10.0 else  ${TABLE}."questionscore"::float end  ;;
   }
 
+  dimension: question_score_less_than_1 {
+    type: yesno
+    sql: ${questionscore} <0 ;;
+  }
+
+
+  dimension: question_score_na {
+    type: yesno
+    sql: ${questionscore} <0 ;;
+  }
+
+
+
   dimension: questionscorecomment {
     type: string
     sql: ${TABLE}."questionscorecomment" ;;
@@ -277,6 +290,22 @@ view: geneysis_evaluations {
   measure: count {
     type: count
     drill_fields: [agentname, evaluationformname, evaluatorname, questiongroupname, queuename]
+  }
+
+
+  measure: total_number_of_questions_yes{
+    type: count_distinct
+    sql: ${conversationid} ;;
+    sql_distinct_key: ${primary_key} ;;
+    filters: [questionscore: "1"]
+
+  }
+
+  measure: total_number_of_questions{
+    type: count_distinct
+    sql: ${conversationid} ;;
+    sql_distinct_key: ${primary_key} ;;
+
   }
 
   measure: total_number_of_failed_kill_questions {
