@@ -125,7 +125,7 @@ view: geneysis_evaluations {
 
 
   dimension: markedna {
-    type: string
+    type: yesno
     sql: ${TABLE}."markedna"::text='1' ;;
   }
 
