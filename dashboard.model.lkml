@@ -3703,6 +3703,11 @@ explore: users {
     sql_on: ${user_roles.user_id} = ${users.id} ;;
   }
 
+  join: zizzl_employee_roster_details {
+    relationship: one_to_one
+    sql_on: ${users.id} = ${zizzl_employee_roster_details.employee_id} ;;
+  }
+
   join: roles {
     relationship: one_to_many
     sql_on: ${roles.id} = ${user_roles.role_id} ;;
