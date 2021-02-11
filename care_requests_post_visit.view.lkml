@@ -78,10 +78,25 @@ indexes: ["patient_id", "anchor_care_request_id", "anchor_service_line_id", "anc
     sql:  ${TABLE}.anchor_service_line_id ;;
   }
 
-  dimension: anchor_on_scene_time {
+  dimension_group: anchor_on_scene_time {
     description: "Base visit on-scene time for which future visits will be counted for a given patient"
-    type: date_time
-    sql:  ${TABLE}.anchor_on_scene_time ;;
+    type: time
+    timeframes: [
+      raw,
+      hour_of_day,
+      time_of_day,
+      date,
+      time,
+      week,
+      month,
+      month_num,
+      day_of_week,
+      day_of_week_index,
+      day_of_month,quarter,
+      hour,
+      year
+    ]
+    sql:  ${TABLE}.anchor_on_scene_time AT TIME ZONE 'UTC' AT TIME ZONE 'US/Mountain' ;;
   }
 
   dimension: post_anchor_care_request_id {
@@ -108,10 +123,25 @@ indexes: ["patient_id", "anchor_care_request_id", "anchor_service_line_id", "anc
     sql:  ${TABLE}.post_anchor_chief_complaint ;;
   }
 
-  dimension: post_anchor_on_scene_time {
+  dimension_group: post_anchor_on_scene_time {
     description: "Future visit on-scene time (occurring after initial visit) for a given patient"
-    type: date_time
-    sql:  ${TABLE}.post_anchor_on_scene_time ;;
+    type: time
+    timeframes: [
+      raw,
+      hour_of_day,
+      time_of_day,
+      date,
+      time,
+      week,
+      month,
+      month_num,
+      day_of_week,
+      day_of_week_index,
+      day_of_month,quarter,
+      hour,
+      year
+    ]
+    sql:  ${TABLE}.post_anchor_on_scene_time AT TIME ZONE 'UTC' AT TIME ZONE 'US/Mountain' ;;
   }
 
   dimension: seconds_from_anchor_visit {
