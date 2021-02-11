@@ -5068,6 +5068,7 @@ measure: avg_first_on_route_mins {
   }
 
   measure: complete_rate {
+    label: "Conversion-rate"
     type: number
     value_format: "0%"
     sql: ${complete_count}::float/nullif(${care_request_count}::float,0) ;;
