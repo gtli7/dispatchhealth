@@ -792,6 +792,8 @@ view: athena_document_orders {
     sql: ${athena_result_closed.result_closed_raw} ;;
   }
 
+  ##################################################################
+  ##### POTENTIALLY REMOVE - MOVE TO DOCUMENT_RESULTS VIEW #########
   dimension: result_rcvd_to_closed  {
     type: number
     hidden: no
@@ -834,6 +836,7 @@ view: athena_document_orders {
     sql: ${result_rcvd_to_closed} ;;
     value_format: "0.00"
   }
+  ###########################################################
 
   dimension: order_submitted_to_result_closed  {
     type: number
