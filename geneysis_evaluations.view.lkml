@@ -186,7 +186,7 @@ view: geneysis_evaluations {
 
   dimension: questionscore {
     type: number
-    sql: ${TABLE}."questionscore" ;;
+    sql: case when ${questiongroupname} = 'Caller Experience' then ${TABLE}."questionscore"::float/10.0 else  ${TABLE}."questionscore"::float end  ;;
   }
 
   dimension: questionscorecomment {
@@ -303,7 +303,7 @@ view: geneysis_evaluations {
 
   measure: avg_question_score {
     type: average_distinct
-    value_format: "0.00"
+    value_format: "0%"
     sql: ${questionscore} ;;
     sql_distinct_key: ${primary_key} ;;
   }
@@ -427,7 +427,7 @@ view: geneysis_evaluations {
     label: "Caller Experience Avg Total Question Score"
     type: average_distinct
     value_format: "0%"
-    sql: ${questionscore}::float/10.0;;
+    sql: ${questionscore}::float;;
     sql_distinct_key: ${primary_key} ;;
     filters: {
       field: questiongroupname
