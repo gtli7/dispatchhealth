@@ -355,6 +355,7 @@ include: "*.dashboard.lookml"  # include all dashboards in this project
 include: "granular_full_shift_agg.view.lkml"
 include: "views/genesys_conversation_summary_null.view.lkml"
 include: "capture_rate_by_market.view.lkml"
+include: "provider_fit_testing_bad_ids.view.lkml"
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
   max_cache_age: "6 hours"
@@ -4987,3 +4988,5 @@ explore: eligible_patients_full_table {
 }
 
 explore: granular_full_shift_agg {}
+
+explore: provider_fit_testing_bad_ids {}
