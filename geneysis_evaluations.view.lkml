@@ -186,7 +186,7 @@ view: geneysis_evaluations {
 
   dimension: questionscore {
     type: number
-    sql: case when ${questiongroupname} = 'Caller Experience' then ${TABLE}."questionscore"::float/10.0 else  ${TABLE}."questionscore"::float end  ;;
+    sql: case when ${questiongroupname} = 'Caller Experience' then ${TABLE}."questionscore"::float/13.0 else  ${TABLE}."questionscore"::float end  ;;
   }
 
   dimension: question_score_less_than_1 {
