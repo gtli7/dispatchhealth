@@ -85,49 +85,49 @@ indexes: ["patient_id", "anchor_care_request_id", "anchor_service_line_id", "anc
   }
 
   dimension: post_anchor_care_request_id {
-    description: "Future Care Request Id (occurring after base visit) for a given patient"
+    description: "Future Care Request Id (occurring after initial visit) for a given patient"
     type: number
     sql:  ${TABLE}.post_anchor_care_request_id ;;
   }
 
   dimension: post_anchor_service_line_id {
-    description: "Future visit Service Line Id (occurring after base visit) for a given patient"
+    description: "Future visit Service Line Id (occurring after initial visit) for a given patient"
     type: string
     sql:  ${TABLE}.post_anchor_service_line_id ;;
   }
 
   dimension: post_anchor_risk_protocol_name {
-    description: "Future visit Risk Protocol Name (occurring after base visit) for a given patient"
+    description: "Future visit Risk Protocol Name (occurring after initial visit) for a given patient"
     type: string
     sql:  ${TABLE}.post_anchor_risk_protocol_name ;;
   }
 
   dimension: post_anchor_chief_complaint {
-    description: "Future visit Chief Complaint (occurring after base visit) for a given patient"
+    description: "Future visit Chief Complaint (occurring after initial visit) for a given patient"
     type: string
     sql:  ${TABLE}.post_anchor_chief_complaint ;;
   }
 
   dimension: post_anchor_on_scene_time {
-    description: "Future visit on-scene time (occurring after base visit) for a given patient"
+    description: "Future visit on-scene time (occurring after initial visit) for a given patient"
     type: date_time
     sql:  ${TABLE}.post_anchor_on_scene_time ;;
   }
 
   dimension: seconds_from_anchor_visit {
-    description: "Future visit time in seconds from base visit time (occurring after base visit) for a given patient"
+    description: "Future visit time in seconds from initial visit time (occurring after base visit) for a given patient"
     type: number
     sql:  ${TABLE}.seconds_from_anchor_visit ;;
   }
 
   dimension: visits_within_30_days_of_base_visit {
-    description: "Identifies future visits that occur wihtin 30 days after the base visit "
+    description: "Identifies future visits that occur wihtin 30 days after the initial visit "
     type: yesno
     sql: ${seconds_from_anchor_visit} / 3600 <= 720 ;;
   }
 
   dimension: dhfu_visits_within_30_days_of_base_visit {
-    description: "Identifies DHFU visits for the same patient occurring within 30 days of the base visit (DHFU identified by Risk Protocol Name and Cheif Complaint)"
+    description: "Identifies DHFU visits for the same patient occurring within 30 days of the initial visit (DHFU identified by Risk Protocol Name and Cheif Complaint)"
     type: yesno
     sql: ${seconds_from_anchor_visit} / 3600 <= 720 AND
     (lower(trim(${post_anchor_chief_complaint})) SIMILAR TO '%(dhfu|dh followup|dh follow up|dh follow-up|dh f/u|dispatchhealth followup|dispatchhealth follow up|dispatchhealth follow-up)%' OR
@@ -135,7 +135,7 @@ indexes: ["patient_id", "anchor_care_request_id", "anchor_service_line_id", "anc
   }
 
   measure:  count_visits_within_30_days_of_base_visit {
-    description: "Count the number of future visits that occur within 30 days afterthe base visit"
+    description: "Count the number of future visits that occur within 30 days after the initial visit"
     type: count_distinct
     sql: ${concat_anchor_post_care_request_id} ;;
     filters: {
@@ -144,8 +144,18 @@ indexes: ["patient_id", "anchor_care_request_id", "anchor_service_line_id", "anc
     }
   }
 
+  measure:  count_distinct_dhfu_patient_visit_within_30_days_of_base_visit {
+    description: "Count the number of distinct patients with a DHFU follow up occurring within 30 days after the initial visit"
+    type: count_distinct
+    sql: ${patient_id} ;;
+    filters: {
+      field: dhfu_visits_within_30_days_of_base_visit
+      value: "yes"
+    }
+  }
+
   measure:  count_dhfu_visits_within_30_days_of_base_visit {
-    description: "Count DHFU visits for the same patient occurring within 30 days of the base visit (DHFU identified by Risk Protocol Name and Cheif Complaint)"
+    description: "Count DHFU visits for the same patient occurring within 30 days of the initial visit (DHFU identified by Risk Protocol Name and Cheif Complaint)"
     type: count_distinct
     sql: ${concat_anchor_post_care_request_id} ;;
     filters: {
