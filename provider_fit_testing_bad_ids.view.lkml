@@ -7,27 +7,13 @@ view: provider_fit_testing_bad_ids {
   }
 
   dimension: date_approved {
-    type: string
+    type: date
     sql: ${TABLE}."date_approved" ;;
   }
 
   dimension: first_name {
     type: string
     sql: ${TABLE}."first_name" ;;
-  }
-
-  dimension_group: fit_test {
-    type: time
-    timeframes: [
-      raw,
-      time,
-      date,
-      week,
-      month,
-      quarter,
-      year
-    ]
-    sql: ${TABLE}."fit_test_date" ;;
   }
 
   dimension: last_name {
