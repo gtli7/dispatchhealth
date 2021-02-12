@@ -40,10 +40,10 @@ view: provider_fit_testing_bad_ids {
     sql: ${TABLE}."mask_type" ;;
   }
 
-  dimension: odata_etag {
-    type: string
+  dimension: id {
+    type: number
     hidden: yes
-    sql: ${TABLE}."@odata.etag" ;;
+    sql: ${TABLE}."id" ;;
   }
 
   dimension: user_id {
