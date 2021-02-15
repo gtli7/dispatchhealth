@@ -175,12 +175,19 @@ view: athena_document_results {
     sql: ${status} NOT IN ('CLOSED','DELETED') AND ${status} IS NOT NULL ;;
   }
 
+  dimension: duplicate_result {
+    type: yesno
+    description: "A flag indicating that the result is a duplicate of another document"
+    sql: ${document_result_last_action.system_key} LIKE '%DUPLICATE%' ;;
+  }
+
   measure: average_hours_result_open {
     type: average
     group_label: "Time Cycle Management"
     description: "Average hours between result created to today (use with filter status != 'CLOSED'"
     sql: ${hours_result_rcvd_to_today} ;;
     value_format: "0.00"
+    filters: [duplicate_result: "no", result_open: "yes"]
   }
 
   measure: median_hours_result_open {
@@ -189,6 +196,7 @@ view: athena_document_results {
     description: "Median hours between result created to today (use with filter status != 'CLOSED'"
     sql: ${hours_result_rcvd_to_today} ;;
     value_format: "0.00"
+    filters: [duplicate_result: "no"]
   }
 
   dimension: result_rcvd_to_today_tiers {
@@ -482,7 +490,31 @@ view: athena_document_results {
     type: average_distinct
     sql_distinct_key: ${id} ;;
     drill_fields: [document_id, patients.ehr_id, clinical_order_type, result_rcvd_to_closed]
-    filters: [clinical_order_type_group: "LAB, IMAGING"]
+    filters: [clinical_order_type_group: "LAB, IMAGING", duplicate_result: "no"]
+    sql: ${result_rcvd_to_closed} ;;
+    value_format: "0.00"
+  }
+
+  dimension: result_closed_within_18hours {
+    type: yesno
+    sql: ${result_rcvd_to_closed} <= 18 ;;
+  }
+
+  dimension: result_rcvd_to_closed_tiers {
+    type: tier
+    description: "Result received-to-closed Hrs: <=6, 6-12, 12-18, 18-24, 24-48, 48-72, 72+"
+    tiers: [6, 12, 18, 24, 48, 72]
+    style: relational
+    sql: ${result_rcvd_to_closed} ;;
+  }
+
+  measure: median_result_rcvd_to_closed {
+    description: "Median time between order result received and closed (Hrs)"
+    group_label: "Time Cycle Management"
+    type: median_distinct
+    sql_distinct_key: ${id} ;;
+    drill_fields: [document_id, patients.ehr_id, clinical_order_type, result_rcvd_to_closed]
+    filters: [clinical_order_type_group: "LAB, IMAGING", duplicate_result: "no"]
     sql: ${result_rcvd_to_closed} ;;
     value_format: "0.00"
   }
@@ -506,7 +538,7 @@ view: athena_document_results {
     type: average_distinct
     sql_distinct_key: ${id} ;;
     drill_fields: [document_id, patients.ehr_id, clinical_order_type, result_rcvd_to_closed]
-    filters: [clinical_order_type_group: "LAB, IMAGING"]
+    filters: [clinical_order_type_group: "LAB, IMAGING", duplicate_result: "no"]
     sql: ${result_tat_provider} ;;
     value_format: "0.00"
   }
@@ -528,7 +560,7 @@ view: athena_document_results {
     type: average_distinct
     sql_distinct_key: ${id} ;;
     drill_fields: [document_id, patients.ehr_id, clinical_order_type, result_rcvd_to_closed]
-    filters: [clinical_order_type_group: "LAB, IMAGING"]
+    filters: [clinical_order_type_group: "LAB, IMAGING", duplicate_result: "no"]
     sql: ${result_tat_ma} ;;
     value_format: "0.00"
   }
@@ -536,7 +568,35 @@ view: athena_document_results {
   measure: count_distinct_results {
     type: count_distinct
     description: "Count of distinct order results"
+    group_label: "Counts"
     sql: ${document_id} ;;
+    drill_fields: [detail*]
+  }
+
+  measure: count_distinct_lab_imaging_results {
+    type: count_distinct
+    description: "Count of distinct lab or imaging results"
+    group_label: "Counts"
+    sql: ${document_id} ;;
+    filters: [clinical_order_type_group: "LAB, IMAGING", duplicate_result: "no"]
+    drill_fields: [detail*]
+  }
+
+  measure: count_open_lab_imaging_results {
+    type: count_distinct
+    description: "Count of distinct open lab or imaging results"
+    group_label: "Counts"
+    sql: ${document_id} ;;
+    filters: [clinical_order_type_group: "LAB, IMAGING", duplicate_result: "no", result_open: "yes"]
+    drill_fields: [detail*]
+  }
+
+  measure: count_closed_lab_imaging_results {
+    type: count_distinct
+    description: "Count of distinct lab or imaging results"
+    group_label: "Counts"
+    sql: ${document_id} ;;
+    filters: [clinical_order_type_group: "LAB, IMAGING", duplicate_result: "no", status: "CLOSED"]
     drill_fields: [detail*]
   }
 

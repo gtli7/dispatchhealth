@@ -355,6 +355,7 @@ include: "*.dashboard.lookml"  # include all dashboards in this project
 include: "granular_full_shift_agg.view.lkml"
 include: "views/genesys_conversation_summary_null.view.lkml"
 include: "capture_rate_by_market.view.lkml"
+include: "provider_fit_testing_bad_ids.view.lkml"
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
   max_cache_age: "6 hours"
@@ -1089,13 +1090,13 @@ join: athena_first_result {
 
 join: athena_result_created {
   relationship: one_to_one
-  sql_on:  ${athena_document_orders.document_id} = ${athena_result_created.order_document_id};;
+  sql_on:  ${athena_document_results.document_id} = ${athena_result_created.document_id};;
   # fields: []
 }
 
 join: athena_result_closed {
   relationship: one_to_one
-  sql_on: ${athena_document_orders.document_id} = ${athena_result_closed.order_document_id} ;;
+  sql_on: ${athena_document_results.document_id} = ${athena_result_closed.document_id} ;;
   # fields: []
 }
 
@@ -3702,6 +3703,11 @@ explore: users {
     sql_on: ${user_roles.user_id} = ${users.id} ;;
   }
 
+  join: zizzl_employee_roster_details {
+    relationship: one_to_one
+    sql_on: ${users.id} = ${zizzl_employee_roster_details.employee_id} ;;
+  }
+
   join: roles {
     relationship: one_to_many
     sql_on: ${roles.id} = ${user_roles.role_id} ;;
@@ -4624,21 +4630,17 @@ explore: bulk_variable_shift_tracking {
     relationship: one_to_one
     sql_on: ${shift_team_members.user_id} = ${users.id} ;;
   }
-
   join: shift_team_members {
     relationship: one_to_many
     sql_on: ${shift_teams.id} = ${shift_team_members.shift_team_id} ;;
   }
-
   join: shift_types {
     sql_on: ${shift_teams.shift_type_id} = ${shift_types.id} ;;
   }
-
   join: zizzl_shift_hours {
     sql_on: ${shift_team_members.shift_team_id} = ${zizzl_shift_hours.shift_team_id} and
       ${shift_team_members.user_id} = ${zizzl_shift_hours.user_id};;
   }
-
   join: zizzl_detailed_shift_hours {
     relationship: one_to_many
     sql_on: ${users.id} = ${zizzl_detailed_shift_hours.employee_id} AND
@@ -4647,7 +4649,15 @@ explore: bulk_variable_shift_tracking {
                AND (${zizzl_detailed_shift_hours.shift_name} != 'Administration' OR ${zizzl_detailed_shift_hours.shift_name} IS NULL)
                AND ${zizzl_detailed_shift_hours.shift_name} LIKE 'NP/PA/%' ;;
   }
+  join: market_regions {
+    relationship: one_to_one
+    sql_on: ${markets.id} = ${market_regions.market_id} ;;
+  }
+  join: dates_rolling {
+    sql_on: ${bulk_variable_shift_tracking.date_date} = ${dates_rolling.day_date} ;;
+  }
 }
+
 explore: variable_shift_tracking {
   sql_always_where: ${variable_shift_tracking.date_date} < current_date ;;
   join: cars {
@@ -4970,6 +4980,9 @@ explore:  on_call_tracking
       sql_on: ${shift_team_members.shift_team_id} = ${zizzl_shift_hours.shift_team_id} and
       ${shift_team_members.user_id} = ${zizzl_shift_hours.user_id};;
     }
+    join: market_regions {
+      sql_on: ${markets.id_adj_dual} = ${market_regions.market_id} ;;
+    }
   }
 
 
@@ -4987,3 +5000,5 @@ explore: eligible_patients_full_table {
 }
 
 explore: granular_full_shift_agg {}
+
+explore: provider_fit_testing_bad_ids {}
