@@ -4653,6 +4653,11 @@ explore: bulk_variable_shift_tracking {
                AND (${zizzl_detailed_shift_hours.shift_name} != 'Administration' OR ${zizzl_detailed_shift_hours.shift_name} IS NULL)
                AND ${zizzl_detailed_shift_hours.shift_name} LIKE 'NP/PA/%' ;;
   }
+
+  join: market_regions {
+    relationship: one_to_one
+    sql_on: ${markets.id} = ${market_regions.market_id} ;;
+  }
 }
 explore: variable_shift_tracking {
   sql_always_where: ${variable_shift_tracking.date_date} < current_date ;;
@@ -4975,6 +4980,9 @@ explore:  on_call_tracking
     join: zizzl_shift_hours {
       sql_on: ${shift_team_members.shift_team_id} = ${zizzl_shift_hours.shift_team_id} and
       ${shift_team_members.user_id} = ${zizzl_shift_hours.user_id};;
+    }
+    join: market_regions {
+      sql_on: ${markets.id_adj_dual} = ${market_regions.market_id} ;;
     }
   }
 
