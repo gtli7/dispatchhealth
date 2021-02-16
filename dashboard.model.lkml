@@ -930,6 +930,14 @@ join: athena_provider {
   sql_on: ${athena_appointment.provider_id} = ${athena_provider.provider_id} ;;
 }
 
+  join: athena_supervising_provider_clone {
+    from: athena_provider
+    relationship: many_to_one
+    sql_on: ${athena_provider.supervising_provider_id} = ${athena_supervising_provider_clone.provider_id} ;;
+    # fields: []
+  }
+
+
 join: athena_providergroup {
   relationship: one_to_one
   sql_on: ${athena_provider.provider_group_id} = ${athena_providergroup.provider_group_id} ;;
