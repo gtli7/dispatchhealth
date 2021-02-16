@@ -66,6 +66,7 @@ view: athena_cpt_codes {
 
   dimension: em_care_level {
     type: number
+    view_label: "E&M Care Level"
     description: "The Evaluation & Management care level"
     sql: ${TABLE}.em_care_level ;;
   }
