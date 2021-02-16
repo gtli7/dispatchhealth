@@ -48,6 +48,16 @@ view: eligible_patients_full_table {
     sql: ${TABLE}.channel_item_id ;;
   }
 
+  dimension: street_address_1 {
+    type: string
+    sql: ${TABLE}.street_address_1 ;;
+  }
+
+  dimension: street_address_2 {
+    type: string
+    sql: ${TABLE}.street_address_2 ;;
+  }
+
   dimension: city {
     type: string
     sql: ${TABLE}.city ;;

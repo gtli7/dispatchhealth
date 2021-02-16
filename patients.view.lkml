@@ -87,6 +87,17 @@ view: patients {
     group_label: "Age of Patient"
   }
 
+  dimension: hedis_age_group {
+    type: string
+    description: "Age bands for HEDIS reporting: 3 mos - 17, 18 - 64, 65+"
+    sql: CASE
+          WHEN ${age_in_months} >= 3 AND ${age} <=17 THEN '3 months - 17'
+          WHEN ${age} >= 18 AND ${age} <= 64 THEN '18 - 64'
+          WHEN ${age} >= 65 AND ${age} <= 110 THEN '65+'
+          ELSE NULL
+        END ;;
+  }
+
   dimension: bad_age_filter {
     type: yesno
     hidden: yes

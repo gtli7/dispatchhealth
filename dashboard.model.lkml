@@ -4638,21 +4638,17 @@ explore: bulk_variable_shift_tracking {
     relationship: one_to_one
     sql_on: ${shift_team_members.user_id} = ${users.id} ;;
   }
-
   join: shift_team_members {
     relationship: one_to_many
     sql_on: ${shift_teams.id} = ${shift_team_members.shift_team_id} ;;
   }
-
   join: shift_types {
     sql_on: ${shift_teams.shift_type_id} = ${shift_types.id} ;;
   }
-
   join: zizzl_shift_hours {
     sql_on: ${shift_team_members.shift_team_id} = ${zizzl_shift_hours.shift_team_id} and
       ${shift_team_members.user_id} = ${zizzl_shift_hours.user_id};;
   }
-
   join: zizzl_detailed_shift_hours {
     relationship: one_to_many
     sql_on: ${users.id} = ${zizzl_detailed_shift_hours.employee_id} AND
@@ -4661,12 +4657,15 @@ explore: bulk_variable_shift_tracking {
                AND (${zizzl_detailed_shift_hours.shift_name} != 'Administration' OR ${zizzl_detailed_shift_hours.shift_name} IS NULL)
                AND ${zizzl_detailed_shift_hours.shift_name} LIKE 'NP/PA/%' ;;
   }
-
   join: market_regions {
     relationship: one_to_one
     sql_on: ${markets.id} = ${market_regions.market_id} ;;
   }
+  join: dates_rolling {
+    sql_on: ${bulk_variable_shift_tracking.date_date} = ${dates_rolling.day_date} ;;
+  }
 }
+
 explore: variable_shift_tracking {
   sql_always_where: ${variable_shift_tracking.date_date} < current_date ;;
   join: cars {

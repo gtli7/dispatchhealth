@@ -143,6 +143,15 @@ view: athena_clinicalresultobservation {
     sql: ${TABLE}."template_analyte_name" ;;
   }
 
+  dimension: urinalysis_positive {
+    type: yesno
+    description: "Nitrites are +, ++ or +++ OR (Leukocytes are +, ++, +++ AND blood in urine)"
+    sql: ${athena_document_orders.clinical_order_type} = 'URINALYSIS DIPSTICK'
+      AND ((${template_analyte_name} = 'Nitrites' AND ${result} IN ('+','++','+++'))
+      OR ((${template_analyte_name} = 'Leukocytes' AND ${result} IN ('+','++','+++'))
+      AND (${template_analyte_name} = 'Blood' AND ${result} IN ('+','++','+++'))));;
+  }
+
   dimension_group: updated_at {
     type: time
     hidden: yes
