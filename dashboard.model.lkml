@@ -855,7 +855,7 @@ join: athena_patient_medical_history {
   join: athena_diagnosis_sequence {
     relationship: one_to_many
     sql_on: ${care_requests.ehr_id} = ${athena_diagnosis_sequence.appointment_char} ;;
-    fields: []
+    fields: [athena_diagnosis_sequence.sequence_number]
   }
 
   join: athena_primary_diagnosis_codes {
