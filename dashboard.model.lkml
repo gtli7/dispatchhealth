@@ -4061,6 +4061,11 @@ explore: shift_teams
     sql_on: ${shift_teams.shift_type_id} = ${shift_types.id} ;;
   }
 
+  join: shifts_end_of_shift_times {
+    relationship: one_to_one
+    sql_on: ${shift_teams.id} = ${shifts_end_of_shift_times.shift_team_id} ;;
+  }
+
   join: care_requests {
     relationship: one_to_one
     sql_on: ${care_requests_shift_teams.care_request_id} = ${care_requests.id}
