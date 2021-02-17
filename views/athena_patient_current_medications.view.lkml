@@ -274,6 +274,28 @@ view: athena_patient_current_medications {
     sql: ${TABLE}."updated_at" ;;
   }
 
+  dimension: valid_patient_id {
+    type: yesno
+    hidden: yes
+    sql: ${patient_id} IS NOT NULL ;;
+  }
+
+  dimension: patient_id_short_med_name {
+    description: "Concatenate patient ID and medication short name for counting"
+    hidden: yes
+    type: string
+    sql: CONCAT(${patient_id}::varchar,' ', ${medication_name_short}) ;;
+  }
+
+  measure: count_medications_short {
+    type: count_distinct
+    sql: ${patient_id_short_med_name} ;;
+    filters: {
+      field: valid_patient_id
+      value: "yes"
+    }
+  }
+
   dimension: medication_name_short {
     description: "The first word of the medication name"
     type: string
@@ -292,6 +314,11 @@ view: athena_patient_current_medications {
       field: deactivation_datetime_date
       value: "NULL"
     }
+  }
+
+  measure: count_distinct_patients {
+    type: count_distinct
+    sql: ${patient_id} ;;
   }
 
 }
