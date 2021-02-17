@@ -175,4 +175,15 @@ view: athena_medication_details {
     type: count
     drill_fields: [medication_id, medication_name]
   }
+
+  measure: count_dea_scheduled_medication {
+    description: "Counts prescriptions that are Scheduled substances/medications by the DEA"
+    type: count_distinct
+    sql: ${care_requests.id} ;;
+    filters: {
+      field: dea_schedule
+      value: "yes"
+    }
+
+  }
 }
