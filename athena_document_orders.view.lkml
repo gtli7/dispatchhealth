@@ -189,6 +189,13 @@ view: athena_document_orders {
         'URINALYSIS COMPLETE') ;;
   }
 
+  measure: count_appointment_urinalysis_performed {
+    type: count_distinct
+    description: "Count the distinct appointments where a urinalysis was performed / ordered"
+    group_label: "Counts"
+    sql: ${clinical_encounter_id} ;;
+  }
+
   measure: third_party_lab_imaging {
     type: max
     description: "A flag indicating that third party labs or imaging were ordered"

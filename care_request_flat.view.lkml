@@ -2525,7 +2525,7 @@ WITH ort AS (
     ]
     sql: CASE
           WHEN ${archive_comment} IS NOT NULL AND LOWER(${primary_resolved_reason}) <> 'referred - point of care' THEN ${archive_raw}
-          ELSE ${athenadwh_claims_clone.claim_created_datetime_raw}
+          ELSE ${athena_claim.claim_created_raw}
          END ;;
   }
 
@@ -4834,7 +4834,7 @@ measure: avg_first_on_route_mins {
 
   dimension: agent_of_record {
     type: string
-    sql: trim(coalesce(case when trim(${accept_employee_full_name})='' then null else ${accept_employee_full_name} end,
+    sql: trim(coalesce(
                       case when trim( ${csc_risk_assessments.csc_name})='' then null else  ${csc_risk_assessments.csc_name} end,
                       case when trim(${resolved_employee_full_name})='' then null else  ${resolved_employee_full_name} end,
                       case when trim(${csc_created.csc_name})='' then null else  ${csc_created.csc_name} end
@@ -4920,7 +4920,7 @@ measure: avg_first_on_route_mins {
       value: "yes"
     }
     filters: {
-      field: athenadwh_icdcodeall.likely_flu_diganosis
+      field: athena_diagnosis_codes.likely_flu_diganosis
       value: "yes"
     }
   }

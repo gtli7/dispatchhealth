@@ -26,10 +26,6 @@ view: genesys_agent_conversion {
         value: "120 days ago for 120 days"
       }
       filters: {
-        field: genesys_conversation_summary.queuename
-        value: "General Care,DTC,Partner Direct,DTC Pilot,ATL Optum Care,DEN LAS SEM VIP,Humana Partner Direct,LAS RCC"
-      }
-      filters: {
         field: markets.id
         value: "NOT NULL"
       }
