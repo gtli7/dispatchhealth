@@ -189,12 +189,36 @@ view: athena_document_orders {
         'URINALYSIS COMPLETE') ;;
   }
 
-  measure: count_appointment_urinalysis_performed {
+  measure: count_urinalysis_performed_care_requests {
     type: count_distinct
-    description: "Count the distinct appointments where a urinalysis was performed / ordered"
+    description: "Count the distinct visits where any urinalysis was performed / ordered"
     group_label: "Counts"
-    sql: ${clinical_encounter_id} ;;
+    sql: ${care_requests.id} ;;
+    filters: {
+      field: urinalysis_performed
+      value: "yes"
+    }
   }
+
+  dimension: urinalysis_culture_performed {
+    type: yesno
+    description: "A flag indicating a Urinalysis Culture was performed (culture only)"
+    group_label: "Description"
+    sql: ${clinical_order_type} IN ('URINALYSIS REFLEX CULTURE',
+      'URINALYSIS COMPLETE REFLEX CULTURE') ;;
+  }
+
+  measure: count_urinalysis_culture_performed_care_requests {
+    type: count_distinct
+    description: "Count the distinct visits where a urinalysis culture was performed / ordered"
+    group_label: "Counts"
+    sql: ${care_requests.id} ;;
+    filters: {
+      field: urinalysis_culture_performed
+      value: "yes"
+    }
+  }
+
 
   measure: third_party_lab_imaging {
     type: max
