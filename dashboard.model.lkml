@@ -987,7 +987,8 @@ join: athena_patient {
 
 join: athena_document_orders {
   relationship: one_to_many
-  sql_on: ${athena_clinicalencounter.clinical_encounter_id} = ${athena_document_orders.clinical_encounter_id} ;;
+  sql_on: ${athena_clinicalencounter.clinical_encounter_id} = ${athena_document_orders.clinical_encounter_id}
+      AND ${athena_document_orders.deleted_date} IS NULL;;
 }
 
   join: athena_lab_imaging_orders {
@@ -1162,7 +1163,8 @@ join: athena_clinicalletter {
 
 join: athena_document_prescriptions {
   relationship: one_to_many
-  sql_on: ${athena_clinicalencounter.clinical_encounter_id} = ${athena_document_prescriptions.clinical_encounter_id} ;;
+  sql_on: ${athena_clinicalencounter.clinical_encounter_id} = ${athena_document_prescriptions.clinical_encounter_id}
+      AND ${athena_document_prescriptions.deleted_date} IS NULL;;
   # fields: []
 }
 
