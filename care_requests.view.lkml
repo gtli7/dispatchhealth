@@ -1572,6 +1572,7 @@ measure: distinct_day_of_week {
   dimension: secondary_resolved_reason {
     type:  string
     sql: trim(split_part(${resolved_reason_full}, ':', 2)) ;;
+    drill_fields: [other_resolved_reason]
   }
 
   dimension: primary_and_secondary_resolved_reason {
