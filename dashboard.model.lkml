@@ -1098,7 +1098,8 @@ join: athena_first_result {
 
 join: athena_result_created {
   relationship: one_to_one
-  sql_on:  ${athena_document_results.document_id} = ${athena_result_created.document_id};;
+  sql_on:  ${athena_order_submitted.document_id} = ${athena_result_created.order_document_id};;
+  # sql_on:  ${athena_document_results.document_id} = ${athena_result_created.document_id};;
   # fields: []
 }
 
