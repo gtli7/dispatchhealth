@@ -175,4 +175,16 @@ view: athena_medication_details {
     type: count
     drill_fields: [medication_id, medication_name]
   }
+
+  measure: count_dea_scheduled_medication {
+    label: "Count Visits with DEA Scheduled Medication"
+    description: "Counts care requests assoacited with a DEA scheduled substance/medication"
+    type: count_distinct
+    sql: ${care_requests.id} ;;
+    filters: {
+      field: dea_schedule
+      value: "-NULL"
+    }
+
+  }
 }

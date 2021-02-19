@@ -97,4 +97,9 @@ view: fruit_basket {
     sql: ${color} ;;
   }
 
+  measure: is_round_bool {
+    type: number
+    sql: CASE WHEN ${is_round} = 'yes' THEN 1 ELSE 0 END ;;
+  }
+
 }

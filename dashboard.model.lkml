@@ -857,7 +857,7 @@ join: athena_patient_medical_history {
   join: athena_diagnosis_sequence {
     relationship: one_to_many
     sql_on: ${care_requests.ehr_id} = ${athena_diagnosis_sequence.appointment_char} ;;
-    fields: []
+    fields: [athena_diagnosis_sequence.sequence_number]
   }
 
   join: athena_primary_diagnosis_codes {
@@ -932,6 +932,14 @@ join: athena_provider {
   sql_on: ${athena_appointment.provider_id} = ${athena_provider.provider_id} ;;
 }
 
+  join: athena_supervising_provider_clone {
+    from: athena_provider
+    relationship: many_to_one
+    sql_on: ${athena_provider.supervising_provider_id} = ${athena_supervising_provider_clone.provider_id} ;;
+    # fields: []
+  }
+
+
 join: athena_providergroup {
   relationship: one_to_one
   sql_on: ${athena_provider.provider_group_id} = ${athena_providergroup.provider_group_id} ;;
@@ -981,7 +989,8 @@ join: athena_patient {
 
 join: athena_document_orders {
   relationship: one_to_many
-  sql_on: ${athena_clinicalencounter.clinical_encounter_id} = ${athena_document_orders.clinical_encounter_id} ;;
+  sql_on: ${athena_clinicalencounter.clinical_encounter_id} = ${athena_document_orders.clinical_encounter_id}
+      AND ${athena_document_orders.deleted_date} IS NULL;;
 }
 
   join: athena_lab_imaging_orders {
@@ -1092,7 +1101,8 @@ join: athena_first_result {
 
 join: athena_result_created {
   relationship: one_to_one
-  sql_on:  ${athena_document_results.document_id} = ${athena_result_created.document_id};;
+  sql_on:  ${athena_order_submitted.document_id} = ${athena_result_created.order_document_id};;
+  # sql_on:  ${athena_document_results.document_id} = ${athena_result_created.document_id};;
   # fields: []
 }
 
@@ -1156,7 +1166,8 @@ join: athena_clinicalletter {
 
 join: athena_document_prescriptions {
   relationship: one_to_many
-  sql_on: ${athena_clinicalencounter.clinical_encounter_id} = ${athena_document_prescriptions.clinical_encounter_id} ;;
+  sql_on: ${athena_clinicalencounter.clinical_encounter_id} = ${athena_document_prescriptions.clinical_encounter_id}
+      AND ${athena_document_prescriptions.deleted_date} IS NULL;;
   # fields: []
 }
 
@@ -4071,6 +4082,11 @@ explore: shift_teams
   join: shift_types {
     relationship: many_to_one
     sql_on: ${shift_teams.shift_type_id} = ${shift_types.id} ;;
+  }
+
+  join: shifts_end_of_shift_times {
+    relationship: one_to_one
+    sql_on: ${shift_teams.id} = ${shifts_end_of_shift_times.shift_team_id} ;;
   }
 
   join: care_requests {
