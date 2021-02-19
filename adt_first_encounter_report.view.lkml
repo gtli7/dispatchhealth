@@ -122,6 +122,13 @@ view: adt_first_encounter_report {
     group_label: "Emergency First Admittance Intervals"
   }
 
+  dimension: 24_hour_first_admit_emergency {
+    description: "First Emergency admittance identified within 24 hours of the DH care request on-scene date (3rd party vendor reported)"
+    type: yesno
+    sql: extract(epoch from ${cr_to_er_diff})/3600 <= 24;;
+    group_label: "Emergency First Admittance Intervals"
+  }
+
   dimension: 3_day_first_admit_emergency {
     description: "First Emergency admittance identified within 3 days of the DH care request on-scene date (3rd party vendor reported)"
     type: yesno
@@ -156,6 +163,17 @@ view: adt_first_encounter_report {
     sql: ${care_request_flat.care_request_id}  ;;
     filters: {
       field: 12_hour_first_admit_emergency
+      value: "yes"
+    }
+    group_label: "Emergency First Admittance Intervals"
+  }
+
+  measure: count_24_hour_first_admit_emergency {
+    description: "Count First Emergency admittances identified within 24 hours of the DH care request on-scene date (3rd party vendor reported)"
+    type: count_distinct
+    sql: ${care_request_flat.care_request_id}  ;;
+    filters: {
+      field: 24_hour_first_admit_emergency
       value: "yes"
     }
     group_label: "Emergency First Admittance Intervals"
