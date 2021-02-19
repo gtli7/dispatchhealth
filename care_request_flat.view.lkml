@@ -2242,6 +2242,31 @@ WITH ort AS (
     sql: ${TABLE}.created_date AT TIME ZONE ${pg_tz} AT TIME ZONE 'US/Mountain' ;;
   }
 
+  dimension: diff_to_outbound_call_minutes {
+    type: number
+    sql: EXTRACT(EPOCH FROM (${genesys_conversation_outbound.conversationstarttime_raw} - ${created_mountain_raw}))::float/60.0 ;;
+  }
+
+  measure: min_diff_to_outbound_call_minutes {
+    value_format: "0.0"
+    type: number
+    sql: min(EXTRACT(EPOCH FROM (${genesys_conversation_outbound.conversationstarttime_raw} - ${created_mountain_raw}))::float/60.0) ;;
+  }
+
+  measure: max_diff_to_outbound_call_minutes {
+    value_format: "0.0"
+    type: number
+    sql: max(EXTRACT(EPOCH FROM (${genesys_conversation_outbound.conversationstarttime_raw} - ${created_mountain_raw}))::float/60.0) ;;
+  }
+  measure: count_distinct_outbound_calls{
+   type: count_distinct
+  sql: ${genesys_conversation_outbound.conversationid} ;;
+  sql_distinct_key: ${genesys_conversation_outbound.conversationid} ;;
+  }
+
+
+
+
 
 
   dimension_group: accept {
