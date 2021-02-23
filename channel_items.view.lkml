@@ -226,6 +226,96 @@ view: channel_items {
     drill_fields: [name]
   }
 
+measure: count_direct_access_sub_type {
+  description: "Count of care requests channeled through direct access sub type"
+  type: count_distinct
+  sql: ${care_requests.id};;
+  filters: {
+    field: sub_type
+    value: "Direct Access"
+  }
+  group_label: "Sub Type Measures"
+}
+
+  measure: count_provider_group_sub_type {
+    description: "Count of care requests channeled through provider group sub type"
+    type: count_distinct
+    sql: ${care_requests.id};;
+    filters: {
+      field: sub_type
+      value: "Provider Group"
+    }
+    group_label: "Sub Type Measures"
+    }
+
+  measure: count_senior_care_sub_type {
+    description: "Count of care requests channeled through senior care sub type"
+    type: count_distinct
+    sql: ${care_requests.id};;
+    filters: {
+      field: sub_type
+      value: "Senior Care"
+    }
+    group_label: "Sub Type Measures"
+  }
+
+  measure: count_home_health_sub_type {
+    description: "Count of care requests channeled through home health sub type"
+    type: count_distinct
+    sql: ${care_requests.id};;
+    filters: {
+      field: sub_type
+      value: "Home Health"
+    }
+    group_label: "Sub Type Measures"
+  }
+
+
+  measure: count_health_system_sub_type {
+    description: "Count of care requests channeled through health system sub type"
+    type: count_distinct
+    sql: ${care_requests.id};;
+    filters: {
+      field: sub_type
+      value: "Health System"
+    }
+    group_label: "Sub Type Measures"
+  }
+
+
+  measure: count_payer_sub_type {
+    description: "Count of care requests channeled through payer sub type"
+    type: count_distinct
+    sql: ${care_requests.id};;
+    filters: {
+      field: sub_type
+      value: "Payer"
+    }
+    group_label: "Sub Type Measures"
+  }
+
+  measure: count_employer_sub_type {
+    description: "Count of care requests channeled through employer sub type"
+    type: count_distinct
+    sql: ${care_requests.id};;
+    filters: {
+      field: sub_type
+      value: "Employer"
+    }
+    group_label: "Sub Type Measures"
+  }
+
+  measure: count_hospice_palliative_sub_type {
+    description: "Count of care requests channeled through hospice & palliative sub type"
+    type: count_distinct
+    sql: ${care_requests.id};;
+    filters: {
+      field: sub_type
+      value: "Hospice & Palliative Care"
+    }
+    group_label: "Sub Type Measures"
+  }
+
   dimension_group: updated {
     type: time
     hidden: yes
