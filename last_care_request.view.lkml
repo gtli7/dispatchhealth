@@ -5,6 +5,8 @@ view: last_care_request {
     cr.id AS last_care_request_id,
     cr.market_id,
     crord.shift_team_id,
+    st.start_time AT TIME ZONE 'UTC' AT TIME ZONE tz.pg_tz AS start_time,
+    st.end_time AT TIME ZONE 'UTC' AT TIME ZONE tz.pg_tz AS end_time,
     crord.complete_time AT TIME ZONE 'UTC' AT TIME ZONE tz.pg_tz AS complete_time
     FROM public.care_requests cr
     INNER JOIN (
@@ -26,6 +28,8 @@ view: last_care_request {
             ) AS comp
                 ON crst.care_request_id = comp.care_request_id) AS crord
             ON cr.id = crord.care_request_id AND crord.rn = 1
+        LEFT JOIN public.shift_teams st
+          ON crord.shift_team_id = st.id
         LEFT JOIN public.markets mkt
             ON cr.market_id = mkt.id
         LEFT JOIN looker_scratch.timezones tz
@@ -75,6 +79,38 @@ view: last_care_request {
     sql: ${last_care_request_id} IS NOT NULL ;;
   }
 
+  dimension_group: end {
+    type: time
+    convert_tz: no
+    timeframes: [
+      raw,
+      time,
+      date,
+      week,
+      month,
+      quarter,
+      year,
+      hour_of_day
+    ]
+    sql: ${TABLE}.end_time ;;
+  }
+
+  dimension_group: start {
+    type: time
+    convert_tz: no
+    timeframes: [
+      raw,
+      time,
+      date,
+      week,
+      month,
+      quarter,
+      year,
+      hour_of_day
+    ]
+    sql: ${TABLE}.start_time ;;
+  }
+
   dimension_group: complete {
     type: time
     convert_tz: no
@@ -89,6 +125,23 @@ view: last_care_request {
       day_of_month
     ]
     sql: ${TABLE}.complete_time ;;
+  }
+
+  dimension_group: last_complete_to_shift_end  {
+    type: duration
+    intervals: [
+      day,
+      hour,
+      minute
+    ]
+    sql_start: ${complete_raw} ;;
+    sql_end: ${end_raw} ;;
+  }
+
+  measure: sum_mins_last_complete_shift_end {
+    type: sum_distinct
+    sql: ${minutes_last_complete_to_shift_end} ;;
+    sql_distinct_key: ${last_care_request_id} ;;
   }
 
   dimension: hrs_btwn_last_cr_eos {

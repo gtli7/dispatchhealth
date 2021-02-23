@@ -20,8 +20,6 @@ view: athena_document_results {
     type: time
     hidden: no
     timeframes: [
-      raw,
-      time,
       date,
       week,
       month,
@@ -588,6 +586,37 @@ view: athena_document_results {
     group_label: "Counts"
     sql: ${document_id} ;;
     filters: [clinical_order_type_group: "LAB, IMAGING", duplicate_result: "no", result_open: "yes"]
+    drill_fields: [detail*]
+  }
+
+  dimension: assigned_to_ma {
+    type: yesno
+    hidden: yes
+    sql: ${assigned_to} LIKE '%maonshif%' ;;
+  }
+
+  dimension: assigned_to_app {
+    type: yesno
+    hidden: yes
+    sql: ${assigned_to} LIKE '%provider%' ;;
+  }
+
+  measure: count_open_lab_imaging_results_ma {
+    type: count_distinct
+    description: "Count of distinct open lab or imaging results assigned to maonshift"
+    group_label: "Counts"
+    sql: ${document_id} ;;
+    filters: [clinical_order_type_group: "LAB, IMAGING", duplicate_result: "no",
+              result_open: "yes", assigned_to_ma: "yes"]
+    drill_fields: [detail*]
+  }
+  measure: count_open_lab_imaging_results_app {
+    type: count_distinct
+    description: "Count of distinct open lab or imaging results assigned to provider"
+    group_label: "Counts"
+    sql: ${document_id} ;;
+    filters: [clinical_order_type_group: "LAB, IMAGING", duplicate_result: "no",
+              result_open: "yes", assigned_to_app: "yes"]
     drill_fields: [detail*]
   }
 

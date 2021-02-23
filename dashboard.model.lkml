@@ -4080,6 +4080,16 @@ explore: shift_teams
     sql_on: ${care_requests.id} = ${care_request_flat.care_request_id} ;;
   }
 
+  join: last_care_request {
+    relationship: one_to_one
+    sql_on: ${care_requests.id} = ${last_care_request.last_care_request_id} ;;
+  }
+
+  join: breaks {
+    relationship: one_to_one
+    sql_on: ${shift_teams.id} = ${breaks.shift_team_id} ;;
+  }
+
   join: survey_responses_flat_clone {
     relationship: one_to_one
     sql_on: ${care_requests.id} = ${survey_responses_flat_clone.care_request_id};;
