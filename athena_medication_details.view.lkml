@@ -144,6 +144,12 @@ view: athena_medication_details {
     sql: ${TABLE}."medication_name" ;;
   }
 
+  dimension: medication_name_short {
+    description: "The first word of the medication name"
+    type: string
+    sql: INITCAP(split_part(${medication_name}, ' ', 1)) ;;
+  }
+
   dimension: ndc {
     type: string
     group_label: "Descriptions"

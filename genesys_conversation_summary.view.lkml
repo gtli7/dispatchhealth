@@ -97,6 +97,12 @@ view: genesys_conversation_summary {
     ;;
   }
 
+  dimension: dnis_raw {
+    type: string
+    sql:  ${TABLE}."dnis"
+    ;;
+  }
+
 
 
   dimension: market_id {
@@ -584,6 +590,36 @@ measure: percent_repeat_callers {
     filters: {
       field: inbound_demand
       value: "yes"
+    }
+
+
+
+  }
+
+  measure: average_talk_time_minutes_non_inbound {
+    label: "Average Talk Time Minutes (non-Inbound Demand)"
+    type: average_distinct
+    value_format: "0.00"
+    sql_distinct_key: concat(${conversationid}, ${queuename}) ;;
+    sql: ${totalagenttalkduration}::float/1000/60 ;;
+    filters: {
+      field: inbound_demand
+      value: "no"
+    }
+
+
+
+  }
+
+  measure: median_talk_time_minutes_non_inbound {
+    label: "Median Talk Time Minutes (non-Inbound Demand)"
+    type: median_distinct
+    value_format: "0.00"
+    sql_distinct_key: concat(${conversationid}, ${queuename}) ;;
+    sql: ${totalagenttalkduration}::float/1000/60 ;;
+    filters: {
+      field: inbound_demand
+      value: "no"
     }
 
 

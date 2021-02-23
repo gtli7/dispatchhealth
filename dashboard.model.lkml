@@ -356,6 +356,8 @@ include: "granular_full_shift_agg.view.lkml"
 include: "views/genesys_conversation_summary_null.view.lkml"
 include: "capture_rate_by_market.view.lkml"
 include: "provider_fit_testing_bad_ids.view.lkml"
+include: "outbound_out_reach.view.lkml"
+
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
   max_cache_age: "6 hours"
@@ -2128,8 +2130,26 @@ join: ga_pageviews_clone {
   join: genesys_conversation_summary_sem {
     from: genesys_conversation_summary
     sql_on: ${genesys_conversation_summary_sem.conversationid} =${care_request_flat.contact_id} and trim(lower(${genesys_conversation_summary_sem.queuename})) = 'dtc pilot'
-     ;;
+    ;;
   }
+
+  join: patients_mobile {
+    sql_on:   (
+                ${patients_mobile.patient_id} = ${patients.id}
+              )
+               ;;
+  }
+
+  join: genesys_conversation_outbound {
+    from: genesys_conversation_summary
+    sql_on: ${genesys_conversation_outbound.dnis_raw} =${patients_mobile.mobile_number} and ${genesys_conversation_outbound.direction}='outbound'
+
+            and EXTRACT(EPOCH FROM (${genesys_conversation_outbound.conversationstarttime_raw}- ${care_request_flat.created_mountain_raw})) between 0 and (60*60*24*2)
+
+      ;;
+  }
+
+
 
   join: number_to_market {
     sql_on: ${number_to_market.number} = ${genesys_conversation_summary.dnis} ;;
@@ -5028,3 +5048,4 @@ explore: eligible_patients_full_table {
 explore: granular_full_shift_agg {}
 
 explore: provider_fit_testing_bad_ids {}
+explore: outbound_out_reach {}
