@@ -3,7 +3,7 @@
 
 view: funnel_agg {
   derived_table: {
-    sql_trigger_value:  SELECT MAX(care_request_id) FROM ${care_request_flat.SQL_TABLE_NAME} where created_date > current_date - interval '2 days';;
+    sql_trigger_value:  SELECT count(*) FROM ${care_request_flat.SQL_TABLE_NAME} where created_date > current_date - interval '2 days';;
     indexes: ["created", "name_adj"]
     explore_source: care_requests {
       column: name_adj { field: markets.name_adj }
