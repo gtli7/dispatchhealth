@@ -3821,9 +3821,21 @@ measure: avg_first_on_route_mins {
     }
   }
 
-  measure: resolved_other_count {
+  dimension: unable_fufill_covid {
+    label: "Unable to Fulfill COVID"
+    type: yesno
+    sql: lower(${primary_and_secondary_resolved_reason}) like '%covid%';;
+  }
+
+  measure: unable_fufill_covid_count{
+    label: "Unable to Fulfill COVID"
     type: count_distinct
     sql: ${care_request_id} ;;
+    sql_distinct_key: ${care_request_id} ;;
+    filters: {
+      field: unable_fufill_covid
+      value: "yes"
+    }
     filters: {
       field: complete
       value: "no"
@@ -3877,6 +3889,154 @@ measure: avg_first_on_route_mins {
     }
     filters: {
       field: cancelled_by_patient_other_resolved
+      value: "no"
+    }
+    filters: {
+      field: lwbs
+      value: "no"
+    }
+  }
+
+  dimension: unable_fufill_insufficent_information{
+    label: "Unable to Fulfill Insufficient Information"
+    type: yesno
+    sql: lower(${primary_and_secondary_resolved_reason}) like '%unable to fulfill request: insufficient information to create care request%';;
+  }
+
+  measure: unable_fufill_insufficent_information_count{
+    label: "Unable to Fulfill Insufficient Information Count"
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    sql_distinct_key: ${care_request_id} ;;
+    filters: {
+      field: unable_fufill_insufficent_information
+      value: "yes"
+    }
+    filters: {
+      field: unable_fufill_covid
+      value: "no"
+    }
+    filters: {
+      field: complete
+      value: "no"
+    }
+    filters: {
+      field: lwbs_accepted
+      value: "no"
+    }
+    filters: {
+      field: lwbs_scheduled
+      value: "no"
+    }
+    filters: {
+      field: booked_resolved
+      value: "no"
+    }
+    filters: {
+      field: escalated_on_phone
+      value: "no"
+    }
+
+    filters: {
+      field: resolved_no_answer_no_show
+      value: "no"
+    }
+
+    filters: {
+      field: complete
+      value: "no"
+    }
+
+    filters: {
+      field: not_resolved_or_complete
+      value: "no"
+    }
+    filters: {
+      field: clinical_service_not_offered
+      value: "no"
+    }
+    filters: {
+      field: insurance_resolved
+      value: "no"
+    }
+    filters: {
+      field: poa_resolved
+      value: "no"
+    }
+    filters: {
+      field: zipcode_resolved
+      value: "no"
+    }
+    filters: {
+      field: cancelled_by_patient_other_resolved
+      value: "no"
+    }
+    filters: {
+      field: lwbs
+      value: "no"
+    }
+  }
+
+  measure: resolved_other_count {
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters: {
+      field: unable_fufill_insufficent_information
+      value: "no"
+    }
+    filters: {
+      field: unable_fufill_covid
+      value: "no"
+    }
+   filters: {
+      field: complete
+      value: "no"
+    }
+    filters: {
+      field: lwbs_accepted
+      value: "no"
+    }
+    filters: {
+      field: lwbs_scheduled
+      value: "no"
+    }
+    filters: {
+      field: booked_resolved
+      value: "no"
+    }
+    filters: {
+      field: escalated_on_phone
+      value: "no"
+    }
+
+    filters: {
+      field: resolved_no_answer_no_show
+      value: "no"
+    }
+
+    filters: {
+      field: complete
+      value: "no"
+    }
+
+    filters: {
+      field: not_resolved_or_complete
+      value: "no"
+    }
+    filters: {
+      field: clinical_service_not_offered
+      value: "no"
+    }
+    filters: {
+      field: insurance_resolved
+      value: "no"
+    }
+    filters: {
+      field: poa_resolved
+      value: "no"
+    }
+    filters: {
+      field: zipcode_resolved
       value: "no"
     }
     filters: {
