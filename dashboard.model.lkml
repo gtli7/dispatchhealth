@@ -150,6 +150,7 @@ include: "insurance_plans_insurance_networks.view.lkml"
 include: "iora_patients.view.lkml"
 include: "diversion_flat.view.lkml"
 include: "athenadwh_medication_clone.view.lkml"
+include: "target_staffing_old.view.lkml"
 include: "target_staffing.view.lkml"
 include: "insurance_network_network_referrals.view.lkml"
 include: "care_request_network_referrals.view.lkml"
@@ -4206,10 +4207,15 @@ explore: shift_teams
     sql_on: ${timezones.rails_tz} = ${markets.sa_time_zone} ;;
   }
 
+  join: target_staffing_old {
+    sql_on: ${markets.id} = ${target_staffing_old.market_id}
+      and ${shift_teams.start_month}=${target_staffing_old.month_month}
+      and  ${shift_teams.start_day_of_week} = ${target_staffing_old.dow};;
+  }
   join: target_staffing {
     sql_on: ${markets.id} = ${target_staffing.market_id}
       and ${shift_teams.start_month}=${target_staffing.month_month}
-      and  ${shift_teams.start_day_of_week} = ${target_staffing.dow};;
+      and ${shift_teams.start_day_of_week} = ${target_staffing.dow};;
   }
   join: goals_by_day_of_week {
     sql_on: ${markets.id_adj} =${goals_by_day_of_week.market_id} and ${goals_by_day_of_week.month_month}=${shift_teams.start_month};;
@@ -4523,10 +4529,14 @@ explore: sf_contacts {
 explore: renown_all_data {}
 
 explore: date_placeholder {
-  join: target_staffing {
+  join: target_staffing_old {
     sql_on:
-       ${date_placeholder.date_placeholder_month}=${target_staffing.month_month}
-      and  ${date_placeholder.date_placeholder_day_of_week} = ${target_staffing.dow};;
+       ${date_placeholder.date_placeholder_month}=${target_staffing_old.month_month}
+      and  ${date_placeholder.date_placeholder_day_of_week} = ${target_staffing_old.dow};;
+  }
+  join: target_staffing {
+    sql_on: ${date_placeholder.date_placeholder_month}=${target_staffing.month_month} and
+      ${date_placeholder.date_placeholder_day_of_week} = ${target_staffing.dow}  ;;
   }
 
   join: budget_hours {
@@ -4969,6 +4979,11 @@ explore:  on_call_tracking
   }
 
   explore: target_staffing {
+    join: target_staffing_old {
+      sql_on: ${target_staffing_old.month_date} = ${target_staffing.month_date} and
+      ${target_staffing_old.dow} = ${target_staffing.dow} and
+      ${target_staffing_old.market_short} = ${target_staffing.market_short};;
+    }
     join: dates_rolling {
       type: inner
       sql_on: ${target_staffing.month_date} = ${dates_rolling.month_date} and
