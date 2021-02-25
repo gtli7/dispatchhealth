@@ -135,7 +135,7 @@ view: athena_cpt_codes {
     group_label: "Grouped Procedures"
   }
 
-  measure: count_appoitnments_with_blood_tests {
+  measure: count_appointments_with_blood_tests {
     description: "Count of appointments with a blood test"
     type: count_distinct
     sql: ${athena_clinicalencounter.clinical_encounter_id};;
