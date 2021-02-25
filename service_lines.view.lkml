@@ -120,7 +120,7 @@ view: service_lines {
     type: count_distinct
     sql: ${care_request_flat.care_request_id} ;;
     filters: {
-      field: service_lines.name
+      field: name
       value: "Tele-Presentation"
     }
   }
@@ -129,7 +129,7 @@ view: service_lines {
     type: count_distinct
     sql: ${care_request_flat.care_request_id} ;;
     filters: {
-      field: service_lines.name
+      field: name
       value: "Virtual Visit"
     }
   }

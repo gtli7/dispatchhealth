@@ -83,7 +83,7 @@ view: shift_teams {
       year,
       hour_of_day
     ]
-    sql: ${TABLE}.start_time AT TIME ZONE 'UTC' AT TIME ZONE ${timezones.pg_tz} ;;
+    sql: ${TABLE}.start_time AT TIME ZONE 'UTC' AT TIME ZONE case when ${timezones.pg_tz} is not null then ${timezones.pg_tz} else 'US/Mountain' end ;;
   }
 
   dimension: goal_volume {

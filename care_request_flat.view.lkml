@@ -4558,10 +4558,10 @@ measure: avg_first_on_route_mins {
 
   dimension:  complete {
     type: yesno
-    sql: ${care_request_flat.complete_date} is not null AND
-      (${care_request_flat.primary_resolved_reason} IS NULL OR
-      UPPER(${care_request_flat.complete_comment}) LIKE '%REFERRED - POINT OF CARE%' OR
-      UPPER(${care_request_flat.primary_resolved_reason}) = 'REFERRED - POINT OF CARE') ;;
+    sql: ${complete_date} is not null AND
+      (${primary_resolved_reason} IS NULL OR
+      UPPER(${complete_comment}) LIKE '%REFERRED - POINT OF CARE%' OR
+      UPPER(${primary_resolved_reason}) = 'REFERRED - POINT OF CARE') ;;
   }
 
   dimension: accepted {

@@ -4079,6 +4079,64 @@ explore: shift_teams
     fields: []
   }
 
+  join: care_requests_shift_teams_not_dispatched {
+  from: care_requests_shift_teams
+    relationship: many_to_one
+    sql_on: ${care_requests_shift_teams_not_dispatched.shift_team_id} = ${shift_teams.id}
+      AND not ${care_requests_shift_teams_not_dispatched.is_dispatched};;
+    fields: []
+  }
+
+  join: shift_types_not_dispatched {
+  from: shift_types
+    relationship: many_to_one
+    sql_on: ${shift_teams.shift_type_id} = ${shift_types_not_dispatched.id} ;;
+  }
+
+  join: care_requests_not_dispatched {
+    from: care_requests
+    relationship: one_to_one
+    sql_on: ${care_requests_shift_teams_not_dispatched.care_request_id} = ${care_requests_not_dispatched.id}
+      ;;
+  }
+
+  join: care_request_flat_not_dispatched {
+    from: care_request_flat
+    relationship: one_to_many
+    sql_on: ${care_requests_not_dispatched.id} = ${care_request_flat_not_dispatched.care_request_id} ;;
+  }
+
+  join: service_lines_not_dispatched {
+    from: service_lines
+    sql_on: ${care_requests_not_dispatched.service_line_id} =${service_lines_not_dispatched.id} ;;
+  }
+
+  join: shift_team_members_not_dispatched {
+    from: shift_team_members
+    relationship: one_to_many
+    sql_on: ${shift_teams.id} = ${shift_team_members_not_dispatched.shift_team_id} ;;
+  }
+
+  join: users_not_dispatched {
+    from: users
+    relationship: one_to_one
+    sql_on: ${shift_team_members_not_dispatched.user_id} = ${users_not_dispatched.id} ;;
+  }
+
+  join: care_requests {
+    relationship: one_to_one
+    sql_on: ${care_requests_shift_teams.care_request_id} = ${care_requests.id}
+      AND ${care_requests_shift_teams.is_dispatched};;
+  }
+
+  join: care_request_flat {
+    relationship: one_to_many
+    sql_on: ${care_requests.id} = ${care_request_flat.care_request_id} ;;
+  }
+
+
+
+
   join: shift_types {
     relationship: many_to_one
     sql_on: ${shift_teams.shift_type_id} = ${shift_types.id} ;;
@@ -4089,16 +4147,7 @@ explore: shift_teams
     sql_on: ${shift_teams.id} = ${shifts_end_of_shift_times.shift_team_id} ;;
   }
 
-  join: care_requests {
-    relationship: one_to_one
-    sql_on: ${care_requests_shift_teams.care_request_id} = ${care_requests.id}
-    AND ${care_requests_shift_teams.is_dispatched};;
-  }
 
-  join: care_request_flat {
-    relationship: one_to_many
-    sql_on: ${care_requests.id} = ${care_request_flat.care_request_id} ;;
-  }
 
   join: last_care_request {
     relationship: one_to_one
