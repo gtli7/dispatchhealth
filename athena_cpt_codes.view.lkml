@@ -121,6 +121,29 @@ view: athena_cpt_codes {
     sql: ${procedure_code_group} = 'E&M' ;;
   }
 
+  measure: count_appointments_with_non_em_cpt_code {
+    description: "Count of appointments with an associated CPT Code (Excludes E&M codes)"
+    type: count_distinct
+    sql: ${athena_clinicalencounter.clinical_encounter_id};;
+    filters: [cpt_code: "-NULL",e_and_m_cpt_code: "no"]
+    group_label: "Grouped Procedure: Appointment Counts"
+  }
+
+  dimension: blood_tests {
+    type: yesno
+    sql: ${cpt_code} IN ('80047', '36415', '36410', '85014', '83605', '85610', '34616') ;;
+    group_label: "Grouped Procedures"
+  }
+
+  measure: count_appoitnments_with_blood_tests {
+    description: "Count of appointments with a blood test"
+    type: count_distinct
+    sql: ${athena_clinicalencounter.clinical_encounter_id};;
+    group_label: "Grouped Procedure: Appointment Counts"
+    filters: [blood_tests: "yes"]
+
+  }
+
   measure: count_cpt_codes {
     type: count
     description: "Count of All Non-E&M CPT Codes"

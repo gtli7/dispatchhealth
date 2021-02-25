@@ -105,6 +105,11 @@ view: athena_medication_details {
     sql: ${TABLE}."hic3_description" ;;
   }
 
+ # Scott bottom 3 new HIC3 medication classes to the antibiotic_medication yes/no on 2021/02/24
+      # 'NITROFURAN DERIVATIVES ANTIBACTERIAL AGENTS',
+      # 'ABSORBABLE SULFONAMIDE ANTIBACTERIAL AGENTS',
+      # 'ANTIBIOTIC ANTIBACTERIAL MISC'
+
   dimension: antibiotic_medication {
     type: yesno
     group_label: "Descriptions"
@@ -123,7 +128,12 @@ view: athena_medication_details {
       'QUINOLONE ANTIBIOTICS',
       'RIFAMYCINS AND RELATED DERIVATIVE ANTIBIOTICS',
       'TETRACYCLINE ANTIBIOTICS',
-      'VANCOMYCIN ANTIBIOTICS AND DERIVATIVES');;
+      'VANCOMYCIN ANTIBIOTICS AND DERIVATIVES',
+
+      'NITROFURAN DERIVATIVES ANTIBACTERIAL AGENTS',
+      'ABSORBABLE SULFONAMIDE ANTIBACTERIAL AGENTS',
+      'ANTIBIOTIC ANTIBACTERIAL MISC'
+      );;
   }
 
   dimension: hic4_ingredient_base {
@@ -142,6 +152,12 @@ view: athena_medication_details {
     type: string
     group_label: "Descriptions"
     sql: ${TABLE}."medication_name" ;;
+  }
+
+  dimension: medication_name_short {
+    description: "The first word of the medication name"
+    type: string
+    sql: INITCAP(split_part(${medication_name}, ' ', 1)) ;;
   }
 
   dimension: ndc {

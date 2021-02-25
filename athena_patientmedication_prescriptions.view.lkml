@@ -270,12 +270,9 @@ view: athena_patientmedication_prescriptions {
   measure: count_appointments_with_prescriptions {
     description: "Count of appointments with prescriptions written on-scene"
     type: count_distinct
-    sql: ${clinicalencounter.clinical_encounter_id};;
-    filters: {
-      field: prescriptions_written_on_scene
-      value: "yes"
-    }
-    group_label: "Prescription Counts"
+    sql: ${athena_clinicalencounter.clinical_encounter_id};;
+    filters: [prescriptions_written_on_scene: "yes"]
+    group_label: "Prescription Appointment Counts"
   }
 
   measure: count_medications_prescribed {
@@ -288,6 +285,22 @@ view: athena_patientmedication_prescriptions {
     }
     group_label: "Prescription Counts"
   }
+
+  dimension: prescriptions_administered_on_scene {
+    description: "Identifies new first-time prescription/s written on-scene"
+    type: yesno
+    hidden: yes
+    sql:  ${administered_yn} = 'Y' AND upper(${athena_document_prescriptions.status}) != 'DELETED';;
+  }
+
+  measure: count_appointments_with_administered_medications {
+    description: "Count of appointments with prescriptions administered on-scene"
+    type: count_distinct
+    sql: ${athena_clinicalencounter.clinical_encounter_id};;
+    filters: [prescriptions_administered_on_scene: "yes"]
+    group_label: "Prescription Appointment Counts"
+  }
+
 
   measure: count {
     type: count
