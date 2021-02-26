@@ -161,6 +161,40 @@ view: patients {
     group_label: "Age of Patient"
   }
 
+  dimension: age_band_sort_2 {
+    type: string
+    hidden: yes
+    alpha_sort: yes
+    sql: CASE
+          WHEN ${age} >= 0 AND ${age} <= 18 THEN 'a'
+          WHEN ${age} >= 19 AND ${age} <= 29 THEN 'b'
+          WHEN ${age} >= 30 AND ${age} <= 39 THEN 'c'
+          WHEN ${age} >= 40 AND ${age} <= 49 THEN 'd'
+          WHEN ${age} >= 50 AND ${age} <= 59 THEN 'e'
+          WHEN ${age} >= 60 AND ${age} <= 69 THEN 'f'
+          WHEN ${age} >= 70 AND ${age} <= 110 THEN 'g'
+          ELSE 'z'
+         END ;;
+    group_label: "Age of Patient"
+  }
+
+  dimension: age_band_2 {
+    description: "0-18, by decade to 70, older than 70"
+    type: string
+    order_by_field: age_band_sort_2
+    sql: CASE
+          WHEN ${age} >= 0 AND ${age} <= 18 THEN 'age_0_to_18'
+          WHEN ${age} >= 19 AND ${age} <= 29 THEN 'age_19_to_29'
+          WHEN ${age} >= 30 AND ${age} <= 39 THEN 'age_30_to_39'
+          WHEN ${age} >= 40 AND ${age} <= 49 THEN 'age_40_to_49'
+          WHEN ${age} >= 50 AND ${age} <= 59 THEN 'age_50_to_59'
+          WHEN ${age} >= 60 AND ${age} <= 69 THEN 'age_60_to_69'
+          WHEN ${age} >= 70 AND ${age} <= 110 THEN 'age_70_plus'
+          ELSE NULL
+         END ;;
+    group_label: "Age of Patient"
+  }
+
   dimension: age_band_life_stage_sort {
     type: string
     hidden: yes

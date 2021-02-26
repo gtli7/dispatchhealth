@@ -13,6 +13,9 @@ view: outbound_out_reach {
         column: request_type { }
         column: caller_id {field:callers.id}
         column: resolved_no_answer_no_show {field: care_request_flat.resolved_no_answer_no_show}
+        column: complete {field: care_request_flat.complete}
+        column: accepted_scheduled_or_booked {field: care_request_flat.accepted_or_scheduled_count}
+        column: accepted {field: care_request_flat.accepted}
 
         column: time_call_to_creation_minutes {field:care_request_flat.time_call_to_creation_minutes}
 
@@ -50,6 +53,22 @@ view: outbound_out_reach {
     type: number
 
   }
+
+  dimension: complete {
+    type: yesno
+
+  }
+
+
+  dimension: accepted_scheduled_or_booked {
+    type: number
+
+  }
+
+  dimension: accepted {
+    type: yesno
+
+  }
   dimension: resolved_no_answer_no_show {
     type: yesno
   }
@@ -85,6 +104,27 @@ view: outbound_out_reach {
     type: yesno
     sql: ${time_call_to_creation_minutes} < 120   ;;
   }
+  dimension: min_diff_to_outbound_call_minutes_bands {
+    type: number
+    sql: ROUND(${min_diff_to_outbound_call_minutes}/1) * 1 ;;
+  }
+
+  dimension: min_diff_to_outbound_call_minutes_bands_complex {
+    type: string
+    sql: case
+              when ${min_diff_to_outbound_call_minutes} < 1 then '<1 minute'
+              when ${min_diff_to_outbound_call_minutes} < 2 then '<2 minutes'
+              when ${min_diff_to_outbound_call_minutes} < 4 then '<4 minutes'
+              when ${min_diff_to_outbound_call_minutes} < 8 then '<8 minutes'
+              when ${min_diff_to_outbound_call_minutes} < 16 then '<16 minutes'
+              when ${min_diff_to_outbound_call_minutes} < 32 then '<32 minutes'
+              when ${min_diff_to_outbound_call_minutes} < 64 then '<64 minutes'
+              when ${min_diff_to_outbound_call_minutes} >= 64 then '>=64 minutes'
+              else null end;;
+
+}
+
+
     measure: median_min_diff_to_outbound_call_minutes {
       value_format: "0.0"
       type: median_distinct
@@ -172,10 +212,48 @@ view: outbound_out_reach {
     filters: [resolved_no_answer_no_show: "yes"]
 
   }
+
+  measure: count_accepted {
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    sql_distinct_key: ${care_request_id} ;;
+    filters: [accepted: "yes"]
+  }
+
+  measure: count_complete {
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    sql_distinct_key: ${care_request_id} ;;
+    filters: [complete: "yes"]
+  }
+
+  measure: count_accepted_scheduled_or_booked {
+    type: sum_distinct
+    sql: ${accepted_scheduled_or_booked} ;;
+    sql_distinct_key: ${care_request_id} ;;
+  }
   measure: percent_resolved_no_answer_no_show {
     type: number
     value_format: "0%"
     sql: case when ${count_distinct_care_requests}>0 then ${count_resolved_no_answer_no_show}::float/${count_distinct_care_requests} else 0 end ;;
+  }
+
+  measure: percent_converted {
+    type: number
+    value_format: "0%"
+    sql: case when ${count_distinct_care_requests}>0 then ${count_complete}::float/${count_distinct_care_requests} else 0 end ;;
+  }
+
+  measure: percent_captured {
+    type: number
+    value_format: "0%"
+    sql: case when ${count_distinct_care_requests}>0 then ${count_accepted_scheduled_or_booked}::float/${count_distinct_care_requests} else 0 end ;;
+  }
+
+  measure: percent_assigned {
+    type: number
+    value_format: "0%"
+    sql: case when ${count_distinct_care_requests}>0 then ${count_accepted}::float/${count_distinct_care_requests} else 0 end ;;
   }
   measure: median_time_call_to_creation_minutes {
     label: "Median Time to Caller Creation"

@@ -1,19 +1,40 @@
 view: target_staffing {
-  sql_table_name: looker_scratch.target_staffing ;;
+  derived_table: {
+    sql: SELECT
+          hrs.month,
+          hrs.market_short,
+          hrs.market_id,
+          hrs.shift_type,
+          hrs.dow,
+          frac.provider_type,
+          hrs.hours * frac.fraction AS target_hours
+        FROM looker_scratch.daily_target_hours hrs
+        JOIN looker_scratch.provider_fractions frac
+          ON hrs.month = frac.month
+          AND hrs.market_short = frac.market_short
+          AND hrs.shift_type = frac.shift_type
+      ;;
+  }
+
+  dimension: acute_tele_flag {
+    type: yesno
+    sql: (${TABLE}.provider_type = 'APP' AND ${TABLE}.shift_type = 'Regular') OR
+          (${TABLE}.provider_type = 'DHMT' and ${TABLE}.shift_type = 'Tele') ;;
+  }
 
   dimension: dow {
     type: string
-    sql: ${TABLE}."dow" ;;
+    sql: ${TABLE}.dow ;;
   }
 
   dimension: market_id {
     type: number
-    sql: ${TABLE}."market_id" ;;
+    sql: ${TABLE}.market_id ;;
   }
 
   dimension: market_short {
     type: string
-    sql: ${TABLE}."market_short" ;;
+    sql: ${TABLE}.market_short ;;
   }
 
   dimension_group: month {
@@ -29,57 +50,62 @@ view: target_staffing {
     ]
     convert_tz: no
     datatype: date
-    sql: ${TABLE}."month" ;;
+    sql: ${TABLE}.month ;;
+  }
+
+  dimension: provider_type {
+    type: string
+    sql: ${TABLE}.provider_type ;;
+  }
+
+  dimension: shift_type {
+    type: string
+    sql: ${TABLE}.shift_type ;;
   }
 
   dimension: target_hours {
     type: number
-    sql: ${TABLE}."target_hours" ;;
+    sql: ${TABLE}.target_hours ;;
   }
 
-  dimension: tele_hours {
-    type: number
-    sql: ${TABLE}."tele_hours" ;;
-  }
-
-  dimension: arm_hours {
-    type: number
-    sql: ${TABLE}."arm_hours" ;;
-  }
-
-  dimension: other_hours {
-    type: number
-    sql: ${TABLE}."other_hours" ;;
-  }
-
-  dimension: app_hours {
-    type: number
-    sql: ${TABLE}."target_hours" + ${TABLE}."arm_hours" ;;
-  }
-
-  dimension: dhmt_hours {
-    type: number
-    sql: ${TABLE}."target_hours" + ${TABLE}."tele_hours" ;;
-  }
-
-
-  measure: sum_target_hours {
+  measure: sum_acute_hours {
+    label: "Target Car Hours (acute only)"
     type: sum_distinct
     sql_distinct_key: concat(${shift_teams.start_date}::varchar, ${markets.name});;
     sql: ${target_hours} ;;
+    filters: [provider_type: "APP", shift_type: "Regular"]
   }
 
-  measure: sum_car_hours {
-    label: "Sum Target Car Hours (acute, tele only)"
+  measure: sum_acute_tele_hours {
+    label: "Target Car Hours (acute, tele only)"
     type: sum_distinct
-    sql_distinct_key: concat(${shift_teams.start_date}::varchar, ${markets.name});;
-    sql: ${target_hours} + ${tele_hours} ;;
+    sql_distinct_key: concat(${shift_teams.start_date}::varchar, ${markets.name}, ${TABLE}.shift_type);;
+    sql: ${target_hours} ;;
+    filters: [acute_tele_flag: "yes"]
+  }
+
+  measure: sum_app_hours {
+    label: "APP Target Hrs"
+    type: sum_distinct
+    sql_distinct_key: concat(${dates_rolling.day_date}::varchar, ${markets.id_adj_dual}, ${TABLE}.shift_type)  ;;
+    sql: ${target_hours} ;;
+    filters: [provider_type: "APP"]
+  }
+
+  measure: sum_dhmt_hours {
+    label: "DHMT Target Hrs"
+    type: sum_distinct
+    sql_distinct_key: concat(${dates_rolling.day_date}::varchar, ${markets.id_adj_dual}, ${TABLE}.shift_type)  ;;
+    sql: ${target_hours} ;;
+    filters: [provider_type: "DHMT"]
   }
 
   measure: sum_target_hours_datetime_explore {
+    label: "Target Hours"
     type: sum_distinct
     sql_distinct_key: concat(${date_placeholder.date_placeholder_date}::varchar, ${markets.name});;
     sql: ${target_hours} ;;
+    filters: [provider_type: "APP", shift_type: "Regular"]
   }
 
   measure: sum_target_hours_future {
@@ -87,24 +113,7 @@ view: target_staffing {
     type: sum_distinct
     sql_distinct_key: concat(${shift_details.local_expected_end_date}::varchar, ${markets_loan.name});;
     sql: ${target_hours} ;;
+    filters: [provider_type: "APP", shift_type: "Regular"]
   }
 
-  measure: count {
-    type: count
-    drill_fields: []
-  }
-
-  measure: sum_app_hours {
-    type: sum_distinct
-    sql_distinct_key: concat(${dates_rolling.day_date}::varchar, ${markets.id_adj_dual}) ;;
-    sql: ${app_hours} ;;
-    label: "APP Target Hrs"
-  }
-
-  measure: sum_dhmt_hours {
-    type: sum_distinct
-    sql_distinct_key: concat(${dates_rolling.day_date}::varchar, ${markets.id_adj_dual}) ;;
-    sql: ${dhmt_hours} ;;
-    label: "DHMT Target Hrs"
-  }
 }
