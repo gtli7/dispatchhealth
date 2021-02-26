@@ -370,14 +370,19 @@ explore: care_requests {
 
   persist_with: care_request_datagroup
 
-  sql_always_where: ${deleted_raw} IS NULL AND
-  (${care_request_flat.secondary_resolved_reason} NOT IN ('Test Case', 'Duplicate', 'Test') OR ${care_request_flat.secondary_resolved_reason} IS NULL)
-  AND (${patients.last_name} NOT LIKE '%Test%' OR ${patients.last_name} IS NULL) ;;
+  sql_always_where: ${deleted_raw} IS NULL AND (${patients.last_name} NOT LIKE '%Test%' OR ${patients.last_name} IS NULL) ;;
+  # (${care_request_flat.secondary_resolved_reason} NOT IN ('Test Case', 'Duplicate', 'Test') OR ${care_request_flat.secondary_resolved_reason} IS NULL)
+  # AND (${patients.last_name} NOT LIKE '%Test%' OR ${patients.last_name} IS NULL) ;;
 
   #access_filter: {
   #  field: markets.name
   #  user_attribute: "market_name"
   #}
+
+  join: care_request_flat {
+    relationship: one_to_one
+    sql_on: ${care_requests.id} = ${care_request_flat.care_request_id} ;;
+  }
 
   join: bounce_back_risk_3day_predictions {
     relationship: one_to_one
@@ -1932,11 +1937,6 @@ join: athena_procedurecode {
     relationship: one_to_many
     from: care_request_statuses
     sql_on: ${care_request_scheduled.care_request_id} = ${care_requests.id} and ${care_request_scheduled.name}='scheduled';;
-  }
-
-  join: care_request_flat {
-    relationship: one_to_one
-    sql_on: ${care_request_flat.care_request_id} = ${care_requests.id} ;;
   }
 
   join: geolocations_stops_by_care_request {

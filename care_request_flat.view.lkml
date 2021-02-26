@@ -217,8 +217,15 @@ WITH ort AS (
       LEFT JOIN care_request_statuses esc
       ON cr.id = esc.care_request_id AND esc.name = 'archived' and esc.deleted_at is null
       and lower(esc.comment) like '%referred - point of care%'
-      LEFT JOIN care_request_statuses archive
-      ON cr.id = archive.care_request_id AND archive.name = 'archived' and archive.deleted_at is null
+      LEFT JOIN (
+        SELECT
+            care_request_id,
+            started_at,
+            comment
+            FROM care_request_statuses
+            WHERE name = 'archived' AND deleted_at IS NULL AND
+            comment NOT IN ('Other: Test', 'Other: Duplicate', 'Cancelled by Patient: Other: Test Case', 'Other: Test Case')) AS archive
+        ON cr.id = archive.care_request_id
       LEFT JOIN care_request_statuses fu3
       ON cr.id = fu3.care_request_id AND fu3.name in('followup_3', 'followup_2') and fu3.deleted_at is null
       LEFT JOIN care_request_statuses fu14
