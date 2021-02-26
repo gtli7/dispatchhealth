@@ -201,6 +201,28 @@ view: athena_medication_details {
       field: dea_schedule
       value: "-NULL"
     }
-
   }
+  dimension: uti_first_line_antibiotics {
+    description: "First line antibiotics for UTI treatment (Antibiotic HIC3 classes: %cephalosporin%, %penicillin%, nitrofuran derivatives antibacterial agents, absorbable sulfonamide antibacterial agents AND a subset of medications in the 'antibiotic antibacterial misc' [trimethoprim% and fosfomycin%])"
+    type: yesno
+    sql: lower(${hic3_description}) in ('nitrofuran derivatives antibacterial agents', 'absorbable sulfonamide antibacterial agents')
+      OR lower(${hic3_description}) LIKE '%cephalosporin%'
+      OR lower(${hic3_description}) LIKE '%penicillin%'
+      OR ((lower(${medication_name}) LIKE '%trimethoprim%'
+        OR lower(${medication_name}) LIKE '%fosfomycin%')
+        AND lower(${hic3_description}) != 'ophthalmic antibiotics') ;;
+
+    group_label: "Care Pathway First Line Antibiotic Groups"
+  }
+
+  measure: count_uti_care_pathway_first_line_antibiotic_appointments {
+    description: "Count appointments where first line UTI antibiotics were employed (Antibiotic HIC3 classes: %cephalosporin%, %penicillin%, nitrofuran derivatives antibacterial agents, absorbable sulfonamide antibacterial agents AND a subset of medications in the 'antibiotic antibacterial misc' [trimethoprim% and fosfomycin%])"
+    type: count_distinct
+    sql:  ${athena_clinicalencounter.clinical_encounter_id};;
+    filters: [uti_first_line_antibiotics: "yes"]
+    group_label: "Care Pathway First Line Antibiotic Groups"
+  }
+
+
+
 }
