@@ -115,6 +115,36 @@ view: athena_cpt_codes {
     sql: ${TABLE}.procedure_code_group ;;
   }
 
+  dimension: dhmt_solo_approved_procedures {
+    type: yesno
+    group_label: "Descriptions"
+    description: "The list of CPT codes that a DHMT can administer without an APP on-scene (e.g. Tele-Presentation). Use with caution given a visit can have more than one procedure"
+    sql: lower(${cpt_code}) in(
+        '81002',
+        '87426',
+        '87804',
+        '87880',
+        '81025',
+        '86308',
+        '93005',
+        '93010',
+        '81003',
+        '29125',
+        '29130',
+        '29105',
+        '29505')
+        OR ${e_and_m_cpt_code};;
+  }
+
+  measure: count_appointments_with_procedures_not_approved_dhmt_solo {
+    description: "Count of appointments with a blood test"
+    type: count_distinct
+    sql: ${athena_clinicalencounter.clinical_encounter_id};;
+    group_label: "Grouped Procedure: Appointment Counts"
+    filters: [dhmt_solo_approved_procedures: "no"]
+
+  }
+
   dimension: e_and_m_cpt_code {
     type: yesno
     description: "A flag indicating the CPT code is an E&M code"
