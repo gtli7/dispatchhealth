@@ -311,6 +311,7 @@ include: "dx_conversions.view.lkml"
 include: "genesys_agent_conversion.view.lkml"
 include: "athenadwh_patient_current_medications.view.lkml"
 include: "athena_procedurecode.view.lkml"
+include: "athena_procedures_by_claim.view.lkml"
 include: "views/athena_patient_current_medications.view.lkml"
 include: "views/bounce_back_risk_3day_feature_importance.view.lkml"
 include: "views/bounce_back_risk_3day_models.view.lkml"
@@ -319,6 +320,7 @@ include: "narrow_network_providers.view.lkml"
 include: "geneysis_custom_conversation_attributes.view.lkml"
 include: "athena_medication_details.view.lkml"
 include: "geneysis_evaluations.view.lkml"
+include: "views/geneysis_wfm_schedules.view.lkml"
 include: "high_overflow_days.view.lkml"
 include: "resolved_reasons_summary.view.lkml"
 include: "billing_cities.view.lkml"
@@ -956,6 +958,12 @@ join: athena_claim {
     sql_on: ${athena_claim.claim_id} = ${athena_valid_claims.claim_id} ;;
   }
 
+join: athena_procedures_by_claim {
+  relationship: one_to_many
+  sql_on: ${athena_claim.claim_id} = ${athena_procedures_by_claim.claim_id} ;;
+  fields: []
+}
+
   join: athena_transaction_summary {
     relationship: one_to_one
     sql_on: ${athena_claim.claim_id} = ${athena_transaction_summary.claim_id} ;;
@@ -1212,7 +1220,7 @@ join: department_order {
 
 join: athena_procedurecode {
   relationship: one_to_one
-  sql_on: ${athena_transaction.procedure_code} = ${athena_procedurecode.procedure_code} AND
+  sql_on: ${athena_procedures_by_claim.procedure_code} = ${athena_procedurecode.procedure_code} AND
     ${athena_procedurecode.deleted_datetime_raw} IS NULL ;;
   }
 
@@ -4913,6 +4921,9 @@ explore: geneysis_evaluations {
     sql_on: ${genesys_conversation_summary.conversationid} = ${geneysis_evaluations.conversationid} ;;
   }
 }
+
+explore: geneysis_wfm_schedules {}
+
 explore: adwords_campaigns_clone {
   join: markets {
     sql_on: ${adwords_campaigns_clone.market_id_new}=${markets.id} ;;
