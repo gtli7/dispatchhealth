@@ -4129,6 +4129,31 @@ explore: shift_teams
     sql_on: ${shift_teams.id} = ${shift_team_members.shift_team_id} ;;
   }
 
+  join: virtual_shift_team_members {
+    from: shift_team_members
+    relationship: one_to_many
+    sql_on: ${care_requests_shift_teams.virtual_shift_team_id} = ${virtual_shift_team_members.shift_team_id} ;;
+  }
+
+  join: virtual_shift_teams {
+    from: shift_teams
+    sql_on: ${virtual_shift_teams.id} = ${virtual_shift_team_members.shift_team_id} ;;
+  }
+
+  join: virtual_shift_types {
+    from: shift_types
+    relationship: many_to_one
+    sql_on: ${virtual_shift_teams.shift_type_id} = ${virtual_shift_types.id} ;;
+  }
+
+
+  join: virtual_users {
+    from: users
+    relationship: one_to_one
+    sql_on: ${virtual_shift_team_members.user_id} = ${virtual_users.id} ;;
+  }
+
+
   join: zizzl_shift_hours {
     relationship: one_to_one
     sql_on: ${shift_team_members.user_id} = ${zizzl_shift_hours.user_id}
