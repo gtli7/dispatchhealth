@@ -310,12 +310,32 @@ view: athena_patientmedication_prescriptions {
   }
 
   measure: count_appointments_with_dispensed_medications {
-    description: "Count of appointments with prescriptions administered on-scene"
+    description: "Count of appointments with medications dispensed on-scene"
     type: count_distinct
     sql: ${athena_clinicalencounter.clinical_encounter_id};;
     filters: [prescriptions_dispensed: "yes"]
     group_label: "Medication Appointment Counts"
   }
+
+  dimension: medications_prescribed_or_administered_or_dispensed {
+    description: "Identifies medications prescribed, administered, or dispensed"
+    type: yesno
+    hidden: yes
+    sql:  ((${prescribed_yn} = 'Y' AND ${athena_document_prescriptions.document_subclass} = 'PRESCRIPTION_NEW')
+        OR ${administered_yn} = 'Y'
+        OR ${dispensed_yn} = 'Y')
+      AND upper(${athena_document_prescriptions.status}) != 'DELETED';;
+  }
+
+  measure: count_appointments_with_prescribed_or_administered_or_dispensed_medications {
+    description: "Count of appointments with medicatins prescribed, administered, or dispensed"
+    type: count_distinct
+    sql: ${athena_clinicalencounter.clinical_encounter_id};;
+    filters: [medications_prescribed_or_administered_or_dispensed: "yes"]
+    group_label: "Medication Appointment Counts"
+  }
+
+
 
   measure: count {
     type: count
