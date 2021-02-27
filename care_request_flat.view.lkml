@@ -6312,11 +6312,11 @@ end  ;;
     hidden: no
     description: "Identifies visits that do not meet the visit criteria to be a solo DHMT visit"
     sql:  NOT ${athena_cpt_codes.dhmt_solo_approved_procedures}
-      OR ${athena_patientmedication_prescriptions.medications_prescribed_or_administered_or_dispensed} ;;
+      OR ${athena_patientmedication_prescriptions.prescriptions_administered_on_scene} ;;
   }
 
   measure: count_visits_not_approved_dhmt_solo {
-    description: "Count visits with non-approved DHMT procedures or prescribed/administered/dispensed medications"
+    description: "Count visits with non-approved DHMT procedures or administered medications"
     type: count_distinct
     sql: ${care_request_id};;
     group_label: "Grouped Procedure: Appointment Counts"
