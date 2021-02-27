@@ -133,7 +133,8 @@ view: athena_cpt_codes {
         '29130',
         '29105',
         '29505')
-        OR ${e_and_m_cpt_code};;
+        OR ${e_and_m_cpt_code}
+        OR ${cpt_code} IS NULL;;
   }
 
   measure: count_appointments_with_procedures_not_approved_dhmt_solo {
