@@ -138,7 +138,7 @@ view: athena_cpt_codes {
   }
 
   measure: count_appointments_with_procedures_not_approved_dhmt_solo {
-    description: "Count of appointments with a blood test"
+    description: "Count of appointments where a procedure was performed that is not approved for a solo DHMT"
     type: count_distinct
     sql: ${athena_clinicalencounter.clinical_encounter_id};;
     group_label: "Grouped Procedure: Appointment Counts"
