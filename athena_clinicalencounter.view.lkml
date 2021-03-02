@@ -99,6 +99,11 @@ view: athena_clinicalencounter {
     sql: ${TABLE}."closed_by" ;;
   }
 
+  dimension: closed_by_provider {
+    type: yesno
+    sql: ${closed_by} IS NOT NULL AND ${closed_by} = ${athena_provider.provider_user_name} ;;
+  }
+
   dimension: closed_by_supervisor {
     type: yesno
     sql: ${closed_by} IS NOT NULL AND ${closed_by} = ${athena_supervising_provider_clone.provider_user_name} ;;
