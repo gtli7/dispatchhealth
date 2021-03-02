@@ -51,7 +51,7 @@ view: budget_projections_by_market_clone {
   measure: sum_projected_visits_daily {
     label: "Sum Budgeted Visits Daily"
     type: sum_distinct
-    sql_distinct_key: concat(${market_dim_id}, ${month_raw}, ${dates_rolling.day_date}) ;;
+    sql_distinct_key: concat(${market_dim_id}, ${month_raw}) ;;
     sql: ${projected_visits_daily} ;;
   }
 
