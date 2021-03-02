@@ -2799,7 +2799,7 @@ measure: avg_first_on_route_mins {
     sql: ${shift_start_to_first_onroute} ;;
     value_format: "0.0"
     filters: [accepted_cr_at_shift_start: "yes", users.app_name: "-NULL"]
-    drill_fields: [users.app_name, avg_first_on_route_w_accepted_mins]
+    drill_fields: [users.app_name, avg_first_on_route_w_accepted_mins, shift_teams.count_distinct_shifts]
   }
 
   dimension: shift_team_id  {
