@@ -600,7 +600,7 @@ else null end;;
   dimension: high_level_category_consolidated {
     type: string
     sql:  case
-          when ${high_level_category_new} in('Home Health', 'Senior Care') or ${care_requests.pos_senior_broad}  then 'Community'
+          when ${high_level_category_new} in('Home Health', 'Senior Care')  then 'Community'
           when ${high_level_category_new} in('Strategic', 'Provider Group', 'Provider (Generic)') then 'Strategic'
           when ${high_level_category_new} in('Family or Friends','Direct to Consumer')  then 'Direct to Consumer'
 
