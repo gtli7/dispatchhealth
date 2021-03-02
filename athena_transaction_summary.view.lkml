@@ -1,98 +1,6 @@
 view: athena_transaction_summary {
   sql_table_name: athena.transactions_summary ;;
-#   derived_table: {
-#     sql:
-#     WITH valid_claims AS (
-#     SELECT DISTINCT
-#       claim_id
-#       FROM athena.transaction
-#       GROUP BY claim_id
-#       HAVING COUNT(transaction_id) > COUNT(CASE WHEN voided_date IS NOT NULL THEN transaction_id ELSE NULL END))
-# SELECT
-#     t.claim_id,
-#     array_agg(DISTINCT t.procedure_code) AS procedure_codes,
-#     COUNT(DISTINCT transaction_id) AS transactions,
-#     SUM(CASE
-#             WHEN transaction_type = 'PAYMENT' AND voided_date IS NULL THEN amount::float * -1.0
-#             ELSE 0
-#         END) AS payments,
-#     SUM(work_rvu) AS work_rvu,
-#     SUM(practice_expense_rvu) AS practice_expense_rvu,
-#     SUM(malpractice_rvu) AS malpractice_rvu,
-#     SUM(total_rvu) AS total_rvu,
-#     SUM(CASE
-#             WHEN voided_date IS NULL AND transaction_type = 'CHARGE' AND
-#             (transaction_transfer_type = 'Primary' OR ip.insurance_package_id IN (0, -100)) AND
-#             (work_rvu > 0)
-#             THEN expected_allowed_amount::float
-#             ELSE 0.0
-#         END) +
-#     SUM(CASE
-#             WHEN voided_date IS NULL AND reversal_flag AND transaction_type = 'CHARGE' AND
-#             (transaction_transfer_type = 'Primary' OR ip.insurance_package_id IN (0, -100)) AND
-#             (work_rvu > 0)
-#             THEN (expected_allowed_amount::float) * -1.0
-#             ELSE 0.0
-#         END) AS work_expected_allowable,
-#     SUM(CASE
-#             WHEN voided_date IS NULL AND transaction_type = 'CHARGE' AND
-#             (transaction_transfer_type = 'Primary' OR ip.insurance_package_id IN (0, -100))
-#             THEN expected_allowed_amount::float
-#             ELSE 0.0
-#         END) +
-#     SUM(CASE
-#             WHEN voided_date IS NULL AND reversal_flag AND transaction_type = 'CHARGE' AND
-#             (transaction_transfer_type = 'Primary' OR ip.insurance_package_id IN (0, -100))
-#             THEN (expected_allowed_amount::float) * -1.0
-#             ELSE 0.0
-#         END) AS expected_allowable,
-#     SUM(CASE
-#             WHEN transaction_transfer_type = 'Patient' AND transaction_type = 'TRANSFERIN' THEN amount::numeric
-#             ELSE 0.0
-#         END) AS patient_responsibility,
-#     SUM(CASE
-#             WHEN transaction_transfer_type = 'Patient' AND transaction_type = 'TRANSFERIN'
-#             AND transaction_reason = 'COPAY' THEN amount::numeric
-#             ELSE 0.0
-#         END) AS patient_responsibility_copay,
-#     SUM(CASE
-#             WHEN transaction_transfer_type = 'Patient' AND transaction_type = 'TRANSFERIN'
-#             AND transaction_reason = 'DEDUCTIBLE' THEN amount::numeric
-#             ELSE 0.0
-#         END) AS patient_responsibility_deductible,
-#     SUM(CASE
-#             WHEN transaction_transfer_type = 'Patient' AND transaction_type = 'TRANSFERIN'
-#             AND transaction_reason = 'COINSURANCE' THEN amount::numeric
-#             ELSE 0.0
-#         END) AS patient_responsibility_coinsurance,
-#     SUM(CASE
-#             WHEN transaction_transfer_type = 'Patient' AND transaction_type = 'TRANSFERIN'
-#             OR (transaction_transfer_type = 'Secondary' AND
-#             (transaction_type IN ('TRANSFERIN','TRANSFEROUT'))) THEN amount::numeric
-#             ELSE 0.0
-#         END) AS patient_responsibility_without_secondary,
-#     MAX(CASE WHEN transaction_reason = 'COPAY' THEN 1 ELSE 0 END) AS copay_claim,
-#     MAX(CASE WHEN transaction_reason = 'DEDUCTIBLE' THEN 1 ELSE 0 END) AS deductible_claim,
-#     MAX(CASE WHEN transaction_reason = 'COINSURANCE' THEN 1 ELSE 0 END) AS coinsurance_claim
-#     FROM athena.transaction t
-#     INNER JOIN valid_claims vc
-#         ON t.claim_id = vc.claim_id
-#     LEFT JOIN athena.claim c
-#         ON t.claim_id = c.claim_id
-#     LEFT JOIN (
-#         SELECT DISTINCT
-#             patient_insurance_id,
-#             insurance_package_id
-#             FROM athena.patientinsurance
-#             WHERE cancellation_date IS NULL
-#             GROUP BY 1,2) AS ip
-#         ON c.claim_primary_patient_ins_id = ip.patient_insurance_id
-#     WHERE t.voided_date IS NULL AND c.claim_service_date >= '2020-03-01'
-#     GROUP BY 1;;
 
-#     indexes: ["id","claim_id"]
-#     sql_trigger_value: SELECT MAX(claim_id) FROM athena.claim ;;
-#   }
 
   dimension: id {
     primary_key: yes
@@ -199,6 +107,32 @@ WHEN ${markets.short_name_adj} = 'MIA' THEN 2.598
 ELSE NULL END ;;
     value_format: "0.0000"
   }
+
+  dimension: rvu_goal_medicare {
+    type: number
+    group_label: "Goals"
+    description: "The RVU Goal for Medicare"
+    sql: CASE
+WHEN ${markets.short_name_adj} = 'DEN' THEN 122.29
+WHEN ${markets.short_name_adj} = 'RIC' THEN 125.34
+WHEN ${markets.short_name_adj} = 'LAS' THEN 136.35
+WHEN ${markets.short_name_adj} = 'PHX' THEN 127.62
+WHEN ${markets.short_name_adj} = 'OKC' THEN 136.56
+WHEN ${markets.short_name_adj} = 'HOU' THEN 127.03
+WHEN ${markets.short_name_adj} = 'COS' THEN 116.13
+WHEN ${markets.short_name_adj} = 'SPO' THEN 132.21
+WHEN ${markets.short_name_adj} = 'FTW' THEN 120.67
+WHEN ${markets.short_name_adj} = 'TAC' THEN 128.61
+WHEN ${markets.short_name_adj} = 'SPR' THEN 116.67
+WHEN ${markets.short_name_adj} = 'NJR' THEN 133.16
+WHEN ${markets.short_name_adj} = 'ATL' THEN 127.06
+WHEN ${markets.short_name_adj} = 'DAL' THEN 127.72
+WHEN ${markets.short_name_adj} = 'SEA' THEN 141.28
+WHEN ${markets.short_name_adj} = 'POR' THEN 136.38
+WHEN ${markets.short_name_adj} = 'BOI' THEN 140.13
+ELSE NULL
+END;;
+}
 
   dimension: is_valid_claim {
     type: yesno

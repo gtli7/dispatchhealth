@@ -77,10 +77,11 @@ view: service_lines {
     description: "Similar Service Line categories combined. In addition, request type / channel is considered for '911 Service' and 'Advanced Care' is considered 'Acute Care'"
     type:  string
     sql:  CASE
-           WHEN lower(${name}) in('post acute follow up', 'post acute follow up (hpn)', 'post acute follow up (hpn- case management initiated)') THEN 'Post Acute Follow Up'
-           WHEN ${care_requests.request_type} = 'manual_911' OR lower(${name}) = '911 service' THEN '911 Service'
+           WHEN lower(${name}) in('post acute follow up', 'post acute follow up (hpn)', 'post acute follow up (hpn- case management initiated)') THEN 'Bridge Care'
+           WHEN ${care_requests.request_type} = 'manual_911' OR lower(${name}) = '911 service' THEN 'EMS Service'
            WHEN lower(${name}) in('acute care', 'acute care (non covid-19)','acute care (hpn)', 'acute care (senior living)', 'asthma education', 'advanced care', 'acute care (hpn- case management initiated)') THEN 'Acute Care'
-           ELSE ${name}
+          WHEN lower(${name}) = 'covid-19 facility testing' THEN 'Mass Testing'
+          ELSE ${name}
          END
       ;;
 

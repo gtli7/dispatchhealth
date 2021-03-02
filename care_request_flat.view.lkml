@@ -217,8 +217,15 @@ WITH ort AS (
       LEFT JOIN care_request_statuses esc
       ON cr.id = esc.care_request_id AND esc.name = 'archived' and esc.deleted_at is null
       and lower(esc.comment) like '%referred - point of care%'
-      LEFT JOIN care_request_statuses archive
-      ON cr.id = archive.care_request_id AND archive.name = 'archived' and archive.deleted_at is null
+      LEFT JOIN (
+        SELECT
+            care_request_id,
+            started_at,
+            comment
+            FROM care_request_statuses
+            WHERE name = 'archived' AND deleted_at IS NULL AND
+            comment NOT IN ('Other: Test', 'Other: Duplicate', 'Cancelled by Patient: Other: Test Case', 'Other: Test Case')) AS archive
+        ON cr.id = archive.care_request_id
       LEFT JOIN care_request_statuses fu3
       ON cr.id = fu3.care_request_id AND fu3.name in('followup_3', 'followup_2') and fu3.deleted_at is null
       LEFT JOIN care_request_statuses fu14
@@ -6300,5 +6307,21 @@ end  ;;
     }
   }
 
+  dimension: non_approved_DHMT_solo_visits {
+    type: yesno
+    hidden: no
+    description: "Identifies visits that do not meet the visit criteria to be a solo DHMT visit"
+    sql:  NOT ${athena_cpt_codes.dhmt_solo_approved_procedures}
+      OR ${athena_patientmedication_prescriptions.prescriptions_administered_on_scene} ;;
+  }
+
+  measure: count_visits_not_approved_dhmt_solo {
+    description: "Count visits with non-approved DHMT procedures or administered medications"
+    type: count_distinct
+    sql: ${care_request_id};;
+    group_label: "Grouped Procedure: Appointment Counts"
+    filters: [non_approved_DHMT_solo_visits: "yes", care_requests.billable_est: "yes"]
+
+  }
 
 }
