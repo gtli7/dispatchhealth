@@ -5349,6 +5349,13 @@ measure: avg_first_on_route_mins {
     sql: round(${accepted_count}/${month_percent});;
   }
 
+  measure: assigned_rate {
+    type: number
+    value_format: "0.0%"
+    sql: ${accepted_count}/nullif(${care_request_count},0) ;;
+  }
+
+
   measure: monthly_new_patients_run_rate{
     type: number
     sql: round(${count_new_patient_first_visits}/${month_percent});;
