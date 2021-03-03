@@ -42,6 +42,11 @@ view: insurance_plans_intra {
     sql: ${TABLE}.state_id ;;
   }
 
+  dimension: contracted {
+    type: yesno
+    sql: ${TABLE}.contracted ;;
+  }
+
   measure: count {
     type: count
     drill_fields: [id, name]
