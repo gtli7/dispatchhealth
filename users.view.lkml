@@ -133,6 +133,16 @@ view: users {
     sql: case when initcap(concat(trim(${first_name}), ' ', trim(${last_name}))) = ' ' then null else initcap(concat(trim(${first_name}), ' ', trim(${last_name}))) end;;
   }
 
+  dimension: app_name {
+    label: "APP Full Name"
+    type: string
+    sql: CASE
+          WHEN ${provider_profiles.position} = 'advanced practice provider'
+            THEN initcap(concat(trim(${first_name}), ' ', trim(${last_name})))
+          ELSE NULL
+        END ;;
+  }
+
   filter: provider_select {
     suggest_dimension: csc_name
   }

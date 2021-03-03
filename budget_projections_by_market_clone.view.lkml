@@ -25,11 +25,34 @@ view: budget_projections_by_market_clone {
     sql: ${TABLE}.projected_visits ;;
   }
 
+  dimension: days_in_month {
+    type: number
+    sql: CASE WHEN date_part('month', ${month_date}) IN (4, 6, 9, 11) THEN 30
+        WHEN date_part('month', ${month_date}) = 2 AND
+             date_part('year', ${month_date})::numeric % 4 = 0 AND
+             (date_part('year', ${month_date})::numeric % 100 != 0 OR date_part('year', ${month_date})::numeric % 400 = 0)
+             THEN 29
+        WHEN date_part('month', ${month_date}) = 2 THEN 28
+        ELSE 31 END ;;
+  }
+
+  dimension: projected_visits_daily {
+    type: number
+    sql: 1.0 * ${projected_visits} / ${days_in_month} ;;
+  }
+
   measure: sum_projected_visits {
     label:"Budgeted Visits"
     type: sum_distinct
     sql_distinct_key: concat(${market_dim_id}, ${month_raw})  ;;
     sql: ${projected_visits} ;;
+  }
+
+  measure: sum_projected_visits_daily {
+    label: "Sum Budgeted Visits Daily"
+    type: sum_distinct
+    sql_distinct_key: concat(${market_dim_id}, ${month_raw}) ;;
+    sql: ${projected_visits_daily} ;;
   }
 
   measure: percent_of_goal{
