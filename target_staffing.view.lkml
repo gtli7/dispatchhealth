@@ -18,7 +18,7 @@ view: target_staffing {
 
   dimension: acute_tele_flag {
     type: yesno
-    sql: (${TABLE}.provider_type = 'APP' AND ${TABLE}.shift_type = 'Regular') OR
+    sql: (${TABLE}.provider_type = 'APP' AND ${TABLE}.shift_type = 'Acute') OR
           (${TABLE}.provider_type = 'DHMT' and ${TABLE}.shift_type = 'Tele') ;;
   }
 
@@ -73,7 +73,7 @@ view: target_staffing {
     type: sum_distinct
     sql_distinct_key: concat(${shift_teams.start_date}::varchar, ${markets.name});;
     sql: ${target_hours} ;;
-    filters: [provider_type: "APP", shift_type: "Regular"]
+    filters: [provider_type: "APP", shift_type: "Acute"]
   }
 
   measure: sum_acute_tele_hours {
@@ -105,7 +105,7 @@ view: target_staffing {
     type: sum_distinct
     sql_distinct_key: concat(${date_placeholder.date_placeholder_date}::varchar, ${markets.name});;
     sql: ${target_hours} ;;
-    filters: [provider_type: "APP", shift_type: "Regular"]
+    filters: [provider_type: "APP", shift_type: "Acute"]
   }
 
   measure: sum_target_hours_future {
@@ -113,7 +113,7 @@ view: target_staffing {
     type: sum_distinct
     sql_distinct_key: concat(${shift_details.local_expected_end_date}::varchar, ${markets_loan.name});;
     sql: ${target_hours} ;;
-    filters: [provider_type: "APP", shift_type: "Regular"]
+    filters: [provider_type: "APP", shift_type: "Acute"]
   }
 
 }
