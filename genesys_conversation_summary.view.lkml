@@ -68,6 +68,10 @@ view: genesys_conversation_summary {
     ]
     sql: ${TABLE}."conversationstarttime" AT TIME ZONE 'UTC';;
   }
+  dimension: hhs_removed {
+    type: yesno
+    sql: ${conversationstarttime_date} >='2021-03-04';;
+  }
 
   dimension_group: month_placeholder {
     type: time
