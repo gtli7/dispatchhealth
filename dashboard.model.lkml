@@ -1020,7 +1020,7 @@ join: narrow_network_providers {
   sql_on: ${insurance_coalese.package_id_coalese} = ${narrow_network_providers.package_id}
           AND ${care_requests.market_id_adj} = ${narrow_network_providers.market_id}
           AND ${athena_document_orders.clinical_provider_id} = ${narrow_network_providers.athena_id};;
-  fields: []
+  fields: [narrow_network_providers.name]
 }
 
 join: insurance_network_insurance_plans {
