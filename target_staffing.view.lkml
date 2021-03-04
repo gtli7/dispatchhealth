@@ -84,6 +84,22 @@ view: target_staffing {
     filters: [acute_tele_flag: "yes"]
   }
 
+  measure: diff_to_target_hours {
+    value_format: "0"
+    type: number
+    sql:${shift_teams.sum_shift_hours_no_arm_advanced_only}- ${sum_acute_tele_hours}   ;;
+  }
+
+  measure: diff_to_target_percent {
+    value_format: "0%"
+    sql:  case when ${sum_acute_tele_hours} >0 then ${diff_to_target_hours}::float/${sum_acute_tele_hours}::float else 0 end;;
+  }
+
+  measure: percent_to_plan {
+    value_format: "0%"
+    sql:  1+${diff_to_target_percent};;
+  }
+
   measure: sum_app_hours {
     label: "APP Target Hrs"
     type: sum_distinct
