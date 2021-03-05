@@ -182,6 +182,7 @@ include: "ga_zips_clone.view.lkml"
 include: "operational_excellence_metrics.view.lkml"
 include: "athena_document_prescriptions.view.lkml"
 include: "survey_responses_flat_clone.view.lkml"
+include: "views/patient_satisfaction.view.lkml"
 include: "drg_to_icd10_crosswalk.view.lkml"
 include: "sf_activities.view.lkml"
 include: "user_roles.view.lkml"
@@ -1525,6 +1526,11 @@ join: athena_procedurecode {
   join: survey_responses_flat_clone {
     relationship: one_to_one
     sql_on: ${care_requests.id} = ${survey_responses_flat_clone.care_request_id};;
+  }
+
+  join: patient_satisfaction {
+    relationship: one_to_one
+    sql_on: ${care_requests.id} = ${patient_satisfaction.care_request_id} ;;
   }
 
   # End cloned BI table joins
