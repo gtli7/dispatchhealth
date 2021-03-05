@@ -325,6 +325,46 @@ view: adt_first_encounter_report {
     group_label: "Inpatient Emergency Admittance Intervals"
   }
 
+  dimension: 1_to_48_hour_cumulative_emergency_admittance_framework {
+    description: "Categorizes the first recorded Emergency admittance by day for the first 30 days from the DH on-scene date"
+    type: string
+    sql: CASE WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 1 THEN '01 Hour'
+    WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 2 THEN '02 Hours'
+    WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 3 THEN '03 Hours'
+    WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 5 THEN '05 Hours'
+    WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 8 THEN '08 Hours'
+    WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 12 THEN '12 Hours'
+    WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 18 THEN '18 Hours'
+    WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 24 THEN '24 Hours'
+    WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 36 THEN '36 Hours'
+    WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 48 THEN '48 Hours'
+    ELSE NULL
+    END
+    ;;
+
+    }
+
+  dimension: 1_to_48_hour_inclusive_emergency_admittance_framework {
+    description: "Categorizes the first recorded Emergency admittance by day for the first 30 days from the DH on-scene date"
+    type: string
+    sql: CASE WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 1 THEN '(01) 1 Hour or Less'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 > 1 AND  extract(epoch from ${cr_to_er_diff})/3600 <= 2 THEN '(02) 1 to 2 Hours'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 > 2 AND  extract(epoch from ${cr_to_er_diff})/3600 <= 3 THEN '(03) 2 to 3 Hours'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 > 3 AND  extract(epoch from ${cr_to_er_diff})/3600 <= 5 THEN '(05) 3 to 5 Hours'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 > 5 AND  extract(epoch from ${cr_to_er_diff})/3600 <= 8 THEN '(08) 5 to 8 Hours'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 > 8 AND  extract(epoch from ${cr_to_er_diff})/3600 <= 12 THEN '(12) 8 to 12 Hours'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 > 12 AND  extract(epoch from ${cr_to_er_diff})/3600 <= 18 THEN '(18) 12 to 18 Hours'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 > 18 AND  extract(epoch from ${cr_to_er_diff})/3600 <= 24 THEN '(24) 18 to 24 Hours'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 > 24 AND  extract(epoch from ${cr_to_er_diff})/3600 <= 36 THEN '(36) 24 to 36 Hours'
+          WHEN extract(epoch from ${cr_to_er_diff})/3600 > 36 AND  extract(epoch from ${cr_to_er_diff})/3600 <= 48 THEN '(48) 36 to 48 Hours'
+          ELSE NULL
+          END
+          ;;
+
+    }
+
+
+
   dimension: 30day_emergency_admittance_framework {
     description: "Categorizes the first recorded Emergency admittance by day for the first 30 days from the DH on-scene date"
     type: string
