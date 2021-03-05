@@ -62,6 +62,22 @@ view: patient_satisfaction {
     sql: ${TABLE}."nps_response" ;;
   }
 
+  dimension: nps_response_rate {
+    type: number
+    hidden: yes
+    sql: CASE WHEN ${nps_response} > 0 THEN 100 ELSE 0 END ;;
+  }
+
+  measure: nps_survey_response_rate {
+    type: average_distinct
+    description: "The NPS survey response rate for all completed visits"
+    value_format: "0.0\%"
+    group_label: "NPS Metrics"
+    sql: ${nps_response_rate} ;;
+    sql_distinct_key: ${care_requests.id} ;;
+    filters: [care_requests.billable_est: "yes"]
+  }
+
   measure: count_distinct_promoters {
     description: "NPS survey response is 9 or 10"
     group_label: "NPS Metrics"
