@@ -5750,6 +5750,27 @@ end  ;;
         ;;
   }
 
+  dimension: pushed_visits {
+    type: yesno
+    sql: (not ${pafu_or_follow_up}) and ${scheduled_visit} and lower(${service_lines.name}) like '%acute%'
+         AND
+        (
+          ${created_date} != ${on_scene_date}
+          OR
+         ${on_scene_date} is null
+        )
+        AND
+        (
+          ${created_date} != ${archive_date}
+        OR
+          ${archive_date} is NULL
+        )
+        AND
+        ${created_date} != ${scheduled_care_date}
+        ;;
+  }
+
+
   dimension: accepted_date_same_created_date {
     type: yesno
     sql: ${accept_initial_date} = ${created_date} ;;
@@ -5819,6 +5840,16 @@ end  ;;
     }
     filters: {
       field: overflow_visit
+      value: "yes"
+    }
+  }
+
+  measure: limbo_count {
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    sql_distinct_key: ${care_request_id} ;;
+    filters: {
+      field: not_resolved_or_complete
       value: "yes"
     }
   }
