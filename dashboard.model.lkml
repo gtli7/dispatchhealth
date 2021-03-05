@@ -361,6 +361,8 @@ include: "views/genesys_conversation_summary_null.view.lkml"
 include: "capture_rate_by_market.view.lkml"
 include: "provider_fit_testing_bad_ids.view.lkml"
 include: "outbound_out_reach.view.lkml"
+include: "daily_on_call_tracking.view.lkml"
+include: "daily_variable_shift_tracking.view.lkml"
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -4167,6 +4169,13 @@ explore: shift_teams
     relationship: one_to_many
     sql_on: ${users.id} = ${secondary_screenings.provider_id}
     AND ${secondary_screenings.provider_updated_date} = ${shift_teams.start_date};;
+  }
+  join: daily_on_call_tracking {
+    sql_on: ${daily_on_call_tracking.date_date} = ${shift_teams.start_date} and ${markets.short_name_adj_dual}=${daily_on_call_tracking.short_name_adj_dual} ;;
+  }
+
+  join: daily_variable_shift_tracking {
+    sql_on: ${daily_variable_shift_tracking.date_date} = ${shift_teams.start_date} and ${markets.short_name_adj_dual}=${daily_variable_shift_tracking.short_name_adj_dual} ;;
   }
 
 #  join: zizzl_detailed_shift_hours {

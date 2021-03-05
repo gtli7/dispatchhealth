@@ -87,7 +87,7 @@ view: target_staffing {
   measure: diff_to_target_hours {
     value_format: "0"
     type: number
-    sql:${shift_teams.sum_shift_hours_no_arm_advanced_only}- ${sum_acute_tele_hours}   ;;
+    sql:${shift_teams.sum_shift_hours_no_arm_advanced_only}- ${sum_acute_tele_hours} -${daily_variable_shift_tracking.sum_actual_recommendation_captured}-${daily_on_call_tracking.sum_on_call_diff}  ;;
   }
 
   measure: diff_to_target_percent {
