@@ -56,7 +56,7 @@ view: athena_patientmedication_prescriptions {
   dimension: administered_yn {
     type: string
     group_label: "Prescription Details"
-    sql: ${TABLE}."administered_yn" ;;
+    sql: CASE WHEN ${TABLE}."administered_yn" = 'Y' THEN 'Y' ELSE 'N' END ;;
   }
 
   dimension_group: created {
