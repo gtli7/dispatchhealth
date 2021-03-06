@@ -94,6 +94,14 @@ view: patient_satisfaction {
     filters: [nps_response: "<7"]
   }
 
+  measure: count_distinct_neutral {
+    description: "NPS survey response is 7 or 8"
+    group_label: "NPS Metrics"
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters: [nps_response: ">6 AND <9"]
+  }
+
   measure: count_distinct_respondents {
     description: "Count of distinct NPS survey respondents"
     group_label: "NPS Metrics"
