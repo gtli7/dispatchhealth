@@ -322,6 +322,25 @@ view: athena_clinicalencounter {
     sql: ${hours_to_chart_sign} <= 24 ;;
   }
 
+  dimension: chart_closure_percentage {
+    type: number
+    hidden: yes
+    sql: CASE WHEN ${chart_first_closed_raw} IS NOT NULL THEN 100
+         ELSE 0
+         END ;;
+  }
+
+  # Does not calculate correctly - DE - 3/6/2021
+  measure: average_24_hour_chart_closure_rate {
+    description: "The percentage of charts closed by the provider within 24 hours of the visit"
+    type: average_distinct
+    hidden: yes
+    group_label: "Chart Closure Metrics"
+    sql: ${chart_closure_percentage} ;;
+    sql_distinct_key: ${care_requests.id} ;;
+    filters: [chart_signed_24_hours: "yes", care_requests.billable_est: "yes"]
+  }
+
   dimension: chart_signed_48_hours {
     description: "A flag indicating that the chart was signed within 48 hours of visit"
     type: yesno
@@ -332,7 +351,7 @@ view: athena_clinicalencounter {
   measure: count_charts_signed_24_hours {
     description: "The count of distinct charts that were signed by the provider within 24 hours of the visit"
     type: count_distinct
-    group_label: "Counts"
+    group_label: "Chart Closure Metrics"
     sql: ${clinical_encounter_id} ;;
     filters: [chart_signed_24_hours: "yes"]
   }
@@ -340,7 +359,7 @@ view: athena_clinicalencounter {
   measure: count_charts_signed_48_hours {
     description: "The count of distinct charts that were signed by the provider within 48 hours of the visit"
     type: count_distinct
-    group_label: "Counts"
+    group_label: "Chart Closure Metrics"
     sql: ${clinical_encounter_id} ;;
     filters: [chart_signed_48_hours: "yes"]
   }

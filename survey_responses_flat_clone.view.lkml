@@ -1,4 +1,5 @@
 view: survey_responses_flat_clone {
+  view_label: "ZZZZ - Survey Responses Flat Clone"
   derived_table: {
     sql:
       SELECT DISTINCT
