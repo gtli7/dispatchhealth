@@ -527,10 +527,10 @@ explore: care_requests {
 
   join: prior_claims {
     view_label: "Claims created 2 or more days ago - HPN"
-    from: athenadwh_claims_clone
+    from: athena_claim
     relationship: one_to_one
-    sql_on: ${athenadwh_clinical_encounters_clone.appointment_id} = ${prior_claims.claim_appointment_id}
-    AND ${prior_claims.claim_created_datetime_date} < CURRENT_DATE - 2 ;;
+    sql_on: ${athena_clinicalencounter.appointment_id} = ${prior_claims.claim_appointment_id}
+    AND ${prior_claims.claim_created_date} < CURRENT_DATE - 2 ;;
     # fields: []
   }
 
