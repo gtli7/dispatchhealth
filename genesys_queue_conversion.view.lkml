@@ -213,7 +213,9 @@ view: genesys_queue_conversion {
     type: string
     sql: case when ${queuename} in('TIER 1', 'TIER 2') then 'TIER 1/TIER 2'
       when ${queuename} in ('Partner Direct', 'ATL Optum Care', 'LAS RCC', 'Humana Partner Direct', 'BOI Regence', 'POR Regence', 'SEA Regence', 'SPO Regence') then 'Partner Direct (Broad)'
-    else ${queuename}  end ;;
+        when ${queuename} in('DEN LAS SEM VIP', 'DTC Pilot') then 'DTC Pilot'
+
+   else ${queuename}  end ;;
   }
 
   measure: sum_inbound_phone_calls {
