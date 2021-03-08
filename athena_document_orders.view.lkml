@@ -250,17 +250,20 @@ view: athena_document_orders {
     sql: array_to_string(array_agg(DISTINCT ${clinical_order_type}), ' | ') ;;
   }
 
-  dimension: referral_flag {
-    type: yesno
-    sql: ${clinical_order_type} LIKE '%REFERRAL%' AND ${status} != 'DELETED' ;;
-  }
+  dimension: referral_description {
+    type: string
+    sql: CASE
+          WHEN ${clinical_order_type} LIKE '%REFERRAL%' AND ${status} != 'DELETED' THEN ${clinical_order_type}
+          ELSE NULL
+        END ;;
+    }
+
 
   measure: aggregated_referrals {
     type: string
     description: "Aggregation of all referrals"
     group_label: "Description"
-    sql: array_to_string(array_agg(DISTINCT ${clinical_order_type}), ' | ') ;;
-    filters: [referral_flag: "yes"]
+    sql: array_to_string(array_agg(DISTINCT ${referral_description}), ' | ') ;;
   }
 
   measure: aggregated_imaging_orders {
