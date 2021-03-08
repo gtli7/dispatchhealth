@@ -4924,7 +4924,7 @@ explore: geneysis_custom_conversation_attributes {
     sql_on: ${genesys_conversation_summary.conversationid} = ${geneysis_custom_conversation_attributes.conversationid} ;;
   }
   join: genesys_conversation_summary_null {
-    sql_on: ${genesys_conversation_summary.conversationid} = ${genesys_conversation_summary_null.conversationid} ;;
+    sql_on: ${geneysis_custom_conversation_attributes.conversationid} = ${genesys_conversation_summary_null.conversationid} ;;
 
   }
   join: number_to_market {
