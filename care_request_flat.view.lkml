@@ -223,8 +223,7 @@ WITH ort AS (
             started_at,
             comment
             FROM care_request_statuses
-            WHERE name = 'archived' AND deleted_at IS NULL AND
-            comment NOT IN ('Other: Test', 'Other: Duplicate', 'Cancelled by Patient: Other: Test Case', 'Other: Test Case')) AS archive
+            WHERE name = 'archived' AND deleted_at IS NULL) AS archive
         ON cr.id = archive.care_request_id
       LEFT JOIN care_request_statuses fu3
       ON cr.id = fu3.care_request_id AND fu3.name in('followup_3', 'followup_2') and fu3.deleted_at is null
@@ -256,6 +255,8 @@ WITH ort AS (
         and insurances.package_id is not null
         and trim(insurances.package_id)!='') as insurances
         ON cr.id = insurances.care_request_id AND insurances.rn = 1
+      where
+            (archive.comment NOT IN ('Other: Test', 'Other: Duplicate', 'Cancelled by Patient: Other: Test Case', 'Other: Test Case') or archive.comment  is null)
       GROUP BY 1,2,3,4,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,
                insurances.package_id, callers.origin_phone, callers.contact_id,cr.patient_id,crst.shift_team_id,
                foc.first_on_scene_time,onscene.mins_on_scene_predicted, n_assign.count_assignments;;
