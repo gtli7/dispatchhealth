@@ -79,7 +79,7 @@ view: service_lines {
     sql:  CASE
            WHEN lower(${name}) in('post acute follow up', 'post acute follow up (hpn)', 'post acute follow up (hpn- case management initiated)') THEN 'Bridge Care'
            WHEN ${care_requests.request_type} = 'manual_911' OR lower(${name}) = '911 service' THEN 'EMS Service'
-           WHEN lower(${name}) in('acute care', 'acute care (non covid-19)','acute care (hpn)', 'acute care (senior living)', 'asthma education', 'advanced care', 'acute care (hpn- case management initiated)') THEN 'Acute Care'
+           WHEN lower(${name}) in('acute care', 'acute care (non covid-19)','acute care (hpn)', 'acute care (senior living)', 'asthma education',  'acute care (hpn- case management initiated)') THEN 'Acute Care'
           WHEN lower(${name}) = 'covid-19 facility testing' THEN 'Mass Testing'
           ELSE ${name}
          END
