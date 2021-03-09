@@ -198,6 +198,13 @@ view: athena_clinicalencounter {
     sql: ${TABLE}."encounter_date" ;;
   }
 
+  dimension: days_past_since_clinical_encounter {
+    description: "Counts the number of days that have elapsed between now and the date of the clinical encounter"
+    type: duration_day
+    sql_start: ${encounter_raw};;
+    sql_end: now();;
+  }
+
   dimension: encounter_status {
     type: string
     description: "The status of the encounter e.g. 'checked in', etc."
