@@ -10,6 +10,7 @@ view: accepted_agg {
       column: lwbs_accepted {field: care_request_flat.lwbs_accepted_count}
       column: lwbs_scheduled {field:care_request_flat.lwbs_scheduled_count}
       column: care_request_created_count {field: care_request_flat.care_request_count}
+      column: monthly_complete_run_rate {field: care_request_flat.monthly_visits_run_rate}
       column: market_id { field: markets.id_adj }
       filters: {
         field: care_request_flat.scheduled_or_accepted_coalese_date
@@ -36,6 +37,9 @@ view: accepted_agg {
   }
 
   dimension: complete_count {
+    type: number
+  }
+  dimension: monthly_complete_run_rate {
     type: number
   }
   dimension: market_id {
@@ -85,6 +89,13 @@ view: accepted_agg {
     label: "Complete Care Requests"
     type: sum_distinct
     sql: ${complete_count} ;;
+    sql_distinct_key: concat(${first_accepted_date}, ${market_id}) ;;
+  }
+
+  measure: sum_monthly_complete_run_rate {
+    label: "Monthly Complete Run-rate"
+    type: sum_distinct
+    sql: ${monthly_complete_run_rate} ;;
     sql_distinct_key: concat(${first_accepted_date}, ${market_id}) ;;
   }
 

@@ -4630,6 +4630,11 @@ explore: genesys_agg {
     sql_on: ${genesys_agg.conversationstarttime_date} = ${geneysis_custom_conversation_attributes_agg.conversationstarttime_date}
     and ${markets.id}=${geneysis_custom_conversation_attributes_agg.market_id};;
   }
+  join: budget_projections_by_market_clone {
+    sql_on:  ${budget_projections_by_market_clone.market_dim_id}=${genesys_agg.market_id}
+             and
+            ${budget_projections_by_market_clone.month_month}=${genesys_agg.conversationstarttime_month};;
+  }
 
   }
 
