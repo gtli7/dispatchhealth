@@ -183,14 +183,15 @@ WITH ort AS (
             GROUP BY shift_team_id) AS fst_or
         ON crst.shift_team_id = fst_or.shift_team_id
       LEFT JOIN (
-            SELECT
-                CAST(meta_data::json->> 'shift_team_id' AS INT) AS shift_team_id,
+             SELECT
+                cst.shift_team_id,
                 MIN(crs.started_at) AS accepted
             FROM public.care_requests cr
-            LEFT JOIN public.care_request_statuses crs
-                ON cr.id = crs.care_request_id
-            WHERE crs.name = 'accepted' AND crs.deleted_at IS NULL AND meta_data::json->> 'shift_team_id' IS NOT NULL AND
-                  LOWER(cr.chief_complaint) <> 'test'
+           join  public.care_requests_shift_teams cst
+           on cst.care_request_id=cr.id
+           JOIN public.care_request_statuses crs
+                ON cr.id = crs.care_request_id and crs.name = 'accepted' AND crs.deleted_at IS NULL
+           where cst.is_dispatched
             GROUP BY 1) AS fst_cra
         ON crst.shift_team_id = fst_cra.shift_team_id
       LEFT JOIN (
