@@ -1,5 +1,5 @@
 view: insurance_plans_intra {
-  sql_table_name: looker_scratch.insurance_plans_intra ;;
+  sql_table_name: public.insurance_plans_intra ;;
 
   dimension: id {
     primary_key: yes
@@ -40,6 +40,11 @@ view: insurance_plans_intra {
   dimension: state_id {
     type: number
     sql: ${TABLE}.state_id ;;
+  }
+
+  dimension: contracted {
+    type: yesno
+    sql: ${TABLE}.contracted ;;
   }
 
   measure: count {

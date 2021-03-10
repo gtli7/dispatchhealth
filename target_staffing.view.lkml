@@ -18,7 +18,7 @@ view: target_staffing {
 
   dimension: acute_tele_flag {
     type: yesno
-    sql: (${TABLE}.provider_type = 'APP' AND ${TABLE}.shift_type = 'Regular') OR
+    sql: (${TABLE}.provider_type = 'APP' AND ${TABLE}.shift_type = 'Acute') OR
           (${TABLE}.provider_type = 'DHMT' and ${TABLE}.shift_type = 'Tele') ;;
   }
 
@@ -73,7 +73,7 @@ view: target_staffing {
     type: sum_distinct
     sql_distinct_key: concat(${shift_teams.start_date}::varchar, ${markets.name});;
     sql: ${target_hours} ;;
-    filters: [provider_type: "APP", shift_type: "Regular"]
+    filters: [provider_type: "APP", shift_type: "Acute"]
   }
 
   measure: sum_acute_tele_hours {
@@ -82,6 +82,24 @@ view: target_staffing {
     sql_distinct_key: concat(${shift_teams.start_date}::varchar, ${markets.name}, ${TABLE}.shift_type);;
     sql: ${target_hours} ;;
     filters: [acute_tele_flag: "yes"]
+  }
+
+  measure: diff_to_target_hours {
+    value_format: "0"
+    type: number
+    sql:${shift_teams.sum_shift_hours_no_arm_advanced_only}- ${sum_acute_tele_hours} -${daily_variable_shift_tracking.sum_actual_recommendation_captured}-${daily_on_call_tracking.sum_on_call_diff}  ;;
+  }
+
+  measure: diff_to_target_percent {
+    type: number
+    value_format: "0%"
+    sql:  case when ${sum_acute_tele_hours} >0 then ${diff_to_target_hours}::float/${sum_acute_tele_hours}::float else 0 end;;
+  }
+
+  measure: percent_to_plan {
+    type: number
+    value_format: "0%"
+    sql:  1+${diff_to_target_percent};;
   }
 
   measure: sum_app_hours {
@@ -105,7 +123,7 @@ view: target_staffing {
     type: sum_distinct
     sql_distinct_key: concat(${date_placeholder.date_placeholder_date}::varchar, ${markets.name});;
     sql: ${target_hours} ;;
-    filters: [provider_type: "APP", shift_type: "Regular"]
+    filters: [provider_type: "APP", shift_type: "Acute"]
   }
 
   measure: sum_target_hours_future {
@@ -113,7 +131,7 @@ view: target_staffing {
     type: sum_distinct
     sql_distinct_key: concat(${shift_details.local_expected_end_date}::varchar, ${markets_loan.name});;
     sql: ${target_hours} ;;
-    filters: [provider_type: "APP", shift_type: "Regular"]
+    filters: [provider_type: "APP", shift_type: "Acute"]
   }
 
 }

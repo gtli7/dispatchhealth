@@ -354,6 +354,23 @@ LEFT JOIN (
       }
     }
 
+  dimension: fall_risk_us_pct {
+    type: number
+    hidden: yes
+    sql: CASE WHEN ${fall_risk_unsteady} LIKE 'Y%' THEN 100
+              WHEN ${fall_risk_unsteady} IS NOT NULL THEN 0
+      ELSE NULL END ;;
+  }
+
+  measure: pct_fall_risk_unsteady {
+    type: average_distinct
+    description: "Percentage of patients who were asked and had a positive response"
+    sql: ${fall_risk_us_pct} ;;
+    value_format: "0.0\%"
+    sql_distinct_key: ${chart_id} ;;
+    group_label: "Percentages"
+  }
+
     dimension: activities_daily_living {
       type: string
       hidden: no
@@ -374,6 +391,23 @@ LEFT JOIN (
       }
     }
 
+  dimension: adl_pct {
+    type: number
+    hidden: yes
+    sql: CASE WHEN ${activities_daily_living} = 'Y' THEN 100
+              WHEN ${activities_daily_living} IS NOT NULL THEN 0
+      ELSE NULL END ;;
+  }
+
+  measure: pct_activities_daily_living {
+    type: average_distinct
+    description: "Percentage of patients who were asked and had a positive response"
+    sql: ${adl_pct} ;;
+    value_format: "0.0\%"
+    sql_distinct_key: ${chart_id} ;;
+    group_label: "Percentages"
+  }
+
     dimension: transportation {
       type: string
       hidden: yes
@@ -388,6 +422,23 @@ LEFT JOIN (
       sql: ${transportation} LIKE 'Yes%' ;;
     }
 
+  dimension: transportation_pct {
+    type: number
+    hidden: yes
+    sql: CASE WHEN ${lack_of_transportation_flag} THEN 100
+              WHEN ${transportation} IS NOT NULL THEN 0
+      ELSE NULL END ;;
+  }
+
+  measure: pct_lack_of_transportation {
+    type: average_distinct
+    description: "Percentage of patients who were asked and had a positive response"
+    sql: ${transportation_pct} ;;
+    value_format: "0.0\%"
+    sql_distinct_key: ${chart_id} ;;
+    group_label: "Percentages"
+  }
+
     dimension: fall_risk_provider {
       type: string
       hidden: yes
@@ -401,6 +452,23 @@ LEFT JOIN (
       group_label: "Fall Risk"
       sql: ${fall_risk_provider} IS NOT NULL AND ${fall_risk_provider} <> 'N' ;;
     }
+
+  dimension: fall_risk_pp_pct {
+    type: number
+    hidden: yes
+    sql: CASE WHEN ${fall_risk_per_provider_flag} THEN 100
+              WHEN ${fall_risk_provider} IS NOT NULL THEN 0
+      ELSE NULL END ;;
+  }
+
+  measure: pct_fall_risk_per_provider {
+    type: average_distinct
+    description: "Percentage of patients who were asked and had a positive response"
+    sql: ${fall_risk_pp_pct} ;;
+    value_format: "0.0\%"
+    sql_distinct_key: ${chart_id} ;;
+    group_label: "Percentages"
+  }
 
     dimension: fall_risk_worry {
       type: string
@@ -437,6 +505,23 @@ LEFT JOIN (
       sql: lower(${nutrition_access}) SIMILAR TO '%(no:|no,|moc )%'  ;;
     }
 
+  dimension: access_health_food_pct {
+    type: number
+    hidden: yes
+    sql: CASE WHEN ${lack_of_access_healthy_foods} THEN 100
+              WHEN ${nutrition_access} IS NOT NULL THEN 0
+      ELSE NULL END ;;
+  }
+
+  measure: pct_lack_access_healthy_foods {
+    type: average_distinct
+    description: "Percentage of patients who were asked and had a positive response"
+    sql: ${access_health_food_pct} ;;
+    value_format: "0.0\%"
+    sql_distinct_key: ${chart_id} ;;
+    group_label: "Percentages"
+  }
+
     dimension: nutrition_status {
       type: string
       hidden: yes
@@ -463,6 +548,23 @@ LEFT JOIN (
       }
     }
 
+  dimension: feels_unsafe_pct {
+    type: number
+    hidden: yes
+    sql: CASE WHEN ${safety_feeling} = 'N' THEN 100
+              WHEN ${safety_feeling} IS NOT NULL THEN 0
+      ELSE NULL END ;;
+  }
+
+  measure: pct_feels_unsafe {
+    type: average_distinct
+    description: "Percentage of patients who were asked and had a positive response"
+    sql: ${feels_unsafe_pct} ;;
+    value_format: "0.0\%"
+    sql_distinct_key: ${chart_id} ;;
+    group_label: "Percentages"
+  }
+
     dimension: taking_advantage {
       type: string
       hidden: yes
@@ -482,6 +584,23 @@ LEFT JOIN (
       hidden: yes
       sql: ${afford_medications} = 'N' OR LOWER(${afford_medications}) SIMILAR TO '%(t afford|struggl)%';;
     }
+
+  dimension: afford_meds_pct {
+    type: number
+    hidden: yes
+    sql: CASE WHEN ${cant_afford_medications_flag} THEN 100
+              WHEN ${afford_medications} IS NOT NULL THEN 0
+      ELSE NULL END ;;
+  }
+
+  measure: pct_cant_afford_medications {
+    type: average_distinct
+    description: "Percentage of patients who were asked and had a positive response"
+    sql: ${afford_meds_pct} ;;
+    value_format: "0.0\%"
+    sql_distinct_key: ${chart_id} ;;
+    group_label: "Percentages"
+  }
 
     dimension: heavy_drinking {
       type: string
@@ -560,6 +679,23 @@ LEFT JOIN (
       }
     }
 
+  dimension: cost_concerns_pct {
+    type: number
+    hidden: yes
+    sql: CASE WHEN ${cost_concerns_flag} THEN 100
+              WHEN ${cost_concerns} IS NOT NULL THEN 0
+      ELSE NULL END ;;
+  }
+
+  measure: pct_cost_concerns {
+    type: average_distinct
+    description: "Percentage of patients who were asked and had a positive response"
+    sql: ${cost_concerns_pct} ;;
+    value_format: "0.0\%"
+    sql_distinct_key: ${chart_id} ;;
+    group_label: "Percentages"
+  }
+
     dimension: home_situation {
       type: string
       hidden: yes
@@ -588,6 +724,23 @@ LEFT JOIN (
       }
     }
 
+  dimension: food_insecurity_pct {
+    type: number
+    hidden: yes
+    sql: CASE WHEN ${food_insecurity} = 'Yes' THEN 100
+              WHEN ${food_insecurity} IS NOT NULL THEN 0
+      ELSE NULL END ;;
+  }
+
+  measure: pct_food_insecurity {
+    type: average_distinct
+    description: "Percentage of patients who were asked and had a positive response"
+    sql: ${food_insecurity_pct} ;;
+    value_format: "0.0\%"
+    sql_distinct_key: ${chart_id} ;;
+    group_label: "Percentages"
+  }
+
     dimension: food_insecurity_worry {
       type: string
       group_label: "Social Determinants of Health"
@@ -606,6 +759,23 @@ LEFT JOIN (
         value: "Yes"
       }
     }
+
+  dimension: food_insecurity_worry_pct {
+    type: number
+    hidden: yes
+    sql: CASE WHEN ${food_insecurity_worry} = 'Yes' THEN 100
+              WHEN ${food_insecurity_worry} IS NOT NULL THEN 0
+      ELSE NULL END ;;
+  }
+
+  measure: pct_food_insecurity_worry {
+    type: average_distinct
+    description: "Percentage of patients who were asked and had a positive response"
+    sql: ${food_insecurity_worry_pct} ;;
+    value_format: "0.0\%"
+    sql_distinct_key: ${chart_id} ;;
+    group_label: "Percentages"
+  }
 
     dimension: social_interactions {
       type: string
@@ -626,6 +796,23 @@ LEFT JOIN (
         value: "Less Than Once Per Week"
       }
     }
+
+  dimension: social_interactions_pct {
+    type: number
+    hidden: yes
+    sql: CASE WHEN ${social_interactions} = 'Less Than Once Per Week' THEN 100
+              WHEN ${social_interactions} IS NOT NULL THEN 0
+      ELSE NULL END ;;
+  }
+
+  measure: pct_lack_social_interactions {
+    type: average_distinct
+    description: "Percentage of patients who were asked and had a positive response"
+    sql: ${social_interactions_pct} ;;
+    value_format: "0.0\%"
+    sql_distinct_key: ${chart_id} ;;
+    group_label: "Percentages"
+  }
 
     dimension: housing_insecurity {
       type: string
@@ -656,6 +843,22 @@ LEFT JOIN (
       }
     }
 
+  dimension: housing_insecurity_pct {
+    type: number
+    hidden: yes
+    sql: CASE WHEN ${housing_insecurity_flag} THEN 100
+              WHEN ${housing_insecurity} IS NOT NULL THEN 0
+      ELSE NULL END ;;
+  }
+
+  measure: pct_housing_insecurity {
+    type: average_distinct
+    description: "Percentage of patients who were asked and had a positive response"
+    sql: ${housing_insecurity_pct} ;;
+    value_format: "0.0\%"
+    sql_distinct_key: ${chart_id} ;;
+    group_label: "Percentages"
+  }
 
     dimension: resource_help_requested {
       type: string
@@ -682,6 +885,23 @@ LEFT JOIN (
         value: "yes"
       }
     }
+
+  dimension: requested_resources_pct {
+    type: number
+    hidden: yes
+    sql: CASE WHEN ${resource_requested_flag} THEN 100
+              WHEN ${resource_help_requested} IS NOT NULL THEN 0
+      ELSE NULL END ;;
+  }
+
+  measure: pct_requested_resources {
+    type: average_distinct
+    description: "Percentage of patients who were asked and had a positive response"
+    sql: ${requested_resources_pct} ;;
+    value_format: "0.0\%"
+    sql_distinct_key: ${chart_id} ;;
+    group_label: "Percentages"
+  }
 
     dimension: overweight_obese_flag {
       type: yesno

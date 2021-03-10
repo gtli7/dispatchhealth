@@ -12,6 +12,7 @@ view: genesys_queue_conversion {
       explore_source: genesys_conversation_summary {
         column: conversationstarttime {field: genesys_conversation_summary.conversationstarttime_date}
         column: queuename {}
+        column: queuename_adj {}
         column: direction {}
         column: market_id {field:markets.id}
         column: count_distinct_sla {field: genesys_conversation_summary.count_distinct_sla}
@@ -211,9 +212,6 @@ view: genesys_queue_conversion {
 
   dimension: queuename_adj {
     type: string
-    sql: case when ${queuename} in('TIER 1', 'TIER 2') then 'TIER 1/TIER 2'
-      when ${queuename} in ('Partner Direct', 'ATL Optum Care', 'LAS RCC', 'Humana Partner Direct', 'BOI Regence', 'POR Regence', 'SEA Regence', 'SPO Regence') then 'Partner Direct (Broad)'
-    else ${queuename}  end ;;
   }
 
   measure: sum_inbound_phone_calls {

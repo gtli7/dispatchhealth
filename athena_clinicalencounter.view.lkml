@@ -99,6 +99,11 @@ view: athena_clinicalencounter {
     sql: ${TABLE}."closed_by" ;;
   }
 
+  dimension: closed_by_provider {
+    type: yesno
+    sql: ${closed_by} IS NOT NULL AND ${closed_by} = ${athena_provider.provider_user_name} ;;
+  }
+
   dimension: closed_by_supervisor {
     type: yesno
     sql: ${closed_by} IS NOT NULL AND ${closed_by} = ${athena_supervising_provider_clone.provider_user_name} ;;
@@ -191,6 +196,13 @@ view: athena_clinicalencounter {
     convert_tz: no
     datatype: date
     sql: ${TABLE}."encounter_date" ;;
+  }
+
+  dimension: days_past_since_clinical_encounter {
+    description: "Counts the number of days that have elapsed between now and the date of the clinical encounter"
+    type: duration_day
+    sql_start: ${encounter_raw};;
+    sql_end: now();;
   }
 
   dimension: encounter_status {
@@ -317,6 +329,25 @@ view: athena_clinicalencounter {
     sql: ${hours_to_chart_sign} <= 24 ;;
   }
 
+  dimension: chart_closure_percentage {
+    type: number
+    hidden: yes
+    sql: CASE WHEN ${chart_first_closed_raw} IS NOT NULL THEN 100
+         ELSE 0
+         END ;;
+  }
+
+  # Does not calculate correctly - DE - 3/6/2021
+  measure: average_24_hour_chart_closure_rate {
+    description: "The percentage of charts closed by the provider within 24 hours of the visit"
+    type: average_distinct
+    hidden: yes
+    group_label: "Chart Closure Metrics"
+    sql: ${chart_closure_percentage} ;;
+    sql_distinct_key: ${care_requests.id} ;;
+    filters: [chart_signed_24_hours: "yes", care_requests.billable_est: "yes"]
+  }
+
   dimension: chart_signed_48_hours {
     description: "A flag indicating that the chart was signed within 48 hours of visit"
     type: yesno
@@ -327,7 +358,7 @@ view: athena_clinicalencounter {
   measure: count_charts_signed_24_hours {
     description: "The count of distinct charts that were signed by the provider within 24 hours of the visit"
     type: count_distinct
-    group_label: "Counts"
+    group_label: "Chart Closure Metrics"
     sql: ${clinical_encounter_id} ;;
     filters: [chart_signed_24_hours: "yes"]
   }
@@ -335,7 +366,7 @@ view: athena_clinicalencounter {
   measure: count_charts_signed_48_hours {
     description: "The count of distinct charts that were signed by the provider within 48 hours of the visit"
     type: count_distinct
-    group_label: "Counts"
+    group_label: "Chart Closure Metrics"
     sql: ${clinical_encounter_id} ;;
     filters: [chart_signed_48_hours: "yes"]
   }

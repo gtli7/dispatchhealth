@@ -223,6 +223,13 @@ view: athena_medication_details {
     group_label: "Care Pathway First Line Antibiotic Groups"
   }
 
+  measure: prescription_medications_aggregated {
+    type: string
+    description: "List of aggregated medications prescribed"
+    group_label: "Descriptions"
+    sql: array_to_string(array_agg(DISTINCT ${medication_name}), ' | ') ;;
+  }
+
 
 
 }

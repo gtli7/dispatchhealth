@@ -182,6 +182,7 @@ include: "ga_zips_clone.view.lkml"
 include: "operational_excellence_metrics.view.lkml"
 include: "athena_document_prescriptions.view.lkml"
 include: "survey_responses_flat_clone.view.lkml"
+include: "views/patient_satisfaction.view.lkml"
 include: "drg_to_icd10_crosswalk.view.lkml"
 include: "sf_activities.view.lkml"
 include: "user_roles.view.lkml"
@@ -360,6 +361,8 @@ include: "views/genesys_conversation_summary_null.view.lkml"
 include: "capture_rate_by_market.view.lkml"
 include: "provider_fit_testing_bad_ids.view.lkml"
 include: "outbound_out_reach.view.lkml"
+include: "daily_on_call_tracking.view.lkml"
+include: "daily_variable_shift_tracking.view.lkml"
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -370,14 +373,13 @@ explore: care_requests {
 
   persist_with: care_request_datagroup
 
-  sql_always_where: ${deleted_raw} IS NULL AND
-  (${care_request_flat.secondary_resolved_reason} NOT IN ('Test Case', 'Duplicate', 'Test') OR ${care_request_flat.secondary_resolved_reason} IS NULL)
-  AND (${patients.last_name} NOT LIKE '%Test%' OR ${patients.last_name} IS NULL) ;;
+  sql_always_where: ${deleted_raw} IS NULL ;;
+  # AND (${patients.last_name} NOT LIKE '%Test%' OR ${patients.last_name} IS NULL) ;;
 
-  #access_filter: {
-  #  field: markets.name
-  #  user_attribute: "market_name"
-  #}
+  join: care_request_flat {
+    relationship: one_to_one
+    sql_on: ${care_requests.id} = ${care_request_flat.care_request_id} ;;
+  }
 
   join: bounce_back_risk_3day_predictions {
     relationship: one_to_one
@@ -525,10 +527,10 @@ explore: care_requests {
 
   join: prior_claims {
     view_label: "Claims created 2 or more days ago - HPN"
-    from: athenadwh_claims_clone
+    from: athena_claim
     relationship: one_to_one
-    sql_on: ${athenadwh_clinical_encounters_clone.appointment_id} = ${prior_claims.claim_appointment_id}
-    AND ${prior_claims.claim_created_datetime_date} < CURRENT_DATE - 2 ;;
+    sql_on: ${athena_clinicalencounter.appointment_id} = ${prior_claims.claim_appointment_id}
+    AND ${prior_claims.claim_created_date} < CURRENT_DATE - 2 ;;
     # fields: []
   }
 
@@ -1021,7 +1023,7 @@ join: narrow_network_providers {
   sql_on: ${insurance_coalese.package_id_coalese} = ${narrow_network_providers.package_id}
           AND ${care_requests.market_id_adj} = ${narrow_network_providers.market_id}
           AND ${athena_document_orders.clinical_provider_id} = ${narrow_network_providers.athena_id};;
-  fields: []
+  fields: [narrow_network_providers.name]
 }
 
 join: insurance_network_insurance_plans {
@@ -1528,6 +1530,11 @@ join: athena_procedurecode {
     sql_on: ${care_requests.id} = ${survey_responses_flat_clone.care_request_id};;
   }
 
+  join: patient_satisfaction {
+    relationship: one_to_one
+    sql_on: ${care_requests.id} = ${patient_satisfaction.care_request_id} ;;
+  }
+
   # End cloned BI table joins
   ############################
 
@@ -1932,11 +1939,6 @@ join: athena_procedurecode {
     relationship: one_to_many
     from: care_request_statuses
     sql_on: ${care_request_scheduled.care_request_id} = ${care_requests.id} and ${care_request_scheduled.name}='scheduled';;
-  }
-
-  join: care_request_flat {
-    relationship: one_to_one
-    sql_on: ${care_request_flat.care_request_id} = ${care_requests.id} ;;
   }
 
   join: geolocations_stops_by_care_request {
@@ -4193,6 +4195,13 @@ explore: shift_teams
     sql_on: ${users.id} = ${secondary_screenings.provider_id}
     AND ${secondary_screenings.provider_updated_date} = ${shift_teams.start_date};;
   }
+  join: daily_on_call_tracking {
+    sql_on: ${daily_on_call_tracking.date_date} = ${shift_teams.start_date} and ${markets.short_name_adj_dual}=${daily_on_call_tracking.short_name_adj_dual} ;;
+  }
+
+  join: daily_variable_shift_tracking {
+    sql_on: ${daily_variable_shift_tracking.date_date} = ${shift_teams.start_date} and ${markets.short_name_adj_dual}=${daily_variable_shift_tracking.short_name_adj_dual} ;;
+  }
 
 #  join: zizzl_detailed_shift_hours {
 #    relationship: one_to_many
@@ -4646,6 +4655,11 @@ explore: genesys_agg {
     sql_on: ${genesys_agg.conversationstarttime_date} = ${geneysis_custom_conversation_attributes_agg.conversationstarttime_date}
     and ${markets.id}=${geneysis_custom_conversation_attributes_agg.market_id};;
   }
+  join: budget_projections_by_market_clone {
+    sql_on:  ${budget_projections_by_market_clone.market_dim_id}=${genesys_agg.market_id}
+             and
+            ${budget_projections_by_market_clone.month_month}=${genesys_agg.conversationstarttime_month};;
+  }
 
   }
 
@@ -4940,7 +4954,7 @@ explore: geneysis_custom_conversation_attributes {
     sql_on: ${genesys_conversation_summary.conversationid} = ${geneysis_custom_conversation_attributes.conversationid} ;;
   }
   join: genesys_conversation_summary_null {
-    sql_on: ${genesys_conversation_summary.conversationid} = ${genesys_conversation_summary_null.conversationid} ;;
+    sql_on: ${geneysis_custom_conversation_attributes.conversationid} = ${genesys_conversation_summary_null.conversationid} ;;
 
   }
   join: number_to_market {

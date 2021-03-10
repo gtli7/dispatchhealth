@@ -831,6 +831,21 @@ ORDER BY base.chart_id  ;;
     }
   }
 
+  dimension: fall_risk_pp_pct {
+    type: number
+    sql: CASE WHEN ${fall_risk_provider} IS NOT NULL AND ${fall_risk_per_provider_flag} THEN 100
+         ELSE 0 END ;;
+  }
+
+  measure: pct_fall_risk_per_provider {
+    type: average_distinct
+    description: "Percentage of patients who were asked and had a positive response"
+    sql: ${fall_risk_pp_pct} ;;
+    value_format: "0.0\%"
+    sql_distinct_key: ${chart_id} ;;
+    group_label: "Percentages"
+  }
+
   measure: count_lack_of_transportation {
     type: count_distinct
     sql: ${chart_id} ;;

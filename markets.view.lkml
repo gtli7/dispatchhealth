@@ -339,8 +339,14 @@ when ${short_name} = 'RDU' then 24
 when ${short_name} = 'CLE' then 25
 when ${short_name} = 'NSH' then 26
 when ${short_name} = 'KNX' then 27
-when ${short_name} = 'MIA' then 28
+when ${short_name} = 'SAT' then 28
+when ${short_name} = 'TUS' then 29
     else null end ;;
+  }
+
+  measure: min_finance_market_id {
+    type: number
+    sql: min(${finance_market_id}) ;;
   }
 
   # measure: digital_adjusted {

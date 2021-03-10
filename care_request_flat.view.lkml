@@ -217,8 +217,14 @@ WITH ort AS (
       LEFT JOIN care_request_statuses esc
       ON cr.id = esc.care_request_id AND esc.name = 'archived' and esc.deleted_at is null
       and lower(esc.comment) like '%referred - point of care%'
-      LEFT JOIN care_request_statuses archive
-      ON cr.id = archive.care_request_id AND archive.name = 'archived' and archive.deleted_at is null
+      LEFT JOIN (
+        SELECT
+            care_request_id,
+            started_at,
+            comment
+            FROM care_request_statuses
+            WHERE name = 'archived' AND deleted_at IS NULL) AS archive
+        ON cr.id = archive.care_request_id
       LEFT JOIN care_request_statuses fu3
       ON cr.id = fu3.care_request_id AND fu3.name in('followup_3', 'followup_2') and fu3.deleted_at is null
       LEFT JOIN care_request_statuses fu14
@@ -249,6 +255,8 @@ WITH ort AS (
         and insurances.package_id is not null
         and trim(insurances.package_id)!='') as insurances
         ON cr.id = insurances.care_request_id AND insurances.rn = 1
+      where
+            (archive.comment NOT IN ('Other: Test', 'Other: Duplicate', 'Cancelled by Patient: Other: Test Case', 'Other: Test Case') or archive.comment  is null)
       GROUP BY 1,2,3,4,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,
                insurances.package_id, callers.origin_phone, callers.contact_id,cr.patient_id,crst.shift_team_id,
                foc.first_on_scene_time,onscene.mins_on_scene_predicted, n_assign.count_assignments;;
@@ -2786,6 +2794,14 @@ measure: avg_first_on_route_mins {
   value_format: "0.0"
 }
 
+  measure: avg_first_on_route_w_accepted_mins {
+    type: average
+    description: "The average minutes between shift start and first on-route (when team has a care request assigned)"
+    sql: ${shift_start_to_first_onroute} ;;
+    value_format: "0.0"
+    filters: [accepted_cr_at_shift_start: "yes", users.app_name: "-NULL"]
+    drill_fields: [users.app_name, avg_first_on_route_w_accepted_mins, shift_teams.count_distinct_shifts]
+  }
 
   dimension: shift_team_id  {
     type: number
@@ -3356,6 +3372,12 @@ measure: avg_first_on_route_mins {
 
   }
 
+  measure: no_answer_no_show_count_funnel_percent {
+    type: number
+    value_format: "0%"
+    sql: ${no_answer_no_show_count_funnel}::float/nullif(${care_request_count},0)::float ;;
+  }
+
 
   measure: no_answer_no_show_count_funnel {
     type: count_distinct
@@ -3455,6 +3477,13 @@ measure: avg_first_on_route_mins {
     sql: ${care_requests.post_acute_follow_up} or ${care_requests.DHFU_follow_up} ;;
   }
 
+  measure: follow_up_limbo_percent {
+    type: number
+    value_format: "0%"
+    sql: ${follow_up_limbo_count}::float/nullif(${care_request_count},0)::float ;;
+  }
+
+
   measure: follow_up_limbo_count {
     type: count_distinct
     sql: ${care_request_id} ;;
@@ -3470,6 +3499,13 @@ measure: avg_first_on_route_mins {
 
   }
 
+  measure: non_follow_up_limbo_percent {
+    type: number
+    value_format: "0%"
+    sql: ${non_follow_up_limbo_count}::float/nullif(${care_request_count},0)::float ;;
+  }
+
+
   measure: non_follow_up_limbo_count {
     type: count_distinct
     sql: ${care_request_id} ;;
@@ -3482,6 +3518,12 @@ measure: avg_first_on_route_mins {
       value: "no"
     }
 
+  }
+
+  measure: clinical_service_not_offered_funnel_percent {
+    type: number
+    value_format: "0%"
+    sql: ${clinical_service_not_offered_funnel}::float/nullif(${care_request_count},0)::float ;;
   }
 
   measure: clinical_service_not_offered_funnel{
@@ -3530,7 +3572,11 @@ measure: avg_first_on_route_mins {
 
   }
 
-
+  measure: insurance_resolved_funnel_percent {
+    type: number
+    value_format: "0%"
+    sql: ${insurance_resolved_funnel}::float/nullif(${care_request_count},0)::float ;;
+  }
 
   measure: insurance_resolved_funnel{
     type: count_distinct
@@ -3581,6 +3627,13 @@ measure: avg_first_on_route_mins {
       value: "no"
   }
 }
+
+  measure: poa_resolved_funnel_percent {
+    type: number
+    value_format: "0%"
+    sql: ${poa_resolved_funnel}::float/nullif(${care_request_count},0)::float ;;
+  }
+
   measure: poa_resolved_funnel{
       type: count_distinct
       sql: ${care_request_id} ;;
@@ -3632,6 +3685,12 @@ measure: avg_first_on_route_mins {
       field: insurance_resolved
       value: "no"
     }
+  }
+
+  measure: zipcode_funnel_percent {
+    type: number
+    value_format: "0%"
+    sql: ${zipcode_funnel}::float/nullif(${care_request_count},0)::float ;;
   }
 
 
@@ -3755,6 +3814,12 @@ measure: avg_first_on_route_mins {
     }
   }
 
+  measure: lwbs_not_accepted_percent {
+    type: number
+    value_format: "0%"
+    sql: ${lwbs_not_accepted_count}::float/nullif(${care_request_count},0)::float ;;
+  }
+
   measure: lwbs_not_accepted_count {
     type: count_distinct
     sql: ${care_request_id} ;;
@@ -3820,6 +3885,13 @@ measure: avg_first_on_route_mins {
       value: "no"
     }
   }
+
+  measure: unable_fufill_covid_percent {
+    type: number
+    value_format: "0%"
+    sql: ${unable_fufill_covid_count}::float/nullif(${care_request_count},0)::float ;;
+  }
+
 
   dimension: unable_fufill_covid {
     label: "Unable to Fulfill COVID"
@@ -3903,6 +3975,14 @@ measure: avg_first_on_route_mins {
     sql: lower(${primary_and_secondary_resolved_reason}) like '%unable to fulfill request: insufficient information to create care request%';;
   }
 
+
+  measure: unable_fufill_insufficent_information_percent {
+    type: number
+    value_format: "0%"
+    sql: ${unable_fufill_insufficent_information_count}::float/nullif(${care_request_count},0)::float ;;
+  }
+
+
   measure: unable_fufill_insufficent_information_count{
     label: "Unable to Fulfill Insufficient Information Count"
     type: count_distinct
@@ -3976,6 +4056,13 @@ measure: avg_first_on_route_mins {
       value: "no"
     }
   }
+
+  measure: resolved_other_percent {
+    type: number
+    value_format: "0%"
+    sql: ${resolved_other_count}::float/nullif(${care_request_count},0)::float ;;
+  }
+
 
   measure: resolved_other_count {
     type: count_distinct
@@ -4211,6 +4298,12 @@ measure: avg_first_on_route_mins {
     }
   }
 
+  measure: lwbs_scheduled_percent {
+    type: number
+    value_format: "0%"
+    sql: ${lwbs_scheduled_count}::float/nullif(${care_request_count},0)::float ;;
+  }
+
   measure: lwbs_scheduled_count_address {
     label: "Resolved Acute Scheduled (Overflow) (Unique Address)"
     type: count_distinct
@@ -4223,6 +4316,11 @@ measure: avg_first_on_route_mins {
     }
   }
 
+  measure: lwbs_accepted_percent {
+    type: number
+    value_format: "0%"
+    sql: ${lwbs_accepted_count}::float/nullif(${care_request_count},0)::float ;;
+  }
 
   measure: lwbs_accepted_count {
     type: count_distinct
@@ -4287,6 +4385,13 @@ measure: avg_first_on_route_mins {
       value: "yes"
     }
   }
+
+  measure: booked_resolved_percent {
+    type: number
+    value_format: "0%"
+    sql: ${booked_resolved_count}::float/nullif(${care_request_count},0)::float ;;
+  }
+
   measure: booked_resolved_count_address {
     description: "Care requests resolved for booked (Unique on Address)"
     type: count_distinct
@@ -4323,6 +4428,12 @@ measure: avg_first_on_route_mins {
       field: secondary_screening
       value: "yes"
     }
+  }
+
+  measure: screened_escalated_phone_count_funnel_percent {
+    type: number
+    value_format: "0%"
+    sql: ${screened_escalated_phone_count_funnel}::float/nullif(${care_request_count},0)::float ;;
   }
 
   measure: screened_escalated_phone_count_funnel {
@@ -4397,6 +4508,11 @@ measure: avg_first_on_route_mins {
 
   }
 
+measure: non_screened_escalated_phone_count_funnel_percent {
+  type: number
+  value_format: "0%"
+  sql: ${non_screened_escalated_phone_count_funnel}::float/nullif(${care_request_count},0)::float ;;
+}
 
   measure: non_screened_escalated_phone_count_funnel {
     description: "Care requests NOT secondary screened and escalated over the phone"
@@ -5342,6 +5458,13 @@ measure: avg_first_on_route_mins {
     sql: round(${accepted_count}/${month_percent});;
   }
 
+  measure: assigned_rate {
+    type: number
+    value_format: "0.0%"
+    sql: ${accepted_count}/nullif(${care_request_count},0) ;;
+  }
+
+
   measure: monthly_new_patients_run_rate{
     type: number
     sql: round(${count_new_patient_first_visits}/${month_percent});;
@@ -5728,6 +5851,27 @@ end  ;;
         ;;
   }
 
+  dimension: pushed_visits {
+    type: yesno
+    sql: (not ${pafu_or_follow_up}) and ${scheduled_visit} and lower(${service_lines.name}) like '%acute%'
+         AND
+        (
+          ${created_date} != ${on_scene_date}
+          OR
+         ${on_scene_date} is null
+        )
+        AND
+        (
+          ${created_date} != ${archive_date}
+        OR
+          ${archive_date} is NULL
+        )
+        AND
+        ${created_date} != ${scheduled_care_date}
+        ;;
+  }
+
+
   dimension: accepted_date_same_created_date {
     type: yesno
     sql: ${accept_initial_date} = ${created_date} ;;
@@ -5797,6 +5941,16 @@ end  ;;
     }
     filters: {
       field: overflow_visit
+      value: "yes"
+    }
+  }
+
+  measure: limbo_count {
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    sql_distinct_key: ${care_request_id} ;;
+    filters: {
+      field: not_resolved_or_complete
       value: "yes"
     }
   }
@@ -6300,5 +6454,21 @@ end  ;;
     }
   }
 
+  dimension: non_approved_DHMT_solo_visits {
+    type: yesno
+    hidden: no
+    description: "Identifies visits that do not meet the visit criteria to be a solo DHMT visit"
+    sql:  NOT ${athena_cpt_codes.dhmt_solo_approved_procedures}
+      OR ${athena_patientmedication_prescriptions.prescriptions_administered_on_scene} ;;
+  }
+
+  measure: count_visits_not_approved_dhmt_solo {
+    description: "Count visits with non-approved DHMT procedures or administered medications"
+    type: count_distinct
+    sql: ${care_request_id};;
+    group_label: "Grouped Procedure: Appointment Counts"
+    filters: [non_approved_DHMT_solo_visits: "yes", care_requests.billable_est: "yes"]
+
+  }
 
 }

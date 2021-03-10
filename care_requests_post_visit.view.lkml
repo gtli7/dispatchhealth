@@ -156,6 +156,12 @@ indexes: ["patient_id", "anchor_care_request_id", "anchor_service_line_id", "anc
     sql: ${seconds_from_anchor_visit} / 3600 <= 720 ;;
   }
 
+  dimension: visits_within_3_days_of_base_visit {
+    description: "Identifies future visits that occur wihtin 30 days after the initial visit "
+    type: yesno
+    sql: ${seconds_from_anchor_visit} / 3600 <= 72 ;;
+  }
+
   dimension: dhfu_visits_within_30_days_of_base_visit {
     description: "Identifies DHFU visits for the same patient occurring within 30 days of the initial visit (DHFU identified by Risk Protocol Name and Cheif Complaint)"
     type: yesno
@@ -170,6 +176,16 @@ indexes: ["patient_id", "anchor_care_request_id", "anchor_service_line_id", "anc
     sql: ${concat_anchor_post_care_request_id} ;;
     filters: {
       field: visits_within_30_days_of_base_visit
+      value: "yes"
+    }
+  }
+
+  measure:  count_visits_within_3_days_of_base_visit {
+    description: "Count the number of future visits that occur within 3 days after the initial visit"
+    type: count_distinct
+    sql: ${concat_anchor_post_care_request_id} ;;
+    filters: {
+      field: visits_within_3_days_of_base_visit
       value: "yes"
     }
   }

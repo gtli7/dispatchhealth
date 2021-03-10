@@ -17,8 +17,7 @@ view: cars_intra {
 
   dimension: market_id {
     type: number
-    sql: case when ${name} = 'COS02' and ${now_mountain_day_of_week_index} in(999)  then 159
-           else ${TABLE}.market_id end ;;
+    sql: ${TABLE}.market_id;;
   }
 
   dimension: name {
