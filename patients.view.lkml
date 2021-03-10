@@ -448,7 +448,7 @@ view: patients {
 
   dimension: ssn_present {
     type: yesno
-    sql: ${ssn} is not null and trim(${ssn})='' ;;
+    sql: ${ssn} is not null and trim(${ssn})!='' ;;
   }
 
   measure: count {
