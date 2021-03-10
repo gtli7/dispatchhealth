@@ -1989,6 +1989,10 @@ WITH ort AS (
       ((CAST(EXTRACT(MINUTE FROM ${drive_start_raw} ) AS FLOAT)) / 60) ;;
   }
 
+  dimension: before_hss_removal{
+    type: yesno
+    sql: ${on_scene_date} < '2021-03-04';;
+  }
   dimension_group: on_scene {
     type: time
     description: "The local date/time that the care request team arrived on-scene"
