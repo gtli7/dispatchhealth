@@ -107,6 +107,16 @@ view: genesys_conversation_summary {
     ;;
   }
 
+  dimension: partner_dnis_adj{
+    type: string
+    sql: case when ${dnis_raw}='+17205889686' then 'Kaiser'
+              when ${dnis_raw}='+17028748811' then 'HPN'
+               when ${dnis_raw}='+17026596193' then 'RCC'
+              when ${dnis_raw}='+18136025311' then 'WellMed'
+              else ${queuename_adj} end
+              ;;
+  }
+
 
 
   dimension: market_id {
