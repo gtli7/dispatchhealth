@@ -4155,6 +4155,12 @@ explore: shift_teams
     sql_on: ${virtual_shift_team_members.user_id} = ${virtual_users.id} ;;
   }
 
+  join: virtual_provider_profiles {
+    from:provider_profiles
+    relationship: one_to_one
+    sql_on: ${virtual_users.id} = ${virtual_provider_profiles.user_id} ;;
+  }
+
 
   join: zizzl_shift_hours {
     relationship: one_to_one
