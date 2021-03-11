@@ -446,6 +446,11 @@ view: patients {
         END ;;
   }
 
+  dimension: ssn_present {
+    type: yesno
+    sql: ${ssn} is not null and trim(${ssn})!='' ;;
+  }
+
   measure: count {
     type: count
     drill_fields: [detail*]
