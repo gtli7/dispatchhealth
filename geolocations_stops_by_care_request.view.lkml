@@ -176,7 +176,12 @@ view: geolocations_stops_by_care_request {
 
   dimension: abs_actual_minus_predicted_greater_than_15_min {
     type:  yesno
-    sql: abs(${actual_minus_predicted}) >= 15  ;;
+    sql: ${absolute_error} >= 15  ;;
+  }
+
+  dimension: abs_actual_minus_predicted_under_than_15_min {
+    type:  yesno
+    sql: ${absolute_error} <= 15  ;;
   }
 
   measure: count_abs_actual_minus_predicted_greater_than_15_min {
