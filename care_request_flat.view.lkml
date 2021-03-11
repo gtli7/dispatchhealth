@@ -410,6 +410,17 @@ WITH ort AS (
     value_format: "0.00"
   }
 
+
+  dimension: abs_residual_tier {
+    type: tier
+    description: "Predicted on-scene time minus button push on-scene time, in 10 minute tiers"
+    group_label: "On Scene Predictions"
+    tiers: [0,10,20,30,40,50,60]
+    style: integer
+    sql: abs(${on_scene_time_minutes} - ${mins_on_scene_predicted}) ;;
+  }
+
+
   dimension: created_to_resolved_minutes {
     type: number
     group_label: "Care Delivery Times"

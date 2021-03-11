@@ -40,7 +40,7 @@ view: geolocations_stops_by_care_request {
     sql: ${care_request_id} ;;
   }
 
-  dimension: on_scene_time {
+  dimension: stop_duration {
     type: number
     description: "The total stop time for the care request.
       Total stop time is divided by the number of patients when multiple patients are treated
@@ -53,8 +53,8 @@ view: geolocations_stops_by_care_request {
     type: number
     group_label: "On Scene Predictions"
     description: "The actual car stopping time minus the predicted on-scene time"
-    sql: CASE WHEN ${on_scene_time} IS NOT NULL
-          THEN ${on_scene_time} - ${care_request_flat.mins_on_scene_predicted}
+    sql: CASE WHEN ${stop_duration} IS NOT NULL
+          THEN ${stop_duration} - ${care_request_flat.mins_on_scene_predicted}
           ELSE NULL
         END;;
   }
@@ -63,8 +63,8 @@ view: geolocations_stops_by_care_request {
     type: number
     group_label: "On Scene Predictions"
     description: "The predicted on-scene time minus the actual car stopping time minus"
-    sql: CASE WHEN ${on_scene_time} IS NOT NULL
-          THEN ${care_request_flat.mins_on_scene_predicted} - ${on_scene_time}
+    sql: CASE WHEN ${stop_duration} IS NOT NULL
+          THEN ${care_request_flat.mins_on_scene_predicted} - ${stop_duration}
           ELSE NULL
         END;;
   }
@@ -73,8 +73,8 @@ view: geolocations_stops_by_care_request {
     type:  number
     group_label: "On Scene Predictions"
     description: "The actual car stopping time minus the predicted on-scene time SQUARED"
-    sql: CASE WHEN ${on_scene_time} IS NOT NULL
-          THEN POWER(${on_scene_time} - ${care_request_flat.mins_on_scene_predicted}, 2)
+    sql: CASE WHEN ${stop_duration} IS NOT NULL
+          THEN POWER(${stop_duration} - ${care_request_flat.mins_on_scene_predicted}, 2)
           ELSE NULL
         END;;
   }
@@ -122,28 +122,28 @@ view: geolocations_stops_by_care_request {
     type: sum_distinct
     description: "The sum of all car stop times for care requests"
     sql_distinct_key: ${primary_key} ;;
-    sql: ${on_scene_time} ;;
+    sql: ${stop_duration} ;;
   }
 
   measure: average_on_scene_time {
     type: average_distinct
     sql_distinct_key: ${primary_key} ;;
     description: "The average of all car stop times for care requests"
-    sql: ${on_scene_time} ;;
+    sql: ${stop_duration} ;;
   }
 
   measure: on_scene_time_25th_percentile {
     type: percentile_distinct
     percentile: 25
     sql_distinct_key: ${care_request_id} ;;
-    sql: ${on_scene_time} ;;
+    sql: ${stop_duration} ;;
   }
 
   measure: on_scene_time_75th_percentile {
     type: percentile_distinct
     percentile: 75
     sql_distinct_key: ${care_request_id} ;;
-    sql: ${on_scene_time} ;;
+    sql: ${stop_duration} ;;
   }
 
   dimension: abs_actual_minus_predicted_greater_than_15_min {
