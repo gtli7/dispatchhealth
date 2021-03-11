@@ -413,12 +413,12 @@ WITH ort AS (
   }
 
 
-  dimension: abs_residual_tier {
+  dimension: abs_residual_tier_button_push {
     type: tier
-    description: "Predicted on-scene time minus button push on-scene time, in 10 minute tiers"
+    description: "Predicted on-scene time minus button push on-scene time, in tiers"
     group_label: "On Scene Predictions"
-    tiers: [0,10,20,30,40,50,60]
-    style: integer
+    tiers: [0,5,10,15,30,60]
+    style: relational
     sql: abs(${on_scene_time_minutes} - ${mins_on_scene_predicted}) ;;
   }
 

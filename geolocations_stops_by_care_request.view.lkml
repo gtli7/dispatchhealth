@@ -97,6 +97,15 @@ view: geolocations_stops_by_care_request {
     sql: ${actual_minus_predicted} ;;
   }
 
+  dimension: abs_residual_tier_stop_duration {
+    type: tier
+    description: "Predicted on-scene time minus geolocations stop duration, in tiers"
+    group_label: "On Scene Predictions"
+    tiers: [0,5,10,15,30,60]
+    style: relational
+    sql: abs(${stop_duration} - ${care_request_flat.mins_on_scene_predicted}) ;;
+  }
+
   measure: average_actual_minus_pred {
     type: average_distinct
     sql_distinct_key: ${primary_key} ;;
