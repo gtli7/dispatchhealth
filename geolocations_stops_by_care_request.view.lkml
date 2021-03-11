@@ -79,6 +79,16 @@ view: geolocations_stops_by_care_request {
         END;;
   }
 
+  dimension: absolute_error {
+    type: number
+    group_label: "On Scene Predictions"
+    description: "The absolute value of the actual car stopping time minus the predicted on-scene time"
+    sql: CASE WHEN ${stop_duration} IS NOT NULL
+    THEN ABS(${stop_duration} - ${care_request_flat.mins_on_scene_predicted})
+    ELSE NULL
+    END;;
+  }
+
   dimension: actual_minus_pred_tier {
     type: tier
     description: "Geolocations on-scene time minus predicted on-scene time, in 10 minute tiers"
@@ -106,6 +116,8 @@ view: geolocations_stops_by_care_request {
     sql: abs(${stop_duration} - ${care_request_flat.mins_on_scene_predicted}) ;;
   }
 
+
+
   measure: average_actual_minus_pred {
     type: average_distinct
     sql_distinct_key: ${primary_key} ;;
@@ -120,10 +132,17 @@ view: geolocations_stops_by_care_request {
     sql: ${predicted_minus_actual} ;;
   }
 
+  measure: mean_absolue_error{
+    type: average_distinct
+    sql_distinct_key: ${primary_key} ;;
+    description: "The average car stop time - predicted on scene time ABSOLUTE errror"
+    sql: ${absolute_error} ;;
+  }
+
   measure: mse_actual_minus_pred {
     type: average_distinct
     sql_distinct_key: ${primary_key} ;;
-    description: "The average car stop time - predicted on scene time (residual)"
+    description: "The average car stop time - predicted on scene time error SQUARED"
     sql: ${squared_error} ;;
   }
 
