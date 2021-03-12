@@ -33,6 +33,16 @@ view: eligible_patients {
     sql: ${TABLE}.city ;;
   }
 
+  dimension_group: created {
+    type: time
+    timeframes: [
+      raw,
+      date,
+    ]
+    convert_tz: no
+    sql: ${TABLE}.created_at ;;
+  }
+
   dimension_group: dob {
     type: time
     timeframes: [
