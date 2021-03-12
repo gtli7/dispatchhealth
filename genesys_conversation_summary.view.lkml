@@ -42,6 +42,7 @@ view: genesys_conversation_summary {
     sql: ${totalagenttalkduration} >60000  ;;
   }
 
+
   dimension: campaignname {
     type: string
     sql: ${TABLE}."campaignname" ;;
@@ -50,6 +51,10 @@ view: genesys_conversation_summary {
   dimension: conversationid {
     type: string
     sql: ${TABLE}."conversationid" ;;
+  }
+  dimension: after_ivr_turned_off {
+    type: yesno
+    sql: ${conversationstarttime_date} >='2021-03-09' ;;
   }
 
   dimension_group: conversationstarttime {
@@ -105,6 +110,16 @@ view: genesys_conversation_summary {
     type: string
     sql:  ${TABLE}."dnis"
     ;;
+  }
+
+  dimension: partner_dnis_adj{
+    type: string
+    sql: case when ${dnis_raw}='+17205889686' then 'Kaiser'
+              when ${dnis_raw}='+17028748811' then 'HPN'
+               when ${dnis_raw}='+17026596193' then 'RCC'
+              when ${dnis_raw}='+18136025311' then 'WellMed'
+              else ${queuename_adj} end
+              ;;
   }
 
 
@@ -595,9 +610,6 @@ measure: percent_repeat_callers {
       field: inbound_demand
       value: "yes"
     }
-
-
-
   }
 
   measure: average_talk_time_minutes_non_inbound {
@@ -868,19 +880,32 @@ measure: percent_repeat_callers {
 
   dimension: handle_time {
     type: number
-    sql: (coalesce(${totalagentalertduration},0)+coalesce(${totalagentholdduration},0)+coalesce(${totalacdwaitduration},0)+coalesce(${totalagenttalkduration},0)+coalesce(${totalagentwrapupduration},0))-coalesce(${firstacdwaitduration},0) ;;
+    sql: coalesce(${totalagentholdduration},0)+coalesce(${totalagenttalkduration},0)+coalesce(${totalagentwrapupduration},0);;
   }
 
   measure: average_handle_time {
-    label: "Average Handle Time (Inbound Demand)"
+    label: "Average Handle Time (Minutes)"
 
     type: average_distinct
     sql: ${handle_time}::float/1000/60 ;;
-    sql_distinct_key:  ${conversationid};;
+    sql_distinct_key:  concat(${conversationid}, ${queuename});;
     value_format: "0.00"
     filters: {
-      field: inbound_demand
-      value: "yes"
+      field: answered
+      value: "1"
+    }
+  }
+
+  measure: total_handle_time {
+    label: "Total Handle Time (Minutes)"
+
+    type: sum_distinct
+    sql: ${handle_time}::float/1000/60 ;;
+    sql_distinct_key:  concat(${conversationid}, ${queuename});;
+    value_format: "0.00"
+    filters: {
+      field: answered
+      value: "1"
     }
   }
 

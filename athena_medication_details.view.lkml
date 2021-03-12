@@ -213,7 +213,6 @@ view: athena_medication_details {
     type: yesno
     sql: lower(${hic3_description}) in ('nitrofuran derivatives antibacterial agents', 'absorbable sulfonamide antibacterial agents')
       OR lower(${hic3_description}) LIKE '%cephalosporin%'
-      OR lower(${hic3_description}) LIKE '%penicillin%'
       OR ((lower(${medication_name}) LIKE '%trimethoprim%'
         OR lower(${medication_name}) LIKE '%fosfomycin%')
         AND lower(${hic3_description}) != 'ophthalmic antibiotics') ;;
