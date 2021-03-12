@@ -363,6 +363,8 @@ include: "provider_fit_testing_bad_ids.view.lkml"
 include: "outbound_out_reach.view.lkml"
 include: "daily_on_call_tracking.view.lkml"
 include: "daily_variable_shift_tracking.view.lkml"
+include: "geneysis_pre_ivr_abandons_by_date_and_dnis.view.lkml"
+
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -3907,6 +3909,10 @@ explore: genesys_conversation_summary {
 
   }
 
+  join: geneysis_pre_ivr_abandons_by_date_and_dnis {
+    sql_on: ${geneysis_pre_ivr_abandons_by_date_and_dnis.dnis} = ${genesys_conversation_summary.dnis_raw} and ${geneysis_pre_ivr_abandons_by_date_and_dnis.conversationstarttime_date} = ${genesys_conversation_summary.conversationstarttime_date} ;;
+  }
+
   join: markets {
     relationship: one_to_one
     sql_on: (${markets.id}=${genesys_conversation_summary.market_id}) ;;
@@ -4969,6 +4975,9 @@ explore: geneysis_custom_conversation_attributes {
   join: markets {
     sql_on: ${number_to_market.market_id}=${markets.id} ;;
   }
+}
+
+explore: geneysis_pre_ivr_abandons_by_date_and_dnis {
 }
 
 explore: geneysis_evaluations {
