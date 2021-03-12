@@ -193,4 +193,14 @@ view: geolocations_stops_by_care_request {
     }
   }
 
+  measure: count_abs_actual_minus_predicted_less_than_15_min {
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters: {
+      field: abs_actual_minus_predicted_less_than_15_min
+      value: "yes"
+    }
+  }
+
+
 }
