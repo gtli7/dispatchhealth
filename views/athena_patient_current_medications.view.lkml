@@ -317,6 +317,20 @@ view: athena_patient_current_medications {
     }
   }
 
+  measure: count_dme_equipment_medications_short {
+    type: count_distinct
+    sql: ${patient_id_short_med_name} ;;
+    filters: [valid_patient_id: "yes",
+      athena_current_medication_details.dme_equipment_medicine: "yes"]
+  }
+
+  measure: count_dme_equipment_medications {
+    type: count_distinct
+    sql: ${compound_primary_key} ;;
+    filters: [valid_patient_id: "yes",
+      athena_current_medication_details.dme_equipment_medicine: "yes"]
+  }
+
   dimension: medication_name_short {
     description: "The first word of the medication name"
     type: string

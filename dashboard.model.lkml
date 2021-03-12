@@ -853,11 +853,16 @@ join: athena_patient_medical_history {
     sql_on: ${athena_clinicalencounter.chart_id} = ${athena_patient_current_medications.chart_id} ;;
   }
 
-# join: athena_diagnosis_sequence {
-#   relationship: one_to_many
-#   sql_on: ${athena_appointment.appointment_id} = ${athena_diagnosis_sequence.appointment_id} ;;
-#   fields: [athena_diagnosis_sequence.sequence_number]
-# }
+  join: athena_current_medication_details {
+    from: athena_medication_details
+    relationship: many_to_one
+    sql_on: ${athena_patient_current_medications.medication_id} = ${athena_current_medication_details.medication_id} ;;
+    fields: [athena_current_medication_details.hic1_description,
+             athena_current_medication_details.hic3_description,
+            athena_current_medication_details.dme_equipment_medicine]
+  }
+
+
 
   join: athena_diagnosis_sequence {
     relationship: one_to_many

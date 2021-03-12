@@ -312,6 +312,13 @@ view: athena_document_letters {
     sql:  (upper(${document_subclass}) != 'LETTER_PATIENTCORRESPONDENCE' OR ${document_subclass} IS NULL) and upper(${status}) != 'DELETED' AND upper(${athena_clinicalletter.role}) = 'PRIMARY CARE PROVIDER' ;;
   }
 
+  dimension: clinical_letters_sent_non_pcp {
+    description: "Identifies clinical letters sent to non-pcp's (specialists, etc)"
+    hidden: yes
+    type: yesno
+    sql:  (upper(${document_subclass}) != 'LETTER_PATIENTCORRESPONDENCE' OR ${document_subclass} IS NULL) and upper(${status}) != 'DELETED' AND upper(${athena_clinicalletter.role}) != 'PRIMARY CARE PROVIDER' ;;
+  }
+
   measure: count_notes_sent_pcp {
     description: "Count appointments where the clinical letter was sent to the patient's primary care provider"
     type: count_distinct
@@ -319,6 +326,16 @@ view: athena_document_letters {
     sql: ${care_requests.id} ;;
     sql_distinct_key: ${care_requests.id} ;;
     filters: [care_requests.billable_est: "yes", clinical_letters_sent_pcp: "yes"]
+    group_label: "Counts"
+  }
+
+  measure: count_notes_sent_non_pcp {
+    description: "Count appointments where the clinical letter was sent to a non-PCP"
+    type: count_distinct
+
+    sql: ${care_requests.id} ;;
+    sql_distinct_key: ${care_requests.id} ;;
+    filters: [care_requests.billable_est: "yes", clinical_letters_sent_non_pcp: "yes"]
     group_label: "Counts"
   }
 

@@ -81,6 +81,12 @@ view: athena_medication_details {
     sql: ${TABLE}."hic1_code" ;;
   }
 
+  dimension: dme_equipment_medicine {
+    type: yesno
+    description: "A flag indicating the medicine is DME or Medical Supplies"
+    sql: ${hic1_description} SIMILAR TO '%(MEDICAL SUPPLIES AND DEVICES|DURABLE MEDICAL EQUIPMENT)%' ;;
+  }
+
   dimension: hic1_description {
     type: string
     group_label: "Descriptions"
