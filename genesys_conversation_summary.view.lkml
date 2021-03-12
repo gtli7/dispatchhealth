@@ -122,6 +122,10 @@ view: genesys_conversation_summary {
               ;;
   }
 
+  dimension: ivr_experiment_dnis {
+    type: yesno
+    sql: ${dnis_raw} in('+13035001518', '+17028484443', '+14255530937', '+15094082107') ;;
+  }
 
 
   dimension: market_id {
