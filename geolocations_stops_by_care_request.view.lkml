@@ -179,7 +179,7 @@ view: geolocations_stops_by_care_request {
     sql: ${absolute_error} >= 15  ;;
   }
 
-  dimension: abs_actual_minus_predicted_under_than_15_min {
+  dimension: abs_actual_minus_predicted_less_than_15_min {
     type:  yesno
     sql: ${absolute_error} <= 15  ;;
   }
