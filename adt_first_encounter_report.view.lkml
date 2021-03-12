@@ -63,7 +63,7 @@ view: adt_first_encounter_report {
 
   dimension: er_facility_name {
     type: string
-    sql: ${TABLE}."er_facility_name" ;;
+    sql: ${TABLE}."er_facility_names" ;;
   }
 
   dimension: first_er_encounter_id {
@@ -107,7 +107,7 @@ view: adt_first_encounter_report {
 
   dimension: hosp_facility_name {
     type: string
-    sql: ${TABLE}."hosp_facility_name" ;;
+    sql: ${TABLE}."hosp_facility_names" ;;
   }
 
   measure: count {
