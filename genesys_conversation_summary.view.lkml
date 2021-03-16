@@ -9,8 +9,12 @@ view: genesys_conversation_summary {
   dimension: inbound_demand_minus_market {
     type: yesno
     sql:
-    ${mediatype}='voice' and trim(lower(${queuename})) not like '%outbound%' and trim(lower(${queuename})) not like '%after hours%' and trim(lower(${queuename})) not like '%optimizer%' and trim(lower(${queuename})) not in('mobile requests','ma', 'rcm / billing', 'backline', 'development', 'secondary screening', 'dispatchhealth help desk', 'dispatch health nurse line', 'zzavtextest', 'pay bill', 'testing', 'initial follow up', 'rn1', 'rn2', 'rn3', 'rn4', 'rn5', 'rn6', 'rn7', 'rn8', 'rn9', 'ivr fail safe', 'covid testing results', 'ebony testing', 'ma/nurse', 'dispatchhealth help desk vendor', 'do not use ma/nurse', 'sem vip', 'covid task force', 'covid pierce county mass testing', 'acute care covid results & care request', 'phx', 'mobile request callbacks', 'click to call', 'dialer results', 'cancels', 'care team escalations', 'rn10', 'advance care fax queue', 'rn11', 'rn12', 'rn13','rn14', 'spanish ivr', 'vip help line', 'kaiser ma email', 'care web chat lab results', 'zztest_delete');;
+    ${mediatype}='voice' and trim(lower(${queuename})) not like '%outbound%' and trim(lower(${queuename})) not like '%after hours%' and trim(lower(${queuename})) not like '%optimizer%' and trim(lower(${queuename})) not in('mobile requests','ma', 'rcm / billing', 'backline', 'development', 'secondary screening', 'dispatchhealth help desk', 'dispatch health nurse line', 'zzavtextest', 'pay bill', 'testing', 'initial follow up', 'rn1', 'rn2', 'rn3', 'rn4', 'rn5', 'rn6', 'rn7', 'rn8', 'rn9', 'ivr fail safe', 'covid testing results', 'ebony testing', 'ma/nurse', 'dispatchhealth help desk vendor', 'do not use ma/nurse', 'sem vip', 'covid task force', 'covid pierce county mass testing', 'acute care covid results & care request', 'phx', 'mobile request callbacks', 'click to call', 'dialer results', 'cancels', 'care team escalations', 'rn10', 'advance care fax queue', 'rn11', 'rn12', 'rn13','rn14', 'spanish ivr', 'vip help line', 'kaiser ma email', 'care web chat lab results', 'zztest_delete', 'none');;
 
+  }
+  dimension: has_queue {
+    type: yesno
+    sql: ${queuename}!='None' ;;
   }
 
   dimension: abandoned {
@@ -235,8 +239,23 @@ view: genesys_conversation_summary {
     drill_fields: [campaignname, queuename]
   }
 
+  measure: connections_distinct {
+    type: number
+    sql: ${count_distinct_no_filter}+${geneysis_pre_ivr_abandons_by_date_and_dnis.sum_prompt_abandons}+${geneysis_pre_ivr_abandons_by_date_and_dnis.sum_short_ivr_abandons}+ ${geneysis_pre_ivr_abandons_by_date_and_dnis.sum_pre_ivr_abandons};;
+  }
+  measure: connections_distinct_inbound_demand {
+    type: number
+    sql: ${count_distinct}+${geneysis_pre_ivr_abandons_by_date_and_dnis.sum_prompt_abandons}+${geneysis_pre_ivr_abandons_by_date_and_dnis.sum_short_ivr_abandons}+ ${geneysis_pre_ivr_abandons_by_date_and_dnis.sum_pre_ivr_abandons};;
+  }
+  measure: connections_distinct_non_inbound_demand {
+    type: number
+    sql: ${count_distinct_non_inbound}+${geneysis_pre_ivr_abandons_by_date_and_dnis.sum_prompt_abandons}+${geneysis_pre_ivr_abandons_by_date_and_dnis.sum_short_ivr_abandons}+ ${geneysis_pre_ivr_abandons_by_date_and_dnis.sum_pre_ivr_abandons};;
+  }
+
+
+
   measure: count_distinct {
-    label: "Count Distinct (Inbound Demand)"
+    label: "Offered Distinct (Inbound Demand)"
     type: count_distinct
     sql: ${conversationid} ;;
     sql_distinct_key:  ${conversationid};;
@@ -244,21 +263,33 @@ view: genesys_conversation_summary {
       field: inbound_demand
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: count_distinct_no_filter {
-    label: "Count Distinct (ConversationId)"
+    label: "Offered Distinct (ConversationId)"
     type: count_distinct
     sql: ${conversationid} ;;
     sql_distinct_key:  ${conversationid};;
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
 
   measure: count_distinct_no_filter_duplicate_by_queue {
-    label: "Count Distinct (Duplicate by Queue)"
+    label: "Offered Distinct (Duplicate by Queue)"
     type: count_distinct
     sql: concat(${conversationid}, ${queuename}, ${direction},  ${mediatype}) ;;
     sql_distinct_key:  concat(${conversationid}, ${queuename},${direction}, ${mediatype});;
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
 
@@ -268,6 +299,10 @@ view: genesys_conversation_summary {
     sql_distinct_key: ${patient_number};;
     filters: {
       field: inbound_demand
+      value: "yes"
+    }
+    filters: {
+      field: has_queue
       value: "yes"
     }
   }
@@ -285,6 +320,10 @@ view: genesys_conversation_summary {
       field: direction
       value: "inbound"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: not_answered {
@@ -299,6 +338,10 @@ view: genesys_conversation_summary {
     filters: {
       field: answered
       value: "0"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
     }
   }
 
@@ -319,6 +362,10 @@ view: genesys_conversation_summary {
       field: direction
       value: "inbound"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: count_distinct_sla_callers {
@@ -337,6 +384,10 @@ view: genesys_conversation_summary {
     filters: {
       field: direction
       value: "inbound"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
     }
   }
 
@@ -390,6 +441,10 @@ view: genesys_conversation_summary {
       field: inbound_demand
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: distinct_answer_long_callers{
@@ -402,6 +457,10 @@ view: genesys_conversation_summary {
     }
     filters: {
       field: answered_long
+      value: "yes"
+    }
+    filters: {
+      field: has_queue
       value: "yes"
     }
   }
@@ -417,6 +476,10 @@ view: genesys_conversation_summary {
     filters: {
       field: answered
       value: "1"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
     }
   }
 
@@ -473,16 +536,24 @@ measure: percent_repeat_callers {
       field: inbound_demand_minus_market
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: count_distinct_non_inbound {
-    label: "Count Distinct (Non-Inbound Demand)"
+    label: "Offered Distinct (Non-Inbound Demand)"
     type: count_distinct
     sql: ${conversationid} ;;
     sql_distinct_key:  ${conversationid};;
     filters: {
       field: inbound_demand
       value: "no"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
     }
   }
 
@@ -498,6 +569,10 @@ measure: percent_repeat_callers {
       field: direction
       value: "inbound"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: number_abandons {
@@ -511,6 +586,10 @@ measure: percent_repeat_callers {
     }
     filters: {
       field: inbound_demand
+      value: "yes"
+    }
+    filters: {
+      field: has_queue
       value: "yes"
     }
   }
@@ -577,6 +656,10 @@ measure: percent_repeat_callers {
       field: inbound_demand
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: short_abandons {
@@ -596,6 +679,10 @@ measure: percent_repeat_callers {
       field: inbound_demand
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: average_wait_time {
@@ -604,6 +691,15 @@ measure: percent_repeat_callers {
     value_format: "0.00"
     sql_distinct_key: concat(${conversationid}) ;;
     sql: ${firstacdwaitduration} ;;
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
+    filters: {
+      field: inbound_demand
+      value: "yes"
+    }
+
 
   }
 
@@ -615,6 +711,10 @@ measure: percent_repeat_callers {
     sql: ${totalagenttalkduration} ;;
     filters: {
       field: inbound_demand
+      value: "yes"
+    }
+    filters: {
+      field: has_queue
       value: "yes"
     }
 
@@ -630,6 +730,10 @@ measure: percent_repeat_callers {
       field: inbound_demand
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: average_talk_time_minutes_non_inbound {
@@ -641,6 +745,10 @@ measure: percent_repeat_callers {
     filters: {
       field: inbound_demand
       value: "no"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
     }
 
 
@@ -656,6 +764,10 @@ measure: percent_repeat_callers {
     filters: {
       field: inbound_demand
       value: "no"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
     }
 
 
@@ -679,6 +791,10 @@ measure: percent_repeat_callers {
       field: inbound_demand
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
 
   }
 
@@ -690,6 +806,10 @@ measure: percent_repeat_callers {
     sql: ${totalagenttalkduration} ;;
     filters: {
       field: inbound_demand
+      value: "yes"
+    }
+    filters: {
+      field: has_queue
       value: "yes"
     }
 
@@ -705,6 +825,10 @@ measure: percent_repeat_callers {
       field: inbound_demand
       value: "no"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
 
   }
 
@@ -719,6 +843,10 @@ measure: percent_repeat_callers {
       field: inbound_demand
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
 
   }
 
@@ -731,6 +859,10 @@ measure: percent_repeat_callers {
     filters: {
       field: inbound_demand
       value: "no"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
     }
 
   }
@@ -750,6 +882,10 @@ measure: percent_repeat_callers {
       field: direction
       value: "inbound"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
 
   }
 
@@ -761,6 +897,10 @@ measure: percent_repeat_callers {
     sql: ${firstacdwaitduration} ;;
     filters: {
       field: inbound_demand
+      value: "yes"
+    }
+    filters: {
+      field: has_queue
       value: "yes"
     }
   }
@@ -776,6 +916,10 @@ measure: percent_repeat_callers {
     }
     filters: {
       field: inbound_demand
+      value: "yes"
+    }
+    filters: {
+      field: has_queue
       value: "yes"
     }
   }
@@ -795,10 +939,29 @@ measure: percent_repeat_callers {
       field: inbound_demand
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
+  }
+
+  measure: count_answered_total {
+    label: "Answered Distinct"
+    type: count_distinct
+    sql: ${conversationid} ;;
+    sql_distinct_key: ${conversationid}  ;;
+    filters: {
+      field: answered
+      value: "1"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: count_answered {
-    label: "Count Answered (Inbound Demand)"
+    label: "Answered Distinct (Inbound Demand)"
     type: count_distinct
     sql: ${conversationid} ;;
     sql_distinct_key: ${conversationid}  ;;
@@ -810,10 +973,14 @@ measure: percent_repeat_callers {
       field: inbound_demand
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: count_answered_non_inbound {
-    label: "Count Answered (non-Inbound Demand)"
+    label: "Answered Distinct (non-Inbound Demand)"
     type: count_distinct
     sql: ${conversationid} ;;
     sql_distinct_key: ${conversationid}  ;;
@@ -824,6 +991,10 @@ measure: percent_repeat_callers {
     filters: {
       field: inbound_demand
       value: "no"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
     }
   }
 
@@ -846,6 +1017,10 @@ measure: percent_repeat_callers {
     }
     filters: {
       field: inbound_demand
+      value: "yes"
+    }
+    filters: {
+      field: has_queue
       value: "yes"
     }
 
@@ -873,6 +1048,10 @@ measure: percent_repeat_callers {
       field: inbound_demand
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
 
   }
 
@@ -896,6 +1075,10 @@ measure: percent_repeat_callers {
       field: inbound_demand
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   dimension: handle_time {
@@ -904,9 +1087,87 @@ measure: percent_repeat_callers {
   }
 
   measure: average_handle_time {
-    label: "Average Handle Time (Inbound Minutes)"
+    label: "Average Handle Time"
 
     type: average_distinct
+    sql: ${handle_time}::float/1000/60 ;;
+    sql_distinct_key:  concat(${conversationid}, ${queuename});;
+    value_format: "0.00"
+    filters: {
+      field: answered
+      value: "1"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
+  }
+
+  measure: average_handle_time_inbound {
+    label: "Average Handle Time (Inbound Demand)"
+
+    type: average_distinct
+    sql: ${handle_time}::float/1000/60 ;;
+    sql_distinct_key:  concat(${conversationid}, ${queuename});;
+    value_format: "0.00"
+    filters: {
+      field: answered
+      value: "1"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
+    filters: {
+      field: inbound_demand
+      value: "yes"
+    }
+  }
+
+
+  measure: average_handle_time_non_inbound {
+    label: "Average Handle Time (Non-Inbound Demand)"
+
+    type: average_distinct
+    sql: ${handle_time}::float/1000/60 ;;
+    sql_distinct_key:  concat(${conversationid}, ${queuename});;
+    value_format: "0.00"
+    filters: {
+      field: answered
+      value: "1"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
+    filters: {
+      field: inbound_demand
+      value: "no"
+    }
+  }
+
+
+  measure: total_handle_time {
+    label: "Total Handle Time"
+
+    type: sum_distinct
+    sql: ${handle_time}::float/1000/60 ;;
+    sql_distinct_key:  concat(${conversationid}, ${queuename});;
+    value_format: "0.00"
+    filters: {
+      field: answered
+      value: "1"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
+  }
+
+  measure: total_handle_time_inbound  {
+    label: "Total Handle Time (Inbound, Minutes)"
+
+    type: sum_distinct
     sql: ${handle_time}::float/1000/60 ;;
     sql_distinct_key:  concat(${conversationid}, ${queuename});;
     value_format: "0.00"
@@ -918,38 +1179,13 @@ measure: percent_repeat_callers {
       field: inbound_demand
       value: "yes"
     }
-  }
-
-  measure: total_handle_time {
-    label: "Total Handle Time (Inbound, Minutes)"
-
-    type: sum_distinct
-    sql: ${handle_time}::float/1000/60 ;;
-    sql_distinct_key:  concat(${conversationid}, ${queuename});;
-    value_format: "0.00"
     filters: {
-      field: answered
-      value: "1"
+      field: has_queue
+      value: "yes"
     }
   }
 
 
-  measure: average_handle_time_non_inbound {
-    label: "Average Handle Time (Non-Inbound Minutes)"
-
-    type: average_distinct
-    sql: ${handle_time}::float/1000/60 ;;
-    sql_distinct_key:  concat(${conversationid}, ${queuename});;
-    value_format: "0.00"
-    filters: {
-      field: answered
-      value: "1"
-    }
-    filters: {
-      field: inbound_demand
-      value: "no"
-    }
-  }
 
   measure: total_handle_time_non_inbound  {
     label: "Total Handle Time (Non-Inbound, Minutes)"
@@ -966,6 +1202,10 @@ measure: percent_repeat_callers {
       field: inbound_demand
       value: "no"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   dimension: onboard_delay {
@@ -978,6 +1218,10 @@ measure: percent_repeat_callers {
     value_format: "0.0"
     sql_distinct_key: concat(${conversationid}, ${care_request_flat.care_request_id}) ;;
     sql: ${onboard_delay} ;;
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: average_onboard_delay {
@@ -985,6 +1229,10 @@ measure: percent_repeat_callers {
     value_format: "0.0"
     sql_distinct_key: concat(${conversationid}, ${care_request_flat.care_request_id}) ;;
     sql: ${onboard_delay} ;;
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   dimension: anthem_eligible {

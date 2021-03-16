@@ -1,13 +1,13 @@
 view: geneysis_pre_ivr_abandons_by_date_and_dnis {
   derived_table: {
-    sql: select concat(date(n.conversationstarttime), ' ', extract(hour from n.conversationstarttime), ':00:00')::timestamp as conversationstarttime, n.dnis,
+    sql: select concat(date(n.conversationstarttime AT TIME ZONE 'UTC'), ' ', extract(hour from n.conversationstarttime AT TIME ZONE 'UTC'), ':00:00')::timestamp as conversationstarttime, n.dnis,
     count(case when n.totalivrduration >15000 then n.conversationid else null end) as long_ivr_abandons,
     count(case when n.totalivrduration between 7000 and 15000 then n.conversationid else null end) as short_ivr_abandons,
     count(case when n.totalivrduration <7000 or n.totalivrduration is null then n.conversationid else null end) as prompt_abandons
 
 from looker_scratch.genesys_conversation_summary_null n
 left join looker_scratch.genesys_conversation_summary g
-on g.conversationid=n.conversationid
+on g.conversationid=n.conversationid and g.queuename!='None'
 where g.conversationid is null
 group by 1,2;;
 indexes: ["conversationstarttime", "dnis"]
@@ -66,12 +66,12 @@ indexes: ["conversationstarttime", "dnis"]
   }
 
   dimension: prompt_abandons {
-    label: "Prompt IVR Abandons (under 7 seconds)"
+    label: "Prompt Abandons (under 7 seconds)"
     type: number
     sql: ${TABLE}."prompt_abandons" ;;
   }
   measure: sum_prompt_abandons {
-    label: "Prompt IVR Abandons (under 7 seconds)"
+    label: "Prompt Abandons (under 7 seconds)"
     type: sum_distinct
     sql: ${prompt_abandons} ;;
     sql_distinct_key: ${primary_key} ;;
