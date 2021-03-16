@@ -12,6 +12,10 @@ view: genesys_conversation_summary {
     ${mediatype}='voice' and trim(lower(${queuename})) not like '%outbound%' and trim(lower(${queuename})) not like '%after hours%' and trim(lower(${queuename})) not like '%optimizer%' and trim(lower(${queuename})) not in('mobile requests','ma', 'rcm / billing', 'backline', 'development', 'secondary screening', 'dispatchhealth help desk', 'dispatch health nurse line', 'zzavtextest', 'pay bill', 'testing', 'initial follow up', 'rn1', 'rn2', 'rn3', 'rn4', 'rn5', 'rn6', 'rn7', 'rn8', 'rn9', 'ivr fail safe', 'covid testing results', 'ebony testing', 'ma/nurse', 'dispatchhealth help desk vendor', 'do not use ma/nurse', 'sem vip', 'covid task force', 'covid pierce county mass testing', 'acute care covid results & care request', 'phx', 'mobile request callbacks', 'click to call', 'dialer results', 'cancels', 'care team escalations', 'rn10', 'advance care fax queue', 'rn11', 'rn12', 'rn13','rn14', 'spanish ivr', 'vip help line', 'kaiser ma email', 'care web chat lab results', 'zztest_delete', 'none');;
 
   }
+  dimension: has_queue {
+    type: yesno
+    sql: ${queuename}!='None' ;;
+  }
 
   dimension: abandoned {
     type: number
@@ -244,6 +248,10 @@ view: genesys_conversation_summary {
       field: inbound_demand
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: distinct_callers_raw {
@@ -252,6 +260,10 @@ view: genesys_conversation_summary {
     sql_distinct_key: ${patient_number};;
     filters: {
       field: inbound_demand
+      value: "yes"
+    }
+    filters: {
+      field: has_queue
       value: "yes"
     }
   }
@@ -269,6 +281,10 @@ view: genesys_conversation_summary {
       field: direction
       value: "inbound"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: not_answered {
@@ -283,6 +299,10 @@ view: genesys_conversation_summary {
     filters: {
       field: answered
       value: "0"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
     }
   }
 
@@ -303,6 +323,10 @@ view: genesys_conversation_summary {
       field: direction
       value: "inbound"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: count_distinct_sla_callers {
@@ -321,6 +345,10 @@ view: genesys_conversation_summary {
     filters: {
       field: direction
       value: "inbound"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
     }
   }
 
@@ -374,6 +402,10 @@ view: genesys_conversation_summary {
       field: inbound_demand
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: distinct_answer_long_callers{
@@ -386,6 +418,10 @@ view: genesys_conversation_summary {
     }
     filters: {
       field: answered_long
+      value: "yes"
+    }
+    filters: {
+      field: has_queue
       value: "yes"
     }
   }
@@ -401,6 +437,10 @@ view: genesys_conversation_summary {
     filters: {
       field: answered
       value: "1"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
     }
   }
 
@@ -457,6 +497,10 @@ measure: percent_repeat_callers {
       field: inbound_demand_minus_market
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: count_distinct_non_inbound {
@@ -467,6 +511,10 @@ measure: percent_repeat_callers {
     filters: {
       field: inbound_demand
       value: "no"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
     }
   }
 
@@ -482,6 +530,10 @@ measure: percent_repeat_callers {
       field: direction
       value: "inbound"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: number_abandons {
@@ -495,6 +547,10 @@ measure: percent_repeat_callers {
     }
     filters: {
       field: inbound_demand
+      value: "yes"
+    }
+    filters: {
+      field: has_queue
       value: "yes"
     }
   }
@@ -561,6 +617,10 @@ measure: percent_repeat_callers {
       field: inbound_demand
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: short_abandons {
@@ -580,6 +640,10 @@ measure: percent_repeat_callers {
       field: inbound_demand
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: average_wait_time {
@@ -588,6 +652,15 @@ measure: percent_repeat_callers {
     value_format: "0.00"
     sql_distinct_key: concat(${conversationid}) ;;
     sql: ${firstacdwaitduration} ;;
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
+    filters: {
+      field: inbound_demand
+      value: "yes"
+    }
+
 
   }
 
@@ -599,6 +672,10 @@ measure: percent_repeat_callers {
     sql: ${totalagenttalkduration} ;;
     filters: {
       field: inbound_demand
+      value: "yes"
+    }
+    filters: {
+      field: has_queue
       value: "yes"
     }
 
@@ -614,6 +691,10 @@ measure: percent_repeat_callers {
       field: inbound_demand
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: average_talk_time_minutes_non_inbound {
@@ -625,6 +706,10 @@ measure: percent_repeat_callers {
     filters: {
       field: inbound_demand
       value: "no"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
     }
 
 
@@ -640,6 +725,10 @@ measure: percent_repeat_callers {
     filters: {
       field: inbound_demand
       value: "no"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
     }
 
 
@@ -663,6 +752,10 @@ measure: percent_repeat_callers {
       field: inbound_demand
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
 
   }
 
@@ -674,6 +767,10 @@ measure: percent_repeat_callers {
     sql: ${totalagenttalkduration} ;;
     filters: {
       field: inbound_demand
+      value: "yes"
+    }
+    filters: {
+      field: has_queue
       value: "yes"
     }
 
@@ -689,6 +786,10 @@ measure: percent_repeat_callers {
       field: inbound_demand
       value: "no"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
 
   }
 
@@ -703,6 +804,10 @@ measure: percent_repeat_callers {
       field: inbound_demand
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
 
   }
 
@@ -715,6 +820,10 @@ measure: percent_repeat_callers {
     filters: {
       field: inbound_demand
       value: "no"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
     }
 
   }
@@ -734,6 +843,10 @@ measure: percent_repeat_callers {
       field: direction
       value: "inbound"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
 
   }
 
@@ -745,6 +858,10 @@ measure: percent_repeat_callers {
     sql: ${firstacdwaitduration} ;;
     filters: {
       field: inbound_demand
+      value: "yes"
+    }
+    filters: {
+      field: has_queue
       value: "yes"
     }
   }
@@ -760,6 +877,10 @@ measure: percent_repeat_callers {
     }
     filters: {
       field: inbound_demand
+      value: "yes"
+    }
+    filters: {
+      field: has_queue
       value: "yes"
     }
   }
@@ -779,6 +900,10 @@ measure: percent_repeat_callers {
       field: inbound_demand
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: count_answered {
@@ -792,6 +917,10 @@ measure: percent_repeat_callers {
     }
     filters: {
       field: inbound_demand
+      value: "yes"
+    }
+    filters: {
+      field: has_queue
       value: "yes"
     }
   }
@@ -808,6 +937,10 @@ measure: percent_repeat_callers {
     filters: {
       field: inbound_demand
       value: "no"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
     }
   }
 
@@ -830,6 +963,10 @@ measure: percent_repeat_callers {
     }
     filters: {
       field: inbound_demand
+      value: "yes"
+    }
+    filters: {
+      field: has_queue
       value: "yes"
     }
 
@@ -857,6 +994,10 @@ measure: percent_repeat_callers {
       field: inbound_demand
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
 
   }
 
@@ -880,6 +1021,10 @@ measure: percent_repeat_callers {
       field: inbound_demand
       value: "yes"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   dimension: handle_time {
@@ -898,6 +1043,10 @@ measure: percent_repeat_callers {
       field: answered
       value: "1"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: total_handle_time {
@@ -911,6 +1060,10 @@ measure: percent_repeat_callers {
       field: answered
       value: "1"
     }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   dimension: onboard_delay {
@@ -923,6 +1076,10 @@ measure: percent_repeat_callers {
     value_format: "0.0"
     sql_distinct_key: concat(${conversationid}, ${care_request_flat.care_request_id}) ;;
     sql: ${onboard_delay} ;;
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   measure: average_onboard_delay {
@@ -930,6 +1087,10 @@ measure: percent_repeat_callers {
     value_format: "0.0"
     sql_distinct_key: concat(${conversationid}, ${care_request_flat.care_request_id}) ;;
     sql: ${onboard_delay} ;;
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
   }
 
   dimension: anthem_eligible {
