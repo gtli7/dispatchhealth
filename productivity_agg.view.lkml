@@ -27,7 +27,7 @@ view: productivity_agg {
       column: complete_count_communicable_protocol { field: care_request_flat.complete_count_communicable_protocol }
       filters: {
         field: shift_teams.start_date
-        value: "365 days ago for 365 days"
+        value: "1460 days ago for 1460 days"
       }
       filters: {
         field: service_lines.name

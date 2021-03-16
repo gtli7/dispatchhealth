@@ -124,7 +124,7 @@ view: genesys_conversation_summary {
 
   dimension: ivr_experiment_dnis {
     type: yesno
-    sql: ${dnis_raw} in('+13035001518', '+17028484443', '+14255530937', '+15094082107') ;;
+    sql: ${dnis_raw} in('+13035001518', '+17028484443', '+14255530937', '+15094082107') and ${queuename} = 'General Care';;
   }
 
 
@@ -245,6 +245,22 @@ view: genesys_conversation_summary {
       value: "yes"
     }
   }
+
+  measure: count_distinct_no_filter {
+    label: "Count Distinct (ConversationId)"
+    type: count_distinct
+    sql: ${conversationid} ;;
+    sql_distinct_key:  ${conversationid};;
+  }
+
+
+  measure: count_distinct_no_filter_duplicate_by_queue {
+    label: "Count Distinct (Duplicate by Queue)"
+    type: count_distinct
+    sql: concat(${conversationid}, ${queuename}, ${direction},  ${mediatype}) ;;
+    sql_distinct_key:  concat(${conversationid}, ${queuename},${direction}, ${mediatype});;
+  }
+
 
   measure: distinct_callers_raw {
     type: count_distinct
@@ -888,7 +904,7 @@ measure: percent_repeat_callers {
   }
 
   measure: average_handle_time {
-    label: "Average Handle Time (Minutes)"
+    label: "Average Handle Time (Inbound Minutes)"
 
     type: average_distinct
     sql: ${handle_time}::float/1000/60 ;;
@@ -898,10 +914,14 @@ measure: percent_repeat_callers {
       field: answered
       value: "1"
     }
+    filters: {
+      field: inbound_demand
+      value: "yes"
+    }
   }
 
   measure: total_handle_time {
-    label: "Total Handle Time (Minutes)"
+    label: "Total Handle Time (Inbound, Minutes)"
 
     type: sum_distinct
     sql: ${handle_time}::float/1000/60 ;;
@@ -910,6 +930,41 @@ measure: percent_repeat_callers {
     filters: {
       field: answered
       value: "1"
+    }
+  }
+
+
+  measure: average_handle_time_non_inbound {
+    label: "Average Handle Time (Non-Inbound Minutes)"
+
+    type: average_distinct
+    sql: ${handle_time}::float/1000/60 ;;
+    sql_distinct_key:  concat(${conversationid}, ${queuename});;
+    value_format: "0.00"
+    filters: {
+      field: answered
+      value: "1"
+    }
+    filters: {
+      field: inbound_demand
+      value: "no"
+    }
+  }
+
+  measure: total_handle_time_non_inbound  {
+    label: "Total Handle Time (Non-Inbound, Minutes)"
+
+    type: sum_distinct
+    sql: ${handle_time}::float/1000/60 ;;
+    sql_distinct_key:  concat(${conversationid}, ${queuename});;
+    value_format: "0.00"
+    filters: {
+      field: answered
+      value: "1"
+    }
+    filters: {
+      field: inbound_demand
+      value: "no"
     }
   }
 

@@ -1,6 +1,6 @@
 view: geneysis_pre_ivr_abandons_by_date_and_dnis {
   derived_table: {
-    sql: select date(n.conversationstarttime) as conversationstarttime, n.dnis,
+    sql: select concat(date(n.conversationstarttime), ' ', extract(hour from n.conversationstarttime), ':00:00')::timestamp as conversationstarttime, n.dnis,
     count(case when n.totalivrduration >15000 then n.conversationid else null end) as long_ivr_abandons,
     count(case when n.totalivrduration between 7000 and 15000 then n.conversationid else null end) as short_ivr_abandons,
     count(case when n.totalivrduration <7000 or n.totalivrduration is null then n.conversationid else null end) as prompt_abandons
@@ -8,8 +8,8 @@ view: geneysis_pre_ivr_abandons_by_date_and_dnis {
 from looker_scratch.genesys_conversation_summary_null n
 left join looker_scratch.genesys_conversation_summary g
 on g.conversationid=n.conversationid
-where g.conversationid is null and  extract(hour from n.conversationstarttime AT TIME ZONE 'UTC') between 9 and 18
-group by 1,2 ;;
+where g.conversationid is null
+group by 1,2;;
 indexes: ["conversationstarttime", "dnis"]
     sql_trigger_value: select sum(num) from
     (SELECT count(*) as num FROM looker_scratch.genesys_conversation_summary  where genesys_conversation_summary.conversationstarttime > current_date - interval '2 day'
@@ -25,7 +25,8 @@ indexes: ["conversationstarttime", "dnis"]
       week,
       month,
       quarter,
-      year
+      year,
+      hour_of_day
     ]
     sql: ${TABLE}."conversationstarttime" ;;
   }
@@ -38,7 +39,7 @@ indexes: ["conversationstarttime", "dnis"]
 
   dimension: primary_key {
     type: string
-    sql: concat(${dnis},${conversationstarttime_date}) ;;
+    sql: concat(${dnis},${conversationstarttime_date}, ${conversationstarttime_hour_of_day}) ;;
   }
   dimension: pre_ivr_abandons {
     label: "Long IVR Abandons (over 15 seconds)"

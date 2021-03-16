@@ -3915,7 +3915,8 @@ explore: genesys_conversation_summary {
   }
 
   join: geneysis_pre_ivr_abandons_by_date_and_dnis {
-    sql_on: ${geneysis_pre_ivr_abandons_by_date_and_dnis.dnis} = ${genesys_conversation_summary.dnis_raw} and ${geneysis_pre_ivr_abandons_by_date_and_dnis.conversationstarttime_date} = ${genesys_conversation_summary.conversationstarttime_date} ;;
+    sql_on: ${geneysis_pre_ivr_abandons_by_date_and_dnis.dnis} = ${genesys_conversation_summary.dnis_raw} and ${geneysis_pre_ivr_abandons_by_date_and_dnis.conversationstarttime_date} = ${genesys_conversation_summary.conversationstarttime_date}
+    and ${geneysis_pre_ivr_abandons_by_date_and_dnis.conversationstarttime_hour_of_day}=${genesys_conversation_summary.conversationstarttime_hour_of_day};;
   }
 
   join: markets {
