@@ -40,7 +40,7 @@ view: funnel_agg {
       column: non_screened_escalated_phone_count_ed { field: care_request_flat.non_screened_escalated_phone_count_ed }
       filters: {
         field: care_request_flat.created_date
-        value: "365 days ago for 365 days"
+        value: "1460 days ago for 1460 days"
       }
       filters: {
         field: service_lines.name
