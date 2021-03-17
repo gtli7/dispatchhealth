@@ -215,7 +215,7 @@ view: addresses {
     label: "List of Care Request States"
     type: string
     group_label: "Aggregated Lists"
-    sql: array_to_string(array_agg(DISTINCT COALESCE(upper(${addresses.state}))), ' | ') ;;
+    sql: array_to_string(array_agg(DISTINCT COALESCE(upper(${state_abbreviation_standardized}))), ' | ') ;;
   }
 
 }
