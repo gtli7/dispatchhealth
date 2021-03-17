@@ -32,10 +32,7 @@ view: athenadwh_medical_history_clone {
   measure: count_positive_responses {
     type: count_distinct
     sql: ${id} ;;
-    filters: {
-      field: answer_yes
-      value: "yes"
-    }
+    filters: [answer_yes: "yes"]
   }
 
   dimension: created_by {
