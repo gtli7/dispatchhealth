@@ -290,6 +290,13 @@ view: athena_clinicalencounter {
     group_label: "Counts"
   }
 
+  measure: count_distinct_encounters {
+    type: count_distinct
+    sql: ${clinical_encounter_id} ;;
+    filters: [encounter_status: "-DELETED"]
+    group_label: "Counts"
+  }
+
   measure: count_symptom_based_charts {
     type: count_distinct
     sql: ${chart_id} ;;
@@ -329,23 +336,23 @@ view: athena_clinicalencounter {
     sql: ${hours_to_chart_sign} <= 24 ;;
   }
 
-  dimension: chart_closure_percentage {
+  dimension: chart_closure_24_hr_percentage {
     type: number
     hidden: yes
-    sql: CASE WHEN ${chart_first_closed_raw} IS NOT NULL THEN 100
+    sql: CASE WHEN ${chart_signed_24_hours} THEN 100
          ELSE 0
          END ;;
   }
 
   # Does not calculate correctly - DE - 3/6/2021
   measure: average_24_hour_chart_closure_rate {
-    description: "The percentage of charts closed by the provider within 24 hours of the visit"
+    description: "The percentage of encounters closed by the provider within 24 hours of the visit"
     type: average_distinct
-    hidden: yes
+    value_format: "0.0\%"
     group_label: "Chart Closure Metrics"
-    sql: ${chart_closure_percentage} ;;
-    sql_distinct_key: ${care_requests.id} ;;
-    filters: [chart_signed_24_hours: "yes", care_requests.billable_est: "yes"]
+    sql: ${chart_closure_24_hr_percentage} ;;
+    sql_distinct_key: ${clinical_encounter_id} ;;
+    filters: [encounter_status: "-DELETED"]
   }
 
   dimension: chart_signed_48_hours {
@@ -356,23 +363,19 @@ view: athena_clinicalencounter {
   }
 
   measure: count_charts_signed_24_hours {
-    description: "The count of distinct charts that were signed by the provider within 24 hours of the visit"
+    description: "The count of distinct encounters that were signed by the provider within 24 hours of the visit"
     type: count_distinct
     group_label: "Chart Closure Metrics"
     sql: ${clinical_encounter_id} ;;
-    filters: [chart_signed_24_hours: "yes"]
+    filters: [chart_signed_24_hours: "yes", encounter_status: "-DELETED"]
   }
 
   measure: count_charts_signed_48_hours {
-    description: "The count of distinct charts that were signed by the provider within 48 hours of the visit"
+    description: "The count of distinct encounters that were signed by the provider within 48 hours of the visit"
     type: count_distinct
     group_label: "Chart Closure Metrics"
     sql: ${clinical_encounter_id} ;;
-    filters: [chart_signed_48_hours: "yes"]
+    filters: [chart_signed_48_hours: "yes", encounter_status: "-DELETED"]
   }
 
-  measure: count {
-    type: count
-    drill_fields: [id, appointment.rescheduled_appointment_id, claim.original_claim_id]
-  }
 }

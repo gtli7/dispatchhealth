@@ -2026,6 +2026,14 @@ WITH ort AS (
     sql: ${TABLE}.on_scene_date ;;
   }
 
+  dimension: on_scene_weekened {
+    type: string
+    sql: CASE WHEN ${on_scene_day_of_week} IN ('Saturday','Sunday') THEN 'Weekend'
+    WHEN ${on_scene_day_of_week} NOT IN ('Monday','Tuesday','Wednesday','Thursday','Friday') THEN 'Weekday'
+    ELSE NULL
+    END;;
+  }
+
   dimension_group: call_time {
     type: time
     description: "The local date/time that the care request team arrived on-scene"
