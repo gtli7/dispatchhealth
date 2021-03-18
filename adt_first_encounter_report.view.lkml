@@ -1,6 +1,6 @@
 view: adt_first_encounter_report {
   sql_table_name: adt_merged.adt_first_encounter_report ;;
-
+  view_label: "Bouncebacks All Cause"
 # Pending view updates. Consider changing all measures using count_distinct sql to use the adt_first_encounter_report.careR_equest_id.
 
   dimension_group: care_request_begin {
@@ -262,6 +262,42 @@ view: adt_first_encounter_report {
     type: yesno
     sql: extract(epoch from ${cr_to_hosp_diff})/3600 <= 720 ;;
     group_label: "Inpatient Emergency Admittance Intervals"
+  }
+
+  dimension: 7_day_bb_pct {
+    type: number
+    hidden: yes
+    sql: CASE WHEN ${7_day_first_admit_emergency} OR ${7_day_first_admit_inpatient_emergency} THEN 100
+         ELSE 0
+        END;;
+  }
+
+  measure: 7_day_avg_bounceback_rate {
+    description: "Average BB rate (all cause) at 7 days post-visit"
+    type: average_distinct
+    value_format: "0.0\%"
+
+    sql: ${7_day_bb_pct} ;;
+    sql_distinct_key: ${care_requests.id} ;;
+    filters: [care_requests.billable_est: "yes"]
+  }
+
+  dimension: 30_day_bb_pct {
+    type: number
+    hidden: yes
+    sql: CASE WHEN ${30_day_first_admit_emergency} OR ${30_day_first_admit_inpatient_emergency} THEN 100
+         ELSE 0
+        END;;
+  }
+
+  measure: 30_day_avg_bounceback_rate {
+    description: "Average BB rate (all cause) at 30 days post-visit"
+    type: average_distinct
+    value_format: "0.0\%"
+
+    sql: ${30_day_bb_pct} ;;
+    sql_distinct_key: ${care_requests.id} ;;
+    filters: [care_requests.billable_est: "yes"]
   }
 
 

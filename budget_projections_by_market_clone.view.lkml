@@ -55,6 +55,16 @@ view: budget_projections_by_market_clone {
     sql: ${projected_visits_daily} ;;
   }
 
+
+  measure: sum_projected_visits_daily_prod_agg {
+    label: "Sum Budgeted Visits Daily (Prod Agg Explore)"
+    value_format: "#,##0"
+    type: sum_distinct
+    sql_distinct_key: concat(${market_dim_id}, ${productivity_agg.start_date}) ;;
+    sql: ${projected_visits_daily} ;;
+  }
+
+
   measure: percent_of_goal{
     value_format: "0.0%"
     type: number

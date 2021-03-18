@@ -4913,6 +4913,12 @@ explore: productivity_agg {
     sql_on: ${productivity_agg.id_adj} = ${market_regions.market_id} ;;
   }
 
+  join: budget_projections_by_market_clone {
+    sql_on:  ${budget_projections_by_market_clone.market_dim_id}=${productivity_agg.id_adj}
+             and
+            ${budget_projections_by_market_clone.month_month}=${productivity_agg.start_month};;
+  }
+
   #join: markets {
   #  sql_on: ${markets.name_adj} = ${productivity_agg.name_adj} ;;
   #}
