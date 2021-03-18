@@ -344,7 +344,6 @@ view: athena_clinicalencounter {
          END ;;
   }
 
-  # Does not calculate correctly - DE - 3/6/2021
   measure: average_24_hour_chart_closure_rate {
     description: "The percentage of encounters closed by the provider within 24 hours of the visit"
     type: average_distinct

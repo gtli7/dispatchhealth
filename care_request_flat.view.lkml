@@ -4269,6 +4269,20 @@ measure: avg_first_on_route_mins {
     }
   }
 
+  dimension: escalated_on_scene_pct {
+    type: number
+    hidden: yes
+    sql: CASE WHEN ${escalated_on_scene} THEN 100 ELSE 0 END ;;
+  }
+
+  measure: avg_on_scene_escalation_pct {
+    type: average_distinct
+    description: "Pct of completed visits that are escalated on-scene"
+    value_format: "0.0\%"
+    sql: ${escalated_on_scene_pct} ;;
+    sql_distinct_key: ${care_request_id} ;;
+  }
+
   measure: escalated_on_scene_to_ed_acute_ems_cost_savings_count {
     label: "Escalated On-Scene to ED Excluding Bridge Care and DH Followups"
     type: count_distinct
