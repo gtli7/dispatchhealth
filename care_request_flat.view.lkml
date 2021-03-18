@@ -5944,7 +5944,7 @@ end  ;;
 
   dimension: pushed_visits {
     type: yesno
-    sql: (not ${pafu_or_follow_up})  and lower(${service_lines.name}) like '%acute%'
+    sql: (not ${pafu_or_follow_up}) and lower(${service_lines.name}) like '%acute%'
          AND
         (
           ${created_date} != ${on_scene_date}
@@ -5957,7 +5957,7 @@ end  ;;
         OR
           ${archive_date} is NULL
         )
-        OR
+        AND
         (
           ${created_date} != ${most_recent_eta_start_date}
         OR
