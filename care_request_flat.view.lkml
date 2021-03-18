@@ -5917,9 +5917,11 @@ end  ;;
           ${archive_date} is NULL
         )
         AND
-        (${created_date} != ${most_recent_eta_start_date}
+        (
+          ${created_date} != ${most_recent_eta_start_date}
         OR
-        ${most_recent_eta_start_date} is null)
+          ${most_recent_eta_start_date} is null
+        )
         AND
         ${notes_aggregated.notes_aggregated} not like '%pushed pt: pt availability%'
         and not ${too_late_for_overflow}
@@ -5941,9 +5943,12 @@ end  ;;
         OR
           ${archive_date} is NULL
         )
-                (${created_date} != ${most_recent_eta_start_date}
         OR
-        ${most_recent_eta_start_date} is null)
+        (
+          ${created_date} != ${most_recent_eta_start_date}
+        OR
+          ${most_recent_eta_start_date} is null
+        )
 
         ;;
   }
