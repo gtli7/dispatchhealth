@@ -292,7 +292,9 @@ view: athena_document_letters {
     description: "Identifies clinical letters sent to provider or specialist"
     hidden: no
     type: yesno
-    sql: (upper(${document_subclass}) != 'LETTER_PATIENTCORRESPONDENCE' OR ${document_subclass} IS NULL) and upper(${status}) != 'DELETED' ;;
+    sql: (upper(${document_subclass}) NOT IN
+      ('LETTER_PATIENTCORRESPONDENCE','LETTER_PATIENTCARESUMMARY')
+      OR ${document_subclass} IS NULL) and upper(${status}) != 'DELETED' ;;
   }
 
   measure: count_notes_sent_any {
@@ -309,7 +311,10 @@ view: athena_document_letters {
     description: "Identifies clinical letters sent to the patient's primary care provider"
     hidden: yes
     type: yesno
-    sql:  (upper(${document_subclass}) != 'LETTER_PATIENTCORRESPONDENCE' OR ${document_subclass} IS NULL) and upper(${status}) != 'DELETED' AND upper(${athena_clinicalletter.role}) = 'PRIMARY CARE PROVIDER' ;;
+    sql:  (upper(${document_subclass}) NOT IN
+      ('LETTER_PATIENTCORRESPONDENCE','LETTER_PATIENTCARESUMMARY')
+      OR ${document_subclass} IS NULL) and upper(${status}) != 'DELETED'
+      AND upper(${athena_clinicalletter.role}) = 'PRIMARY CARE PROVIDER' ;;
   }
 
   dimension: clinical_letters_sent_non_pcp {
