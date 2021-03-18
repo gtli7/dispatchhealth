@@ -81,7 +81,10 @@ WITH ort AS (
         foc.first_on_scene_time,
         onscene.mins_on_scene_predicted,
         n_assign.count_assignments,
-        max(callers.created_at) AT TIME ZONE 'UTC' AT TIME ZONE t.pg_tz AS caller_date
+        max(callers.created_at) AT TIME ZONE 'UTC' AT TIME ZONE t.pg_tz AS caller_date,
+        most_recent_eta.starts_at AT TIME ZONE 'UTC' AT TIME ZONE t.pg_tz as most_recent_eta_start,
+        most_recent_eta.ends_at AT TIME ZONE 'UTC' AT TIME ZONE t.pg_tz as most_recent_eta_end
+
       FROM care_requests cr
       LEFT JOIN care_requests_shift_teams crst
         ON cr.id = crst.care_request_id AND crst.is_dispatched
@@ -257,11 +260,16 @@ WITH ort AS (
         and insurances.package_id is not null
         and trim(insurances.package_id)!='') as insurances
         ON cr.id = insurances.care_request_id AND insurances.rn = 1
+     left join
+(select eta_ranges.care_request_id,  ROW_NUMBER() OVER(PARTITION BY care_request_id
+                                ORDER BY care_request_id, created_at desc) as rn, eta_ranges.starts_at, ends_at
+from eta_ranges) as most_recent_eta
+on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
       where
             (archive.comment NOT IN ('Other: Test', 'Other: Duplicate', 'Cancelled by Patient: Other: Test Case', 'Other: Test Case') or archive.comment  is null)
       GROUP BY 1,2,3,4,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,
                insurances.package_id, callers.origin_phone, callers.contact_id,cr.patient_id,crst.shift_team_id,
-               foc.first_on_scene_time,onscene.mins_on_scene_predicted, n_assign.count_assignments;;
+               foc.first_on_scene_time,onscene.mins_on_scene_predicted, n_assign.count_assignments, most_recent_eta.starts_at, most_recent_eta.ends_at;;
 
     # Run trigger every 2 hours
     sql_trigger_value:  SELECT MAX(id) FROM public.care_requests  where care_requests.created_at > current_date - interval '2 day';;
@@ -1255,6 +1263,7 @@ WITH ort AS (
   dimension_group: eta {
     type: time
     convert_tz: no
+    hidden: yes
     timeframes: [
       raw,
       hour_of_day,
@@ -1270,6 +1279,7 @@ WITH ort AS (
   }
 
   dimension_group: eta_range_start {
+    label: "Initial ETA Range Start"
     type: time
     description: "The initial ETA range start time that was given to the patient"
     convert_tz: no
@@ -1284,6 +1294,7 @@ WITH ort AS (
   }
 
   dimension_group: eta_range_end {
+    label: "Initial ETA Range End"
     type: time
     description: "The initial ETA range end time that was given to the patient"
     convert_tz: no
@@ -1321,6 +1332,43 @@ WITH ort AS (
     ]
     sql: ${TABLE}.initial_eta ;;
   }
+
+  dimension_group: most_recent_eta_start {
+    type: time
+    label: "Most Recent ETA Range Start"
+    convert_tz: no
+    timeframes: [
+      raw,
+      hour_of_day,
+      time_of_day,
+      date,
+      time,
+      week,
+      month,
+      day_of_week,
+      day_of_month
+    ]
+    sql: ${TABLE}.most_recent_eta_start ;;
+  }
+
+  dimension_group: most_recent_eta_end {
+    type: time
+    label: "Most Recent ETA Range End"
+    convert_tz: no
+    timeframes: [
+      raw,
+      hour_of_day,
+      time_of_day,
+      date,
+      time,
+      week,
+      month,
+      day_of_week,
+      day_of_month
+    ]
+    sql: ${TABLE}.most_recent_eta_end ;;
+  }
+
 
   dimension: bounceback_3day {
     type: yesno
@@ -5847,7 +5895,7 @@ end  ;;
   dimension: overflow_visit {
     description: "Care Requests that were pushed to next day from their intended visit date. Excludes PAFU and only includes 'acute' service lines."
     type: yesno
-    sql: (not ${pafu_or_follow_up}) and ${scheduled_visit} and lower(${service_lines.name}) like '%acute%'
+    sql: (not ${pafu_or_follow_up}) and lower(${service_lines.name}) like '%acute%'
          AND
         (
           ${created_date} != ${on_scene_date}
@@ -5861,7 +5909,9 @@ end  ;;
           ${archive_date} is NULL
         )
         AND
-        ${created_date} != ${scheduled_care_date}
+        (${created_date} != ${most_recent_eta_start_date}
+        OR
+        ${most_recent_eta_start_date} is null)
         AND
         ${notes_aggregated.notes_aggregated} not like '%pushed pt: pt availability%'
         and not ${too_late_for_overflow}
@@ -5870,7 +5920,7 @@ end  ;;
 
   dimension: pushed_visits {
     type: yesno
-    sql: (not ${pafu_or_follow_up}) and ${scheduled_visit} and lower(${service_lines.name}) like '%acute%'
+    sql: (not ${pafu_or_follow_up})  and lower(${service_lines.name}) like '%acute%'
          AND
         (
           ${created_date} != ${on_scene_date}
@@ -5883,8 +5933,10 @@ end  ;;
         OR
           ${archive_date} is NULL
         )
-        AND
-        ${created_date} != ${scheduled_care_date}
+                (${created_date} != ${most_recent_eta_start_date}
+        OR
+        ${most_recent_eta_start_date} is null)
+
         ;;
   }
 

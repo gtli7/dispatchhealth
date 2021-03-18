@@ -111,6 +111,8 @@ view: productivity_agg {
     sql_distinct_key: concat(${start_date}, ${name_adj}) ;;
   }
 
+
+
   measure: total_complete_count_asymptomatic {
     type: sum_distinct
     sql: ${complete_count_asymptomatic_covid_testing} ;;
