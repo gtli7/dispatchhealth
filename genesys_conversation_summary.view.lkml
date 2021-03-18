@@ -397,6 +397,13 @@ view: genesys_conversation_summary {
     sql: ${distinct_answer_callers}::float/(nullif(${distinct_callers},0))::float ;;
   }
 
+  measure: qualified_rate {
+    type: number
+    value_format: "0%"
+    sql: ${care_request_flat.accepted_or_scheduled_count}::float/(nullif(${distinct_answer_long_callers},0))::float ;;
+  }
+
+
   measure: sla_percent {
     type: number
     value_format: "0%"
