@@ -60,6 +60,77 @@ view: addresses {
     sql: UPPER(TRIM(${TABLE}.state)) ;;
   }
 
+  dimension: state_abbreviation_standardized {
+    type: string
+    group_label: "Description"
+    sql: CASE
+      WHEN UPPER(${state}) = 'ALABAMA' THEN 'AL'
+      WHEN UPPER(${state}) = 'ALASKA' THEN 'AK'
+      WHEN UPPER(${state}) = 'ARIZONA' THEN 'AZ'
+      WHEN UPPER(${state}) = 'ARKANSAS' THEN 'AR'
+      WHEN UPPER(${state}) = 'CALIFORNIA' THEN 'CA'
+      WHEN UPPER(${state}) = 'COLORADO' THEN 'CO'
+      WHEN UPPER(${state}) = 'CONNECTICUT' THEN 'CT'
+      WHEN UPPER(${state}) = 'DELAWARE' THEN 'DE'
+      WHEN UPPER(${state}) = 'FLORIDA' THEN 'FL'
+      WHEN UPPER(${state}) = 'GEORGIA' THEN 'GA'
+      WHEN UPPER(${state}) = 'HAWAII' THEN 'HI'
+      WHEN UPPER(${state}) = 'IDAHO' THEN 'ID'
+      WHEN UPPER(${state}) = 'ILLINOIS' THEN 'IL'
+      WHEN UPPER(${state}) = 'INDIANA' THEN 'IN'
+      WHEN UPPER(${state}) = 'IOWA' THEN 'IA'
+      WHEN UPPER(${state}) = 'KANSAS' THEN 'KS'
+      WHEN UPPER(${state}) = 'KENTUCKY' THEN 'KY'
+      WHEN UPPER(${state}) = 'LOUISIANA' THEN 'LA'
+      WHEN UPPER(${state}) = 'MAINE' THEN 'ME'
+      WHEN UPPER(${state}) = 'MARYLAND' THEN 'MD'
+      WHEN UPPER(${state}) = 'MASSACHUSETTS' THEN 'MA'
+      WHEN UPPER(${state}) = 'MICHIGAN' THEN 'MI'
+      WHEN UPPER(${state}) = 'MINNESOTA' THEN 'MN'
+      WHEN UPPER(${state}) = 'MISSISSIPPI' THEN 'MS'
+      WHEN UPPER(${state}) = 'MISSOURI' THEN 'MO'
+      WHEN UPPER(${state}) = 'MONTANA' THEN 'MT'
+      WHEN UPPER(${state}) = 'NEBRASKA' THEN 'NE'
+      WHEN UPPER(${state}) = 'NEVADA' THEN 'NV'
+      WHEN UPPER(${state}) = 'NEW HAMPSHIRE' THEN 'NH'
+      WHEN UPPER(${state}) = 'NEW JERSEY' THEN 'NJ'
+      WHEN UPPER(${state}) = 'NEW MEXICO' THEN 'NM'
+      WHEN UPPER(${state}) = 'NEW YORK' THEN 'NY'
+      WHEN UPPER(${state}) = 'NORTH CAROLINA' THEN 'NC'
+      WHEN UPPER(${state}) = 'NORTH DAKOTA' THEN 'ND'
+      WHEN UPPER(${state}) = 'OHIO' THEN 'OH'
+      WHEN UPPER(${state}) = 'OKLAHOMA' THEN 'OK'
+      WHEN UPPER(${state}) = 'OREGON' THEN 'OR'
+      WHEN UPPER(${state}) = 'PENNSYLVANIA' THEN 'PA'
+      WHEN UPPER(${state}) = 'RHODE ISLAND' THEN 'RI'
+      WHEN UPPER(${state}) = 'SOUTH CAROLINA' THEN 'SC'
+      WHEN UPPER(${state}) = 'SOUTH DAKOTA' THEN 'SD'
+      WHEN UPPER(${state}) = 'TENNESSEE' THEN 'TN'
+      WHEN UPPER(${state}) = 'TEXAS' THEN 'TX'
+      WHEN UPPER(${state}) = 'UTAH' THEN 'UT'
+      WHEN UPPER(${state}) = 'VERMONT' THEN 'VT'
+      WHEN UPPER(${state}) = 'VIRGINIA' THEN 'VA'
+      WHEN UPPER(${state}) = 'WASHINGTON' THEN 'WA'
+      WHEN UPPER(${state}) = 'WEST VIRGINIA' THEN 'WV'
+      WHEN UPPER(${state}) = 'WISCONSIN' THEN 'WI'
+      WHEN UPPER(${state}) = 'WYOMING' THEN 'WY'
+      WHEN UPPER(${state}) = 'AMERICAN SAMOA' THEN 'AS'
+      WHEN UPPER(${state}) = 'DISTRICT OF COLUMBIA' THEN 'DC'
+      WHEN UPPER(${state}) = 'GUAM' THEN 'GU'
+      WHEN UPPER(${state}) = 'MARSHALL ISLANDS' THEN 'MH'
+      WHEN UPPER(${state}) = 'NORTHERN MARIANA ISLAND' THEN 'MP'
+      WHEN UPPER(${state}) = 'PUERTO RICO' THEN 'PR'
+      WHEN UPPER(${state}) = 'VIRGIN ISLANDS' THEN 'VI'
+      WHEN UPPER(${state}) = 'ARMED FORCES AFRICA' THEN 'AE'
+      WHEN UPPER(${state}) = 'ARMED FORCES AMERICAS' THEN 'AA'
+      WHEN UPPER(${state}) = 'ARMED FORCES CANADA' THEN 'AE'
+      WHEN UPPER(${state}) = 'ARMED FORCES EUROPE' THEN 'AE'
+      WHEN UPPER(${state}) = 'ARMED FORCES MIDDLE EAST' THEN 'AE'
+      WHEN UPPER(${state}) = 'ARMED FORCES PACIFIC' THEN 'AP'
+      ELSE ${state}
+      END;;
+  }
+
   dimension: street_address_1 {
     type: string
     group_label: "Description"
@@ -144,7 +215,7 @@ view: addresses {
     label: "List of Care Request States"
     type: string
     group_label: "Aggregated Lists"
-    sql: array_to_string(array_agg(DISTINCT COALESCE(upper(${addresses.state}))), ' | ') ;;
+    sql: array_to_string(array_agg(DISTINCT COALESCE(upper(${state_abbreviation_standardized}))), ' | ') ;;
   }
 
 }
