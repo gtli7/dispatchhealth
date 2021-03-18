@@ -172,6 +172,18 @@ view: productivity_agg {
     sql: case when ${total_clinical_hours_no_arm_advanced}>0 then ${total_complete_count_no_arm_advanced}::float/${total_clinical_hours_no_arm_advanced}::float else 0 end ;;
   }
 
+  measure: complete_visits_vs_budget {
+    type: number
+    value_format: "#,##0"
+    sql: ${budget_projections_by_market_clone.sum_projected_visits_daily_prod_agg} -${total_complete_count_no_arm_advanced};;
+  }
+
+  measure: complete_visits_vs_budget_percent {
+    type: number
+    value_format: "0%"
+    sql: case when ${budget_projections_by_market_clone.sum_projected_visits_daily_prod_agg} >0 then ${complete_visits_vs_budget}/${budget_projections_by_market_clone.sum_projected_visits_daily_prod_agg} else 0 end;;
+  }
+
   dimension: count_wmfr_billable {
     type: number
   }
