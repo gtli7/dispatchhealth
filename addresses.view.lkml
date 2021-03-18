@@ -211,6 +211,12 @@ view: addresses {
     sql: ${state} ;;
   }
 
+  measure: count_distinct_standardized_state_abbreviations{
+    type: count_distinct
+    group_label: "Counts"
+    sql: ${state_abbreviation_standardized} ;;
+  }
+
   measure: visit_state_concat {
     label: "List of Care Request States"
     type: string
