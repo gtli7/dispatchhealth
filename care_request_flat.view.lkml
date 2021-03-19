@@ -809,7 +809,7 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
 
   dimension: scheduled_not_pafu_or_dhfu {
     type: yesno
-    sql: (${scheduled_visit} and not ${pafu_or_follow_up}) ;;
+    sql: (${pushed_visits} and not ${pafu_or_follow_up}) ;;
   }
 
   measure: count_accepted_patients {
