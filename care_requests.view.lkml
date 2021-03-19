@@ -916,24 +916,25 @@ view: care_requests {
     type: count_distinct
     description: "Count of completed care requests OR on-scene escalations"
     sql: ${id} ;;
-    drill_fields: [patients.ehr_id, id]
+    drill_fields: [detail*]
     filters: {
       field: billable_est
       value: "yes"
     }
-    link: {
-      label: "Patient-Level Details"
-      url: "https://dispatchhealth.looker.com/looks/1124?&f[markets.name]={{ _filters['markets.name'] | url_encode }}
-      &f[markets.name_adj]={{ _filters['markets.name_adj'] | url_encode }}
-      &f[care_request_flat.escalated_on_scene]={{ _filters['care_request_flat.escalated_on_scene'] | url_encode }}
-      &f[care_request_flat.complete_resolved_date]={{ _filters['care_request_flat.complete_resolved_date'] | url_encode }}
-      &f[care_request_flat.complete_date]={{ _filters['care_request_flat.complete_date'] | url_encode }}
-      &f[care_request_flat.complete_month]={{ _filters['care_request_flat.complete_month'] | url_encode }}
-      &f[drg_to_icd10_crosswalk.drg_code]={{ _filters['drg_to_icd10_crosswalk.drg_code'] | url_encode }}
-      &f[insurance_coalese_crosswalk.insurance_package_name]={{ _filters['insurance_coalese_crosswalk.insurance_package_name'] | url_encode }}
-      &f[care_request_flat.lwbs]={{ _filters['care_request_flat.lwbs'] | url_encode }}"
+  # Doesn't filter correctly.  Removing for now. DE - 3/19/2021
+  #   link: {
+  #     label: "Patient-Level Details"
+  #     url: "https://dispatchhealth.looker.com/looks/1124?&f[markets.name]={{ _filters['markets.name'] | url_encode }}
+  #     &f[markets.name_adj]={{ _filters['markets.name_adj'] | url_encode }}
+  #     &f[care_request_flat.escalated_on_scene]={{ _filters['care_request_flat.escalated_on_scene'] | url_encode }}
+  #     &f[care_request_flat.complete_resolved_date]={{ _filters['care_request_flat.complete_resolved_date'] | url_encode }}
+  #     &f[care_request_flat.complete_date]={{ _filters['care_request_flat.complete_date'] | url_encode }}
+  #     &f[care_request_flat.complete_month]={{ _filters['care_request_flat.complete_month'] | url_encode }}
+  #     &f[drg_to_icd10_crosswalk.drg_code]={{ _filters['drg_to_icd10_crosswalk.drg_code'] | url_encode }}
+  #     &f[insurance_coalese_crosswalk.insurance_package_name]={{ _filters['insurance_coalese_crosswalk.insurance_package_name'] | url_encode }}
+  #     &f[care_request_flat.lwbs]={{ _filters['care_request_flat.lwbs'] | url_encode }}"
 
-   }
+  # }
   }
 
   dimension: billable_est_numeric {
@@ -1739,13 +1740,20 @@ measure: distinct_day_of_week {
   set: detail {
     fields: [
       id,
-      ehr_name,
-      consenter_name,
-      markets.id,
+      patients.ehr_id,
+      care_request_flat.complete_date,
       markets.name,
-      markets.provider_group_name,
-      markets.short_name,
-      credit_cards.count
+      patients.first_name,
+      patients.last_name,
+      patients.age,
+      patients.gender,
+      chief_complaint,
+      risk_assessments.protocol_name,
+      care_request_flat.on_scene_time_minutes,
+      channel_items.sub_type,
+      channel_items.name,
+      primary_resolved_reason,
+      secondary_resolved_reason
     ]
   }
 }
