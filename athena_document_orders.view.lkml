@@ -280,6 +280,29 @@ view: athena_document_orders {
     }
   }
 
+  dimension: wound_culture_performed {
+    type: yesno
+    description: "A flag indicating a wound culture was performed (culture, panel, dipstick or complete)"
+    group_label: "Description"
+    sql: ${clinical_order_type} IN ('CULTURE AEROBIC WOUND',
+        'CULTURE ANAEROBIC WOUND',
+        'CULTURE DEEP WOUND',
+        'CULTURE SUPERFICIAL WOUND',
+        'CULTURE WOUND',
+        'FUNGUS CULTURE WOUND') ;;
+  }
+
+  measure: count_wound_culture_performed_care_requests {
+    type: count_distinct
+    description: "Count the distinct visits where a wound culture was performed / ordered"
+    group_label: "Counts"
+    sql: ${care_requests.id} ;;
+    filters: {
+      field: wound_culture_performed
+      value: "yes"
+    }
+  }
+
 
   measure: third_party_lab_imaging {
     type: max
