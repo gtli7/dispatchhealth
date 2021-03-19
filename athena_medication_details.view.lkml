@@ -208,6 +208,7 @@ view: athena_medication_details {
       value: "-NULL"
     }
   }
+
   dimension: uti_first_line_antibiotics {
     description: "First line antibiotics for UTI treatment (Antibiotic HIC3 classes: %cephalosporin%, %penicillin%, nitrofuran derivatives antibacterial agents, absorbable sulfonamide antibacterial agents AND a subset of medications in the 'antibiotic antibacterial misc' [trimethoprim% and fosfomycin%])"
     type: yesno
@@ -216,7 +217,6 @@ view: athena_medication_details {
       OR ((lower(${medication_name}) LIKE '%trimethoprim%'
         OR lower(${medication_name}) LIKE '%fosfomycin%')
         AND lower(${hic3_description}) != 'ophthalmic antibiotics') ;;
-
     group_label: "Care Pathway First Line Antibiotic Groups"
   }
 
@@ -225,6 +225,24 @@ view: athena_medication_details {
     type: count_distinct
     sql:  ${athena_clinicalencounter.clinical_encounter_id};;
     filters: [uti_first_line_antibiotics: "yes"]
+    group_label: "Care Pathway First Line Antibiotic Groups"
+  }
+
+  dimension: skin_soft_tissue_first_line_antibiotics {
+    description: "First line antibiotics for skin and soft tissue treatment (Antibiotic HIC3 classes: %cephalosporin%, %penicillin%, nitrofuran derivatives antibacterial agents, absorbable sulfonamide antibacterial agents AND a subset of medications in the 'antibiotic antibacterial misc' [trimethoprim% and fosfomycin%])"
+    type: yesno
+    sql: lower(${medication_name}) LIKE '%cephalexin%'
+        OR lower(${medication_name}) LIKE '%mupirocin%'
+        OR lower(${medication_name}) LIKE '%clindamycin%'
+        OR lower(${medication_name}) LIKE '%augmentin%';;
+    group_label: "Care Pathway First Line Antibiotic Groups"
+    }
+
+  measure: count_skin_soft_tissue_care_pathway_first_line_antibiotic_appointments {
+    description: "Count appointments where first line skin and soft antibiotics were employed (Antibiotic HIC3 classes: %cephalosporin%, %penicillin%, nitrofuran derivatives antibacterial agents, absorbable sulfonamide antibacterial agents AND a subset of medications in the 'antibiotic antibacterial misc' [trimethoprim% and fosfomycin%])"
+    type: count_distinct
+    sql:  ${athena_clinicalencounter.clinical_encounter_id};;
+    filters: [skin_soft_tissue_first_line_antibiotics: "yes"]
     group_label: "Care Pathway First Line Antibiotic Groups"
   }
 
