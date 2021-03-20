@@ -190,7 +190,7 @@ indexes: ["patient_id", "anchor_care_request_id", "anchor_service_line_id", "anc
     }
   }
 
-  measure:  count_distinct_dhfu_patient_visit_within_30_days_of_base_visit {
+  measure:  count_distinct_dhfu_patient_within_30_days_of_base_visit {
     description: "Count the number of distinct patients with a DHFU follow up occurring within 30 days after the initial visit"
     type: count_distinct
     sql: ${patient_id} ;;
@@ -209,6 +209,5 @@ indexes: ["patient_id", "anchor_care_request_id", "anchor_service_line_id", "anc
       value: "yes"
     }
   }
-
 
  }
