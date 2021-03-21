@@ -18,7 +18,7 @@ view: funnel_agg {
       column: count_resolved_overflow { field: care_request_flat.count_resolved_overflow }
       column: lwbs_minus_overflow { field: care_request_flat.lwbs_minus_overflow }
       column: no_answer_no_show_count_minus_overflow { field: care_request_flat.no_answer_no_show_count_minus_overflow }
-      column: booked_shaping_placeholder_resolved_count_minus_overflow { field: care_request_flat.booked_shaping_placeholder_resolved_count_minus_overflow }
+      column: booked_shaping_placeholder_resolved_count_minus_overflow { field: care_request_flat.booked_resolved_count }
       column: clinical_service_not_offered_minus_overflow { field: care_request_flat.clinical_service_not_offered_minus_overflow }
       column: covid_resolved_minus_overflow { field: care_request_flat.covid_resolved_minus_overflow }
       column: insurance_resolved_minus_overflow { field: care_request_flat.insurance_resolved_minus_overflow }
@@ -38,6 +38,9 @@ view: funnel_agg {
       column: screened_escalated_ed_phone_count { field: care_request_flat.screened_escalated_ed_phone_count }
       column: overflow_complete_rate { field: care_request_flat.overflow_complete_rate }
       column: non_screened_escalated_phone_count_ed { field: care_request_flat.non_screened_escalated_phone_count_ed }
+      column: complete_count { field: care_request_flat.complete_count }
+      column: lwbs_accepted {field: care_request_flat.lwbs_accepted_count}
+      column: lwbs_scheduled {field:care_request_flat.lwbs_scheduled_count}
       filters: {
         field: care_request_flat.created_date
         value: "1460 days ago for 1460 days"
@@ -69,6 +72,60 @@ view: funnel_agg {
       year, day_of_month
     ]
   }
+
+  dimension: complete_count {
+    type: number
+  }
+
+  dimension: lwbs_accepted {
+    type: number
+  }
+
+  dimension: lwbs_scheduled {
+    type: number
+  }
+
+  measure: sum_complete {
+    label: "Complete Care Requests"
+    type: sum_distinct
+    sql: ${complete_count} ;;
+    sql_distinct_key: ${primary_key}  ;;
+    }
+
+  measure: sum_lwbs_accepted {
+    type: sum_distinct
+    sql: ${lwbs_accepted} ;;
+    sql_distinct_key: ${primary_key}  ;;
+    }
+
+  measure: sum_lwbs_scheduled {
+    label: "Sum Scheduled Overflow Acute Resolved"
+    type: sum_distinct
+    sql: ${lwbs_scheduled} ;;
+    sql_distinct_key: ${primary_key}  ;;
+    }
+
+  measure: captured_sum {
+    label: "Captured Care Requests"
+    description: "Capture (Accepted, Scheduled Acute, .7*Booked)"
+    type: number
+    value_format: "#,##0"
+    sql:
+      ${sum_lwbs_accepted}+${sum_lwbs_scheduled}+${total_booked_shaping_placeholder_resolved_count_minus_overflow}::float*.7+${sum_complete};;
+  }
+  measure: accepted_care_requests{
+    type: number
+    sql: ${sum_complete}+${sum_lwbs_accepted} ;;
+  }
+
+  measure: percent_loss_after_capture {
+    label: "Percent Capacity Constrainted"
+    type: number
+    value_format: "0%"
+    sql: (1-case when ${captured_sum} >0 then ${accepted_care_requests}::float/${captured_sum}::float else 0 end);;
+  }
+
+
 
 
   dimension: cpr_market {
@@ -116,11 +173,14 @@ view: funnel_agg {
     type: number
   }
   dimension: booked_shaping_placeholder_resolved_count_minus_overflow {
+    label: "Booked Resolved"
+
     description: "Care requests resolved for booked, shaping or placeholder"
     type: number
   }
 
   measure: total_booked_shaping_placeholder_resolved_count_minus_overflow {
+    label: "Sum Booked Resolved"
     type: sum_distinct
     sql: ${booked_shaping_placeholder_resolved_count_minus_overflow} ;;
     sql_distinct_key: ${primary_key}  ;;
