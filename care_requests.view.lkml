@@ -95,6 +95,12 @@ view: care_requests {
     sql: ${TABLE}.chrono_visit_id ;;
   }
 
+  dimension: automated_communication_consent {
+    description: "Flag indicating the patient consented to automated marketing messages"
+    type: yesno
+    sql: ${TABLE}.automated_communication_consent ;;
+  }
+
   dimension: consent_signature {
     type: string
     sql: ${TABLE}.consent_signature ;;
@@ -701,11 +707,12 @@ view: care_requests {
 
   dimension: request_type_consolidated {
     type: string
-    description: "The care request type, grouped into phone, web, mobile or other"
+    description: "The care request type, grouped into phone, web, mobile, express or other"
     sql: CASE
           WHEN ${request_type_id} = 0 THEN 'Phone'
           WHEN ${request_type_id} = 3 THEN 'Web'
           WHEN ${request_type_id} IN (2, 4) THEN 'Mobile'
+          WHEN ${request_type_id} = 9 THEN 'DispatchHealth Express'
           ELSE 'Other'
         END ;;
   }
