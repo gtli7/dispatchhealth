@@ -6561,6 +6561,7 @@ end  ;;
   measure: count_visits_not_approved_dhmt_solo {
     description: "Count visits with non-approved DHMT procedures or administered medications"
     type: count_distinct
+    value_format: "#,##0"
     sql: ${care_request_id};;
     group_label: "Grouped Procedure: Appointment Counts"
     filters: [non_approved_DHMT_solo_visits: "yes", care_requests.billable_est: "yes"]
