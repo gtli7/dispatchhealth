@@ -303,6 +303,15 @@ view: athena_document_orders {
     }
   }
 
+  measure: count_chem8_istat_performed_care_requests {
+    type: count_distinct
+    description: "Count the distinct visits where a CHEM8 ISTAT was performed / ordered"
+    group_label: "Counts"
+    sql: ${care_requests.id} ;;
+    filters: [clinical_order_type: "CHEM8+ ISTAT"]
+
+  }
+
 
   measure: third_party_lab_imaging {
     type: max
