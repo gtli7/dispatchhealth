@@ -1092,6 +1092,15 @@ measure: percent_repeat_callers {
     type: number
     sql: coalesce(${totalagentholdduration},0)+coalesce(${totalagenttalkduration},0)+coalesce(${totalagentwrapupduration},0);;
   }
+  dimension: care_request_call {
+    type: yesno
+    sql: ${care_request_flat.care_request_id} is not null ;;
+  }
+
+  dimension: complete_care_request_call {
+    type: yesno
+    sql: ${care_request_flat.complete}  ;;
+  }
 
   measure: average_handle_time {
     label: "Average Handle Time"
@@ -1106,6 +1115,48 @@ measure: percent_repeat_callers {
     }
     filters: {
       field: has_queue
+      value: "yes"
+    }
+  }
+
+  measure: average_handle_time_care_request_created{
+    label: "Average Handle Time (Care Request Created)"
+
+    type: average_distinct
+    sql: ${handle_time}::float/1000/60 ;;
+    sql_distinct_key:  concat(${conversationid}, ${queuename});;
+    value_format: "0.00"
+    filters: {
+      field: answered
+      value: "1"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
+    filters:{
+      field: care_request_call
+      value: "yes"
+    }
+  }
+
+  measure: average_handle_time_complete_care_request{
+    label: "Average Handle Time (Complete Care Request)"
+
+    type: average_distinct
+    sql: ${handle_time}::float/1000/60 ;;
+    sql_distinct_key:  concat(${conversationid}, ${queuename});;
+    value_format: "0.00"
+    filters: {
+      field: answered
+      value: "1"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
+    filters:{
+      field: complete_care_request_call
       value: "yes"
     }
   }
@@ -1215,6 +1266,10 @@ measure: percent_repeat_callers {
     }
   }
 
+  dimension: accepted_care_request_call {
+    type: yesno
+    sql:  ${care_request_flat.accept_mountain_intial_raw} is not null;;
+  }
   dimension: onboard_delay {
     type: number
     sql: (EXTRACT(EPOCH FROM (${care_request_flat.accept_mountain_intial_raw} - ${conversationstarttime_raw}))-${firstacdwaitduration}/1000)/60;;
@@ -1229,6 +1284,7 @@ measure: percent_repeat_callers {
       field: has_queue
       value: "yes"
     }
+    filters: [accepted_care_request_call: "yes"]
   }
 
   measure: average_onboard_delay {
@@ -1240,6 +1296,8 @@ measure: percent_repeat_callers {
       field: has_queue
       value: "yes"
     }
+    filters: [accepted_care_request_call: "yes"]
+
   }
 
   dimension: anthem_eligible {
