@@ -9,7 +9,7 @@ view: genesys_conversation_summary {
   dimension: inbound_demand_minus_market {
     type: yesno
     sql:
-    ${mediatype}='voice' and trim(lower(${queuename})) not like '%outbound%' and trim(lower(${queuename})) not like '%after hours%' and trim(lower(${queuename})) not like '%optimizer%' and trim(lower(${queuename})) not in('mobile requests','ma', 'rcm / billing', 'backline', 'development', 'secondary screening', 'dispatchhealth help desk', 'dispatch health nurse line', 'zzavtextest', 'pay bill', 'testing', 'initial follow up', 'rn1', 'rn2', 'rn3', 'rn4', 'rn5', 'rn6', 'rn7', 'rn8', 'rn9', 'ivr fail safe', 'covid testing results', 'ebony testing', 'ma/nurse', 'dispatchhealth help desk vendor', 'do not use ma/nurse', 'sem vip', 'covid task force', 'covid pierce county mass testing', 'acute care covid results & care request', 'phx', 'mobile request callbacks', 'click to call', 'dialer results', 'cancels', 'care team escalations', 'rn10', 'advance care fax queue', 'rn11', 'rn12', 'rn13','rn14', 'spanish ivr', 'vip help line', 'kaiser ma email', 'care web chat lab results', 'zztest_delete', 'none');;
+    ${mediatype}='voice' and trim(lower(${queuename})) not like '%outbound%' and trim(lower(${queuename})) not like '%after hours%' and trim(lower(${queuename})) not like '%optimizer%' and trim(lower(${queuename})) not in('mobile requests','ma', 'rcm / billing', 'backline', 'development', 'secondary screening', 'dispatchhealth help desk', 'dispatch health nurse line', 'zzavtextest', 'pay bill', 'testing', 'initial follow up', 'rn1', 'rn2', 'rn3', 'rn4', 'rn5', 'rn6', 'rn7', 'rn8', 'rn9', 'ivr fail safe', 'covid testing results', 'ebony testing', 'ma/nurse', 'dispatchhealth help desk vendor', 'do not use ma/nurse', 'sem vip', 'covid task force', 'covid pierce county mass testing', 'acute care covid results & care request', 'phx', 'mobile request callbacks', 'click to call', 'dialer results', 'cancels', 'care team escalations', 'rn10', 'advance care fax queue', 'rn11', 'rn12', 'rn13','rn14', 'spanish ivr', 'vip help line', 'kaiser ma email', 'care web chat lab results', 'zztest_delete', 'none', 'care web chat covid', 'care web chat', 'advanced care');;
 
   }
   dimension: has_queue {
@@ -176,7 +176,7 @@ view: genesys_conversation_summary {
 
   dimension: queuename_adj {
     type: string
-    sql: case when ${queuename} in('TIER 1', 'TIER 2') then 'TIER 1/TIER 2'
+    sql: case when ${queuename} in('TIER 1', 'TIER 2', 'Sykes General Care', 'General Care') then 'General Care'
       when ${queuename} in('Partner Direct', 'ATL Optum Care', 'LAS RCC', 'Humana Partner Direct', 'BOI Regence', 'POR Regence', 'SEA Regence', 'SPO Regence' ) then 'Partner Direct (Broad)'
       when ${queuename} in('DEN LAS SEM VIP', 'DTC Pilot') then 'DTC Pilot'
     else ${queuename}  end ;;
@@ -1092,6 +1092,15 @@ measure: percent_repeat_callers {
     type: number
     sql: coalesce(${totalagentholdduration},0)+coalesce(${totalagenttalkduration},0)+coalesce(${totalagentwrapupduration},0);;
   }
+  dimension: care_request_call {
+    type: yesno
+    sql: ${care_request_flat.care_request_id} is not null ;;
+  }
+
+  dimension: complete_care_request_call {
+    type: yesno
+    sql: ${care_request_flat.complete}  ;;
+  }
 
   measure: average_handle_time {
     label: "Average Handle Time"
@@ -1106,6 +1115,48 @@ measure: percent_repeat_callers {
     }
     filters: {
       field: has_queue
+      value: "yes"
+    }
+  }
+
+  measure: average_handle_time_care_request_created{
+    label: "Average Handle Time (Care Request Created)"
+
+    type: average_distinct
+    sql: ${handle_time}::float/1000/60 ;;
+    sql_distinct_key:  concat(${conversationid}, ${queuename});;
+    value_format: "0.00"
+    filters: {
+      field: answered
+      value: "1"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
+    filters:{
+      field: care_request_call
+      value: "yes"
+    }
+  }
+
+  measure: average_handle_time_complete_care_request{
+    label: "Average Handle Time (Complete Care Request)"
+
+    type: average_distinct
+    sql: ${handle_time}::float/1000/60 ;;
+    sql_distinct_key:  concat(${conversationid}, ${queuename});;
+    value_format: "0.00"
+    filters: {
+      field: answered
+      value: "1"
+    }
+    filters: {
+      field: has_queue
+      value: "yes"
+    }
+    filters:{
+      field: complete_care_request_call
       value: "yes"
     }
   }
@@ -1215,6 +1266,10 @@ measure: percent_repeat_callers {
     }
   }
 
+  dimension: accepted_care_request_call {
+    type: yesno
+    sql:  ${care_request_flat.accept_mountain_intial_raw} is not null;;
+  }
   dimension: onboard_delay {
     type: number
     sql: (EXTRACT(EPOCH FROM (${care_request_flat.accept_mountain_intial_raw} - ${conversationstarttime_raw}))-${firstacdwaitduration}/1000)/60;;
@@ -1229,6 +1284,7 @@ measure: percent_repeat_callers {
       field: has_queue
       value: "yes"
     }
+    filters: [accepted_care_request_call: "yes"]
   }
 
   measure: average_onboard_delay {
@@ -1240,6 +1296,8 @@ measure: percent_repeat_callers {
       field: has_queue
       value: "yes"
     }
+    filters: [accepted_care_request_call: "yes"]
+
   }
 
   dimension: anthem_eligible {
