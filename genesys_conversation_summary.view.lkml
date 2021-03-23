@@ -403,6 +403,13 @@ view: genesys_conversation_summary {
     sql: ${care_request_flat.accepted_or_scheduled_count}::float/(nullif(${distinct_answer_long_callers},0))::float ;;
   }
 
+  measure: care_request_created_rate {
+    type: number
+    value_format: "0%"
+    sql: ${care_request_flat.care_request_count}::float/(nullif(${distinct_answer_long_callers},0))::float ;;
+  }
+
+
 
   measure: sla_percent {
     type: number
