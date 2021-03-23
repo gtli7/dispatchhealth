@@ -2187,7 +2187,9 @@ join: ga_pageviews_clone {
   }
 
   join: genesys_conversation_wrapup {
-    sql_on: ${genesys_conversation_summary.conversationid}=${genesys_conversation_wrapup.conversationid} ;;
+    sql_on: ${genesys_conversation_summary.conversationid}=${genesys_conversation_wrapup.conversationid} and ${genesys_conversation_wrapup.queuename}=${genesys_conversation_summary.queuename}
+    and ${genesys_conversation_wrapup.purpose}='agent'
+    ;;
   }
 
   join: ga_experiments {
@@ -3916,7 +3918,8 @@ explore: genesys_conversation_summary {
   }
 
   join: genesys_conversation_wrapup {
-    sql_on: ${genesys_conversation_summary.conversationid}=${genesys_conversation_wrapup.conversationid} ;;
+    sql_on: ${genesys_conversation_summary.conversationid}=${genesys_conversation_wrapup.conversationid} and ${genesys_conversation_wrapup.queuename}=${genesys_conversation_summary.queuename}
+     and ${genesys_conversation_wrapup.purpose}='agent' ;;
   }
 
   join:  genesys_conversation_summary_same_day {
