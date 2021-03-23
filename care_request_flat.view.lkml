@@ -439,6 +439,15 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
     value_format: "0.00"
   }
 
+  dimension: created_to_accepted_minutes {
+    type: number
+    group_label: "Care Delivery Times"
+    description: "The number of minutes between created time and accepted time"
+    sql: (EXTRACT(EPOCH FROM ${first_accepted_raw})-EXTRACT(EPOCH FROM ${created_raw}))::float/60.0 ;;
+    value_format: "0.00"
+  }
+
+
   dimension: accepted_to_resolved_minutes {
     type: number
     group_label: "Care Delivery Times"

@@ -16,7 +16,7 @@ view: outbound_out_reach {
         column: complete {field: care_request_flat.complete}
         column: accepted_scheduled_or_booked {field: care_request_flat.accepted_or_scheduled_count}
         column: accepted {field: care_request_flat.accepted}
-
+        column: created_to_accepted_minutes {field: care_request_flat.created_to_accepted_minutes}
         column: time_call_to_creation_minutes {field:care_request_flat.time_call_to_creation_minutes}
 
         column: min_diff_to_outbound_call_minutes { field: care_request_flat.min_diff_to_outbound_call_minutes }
@@ -93,6 +93,9 @@ view: outbound_out_reach {
       value_format: "0.0"
       type: number
     }
+    dimension: created_to_accepted_minutes {
+      type: number
+    }
     dimension: count_distinct_outbound_calls {
       type: number
     }
@@ -132,6 +135,14 @@ view: outbound_out_reach {
       sql_distinct_key: ${care_request_id} ;;
       filters: [outbound_call_occured: "yes"]
     }
+
+  measure: median_created_to_accepted_minutes {
+    value_format: "0.0"
+    type: median_distinct
+    sql: ${created_to_accepted_minutes} ;;
+    sql_distinct_key: ${care_request_id} ;;
+    filters: [accepted: "yes"]
+  }
   measure: avg_min_diff_to_outbound_call_minutes {
     value_format: "0.0"
     type: average_distinct
