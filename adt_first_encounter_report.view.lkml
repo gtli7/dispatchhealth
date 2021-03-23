@@ -1,7 +1,31 @@
 view: adt_first_encounter_report {
   sql_table_name: adt_merged.adt_first_encounter_report ;;
   view_label: "Bouncebacks All Cause"
-# Pending view updates. Consider changing all measures using count_distinct sql to use the adt_first_encounter_report.careR_equest_id.
+# Pending view updates. Consider changing all measures using count_distinct sql to use the adt_first_encounter_report.care_request_id.
+
+
+# Always update when any new ADT vendor or market of coverage is added. This, when added as a filter to a report, ensure that only valid data is populated
+  dimension: active_market_bounceback_data {
+    description: "Flag defining market and time period valid ADT (bunceback) data is avilable for. Settng this flag to 'yes' will ensure the report only populates valid data "
+    type:  yesno
+    sql: CASE
+          WHEN lower(${markets.name}) IN (
+              'springfield',
+              'richmond',
+              'seattle',
+              'spokane',
+              'olympia',
+              'tacoma')
+            AND ${care_request_flat.complete_date} > '2020/03/01' THEN true
+          WHEN lower(${markets.name}) IN (
+              'denver',
+              'colorado springs')
+            AND ${care_request_flat.complete_date} > '2020/11/01' THEN true
+            ELSE false
+            END
+
+            ;;
+  }
 
   dimension_group: care_request_begin {
     type: time
