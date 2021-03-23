@@ -5174,7 +5174,8 @@ measure: non_screened_escalated_phone_count_funnel_percent {
   }
 
   measure: accepted_or_scheduled_count {
-    label: "Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled) Count"
+    label: "Captured Care Requests"
+    description: "Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled) Count"
     type: sum_distinct
     value_format: "0"
     sql: case when ${booked_resolved} then .7 else 1 end ;;
