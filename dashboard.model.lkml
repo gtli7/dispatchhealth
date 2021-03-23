@@ -2081,7 +2081,7 @@ join: resolved_reasons_summary {
   join: partner_population {
     relationship: one_to_many
     sql_on: ${care_requests.id} = ${partner_population.care_request_id} ;;
-    fields: []
+    fields: [partner_population]
   }
 
   join: growth_update_channels {
