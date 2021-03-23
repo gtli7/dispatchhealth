@@ -4867,6 +4867,11 @@ measure: non_screened_escalated_phone_count_funnel_percent {
     sql: ${channel_items.high_level_category_new} = 'Direct to Consumer' and not ${self_report_sem_visit};;
   }
 
+  dimension: saved_care_requests {
+    type: yesno
+    sql: ${saved_care_requests.completed_id} is not null ;;
+  }
+
 
 
   measure: complete_count {
@@ -4877,6 +4882,17 @@ measure: non_screened_escalated_phone_count_funnel_percent {
       value: "yes"
     }
   }
+
+  measure: saved_care_requests_count {
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters: {
+      field: complete
+      value: "yes"
+    }
+    filters: [saved_care_requests: "yes"]
+  }
+
 
   measure: complete_count_address {
     type: count_distinct

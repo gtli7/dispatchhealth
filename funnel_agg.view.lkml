@@ -136,6 +136,14 @@ view: funnel_agg {
   dimension: care_request_count {
     type: number
   }
+  measure: sum_care_request_count {
+    label: "Care Requests Created"
+
+    type: sum_distinct
+    sql: ${care_request_count} ;;
+    sql_distinct_key: ${primary_key} ;;
+  }
+
   dimension: count_distinct_bottom_funnel_care_requests {
     description: "Count of distinct care requests w/o phone screened"
     type: number
@@ -359,5 +367,30 @@ view: funnel_agg {
     else
     (${overflow_plus_booked_shaping_percent}-.25)*(.7-${productivity_agg.total_productivity})*100  end;;
   }
+  measure: conversion_rate {
+    description: "Complete/Care Requests Created"
+    label: "Percent Converted"
+    type: number
+    value_format: "0%"
+    sql: case when ${sum_care_request_count} >0 then ${sum_complete}::float/${sum_care_request_count}::float else 0 end ;;
+  }
+
+  measure: lwbs_rate {
+    label: "Percent LWBS"
+    type: number
+    value_format: "0%"
+    sql: (1-case when ${accepted_care_requests} >0 then ${sum_complete}::float/${accepted_care_requests}::float else 0 end);;
+  }
+
+
+  measure: capture_rate {
+    description: "Sum Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled)/Care Requests Created"
+    label: "Percent Captured"
+    type: number
+    value_format: "0%"
+    sql: case when ${sum_care_request_count} >0 then ${captured_sum}::float/${sum_care_request_count}::float else 0 end ;;
+  }
+
+
 
 }

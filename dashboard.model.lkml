@@ -365,6 +365,7 @@ include: "outbound_out_reach.view.lkml"
 include: "daily_on_call_tracking.view.lkml"
 include: "daily_variable_shift_tracking.view.lkml"
 include: "geneysis_pre_ivr_abandons_by_date_and_dnis.view.lkml"
+include: "saved_care_requests.view.lkml"
 
 
 datagroup: care_request_datagroup {
@@ -2285,6 +2286,9 @@ join: ga_pageviews_clone {
   }
   join: dates_rolling {
     sql_on: ${care_requests.created_date} = ${dates_rolling.day_date} ;;
+  }
+  join: saved_care_requests {
+    sql_on: ${care_request_flat.care_request_id}=${saved_care_requests.completed_id} ;;
   }
 
 }
