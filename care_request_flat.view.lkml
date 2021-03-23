@@ -4872,6 +4872,11 @@ measure: non_screened_escalated_phone_count_funnel_percent {
     sql: ${saved_care_requests.completed_id} is not null ;;
   }
 
+  measure: saved_percent {
+    type: number
+    value_format: "0%"
+    sql: case when ${complete_count} >0 then ${saved_care_requests_count}::float/${complete_count}::float else 0 end ;;
+  }
 
 
   measure: complete_count {
