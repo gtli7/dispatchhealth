@@ -2061,6 +2061,12 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
     type: yesno
     sql: ${on_scene_date} < '2021-03-04';;
   }
+
+  dimension: after_intraday_east_experiment {
+    type: yesno
+    sql: ${on_scene_date} >= '2021-02-10';;
+
+  }
   dimension_group: on_scene {
     type: time
     description: "The local date/time that the care request team arrived on-scene"
