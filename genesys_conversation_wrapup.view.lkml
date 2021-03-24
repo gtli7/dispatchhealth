@@ -61,6 +61,12 @@ view: genesys_conversation_wrapup {
               else 'Control' end;;
   }
 
+  dimension: sykes {
+    type: yesno
+    sql: lower(${username}) like '%sykes%' ;;
+  }
+
+
   dimension: wrapupcodename {
     type: string
     sql: trim(${TABLE}."wrapupcodename") ;;
