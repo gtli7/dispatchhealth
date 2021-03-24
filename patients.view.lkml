@@ -161,6 +161,22 @@ view: patients {
     group_label: "Age of Patient"
   }
 
+  dimension: age_categories_risk_strat {
+    description: "Age band used to track risk stratification from different risk protocols: 0-5, 6-10, 11-18, 19-39, 40-60, 61-79, 80+"
+    type: string
+    sql: CASE
+          WHEN ${age} >= 0 AND ${age} <= 5 THEN 'a (0 - 5)'
+          WHEN ${age} >= 6 AND ${age} <= 10 THEN 'b (6 - 10)'
+          WHEN ${age} >= 11 AND ${age} <= 18 THEN 'c (11 - 18)'
+          WHEN ${age} >= 19 AND ${age} <= 39 THEN 'd (19 - 39)'
+          WHEN ${age} >= 40 AND ${age} <= 60 THEN 'e (40 - 60)'
+          WHEN ${age} >= 61 AND ${age} <= 79 THEN 'f (61 - 79)'
+          WHEN ${age} >= 80 AND ${age} <= 110 THEN 'g (80+)'
+          ELSE NULL
+         END ;;
+    group_label: "Age of Patient"
+  }
+
   dimension: age_band_sort_2 {
     type: string
     hidden: yes
