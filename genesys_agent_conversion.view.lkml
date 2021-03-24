@@ -42,6 +42,11 @@ view: genesys_agent_conversion {
   dimension: market_id {}
   dimension: agent_name {}
 
+  dimension: sykes {
+    type: yesno
+    sql: lower(${agent_name}) like '%sykes%' ;;
+  }
+
 
   dimension: inbound_phone_calls {
     label: "Count Ditinct Phone Callers (Inbound Demand)"
