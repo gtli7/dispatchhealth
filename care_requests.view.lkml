@@ -1742,6 +1742,46 @@ measure: distinct_day_of_week {
     }
   }
 
+  dimension: advanced_care_eligibility {
+    description: "Care request is elgibile for AdvancedCare based on Dashboard configured Insurance Package, market and age"
+    type: string
+    sql: ${TABLE}.advanced_care_eligibility ;;
+  }
+
+  measure: count_advanced_care_eligible_care_requests {
+    description: "Count of the care requests that are elgibile for AdvancedCare based on Dashboard congifured Insurance Package, market and age"
+    type: count_distinct
+    sql: ${id} ;;
+    filters: [advanced_care_eligibility: "yes"]
+  }
+
+  dimension: advanced_care_status {
+    description: "Status of care requests submitted for Advanced Care (pending, accepted and rejected)"
+    type: string
+    sql: lower(${TABLE}.advanced_care_status) ;;
+  }
+
+  measure: count_advanced_care_submitted_care_requests {
+    description: "Count of care requests that were submitted for review by AdvancedCare"
+    type: count_distinct
+    sql: ${id} ;;
+    filters: [advanced_care_status: "pending, accepted, rejected"]
+  }
+
+  measure: count_advanced_care_accepted_care_requests {
+    description: "Count of care requests that were accepted by AdvancedCare"
+    type: count_distinct
+    sql: ${id} ;;
+    filters: [advanced_care_status: "accepted"]
+  }
+
+  measure: count_advanced_care_rejected_care_requests {
+    description: "Count of care requests that were rejected by AdvancedCare"
+    type: count_distinct
+    sql: ${id} ;;
+    filters: [advanced_care_status: "rejected"]
+  }
+
 
   # ----- Sets of fields for drilling ------
   set: detail {
