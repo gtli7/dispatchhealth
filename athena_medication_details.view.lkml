@@ -164,7 +164,7 @@ view: athena_medication_details {
     description: "The first word of the medication name"
     type: string
     sql: INITCAP(split_part(${medication_name}, ' ', 1)) ;;
-    drill_fields: [athena_diagnosis_codes.diagnosis_description]
+    drill_fields: [athena_diagnosis_codes.diagnosis_description, medication_name]
   }
 
   dimension: ndc {
