@@ -39,6 +39,11 @@ view: athena_inbox_review_provider {
     sql: ${TABLE}.document_action_id ;;
   }
 
+  dimension: document_id {
+    type: number
+    sql: ${TABLE}.document_id ;;
+  }
+
   dimension: npi {
     type: number
     sql: ${TABLE}.provider_npi_number ;;

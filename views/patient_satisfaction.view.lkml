@@ -62,6 +62,24 @@ view: patient_satisfaction {
     sql: ${TABLE}."nps_response" ;;
   }
 
+  dimension: promoter {
+    label: "Promoter"
+    type: yesno
+    sql: ${nps_response} > 8 ;;
+  }
+
+  dimension: detractor {
+    label: "Detractor"
+    type: yesno
+    sql: ${nps_response} < 7 ;;
+  }
+
+  dimension: nps_respondent {
+    label: "NPS survey respondent"
+    type: yesno
+    sql: ${nps_response} IS NOT NULL;;
+  }
+
   dimension: nps_response_rate {
     type: number
     hidden: yes

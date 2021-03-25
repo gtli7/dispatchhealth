@@ -4266,6 +4266,11 @@ explore: shift_teams
       AND ${athena_inbox_review_provider.created_raw} >= ${shift_teams.start_raw};;
   }
 
+  join: athena_document_results {
+    relationship: one_to_one
+    sql_on: ${athena_inbox_review_provider.document_id} = ${athena_document_results.document_id} ;;
+  }
+
   join: shift_team_market_assignment_logs {
     sql_on: ${shift_teams.id} = ${shift_team_market_assignment_logs.shift_team_id} AND ${shift_team_market_assignment_logs.lend} ;;
   }
