@@ -162,12 +162,11 @@ indexes: ["patient_id", "anchor_care_request_id", "anchor_service_line_id", "anc
     sql: ${seconds_from_anchor_visit} / 3600 <= 72 ;;
   }
 
-  dimension: dhfu_visits_within_30_days_of_base_visit {
-    description: "Identifies DHFU visits for the same patient occurring within 30 days of the initial visit (DHFU identified by Risk Protocol Name and Cheif Complaint)"
+  dimension: dhfu_visits_post_base_visit {
+    description: "Identifies DHFU visits for the same patient occurring after the initial visit (DHFU identified by Risk Protocol Name and Cheif Complaint)"
     type: yesno
-    sql: ${seconds_from_anchor_visit} / 3600 <= 720 AND
-    (lower(trim(${post_anchor_chief_complaint})) SIMILAR TO '%(dhfu|dh followup|dh follow up|dh follow-up|dh f/u|dispatchhealth followup|dispatchhealth follow up|dispatchhealth follow-up)%' OR
-         trim(${post_anchor_risk_protocol_name}) SIMILAR TO 'DispatchHealth Acute Care - follow up visit%');;
+    sql: lower(trim(${post_anchor_chief_complaint})) SIMILAR TO '%(dhfu|dh followup|dh follow up|dh follow-up|dh f/u|dispatchhealth followup|dispatchhealth follow up|dispatchhealth follow-up)%' OR
+         trim(${post_anchor_risk_protocol_name}) SIMILAR TO 'DispatchHealth Acute Care - follow up visit%';;
   }
 
   measure:  count_visits_within_30_days_of_base_visit {
@@ -190,25 +189,27 @@ indexes: ["patient_id", "anchor_care_request_id", "anchor_service_line_id", "anc
     }
   }
 
+  measure:  count_distinct_dhfu_patient_visit_within_3_days_of_base_visit {
+    label: "Count Distinct Patients With DHFU Within 3 Days"
+    description: "Count the number of distinct patients with a DHFU follow up occurring within 3 days after the initial visit"
+    type: count_distinct
+    sql: ${patient_id} ;;
+    filters: [dhfu_visits_post_base_visit: "yes",visits_within_3_days_of_base_visit: "yes"]
+  }
+
   measure:  count_distinct_dhfu_patient_visit_within_30_days_of_base_visit {
     label: "Count Distinct Patients With DHFU Within 30 Days"
     description: "Count the number of distinct patients with a DHFU follow up occurring within 30 days after the initial visit"
     type: count_distinct
     sql: ${patient_id} ;;
-    filters: {
-      field: dhfu_visits_within_30_days_of_base_visit
-      value: "yes"
-    }
+    filters: [dhfu_visits_post_base_visit: "yes",visits_within_30_days_of_base_visit: "yes"]
   }
 
   measure:  count_dhfu_visits_within_30_days_of_base_visit {
     description: "Count DHFU visits for the same patient occurring within 30 days of the initial visit (DHFU identified by Risk Protocol Name and Cheif Complaint)"
     type: count_distinct
     sql: ${concat_anchor_post_care_request_id} ;;
-    filters: {
-      field: dhfu_visits_within_30_days_of_base_visit
-      value: "yes"
-    }
+    filters: [dhfu_visits_post_base_visit: "yes",visits_within_30_days_of_base_visit: "yes"]
   }
 
  }
