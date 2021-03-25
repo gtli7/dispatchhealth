@@ -172,7 +172,12 @@ view: athena_cpt_codes {
     sql: ${athena_clinicalencounter.clinical_encounter_id};;
     group_label: "Grouped Procedure: Appointment Counts"
     filters: [blood_tests: "yes"]
+  }
 
+  dimension: catheter_procedures {
+    type: yesno
+    sql: ${cpt_code} IN ('51701', '51702', '51703', '51705', 'A4338', 'P9612') ;;
+    group_label: "Grouped Procedures"
   }
 
   measure: count_cpt_codes {
