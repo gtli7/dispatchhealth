@@ -140,6 +140,7 @@ view: adt_first_encounter_report {
   }
 
   dimension: 12_hour_first_admit_emergency {
+    label: "12 Hour First Emergency Bounceback"
     description: "First Emergency admittance identified within 12 hours of the DH care request on-scene date (3rd party vendor reported)"
     type: yesno
     sql: extract(epoch from ${cr_to_er_diff})/3600 <= 12;;
@@ -147,6 +148,7 @@ view: adt_first_encounter_report {
   }
 
   dimension: 24_hour_first_admit_emergency {
+    label: "24 Hour First Emergency Bounceback"
     description: "First Emergency admittance identified within 24 hours of the DH care request on-scene date (3rd party vendor reported)"
     type: yesno
     sql: extract(epoch from ${cr_to_er_diff})/3600 <= 24;;
@@ -154,6 +156,7 @@ view: adt_first_encounter_report {
   }
 
   dimension: 3_day_first_admit_emergency {
+    label: "3 Day First Emergency Bounceback"
     description: "First Emergency admittance identified within 3 days of the DH care request on-scene date (3rd party vendor reported)"
     type: yesno
     sql: extract(epoch from ${cr_to_er_diff})/3600 <= 72;;
@@ -161,6 +164,7 @@ view: adt_first_encounter_report {
   }
 
   dimension: 7_day_first_admit_emergency {
+    label: "7 Day First Emergency Bounceback"
     description: "First Emergency admittance identified within 7 days of the DH care request on-scene date (3rd party vendor reported)"
     type: yesno
     sql: extract(epoch from ${cr_to_er_diff})/3600 <= 168;;
@@ -168,6 +172,7 @@ view: adt_first_encounter_report {
   }
 
   dimension: 14_day_first_admit_emergency {
+    label: "14 Day First Emergency Bounceback"
     description: "First Emergency admittance identified within 14 days of the DH care request on-scene date (3rd party vendor reported)"
     type: yesno
     sql: extract(epoch from ${cr_to_er_diff})/3600 <= 336;;
@@ -175,6 +180,7 @@ view: adt_first_encounter_report {
   }
 
   dimension: 30_day_first_admit_emergency {
+    label: "30 Day First Emergency Bounceback"
     description: "First Emergency admittance identified within 30 days of the DH care request on-scene date (3rd party vendor reported)"
     type: yesno
     sql: extract(epoch from ${cr_to_er_diff})/3600 <= 720;;
@@ -182,6 +188,7 @@ view: adt_first_encounter_report {
   }
 
   measure: count_12_hour_first_admit_emergency {
+    label: "Count 12 Hour First Emergency Bounceback"
     description: "Count First Emergency admittances identified within 12 hours of the DH care request on-scene date (3rd party vendor reported)"
     type: count_distinct
     sql: ${care_requests.id}  ;;
@@ -193,6 +200,7 @@ view: adt_first_encounter_report {
   }
 
   measure: count_24_hour_first_admit_emergency {
+    label: "Count 24 Hour First Emergency Bounceback"
     description: "Count First Emergency admittances identified within 24 hours of the DH care request on-scene date (3rd party vendor reported)"
     type: count_distinct
     sql: ${care_requests.id}  ;;
@@ -204,6 +212,7 @@ view: adt_first_encounter_report {
   }
 
   measure: count_3_day_first_admit_emergency {
+    label: "Count 3 Day First Emergency Bounceback"
     description: "Count First Emergency admittances identified within 3 days of the DH care request on-scene date (3rd party vendor reported)"
     type: count_distinct
     sql: ${care_requests.id}  ;;
@@ -215,6 +224,7 @@ view: adt_first_encounter_report {
   }
 
   measure: count_7_day_first_admit_emergency {
+    label: "Count 7 Day First Emergency Bounceback"
     description: "Count First Emergency admittances identified within 7 days of the DH care request on-scene date (3rd party vendor reported)"
     type: count_distinct
     sql: ${care_requests.id}  ;;
@@ -227,6 +237,7 @@ view: adt_first_encounter_report {
 
 
   measure: count_14_day_first_admit_emergency {
+    label: "Count 14 Day First Emergency Bounceback"
     description: "Count First Emergency admittances identified within 14 days of the DH care request on-scene date (3rd party vendor reported)"
     type: count_distinct
     sql: ${care_requests.id}  ;;
@@ -238,6 +249,7 @@ view: adt_first_encounter_report {
   }
 
   measure: count_30_day_first_admit_emergency {
+    label: "Count 30 Day First Emergency Bounceback"
     description: "Count First Emergency admittances identified within 14 days of the DH care request on-scene date (3rd party vendor reported)"
     type: count_distinct
     sql: ${care_requests.id}  ;;
@@ -249,7 +261,7 @@ view: adt_first_encounter_report {
   }
 
   dimension: 24_hour_first_admit_inpatient_emergency {
-    label: "24 Hour First Admit Hospitalization"
+    label: "24 Hour First Hospitalization Bounceback"
     description: "First Hospitalization admittance (transer from Emergency) identified within 24 hours of the DH care request on-scene date (3rd party vendor reported)"
     type: yesno
     sql: extract(epoch from ${cr_to_hosp_diff})/3600 <= 24 ;;
@@ -257,7 +269,7 @@ view: adt_first_encounter_report {
   }
 
   dimension: 3_day_first_admit_inpatient_emergency {
-    label: "3 Day First Admit Hospitalization"
+    label: "3 Day First Hospitalization Bounceback"
     description: "First Hospitalization admittance (transer from Emergency) identified within 3 days of the DH care request on-scene date (3rd party vendor reported)"
     type: yesno
     sql: extract(epoch from ${cr_to_hosp_diff})/3600 <= 72 ;;
@@ -265,7 +277,7 @@ view: adt_first_encounter_report {
   }
 
   dimension: 7_day_first_admit_inpatient_emergency {
-    label: "7 Day First Admit Hospitalization"
+    label: "7 Day First Hospitalization Bounceback"
     description: "First Hospitalization admittance (transer from Emergency) identified within 7 days of the DH care request on-scene date (3rd party vendor reported)"
     type: yesno
     sql: extract(epoch from ${cr_to_hosp_diff})/3600 <= 168 ;;
@@ -273,7 +285,7 @@ view: adt_first_encounter_report {
   }
 
   dimension: 14_day_first_admit_inpatient_emergency {
-    label: "14 Day First Admit Hospitalization"
+    label: "14 Day First Hospitalization Bounceback"
     description: "First Hospitalization admittance (transer from Emergency) identified within 14 days of the DH care request on-scene date (3rd party vendor reported)"
     type: yesno
     sql: extract(epoch from ${cr_to_hosp_diff})/3600 <= 336 ;;
@@ -281,7 +293,7 @@ view: adt_first_encounter_report {
   }
 
   dimension: 30_day_first_admit_inpatient_emergency {
-    label: "30 Day First Admit Hospitalization"
+    label: "30 Day First Hospitalization Bounceback"
     description: "First Hospitalization admittance (transer from Emergency) identified within 30 days of the DH care request on-scene date (3rd party vendor reported)"
     type: yesno
     sql: extract(epoch from ${cr_to_hosp_diff})/3600 <= 720 ;;
@@ -326,7 +338,7 @@ view: adt_first_encounter_report {
 
 
   measure: count_24_hour_first_admit_inpatient_emergency {
-    label: "Count 24 Hour First Admit Hospitalization"
+    label: "Count 24 Hour First Hospitalization Bounceback"
     description: "Count First Hospitalization admittance (transer from Emergency) identified within 24 hours of the DH care request on-scene date (3rd party vendor reported)"
     type: count_distinct
     sql: ${care_requests.id}  ;;
@@ -338,7 +350,7 @@ view: adt_first_encounter_report {
   }
 
   measure: count_3_day_first_admit_inpatient_emergency {
-    label: "Count 3 Day First Admit Hospitalization"
+    label: "Count 3 Day First Hospitalization Bounceback"
     description: "Count First Hospitalization admittance (transer from Emergency) identified within 3 days of the DH care request on-scene date (3rd party vendor reported)"
     type: count_distinct
     sql: ${care_requests.id} ;;
@@ -350,7 +362,7 @@ view: adt_first_encounter_report {
   }
 
   measure: count_7_day_first_admit_inpatient_emergency {
-    label: "Count 7 Day First Admit Hospitalization"
+    label: "Count 7 Day First Hospitalization Bounceback"
     description: "Count First Hospitalization admittance (transer from Emergency) identified within 7 days of the DH care request on-scene date (3rd party vendor reported)"
     type: count_distinct
     sql: ${care_requests.id} ;;
@@ -362,7 +374,7 @@ view: adt_first_encounter_report {
   }
 
   measure: count_14_day_first_admit_inpatient_emergency {
-    label: "Count 14 Day First Admit Hospitalization"
+    label: "Count 14 Day First Hospitalization Bounceback"
     description: "Count First Hospitalization admittance (transer from Emergency) identified within 14 days of the DH care request on-scene date (3rd party vendor reported)"
     type: count_distinct
     sql: ${care_requests.id}  ;;
@@ -374,7 +386,7 @@ view: adt_first_encounter_report {
   }
 
   measure: count_30_day_first_admit_inpatient_emergency {
-    label: "Count 30 Day First Admit Hospitalization"
+    label: "Count 30 Day First Hospitalization Bounceback"
     description: "Count First Hospitalization admittance (transer from Emergency) identified within 30 days of the DH care request on-scene date (3rd party vendor reported)"
     type: count_distinct
     sql: ${care_requests.id}  ;;
@@ -386,6 +398,7 @@ view: adt_first_encounter_report {
   }
 
   dimension: 1_to_48_hour_cumulative_emergency_admittance_framework {
+    label: "1 to 48 Hour Cululative Emergency Bounceback Framework"
     description: "Categorizes the first recorded Emergency admittance by day for the first 30 days from the DH on-scene date"
     type: string
     sql: CASE WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 1 THEN '01 Hour'
@@ -405,6 +418,7 @@ view: adt_first_encounter_report {
     }
 
   dimension: 1_to_48_hour_inclusive_emergency_admittance_framework {
+    label: "1 to 48 Hour Inclusive Emergency Bounceback Framework"
     description: "Categorizes the first recorded Emergency admittance by day for the first 30 days from the DH on-scene date"
     type: string
     sql: CASE WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 1 THEN '(01) 1 Hour or Less'
@@ -426,6 +440,7 @@ view: adt_first_encounter_report {
 
 
   dimension: 30day_emergency_admittance_framework {
+    label: "30 Day First Emergency Bounceback Framework"
     description: "Categorizes the first recorded Emergency admittance by day for the first 30 days from the DH on-scene date"
     type: string
     sql: CASE WHEN extract(epoch from ${cr_to_er_diff})/3600 <= 24 THEN '01'
@@ -465,6 +480,7 @@ view: adt_first_encounter_report {
 
     }
   dimension: 30day_emergency_hospitalization_admittance_framework {
+    label: "30 Day First Hospitalization Bounceback Framework"
     description: "Categorizes the first recorded Hospitalization admittance (defined as transfer from Emergency admittance) by day for the first 30 days from the DH on-scene date"
     type: string
     sql: CASE WHEN extract(epoch from ${cr_to_hosp_diff})/3600 <= 24 THEN '01'
