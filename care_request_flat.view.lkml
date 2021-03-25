@@ -6267,7 +6267,7 @@ end  ;;
 
   dimension: insurance_resolved {
     type: yesno
-    sql: lower(${archive_comment}) LIKE '%no insurance / financial%' or lower(${archive_comment}) LIKE '%insurance not contracted (out of network)%'  ;;
+    sql: lower(${archive_comment}) LIKE '%no insurance / financial%' or lower(${archive_comment}) LIKE '%insurance not contracted (out of network)%' or lower(${archive_comment}) like '%payer denied service%'  ;;
   }
 
   measure: insurance_resolved_minus_overflow{
