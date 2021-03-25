@@ -68,7 +68,7 @@ view: athena_diagnosis_codes {
     description: "e.g. Mucopurulent chronic bronchitis"
     sql: ${TABLE}."diagnosis_code_description" ;;
     group_label: "Diagnosis Descriptions"
-    drill_fields: [bodily_system, diagnosis_code_group]
+    drill_fields: [bodily_system, diagnosis_code_group, athena_medication_details.medication_name_short]
   }
 
   dimension: asymptomatic_covid_related {
