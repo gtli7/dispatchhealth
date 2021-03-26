@@ -14,6 +14,12 @@ view: genesys_agg {
         column: non_initiating_care_count{field: genesys_conversation_summary.non_initiating_care_count}
         column: count_distinct {field:genesys_conversation_summary.count_distinct}
         column: wait_time_minutes {field: genesys_conversation_summary.average_wait_time_minutes}
+        column: short_ivr_abandons {field: geneysis_pre_ivr_abandons_by_date_and_dnis.sum_short_ivr_abandons}
+        column: long_ivr_abandons {field: geneysis_pre_ivr_abandons_by_date_and_dnis.sum_pre_ivr_abandons}
+        column: prompt_abandons {field: geneysis_pre_ivr_abandons_by_date_and_dnis.sum_prompt_abandons}
+
+
+
         filters: {
           field: genesys_conversation_summary.conversationstarttime_date
           value: "365 days ago for 365 days"
@@ -23,6 +29,38 @@ view: genesys_agg {
         indexes: ["conversationstarttime", "market_id"]
     }
 
+  dimension: long_ivr_abandons {
+    label: "Long IVR Abandons (over 15 seconds)"
+    type: number
+  }
+  measure: sum_long_ivr_abandons {
+    label: "Long IVR Abandons (over 15 seconds)"
+    type: sum_distinct
+    sql: ${long_ivr_abandons} ;;
+    sql_distinct_key: concat(${conversationstarttime_date}, ${market_id}) ;;
+  }
+
+  dimension: short_ivr_abandons {
+    label: "Short IVR Abandons (Between 7 and 15 seconds)"
+    type: number
+  }
+  measure: sum_short_ivr_abandons {
+    label: "Short IVR Abandons (Between 7 and 15 seconds)"
+    type: sum_distinct
+    sql: ${short_ivr_abandons} ;;
+    sql_distinct_key: concat(${conversationstarttime_date}, ${market_id}) ;;
+    }
+
+  dimension: prompt_abandons {
+    label: "Prompt Abandons (under 7 seconds)"
+    type: number
+  }
+  measure: sum_prompt_abandons {
+    label: "Prompt Abandons (under 7 seconds)"
+    type: sum_distinct
+    sql: ${prompt_abandons} ;;
+    sql_distinct_key: concat(${conversationstarttime_date}, ${market_id}) ;;
+    }
   dimension: wait_time_minutes {
     label: "Wait Time Minutes (Inbound Demand)"
     value_format: "0.00"
@@ -320,7 +358,7 @@ view: genesys_agg {
   }
   measure: all_contacts {
     type: number
-    sql: ${geneysis_custom_conversation_attributes_agg.sum_ivr_deflections}+${sum_non_initiating_care_count}+${sum_unanswered_care}+${answered_calls_related_to_care_dupe_or_short}+${contacts_w_intent_care_request_not_created}+
+    sql: ${sum_long_ivr_abandons}+${sum_short_ivr_abandons}+${sum_prompt_abandons}+${sum_non_initiating_care_count}+${sum_unanswered_care}+${answered_calls_related_to_care_dupe_or_short}+${contacts_w_intent_care_request_not_created}+
       ${accepted_agg.resolved_wo_accepted_scheduled_booked}+${accepted_agg.sum_lwbs_accepted}+${accepted_agg.sum_lwbs_scheduled}+${accepted_agg.sum_booked_resolved}+${accepted_agg.sum_complete};;
   }
 
