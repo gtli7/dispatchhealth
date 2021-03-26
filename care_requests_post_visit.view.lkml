@@ -212,4 +212,11 @@ indexes: ["patient_id", "anchor_care_request_id", "anchor_service_line_id", "anc
     filters: [dhfu_visits_post_base_visit: "yes",visits_within_30_days_of_base_visit: "yes"]
   }
 
+  measure:  count_distinct_visits_for_patient_in_30_days {
+    description: "Counts the distinct visits for the same patient occurring within 30 days"
+    type: count_distinct
+    sql: ${post_anchor_care_request_id} ;;
+    filters: [dhfu_visits_post_base_visit: "yes",visits_within_30_days_of_base_visit: "yes"]
+  }
+
  }
