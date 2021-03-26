@@ -701,6 +701,7 @@ explore: care_requests {
   join: collective_medical {
     relationship: one_to_many
     sql_on: ${patients.id} = ${collective_medical.patient_id} ;;
+    fields: []
   }
 
   join: corhio {
@@ -711,11 +712,13 @@ explore: care_requests {
   join: collective_medical_first_major_class_admit_date_post_visit {
     relationship: one_to_many
     sql_on: ${care_requests.id} = ${collective_medical_first_major_class_admit_date_post_visit.care_request_id};;
+    fields: []
   }
 
   join: collective_medical_first_emergency_inpatient_admit_date_post_visit {
     relationship: one_to_one
     sql_on: ${care_requests.id} = ${collective_medical_first_emergency_inpatient_admit_date_post_visit.care_request_id};;
+    fields: []
   }
 
   join: collective_medical_admit_emergency_and_inpatient_within_24_hours {
@@ -4264,6 +4267,11 @@ explore: shift_teams
     sql_on: ${provider_profiles.npi} = ${athena_inbox_review_provider.npi}
       AND ${athena_inbox_review_provider.created_raw} <= ${shift_teams.end_raw}
       AND ${athena_inbox_review_provider.created_raw} >= ${shift_teams.start_raw};;
+  }
+
+  join: athena_document_results {
+    relationship: one_to_one
+    sql_on: ${athena_inbox_review_provider.document_id} = ${athena_document_results.document_id} ;;
   }
 
   join: shift_team_market_assignment_logs {
