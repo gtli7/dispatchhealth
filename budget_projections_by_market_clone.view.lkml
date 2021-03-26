@@ -14,6 +14,8 @@ view: budget_projections_by_market_clone {
       date,
       week,
       month,
+      month_num,
+      day_of_month,
       quarter,
       year
     ]
