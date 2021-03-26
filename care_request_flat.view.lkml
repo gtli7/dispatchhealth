@@ -3319,12 +3319,12 @@ measure: avg_first_on_route_mins {
 
   dimension: lwbs_accepted {
     type: yesno
-    sql:(not ${complete}) and not ${booked_shaping_placeholder_resolved} and (${accepted});;
+    sql:(not ${complete}) and not ${booked_shaping_placeholder_resolved} and (${accepted}) and not ${scheduled_not_pafu_or_dhfu};;
   }
 
   dimension: lwbs_scheduled {
     type: yesno
-    sql:(not ${complete}) and not ${booked_shaping_placeholder_resolved} and (not ${accepted}) and ${scheduled_not_pafu_or_dhfu};;
+    sql:(not ${complete}) and not ${booked_shaping_placeholder_resolved} and ${scheduled_not_pafu_or_dhfu};;
   }
 
 
