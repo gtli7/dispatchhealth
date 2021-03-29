@@ -60,7 +60,42 @@ view: intraday_care_requests {
 
   dimension: etos {
     type: number
-    sql: (${TABLE}.meta_data ->> 'etos')::int ;;
+    sql: (${TABLE}.meta_data ->> 'etos')::int *60.0;;
+  }
+
+  measure: sum_etos {
+    type: sum_distinct
+    sql: ${etos} ;;
+    sql_distinct_key: ${care_request_id} ;;
+    filters: {
+      field: complete
+      value: "no"
+    }
+    filters: {
+      field: accepted
+      value: "yes"
+    }
+  }
+
+  dimension: drive_time {
+    type: number
+    sql: (${TABLE}.meta_data ->> 'drive_time')::int ;;
+
+
+  }
+
+  measure: sum_drive_time {
+    type: sum_distinct
+    sql: ${drive_time} ;;
+    sql_distinct_key: ${care_request_id} ;;
+    filters: {
+      field: complete
+      value: "no"
+    }
+    filters: {
+      field: accepted
+      value: "yes"
+    }
   }
 
   dimension: etos_interval {

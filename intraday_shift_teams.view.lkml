@@ -154,6 +154,16 @@ view: intraday_shift_teams {
     sql:(EXTRACT(EPOCH FROM ${max_end_raw}-${max_etc_or_now_raw})/3600)-.5;;
   }
 
+  measure: available_time_shift_new {
+    type: number
+    value_format: "0.00"
+    sql:
+    case when ${intraday_care_requests.sum_drive_time} is null or ${intraday_care_requests.sum_drive_time}=0 then -.5 else 0 end+
+    ((EXTRACT(EPOCH FROM ${max_end_raw}- now() AT TIME ZONE 'US/Mountain')-${intraday_care_requests.sum_drive_time}-${intraday_care_requests.sum_etos})/3600)-.5;;
+  }
+
+
+
   measure: booked_out_for {
     type: number
     value_format: "0.00"
@@ -180,6 +190,14 @@ view: intraday_shift_teams {
       else 0 end;;
 
   }
+
+  measure: patient_slots_new{
+    type: number
+    sql:case when floor(${available_time_shift_new}/${inclusive_shift_length}) >0 then floor(${available_time_shift_new}/${inclusive_shift_length})
+      else 0 end;;
+
+  }
+
 
   measure: sum_available_time_shift {
     type: sum_distinct

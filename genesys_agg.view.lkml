@@ -299,6 +299,15 @@ view: genesys_agg {
     type: number
     sql: case when ${sum_count_distinct}>0 then (${sum_answered_calls}::float+${non_phone_cr.sum_care_request_count}::float)/(${sum_count_distinct}::float+${non_phone_cr.sum_care_request_count}::float) else 0 end;;
   }
+  measure: answered_or_web_mobile {
+    type: number
+    sql:  ${sum_answered_calls}::float+${non_phone_cr.sum_care_request_count}::float;;
+  }
+
+  measure: offered_to_queue {
+    type: number
+    sql: ${sum_count_distinct}+${non_phone_cr.sum_care_request_count} ;;
+  }
 
   measure: percent_care_request_created {
     type: number

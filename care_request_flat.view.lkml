@@ -5890,7 +5890,7 @@ end  ;;
 
   dimension: contact_id_not_populated {
     type: yesno
-    sql: ${contact_id} IS NULL or trim(${contact_id})='';;
+    sql: ${genesys_conversation_summary.conversationid} is null;;
   }
 
   measure: contact_id_populated_count {

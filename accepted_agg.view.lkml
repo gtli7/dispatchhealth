@@ -78,7 +78,7 @@ view: accepted_agg {
 
 
   measure: sum_phone_accepted_or_scheduled_phone_count {
-    label: "Sum Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled)"
+    label: "Sum Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled) Phone"
     value_format: "0"
     type: sum_distinct
     sql: ${accepted_or_scheduled_phone_count} ;;
