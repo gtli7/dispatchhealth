@@ -52,6 +52,12 @@ view: athena_cpt_codes {
     sql: ${TABLE}.procedure_code ;;
   }
 
+  measure: procedures_count {
+    type: count
+    description: "Count of CPT codes across all appointments"
+    # sql: CONCAT(${appointment_id}, ${cpt_code}) ;;
+  }
+
   dimension: cpt_code {
     type: string
     description: "The CPT procedure code without modifiers"
@@ -178,13 +184,6 @@ view: athena_cpt_codes {
     type: yesno
     sql: ${cpt_code} IN ('51701', '51702', '51703', '51705', 'A4338', 'P9612') ;;
     group_label: "Grouped Procedures"
-  }
-
-  measure: count_cpt_codes {
-    type: count
-    description: "Count of All Non-E&M CPT Codes"
-    sql: ${cpt_code} ;;
-    filters: [e_and_m_cpt_code: "no"]
   }
 
 }

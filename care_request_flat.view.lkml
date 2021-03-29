@@ -2511,6 +2511,7 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
       day_of_week,
       day_of_week_index,
       day_of_month,
+      day_of_year,
       quarter,
       month_num,
       year
@@ -2963,7 +2964,7 @@ measure: avg_first_on_route_mins {
   dimension_group: today_mountain{
     type: time
     description: "Today's date/time, given in Mountain time"
-    timeframes: [day_of_week_index, week, month, day_of_month]
+    timeframes: [day_of_week_index, week, month, day_of_month, day_of_year]
     sql: CURRENT_DATE ;;
   }
 
