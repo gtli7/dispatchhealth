@@ -4262,17 +4262,29 @@ explore: shift_teams
     sql_on: ${users.id} = ${provider_profiles.user_id} ;;
   }
 
+  # Intermediate joins to get to documents closed by provider on shift
+  join: athena_provider {
+    relationship: one_to_one
+    sql_on: ${provider_profiles.npi} = ${athena_provider.provider_npi_number} ;;
+    fields: []
+  }
+
+  join: athena_document_results {
+    view_label: "Athena Results Managed"
+    type: left_outer
+    relationship: one_to_many
+    sql_on: ${athena_provider.scheduling_name} = ${athena_document_results.created_by} ;;
+  }
+
   join: athena_inbox_review_provider {
     relationship: one_to_many
     sql_on: ${provider_profiles.npi} = ${athena_inbox_review_provider.npi}
       AND ${athena_inbox_review_provider.created_raw} <= ${shift_teams.end_raw}
       AND ${athena_inbox_review_provider.created_raw} >= ${shift_teams.start_raw};;
   }
+  # End Athena inbox management block
 
-  join: athena_document_results {
-    relationship: one_to_one
-    sql_on: ${athena_inbox_review_provider.document_id} = ${athena_document_results.document_id} ;;
-  }
+
 
   join: shift_team_market_assignment_logs {
     sql_on: ${shift_teams.id} = ${shift_team_market_assignment_logs.shift_team_id} AND ${shift_team_market_assignment_logs.lend} ;;
