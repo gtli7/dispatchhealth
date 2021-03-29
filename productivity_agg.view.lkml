@@ -174,6 +174,12 @@ view: productivity_agg {
     sql: case when ${total_clinical_hours_no_arm_advanced}>0 then ${total_complete_count_no_arm_advanced}::float/${total_clinical_hours_no_arm_advanced}::float else 0 end ;;
   }
 
+  measure: zizzl_dashboard_productivity_diff {
+    type: number
+    value_format: "0.00"
+    sql: ${clinical_productivity} -${total_productivity} ;;
+  }
+
   measure: complete_visits_vs_budget {
     type: number
     value_format: "#,##0"
