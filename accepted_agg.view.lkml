@@ -9,6 +9,8 @@ view: accepted_agg {
       column: booked_resolved_count {field: care_request_flat.booked_resolved_count}
       column: lwbs_accepted {field: care_request_flat.lwbs_accepted_count}
       column: lwbs_scheduled {field:care_request_flat.lwbs_scheduled_count}
+      column: non_follow_up_limbo_count {field:care_request_flat.non_follow_up_limbo_count}
+
       column: care_request_created_count {field: care_request_flat.care_request_count}
       column: monthly_complete_run_rate {field: care_request_flat.monthly_visits_run_rate}
       column: market_id { field: markets.id_adj }
@@ -57,6 +59,12 @@ view: accepted_agg {
   dimension: lwbs_scheduled {
     type: number
   }
+
+  dimension: non_follow_up_limbo_count {
+    type: number
+  }
+
+
 
   dimension: care_request_created_count {
     type: number
@@ -119,6 +127,12 @@ view: accepted_agg {
     sql_distinct_key: concat(${first_accepted_date}, ${market_id}) ;;
   }
 
+  measure: sum_non_follow_up_limbo_count{
+    type: sum_distinct
+    sql: ${non_follow_up_limbo_count} ;;
+    sql_distinct_key: concat(${first_accepted_date}, ${market_id}) ;;
+  }
+
   measure: sum_lwbs_scheduled {
     label: "Sum Scheduled Overflow Acute Resolved"
     type: sum_distinct
@@ -136,7 +150,7 @@ view: accepted_agg {
     type: number
     value_format: "#,##0"
     sql:
-      ${sum_lwbs_accepted}+${sum_lwbs_scheduled}+${sum_booked_resolved}::float*.7+${sum_complete};;
+      ${sum_lwbs_accepted}+${sum_lwbs_scheduled}+${sum_booked_resolved}::float*.7+${sum_complete}+${sum_non_follow_up_limbo_count};;
   }
 
   measure: assigned_rate {
