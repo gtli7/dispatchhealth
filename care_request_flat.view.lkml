@@ -3195,6 +3195,12 @@ measure: avg_first_on_route_mins {
     type: number
     sql: round(${monthly_visits_run_rate}-${budget_projections_by_market_clone.sum_projected_visits}) ;;
   }
+  measure: diff_to_budget_percent {
+    type: number
+    value_format: "0%"
+    sql: case when  ${budget_projections_by_market_clone.sum_projected_visits} != 0 AND   ${budget_projections_by_market_clone.sum_projected_visits}  IS NOT NULL
+    then ${projections_diff}::float/ ${budget_projections_by_market_clone.sum_projected_visits} else 0 end;;
+  }
 
   measure: projections_diff_target {
     label: "Diff to productivity target"
