@@ -41,6 +41,8 @@ view: funnel_agg {
       column: complete_count { field: care_request_flat.complete_count }
       column: lwbs_accepted {field: care_request_flat.lwbs_accepted_count}
       column: lwbs_scheduled {field:care_request_flat.lwbs_scheduled_count}
+      column: non_follow_up_limbo_count {field:care_request_flat.non_follow_up_limbo_count}
+
       filters: {
         field: care_request_flat.created_date
         value: "1460 days ago for 1460 days"
@@ -85,6 +87,10 @@ view: funnel_agg {
     type: number
   }
 
+  dimension: non_follow_up_limbo_count {
+    type: number
+  }
+
   measure: sum_complete {
     label: "Complete Care Requests"
     type: sum_distinct
@@ -105,13 +111,19 @@ view: funnel_agg {
     sql_distinct_key: ${primary_key}  ;;
     }
 
+  measure: sum_non_follow_up_limbo_count{
+    type: sum_distinct
+    sql: ${non_follow_up_limbo_count} ;;
+    sql_distinct_key: ${primary_key} ;;
+  }
+
   measure: captured_sum {
     label: "Captured Care Requests"
     description: "Capture (Accepted, Scheduled Acute, .7*Booked)"
     type: number
     value_format: "#,##0"
     sql:
-      ${sum_lwbs_accepted}+${sum_lwbs_scheduled}+${total_booked_shaping_placeholder_resolved_count_minus_overflow}::float*.7+${sum_complete};;
+      ${sum_lwbs_accepted}+${sum_lwbs_scheduled}+${total_booked_shaping_placeholder_resolved_count_minus_overflow}::float*.7+${sum_complete}+${sum_non_follow_up_limbo_count};;
   }
   measure: accepted_care_requests{
     type: number

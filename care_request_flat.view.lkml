@@ -4440,6 +4440,14 @@ measure: avg_first_on_route_mins {
     }
   }
 
+
+  measure: lwbs_after_accepted {
+    label: "LWBS After Accepted Percent"
+    type: number
+    value_format: "0.0%"
+    sql: (1-case when (${complete_count}::float+${lwbs_accepted_count}::float)>0 then ${complete_count}::float/(${complete_count}::float+${lwbs_accepted_count}::float) else 0 end);;
+  }
+
   dimension: booked_shaping_placeholder_resolved {
     type: yesno
     sql:  lower(${archive_comment}) like '%book%';;
@@ -5216,17 +5224,28 @@ measure: non_screened_escalated_phone_count_funnel_percent {
     }
   }
 
+  dimension: non_follow_up_limbo {
+    type: yesno
+    sql: (${not_resolved_or_complete_count} and not ${pafu_or_follow_up}) ;;
+  }
+
+  dimension: capture_eligible {
+    type: yesno
+    sql: ${lwbs_accepted} or ${lwbs_scheduled} or ${complete} or ${booked_resolved} or (${non_follow_up_limbo});;
+  }
+
   measure: accepted_or_scheduled_count {
     label: "Captured Care Requests"
     description: "Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled) Count"
     type: sum_distinct
-    value_format: "0"
-    sql: case when ${booked_resolved} then .7 else 1 end ;;
+    value_format: "0.0"
+    sql: (case when ${booked_resolved} then .7 else 1 end)::float ;;
     sql_distinct_key:  ${care_request_id} ;;
     filters: {
       field: accepted_or_scheduled
       value: "yes"
     }
+
   }
 
   measure: accepted_or_scheduled_count_address {
@@ -5246,6 +5265,13 @@ measure: non_screened_escalated_phone_count_funnel_percent {
     value_format: "0%"
     sql: case when ${care_request_count}=0 then 0 else ${accepted_or_scheduled_count}::float/${care_request_count}::float end ;;
 
+  }
+
+  measure: percent_loss_after_capture {
+    label: "Capacity Constrainted Percent"
+    type: number
+    value_format: "0%"
+    sql: (1-case when ${accepted_or_scheduled_count} >0 then (${complete_count}::float+${lwbs_accepted_count}::float)/${accepted_or_scheduled_count}::float else 0 end);;
   }
 
   measure: accepted_or_scheduled_phone_count {
