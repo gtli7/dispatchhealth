@@ -93,6 +93,16 @@ SELECT
     drill_fields: [users.first_name, users.last_name, shift_teams.start_date, position, cars.name, actual_clinical_hours]
   }
 
+  measure: sum_paid_hours {
+    type: sum_distinct
+    value_format: "0.00"
+    group_label: "Hours Worked"
+    sql_distinct_key: ${primary_key} ;;
+    description: "Zizzl Paid Hours"
+    sql: ${actual_clinical_hours} ;;
+    filters: [cars.test_car: "no"]
+  }
+
   measure: sum_clinical_hours_no_arm_advanced_only {
     type: sum_distinct
     value_format: "0.00"
