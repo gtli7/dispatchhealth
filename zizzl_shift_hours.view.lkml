@@ -62,6 +62,13 @@ SELECT
     sql: ${TABLE}.actual_clinical_hours ;;
   }
 
+  dimension: punched_clinical_hours {
+    type: number
+    value_format: "0.00"
+    description: "Zizzl hours only"
+    sql: ${TABLE}.punched_clinical_hours ;;
+  }
+
   dimension: direct_clinical_pay {
     type: number
     value_format: "0.00"
@@ -91,6 +98,16 @@ SELECT
     sql: ${actual_clinical_hours} ;;
     filters: [actual_clinical_hours: ">0.24"]
     drill_fields: [users.first_name, users.last_name, shift_teams.start_date, position, cars.name, actual_clinical_hours]
+  }
+
+  measure: sum_punched_hours {
+    type: sum_distinct
+    value_format: "0.00"
+    group_label: "Hours Worked"
+    sql_distinct_key: ${primary_key} ;;
+    description: "Zizzl Punched Hours"
+    sql: ${punched_clinical_hours} ;;
+    filters: [cars.test_car: "no"]
   }
 
   measure: sum_clinical_hours_no_arm_advanced_only {

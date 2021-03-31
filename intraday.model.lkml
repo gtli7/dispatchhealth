@@ -18,14 +18,13 @@ explore:  intraday_shift_teams {
 
   join: intraday_care_requests {
     sql_on: ${intraday_care_requests.shift_team_id} = ${intraday_shift_teams.shift_team_id}
-    and ${intraday_care_requests.accepted_date}=${intraday_shift_teams.start_date}
-    and ${intraday_care_requests.updated_raw} > current_date - interval '1 day' and ${intraday_care_requests.service_line_id} not in('15');;
+    and ${intraday_care_requests.updated_raw} > current_date - interval '2 day' and ${intraday_care_requests.service_line_id} not in('15');;
   }
 
   join: intraday_potential_care_requests {
     relationship: one_to_many
     sql_on: ${markets_intra.id} = ${intraday_potential_care_requests.market_id} AND
-    ${intraday_potential_care_requests.created_raw} > current_date - interval '1 day' ;;
+    ${intraday_potential_care_requests.created_raw} > current_date - interval '2 day' ;;
   }
 
   join: primary_payer_dimensions_intra {
@@ -60,8 +59,7 @@ explore:  intraday_care_requests {
   sql_always_where: ${updated_raw} > current_date - interval '1 day';;
 
   join: intraday_shift_teams {
-    sql_on: ${intraday_care_requests.shift_team_id} = ${intraday_shift_teams.shift_team_id}
-      and ${intraday_care_requests.accepted_date}=${intraday_shift_teams.start_date};;
+    sql_on: ${intraday_care_requests.shift_team_id} = ${intraday_shift_teams.shift_team_id};;
   }
 
   join: last_care_request_etc_intra {
@@ -99,8 +97,7 @@ explore:  intraday_care_requests {
 explore:  intraday_care_requests_full {
   from: intraday_care_requests
   join: intraday_shift_teams {
-    sql_on: ${intraday_care_requests_full.shift_team_id} = ${intraday_shift_teams.shift_team_id}
-      and ${intraday_care_requests_full.accepted_date}=${intraday_shift_teams.start_date};;
+    sql_on: ${intraday_care_requests_full.shift_team_id} = ${intraday_shift_teams.shift_team_id};;
   }
   join: primary_payer_dimensions_intra {
     sql_on: ${intraday_care_requests_full.package_id} = ${primary_payer_dimensions_intra.insurance_package_id} ;;
