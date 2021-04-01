@@ -9,7 +9,7 @@ view: granular_shift_tracking_agg {
         column: id { field: cars.id }
         column: address_lat {}
         column: app_car_staff {}
-        column: emt_car_staff {}
+        column: dhmt_car_staff {field: granular_shift_tracking.emt_car_staff}
         column: complete_count {}
         column: care_request_id_agg {}
         column: patient_assigned_at_start_bool {field: granular_shift_tracking.max_patient_assigned_at_start_bool}
@@ -71,7 +71,7 @@ view: granular_shift_tracking_agg {
     }
     dimension: address_lat {}
     dimension: app_car_staff {}
-    dimension: emt_car_staff {}
+    dimension: dhmt_car_staff {}
     dimension: complete_count {
       type: number
     }

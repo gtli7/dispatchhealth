@@ -9,7 +9,7 @@ view: granular_full_shift_agg {
       column: market_name_adj { field: granular_shift_tracking_agg.market_name_adj }
       column: shift_date { field: granular_shift_tracking_agg.shift_date }
       column: app_car_staff { field: granular_shift_tracking_agg.app_car_staff }
-      column: emt_car_staff { field: granular_shift_tracking_agg.emt_car_staff }
+      column: dhmt_car_staff { field: granular_shift_tracking_agg.emt_car_staff }
       column: shift_team_id { field: granular_shift_tracking_agg.shift_team_id }
       column: shift_productivity { field: granular_shift_tracking_agg.shift_productivity }
       column: overflow_percent { field: funnel_agg.overflow_percent }
@@ -44,7 +44,7 @@ view: granular_full_shift_agg {
     type: date
   }
   dimension: app_car_staff {}
-  dimension: emt_car_staff {}
+  dimension: dhmt_car_staff {}
   dimension: shift_team_id {
     type: number
   }
