@@ -89,7 +89,7 @@ view: patient_satisfaction {
   dimension: alternative_dh_response_rate {
     type: number
     hidden: yes
-    sql: CASE WHEN ${alternative_dh_response} IS NOT NULL THEN 100 ELSE 0 END ;;
+    sql: CASE WHEN ${alternative_dh_response} IN ('Yes','Emergency Room') THEN 100 ELSE 0 END ;;
   }
 
   measure: nps_survey_response_rate {
@@ -109,7 +109,7 @@ view: patient_satisfaction {
     group_label: "ER Alternative Metrics"
     sql: ${alternative_dh_response_rate} ;;
     sql_distinct_key: ${care_requests.id} ;;
-    filters: [care_requests.billable_est: "yes", alternative_dh_response: "Yes, Emergency Room"]
+    filters: [care_requests.billable_est: "yes"]
   }
 
   measure: count_distinct_promoters {
