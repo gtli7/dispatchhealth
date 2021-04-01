@@ -200,6 +200,14 @@ view: athena_document_orders {
     filters: [clinical_order_genus: "XR", status: "-DELETED"]
   }
 
+  measure: count_xray_visits {
+    description: "Count of all X-ray visits"
+    group_label: "Counts"
+    type: count_distinct
+    sql: ${clinical_encounter_id} ;;
+    filters: [clinical_order_genus: "XR", status: "-DELETED"]
+  }
+
   measure: count_ultrasound_orders {
     description: "Count of all ultrasound orders"
     group_label: "Counts"
