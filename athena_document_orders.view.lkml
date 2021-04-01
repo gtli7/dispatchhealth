@@ -218,6 +218,14 @@ view: athena_document_orders {
     drill_fields: [clinical_order_type, care_requests.count_billable_est]
   }
 
+  measure: count_ultrasound_visits {
+    description: "Count of all ultrasound visits"
+    group_label: "Counts"
+    type: count_distinct
+    sql: ${clinical_encounter_id} ;;
+    filters: [clinical_order_genus: "US", status: "-DELETED"]
+  }
+
   measure: count_ct_scan_orders {
     description: "Count of all CT scan orders"
     group_label: "Counts"
@@ -227,6 +235,14 @@ view: athena_document_orders {
     drill_fields: [clinical_order_type, care_requests.count_billable_est]
   }
 
+  measure: count_ct_scan_visits {
+    description: "Count of all CT scan visits"
+    group_label: "Counts"
+    type: count_distinct
+    sql: ${clinical_encounter_id} ;;
+    filters: [clinical_order_genus: "CT", status: "-DELETED"]
+  }
+
   measure: count_mri_orders {
     description: "Count of all MRI orders"
     group_label: "Counts"
@@ -234,6 +250,14 @@ view: athena_document_orders {
     sql: ${document_id} ;;
     filters: [clinical_order_genus: "MR", status: "-DELETED"]
     drill_fields: [clinical_order_type, care_requests.count_billable_est]
+  }
+
+  measure: count_mri_visits {
+    description: "Count of all MRI visits"
+    group_label: "Counts"
+    type: count_distinct
+    sql: ${clinical_encounter_id} ;;
+    filters: [clinical_order_genus: "MR", status: "-DELETED"]
   }
 
   dimension: dme_flag {
