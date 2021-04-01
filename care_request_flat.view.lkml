@@ -4909,6 +4909,67 @@ measure: non_screened_escalated_phone_count_funnel_percent {
     }
   }
 
+  measure: complete_count_dtc {
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters: {
+      field: complete
+      value: "yes"
+    }
+    filters: {
+      field: channel_attribution.primary_channel_attribution
+      value: "Direct to Consumer"
+    }
+  }
+
+  measure: dtc_percent {
+    type: number
+    value_format: "0%"
+    sql: case when ${complete_count} >0 then ${complete_count_dtc}::float/${complete_count}::float else 0 end ;;
+  }
+
+  measure: strategic_percent {
+    type: number
+    value_format: "0%"
+    sql: case when ${complete_count} >0 then ${complete_count_strategic}::float/${complete_count}::float else 0 end ;;
+  }
+
+  measure: community_percent {
+    type: number
+    value_format: "0%"
+    sql: case when ${complete_count} >0 then ${complete_count_community}::float/${complete_count}::float else 0 end ;;
+  }
+
+
+
+  measure: complete_count_strategic {
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters: {
+      field: complete
+      value: "yes"
+    }
+    filters: {
+      field: channel_attribution.primary_channel_attribution
+      value: "Strategic"
+    }
+  }
+
+  measure: complete_count_community{
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters: {
+      field: complete
+      value: "yes"
+    }
+    filters: {
+      field: channel_attribution.primary_channel_attribution
+      value: "Community"
+    }
+  }
+
+
+
   measure: saved_care_requests_count {
     type: count_distinct
     sql: ${care_request_id} ;;

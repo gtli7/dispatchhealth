@@ -198,6 +198,7 @@ view: athena_document_orders {
     type: count_distinct
     sql: ${document_id} ;;
     filters: [clinical_order_genus: "XR", status: "-DELETED"]
+    drill_fields: [clinical_order_type, care_requests.count_billable_est]
   }
 
   measure: count_xray_visits {
@@ -214,6 +215,7 @@ view: athena_document_orders {
     type: count_distinct
     sql: ${document_id} ;;
     filters: [clinical_order_genus: "US", status: "-DELETED"]
+    drill_fields: [clinical_order_type, care_requests.count_billable_est]
   }
 
   measure: count_ct_scan_orders {
@@ -222,6 +224,7 @@ view: athena_document_orders {
     type: count_distinct
     sql: ${document_id} ;;
     filters: [clinical_order_genus: "CT", status: "-DELETED"]
+    drill_fields: [clinical_order_type, care_requests.count_billable_est]
   }
 
   measure: count_mri_orders {
@@ -230,6 +233,7 @@ view: athena_document_orders {
     type: count_distinct
     sql: ${document_id} ;;
     filters: [clinical_order_genus: "MR", status: "-DELETED"]
+    drill_fields: [clinical_order_type, care_requests.count_billable_est]
   }
 
   dimension: dme_flag {

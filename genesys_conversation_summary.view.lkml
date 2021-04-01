@@ -82,6 +82,17 @@ view: genesys_conversation_summary {
     sql: ${conversationstarttime_date} >='2021-03-04';;
   }
 
+  dimension: credit_card_removed {
+    label: "Credit Card Removed Date"
+    type: yesno
+    sql: ${conversationstarttime_date} >='2021-03-29';;
+  }
+
+  dimension: credit_card_removed_and_market{
+    type: yesno
+    sql: ${conversationstarttime_date} >='2021-03-29' and ${markets.short_name_adj} in('DEN', 'TPA');;
+  }
+
   dimension_group: month_placeholder {
     type: time
     timeframes: [

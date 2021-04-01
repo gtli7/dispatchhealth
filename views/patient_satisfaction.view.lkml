@@ -86,12 +86,28 @@ view: patient_satisfaction {
     sql: CASE WHEN ${nps_response} > 0 THEN 100 ELSE 0 END ;;
   }
 
+  dimension: alternative_dh_response_rate {
+    type: number
+    hidden: yes
+    sql: CASE WHEN ${alternative_dh_response} IN ('Yes','Emergency Room') THEN 100 ELSE 0 END ;;
+  }
+
   measure: nps_survey_response_rate {
     type: average_distinct
     description: "The NPS survey response rate for all completed visits"
     value_format: "0.0\%"
     group_label: "NPS Metrics"
     sql: ${nps_response_rate} ;;
+    sql_distinct_key: ${care_requests.id} ;;
+    filters: [care_requests.billable_est: "yes"]
+  }
+
+  measure: er_alternative_response_rate {
+    type: average_distinct
+    description: "The percentage of completed visits where the alternative to DH was ER"
+    value_format: "0.0\%"
+    group_label: "ER Alternative Metrics"
+    sql: ${alternative_dh_response_rate} ;;
     sql_distinct_key: ${care_requests.id} ;;
     filters: [care_requests.billable_est: "yes"]
   }
