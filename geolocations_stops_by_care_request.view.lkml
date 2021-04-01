@@ -69,6 +69,7 @@ view: geolocations_stops_by_care_request {
         END;;
   }
 
+
   dimension: squared_error {
     type:  number
     group_label: "On Scene Predictions"
@@ -87,6 +88,26 @@ view: geolocations_stops_by_care_request {
     THEN ABS(${stop_duration} - ${care_request_flat.mins_on_scene_predicted})
     ELSE NULL
     END;;
+  }
+
+  dimension: perc_error {
+    type: number
+    group_label: "On Scene Predictions"
+    description: "The percentage that the prediction is off by absolut_error/actual"
+    sql: CASE WHEN ${stop_duration} IS NOT NULL
+          THEN ${absolute_error}/${stop_duration}
+          ELSE NULL
+        END;;
+  }
+
+
+  dimension: perc_error_tier_stop_duration {
+    type: tier
+    description: "Predicted on-scene time minus geolocations stop duration, in tiers"
+    group_label: "On Scene Predictions"
+    tiers: [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1]
+    style: relational
+    sql: ${perc_error} ;;
   }
 
   dimension: actual_minus_pred_tier {
@@ -115,8 +136,6 @@ view: geolocations_stops_by_care_request {
     style: relational
     sql: abs(${stop_duration} - ${care_request_flat.mins_on_scene_predicted}) ;;
   }
-
-
 
   measure: average_actual_minus_pred {
     type: average_distinct
@@ -182,6 +201,25 @@ view: geolocations_stops_by_care_request {
   dimension: abs_actual_minus_predicted_less_than_15_min {
     type:  yesno
     sql: ${absolute_error} <= 15  ;;
+  }
+
+  parameter: perc_error_within_param {
+    type:  number
+    default_value: "0.25"
+  }
+
+  dimension: perc_error_within {
+    type:  yesno
+    sql:  ${perc_error} <= {% parameter perc_error_within_param %} ;;
+  }
+
+  measure:count_perc_error_within {
+    type:  count_distinct
+    sql: ${care_request_id} ;;
+    filters: {
+      field: perc_error_within
+      value: "yes"
+    }
   }
 
   measure: count_abs_actual_minus_predicted_greater_than_15_min {
