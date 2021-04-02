@@ -1657,6 +1657,7 @@ measure: distinct_day_of_week {
     label: "Escalated On-Scene to Ed"
     type: count_distinct
     sql: ${id} ;;
+    drill_fields: [detail*]
     filters: {
       field: escalated_on_scene_ed
       value: "yes"
