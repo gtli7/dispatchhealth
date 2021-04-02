@@ -248,6 +248,7 @@ END;;
     sql_distinct_key: ${claim_id} ;;
     sql: ${total_rvu} ;;
     filters: [is_valid_claim: "yes"]
+    drill_fields: [users.app_name, care_requests.count_billable_est, average_total_rvus]
   }
 
   dimension: allowed_amount {
