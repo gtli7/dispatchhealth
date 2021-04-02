@@ -20,8 +20,8 @@ view: high_overflow_days {
           value: "20 weeks"
         }
         filters: {
-          field: funnel_agg.overflow_percent
-          value: ">.2"
+          field: funnel_agg.overflow_plus_booked_shaping_percent
+          value: ">.25"
         }
       }
     }
