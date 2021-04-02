@@ -100,7 +100,7 @@ view: patient_satisfaction {
     sql: ${nps_response_rate} ;;
     sql_distinct_key: ${care_requests.id} ;;
     filters: [care_requests.billable_est: "yes"]
-    drill_fields: [users.app_name, care_requests.count_billable_est, nps_survey_response_rate]
+    drill_fields: [users.app_name, average_net_promoter_score, nps_survey_response_rate]
   }
 
   measure: er_alternative_response_rate {
@@ -160,7 +160,7 @@ view: patient_satisfaction {
     sql: ${net_promoter_score} ;;
     sql_distinct_key: ${care_request_id} ;;
     value_format: "0"
-    drill_fields: [users.app_name, care_requests.count_billable_est, average_net_promoter_score]
+    drill_fields: [users.app_name, average_net_promoter_score, nps_survey_response_rate]
   }
 
   dimension: overall_rating_response {
