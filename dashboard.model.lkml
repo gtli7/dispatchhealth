@@ -1676,6 +1676,11 @@ join: athena_procedurecode {
     sql_on: ${shift_team_members.shift_team_id} = ${shift_teams.id} ;;
   }
 
+  join: zizzl_employee_roster_details {
+    relationship: many_to_one
+    sql_on: ${shift_team_members.user_id} = ${zizzl_employee_roster_details.employee_id} ;;
+  }
+
   join: shifts_by_cars {
     relationship: many_to_one
     sql_on: ${shift_teams.car_id_start_date_id} = ${shifts_by_cars.car_id_start_date_id} ;;
