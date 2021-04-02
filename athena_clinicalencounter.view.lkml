@@ -352,6 +352,7 @@ view: athena_clinicalencounter {
     sql: ${chart_closure_24_hr_percentage} ;;
     sql_distinct_key: ${clinical_encounter_id} ;;
     filters: [encounter_status: "-DELETED"]
+    drill_fields: [users.app_name, care_requests.count_billable_est, average_24_hour_chart_closure_rate]
   }
 
   dimension: chart_signed_48_hours {

@@ -315,7 +315,8 @@ view: adt_first_encounter_report {
 
     sql: ${7_day_bb_pct} ;;
     sql_distinct_key: ${care_requests.id} ;;
-    filters: [care_requests.billable_est: "yes"]
+    filters: [care_requests.billable_est: "yes", provider_profiles.position: "advanced practice provider"]
+    drill_fields: [users.app_name, care_requests.count_billable_est, 7_day_avg_bounceback_rate]
   }
 
   dimension: 30_day_bb_pct {

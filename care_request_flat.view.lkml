@@ -983,6 +983,7 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
     value_format: "0.00"
     sql_distinct_key: concat(${care_request_id}) ;;
     sql: ${on_scene_time_minutes} ;;
+    drill_fields: [users.app_name, care_requests.count_billable_est, average_on_scene_time_minutes]
     filters: {
       field: is_reasonable_on_scene_time
       value: "yes"
@@ -4351,6 +4352,7 @@ measure: avg_first_on_route_mins {
     value_format: "0.0\%"
     sql: ${escalated_on_scene_pct} ;;
     sql_distinct_key: ${care_request_id} ;;
+    drill_fields: [users.app_name, care_requests.count_billable_est, avg_on_scene_escalation_pct]
   }
 
   measure: escalated_on_scene_to_ed_acute_ems_cost_savings_count {

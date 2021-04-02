@@ -132,6 +132,7 @@ SELECT
     type: number
     value_format: "0.00"
     sql: case when ${sum_clinical_hours_no_arm_advanced_only}>0 then ${care_request_flat.complete_count_no_arm_advanced}/${sum_clinical_hours_no_arm_advanced_only} else 0 end ;;
+    drill_fields: [users.app_name, shift_teams.count_distinct_shifts, sum_app_clinical_hours, productivity]
   }
 
   measure: sum_app_clinical_hours {

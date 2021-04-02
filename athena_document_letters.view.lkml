@@ -305,6 +305,21 @@ view: athena_document_letters {
     sql_distinct_key: ${care_request_flat.care_request_id} ;;
     filters: [clinical_letters_sent_all: "yes", care_requests.complete_visit: "yes"]
     group_label: "Counts"
+    drill_fields: [users.app_name, count_notes_sent_any, care_requests.count_billable_est]
+    # link: {
+    #   label: "Table Calc & Total"
+    #   url: "
+    #   {% assign table_calc = '[
+    #   { \"table_calculation\": \"percent_notes_sent\",
+    #   \"label\": \"Pct Clinical Notes Sent\",
+    #   \"expression\": \"${athena_document_letters.count_notes_sent_any} / ${care_requests.count_billable_est}\",
+    #   \"value_format\": null,
+    #   \"value_format_name\": \"percent_2\",
+    #   \"_kind_hint\": \"supermeasure\",
+    #   \"_type_hint\": \"number\"
+    #   }]' %}
+    #   {{ link }}&vis_config={{ vis_config | encode_uri }}&sorts=users.app_name+asc&toggle=dat,pik,vis&limit=500"
+    # }
   }
 
   dimension: clinical_letters_sent_pcp {
