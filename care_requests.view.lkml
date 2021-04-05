@@ -1657,6 +1657,7 @@ measure: distinct_day_of_week {
     label: "Escalated On-Scene to Ed"
     type: count_distinct
     sql: ${id} ;;
+    drill_fields: [detail*]
     filters: {
       field: escalated_on_scene_ed
       value: "yes"
@@ -1765,6 +1766,7 @@ measure: distinct_day_of_week {
     description: "Count of care requests that were submitted for review by AdvancedCare"
     type: count_distinct
     sql: ${id} ;;
+    drill_fields: [detail*]
     filters: [advanced_care_status: "pending, accepted, rejected"]
   }
 
@@ -1772,6 +1774,7 @@ measure: distinct_day_of_week {
     description: "Count of care requests that were accepted by AdvancedCare"
     type: count_distinct
     sql: ${id} ;;
+    drill_fields: [detail*]
     filters: [advanced_care_status: "accepted"]
   }
 
@@ -1779,6 +1782,7 @@ measure: distinct_day_of_week {
     description: "Count of care requests that were rejected by AdvancedCare"
     type: count_distinct
     sql: ${id} ;;
+    drill_fields: [detail*]
     filters: [advanced_care_status: "rejected"]
   }
 
@@ -1788,6 +1792,7 @@ measure: distinct_day_of_week {
     fields: [
       id,
       patients.ehr_id,
+      created_date,
       care_request_flat.complete_date,
       markets.name,
       patients.first_name,

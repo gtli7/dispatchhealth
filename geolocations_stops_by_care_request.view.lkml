@@ -49,6 +49,7 @@ view: geolocations_stops_by_care_request {
     sql: ${TABLE}.on_scene_time ;;
   }
 
+
   dimension: actual_minus_predicted {
     type: number
     group_label: "On Scene Predictions"
@@ -135,6 +136,17 @@ view: geolocations_stops_by_care_request {
     tiers: [0,5,10,15,30,60]
     style: relational
     sql: abs(${stop_duration} - ${care_request_flat.mins_on_scene_predicted}) ;;
+  }
+
+  dimension: model_version {
+    type: string
+    case: {
+      when: {
+        sql: ${care_request_flat.complete_date} < '2021-04-07'::date ;;
+        label: "v1.0.0"
+      }
+      else: "v2.0.0"
+    }
   }
 
   measure: average_actual_minus_pred {

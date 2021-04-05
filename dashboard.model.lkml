@@ -348,6 +348,7 @@ include: "clia_licensure_dh.view.lkml"
 include: "care_requests_post_visit.view.lkml"
 include: "zizzl_shift_hours_daily.view.lkml"
 include: "stops_summary.view.lkml"
+include: "channel_item_packages.view.lkml"
 
 include: "SEM_cost_per_complete_derived.view.lkml"
 
@@ -1677,6 +1678,11 @@ join: athena_procedurecode {
     sql_on: ${shift_team_members.shift_team_id} = ${shift_teams.id} ;;
   }
 
+  join: zizzl_employee_roster_details {
+    relationship: many_to_one
+    sql_on: ${shift_team_members.user_id} = ${zizzl_employee_roster_details.employee_id} ;;
+  }
+
   join: shifts_by_cars {
     relationship: many_to_one
     sql_on: ${shift_teams.car_id_start_date_id} = ${shifts_by_cars.car_id_start_date_id} ;;
@@ -2596,6 +2602,11 @@ explore: channel_items {
   join: channel_item_emr_providers {
     relationship: many_to_one
     sql_on: ${channel_items.id} = ${channel_item_emr_providers.channel_item_id} ;;
+  }
+
+  join: channel_item_packages {
+    relationship: one_to_many
+    sql_on: ${channel_items.id} = ${channel_item_packages.channel_item_id} ;;
   }
 
  join: sf_accounts {

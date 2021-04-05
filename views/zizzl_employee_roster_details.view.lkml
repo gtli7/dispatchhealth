@@ -112,6 +112,12 @@ view: zizzl_employee_roster_details {
     sql: ${TABLE}."default_jobs_full_path" ;;
   }
 
+  dimension: ambassador_flag {
+    type: yesno
+    description: "A flag indicating the provider is an ambassador"
+    sql: ${employee_position} IN ('Advanced Practice Provider Ambassador', 'New Market/Lead Ambassador') ;;
+  }
+
   dimension: employee_location {
     type: string
     sql: ${TABLE}."default_location_full_path" ;;
