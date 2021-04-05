@@ -29,6 +29,8 @@ view: granular_full_shift_agg {
       column: drive_time_minutes_shift { field: granular_shift_tracking_agg.avg_drive_time_minutes_shift }
       column: on_scene_time_minutes_shift { field: granular_shift_tracking_agg.avg_on_scene_time_minutes_shift }
       column: dead_time_at_office_after_shift { field: granular_shift_tracking_agg.avg_dead_time_at_office_after_shift }
+      column: accept_date { field: granular_shift_tracking_agg.min_accept_date }
+
 
       filters: {
         field: granular_shift_tracking_agg.shift_date
@@ -41,6 +43,15 @@ view: granular_full_shift_agg {
     description: "Market name where WMFR is included as part of Denver"
   }
   dimension: shift_date {
+    type: date
+  }
+
+  dimension: accept_date_diff {
+    type: yesno
+    sql: ${accept_date} != ${shift_date} ;;
+  }
+
+  dimension: accept_date {
     type: date
   }
   dimension: app_car_staff {}

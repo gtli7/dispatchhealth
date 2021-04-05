@@ -10,8 +10,18 @@ view: granular_shift_tracking {
     sql: max(${accept_time_of_day}) ;;
   }
 
-  measure: min_accept_time_of_day {
+  measure: min_accept_date {
     type: number
+    sql: min(${accept_date}) ;;
+  }
+
+  measure: max_accept_date {
+    type: date
+    sql: max(${accept_date}) ;;
+  }
+
+  measure: min_accept_time_of_day {
+    type: date
     sql: min(${accept_time_of_day}) ;;
   }
 
@@ -33,6 +43,11 @@ view: granular_shift_tracking {
   dimension: care_request_id {
     type: number
     sql: ${TABLE}."care_request_id" ;;
+  }
+
+  dimension: accept_date {
+    type: date
+    sql: ${TABLE}."accept_date" ;;
   }
 
   measure: care_request_id_agg {

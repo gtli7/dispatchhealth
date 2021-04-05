@@ -366,6 +366,7 @@ include: "daily_on_call_tracking.view.lkml"
 include: "daily_variable_shift_tracking.view.lkml"
 include: "geneysis_pre_ivr_abandons_by_date_and_dnis.view.lkml"
 include: "saved_care_requests.view.lkml"
+include: "care_agent_min_max_dates.view.lkml"
 
 
 datagroup: care_request_datagroup {
@@ -3923,6 +3924,10 @@ explore: genesys_conversation_summary {
   join: genesys_conversation_wrapup {
     sql_on: ${genesys_conversation_summary.conversationid}=${genesys_conversation_wrapup.conversationid} and ${genesys_conversation_wrapup.queuename}=${genesys_conversation_summary.queuename}
      and ${genesys_conversation_wrapup.purpose}='agent' ;;
+  }
+
+  join: care_agent_min_max_dates {
+    sql_on: ${genesys_conversation_wrapup.agent_name_raw} =${care_agent_min_max_dates.agent_name_raw} ;;
   }
 
   join:  genesys_conversation_summary_same_day {

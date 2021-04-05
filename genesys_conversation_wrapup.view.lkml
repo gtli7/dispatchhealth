@@ -15,6 +15,32 @@ view: genesys_conversation_wrapup {
     sql: ${TABLE}."conversationendtime" ;;
   }
 
+  dimension: agent_name_raw {
+    type: string
+    sql: ${TABLE}."agent_name_raw";;
+  }
+  measure: min_conversationendtime {
+    type: time
+    sql: min(${conversationendtime_raw}) ;;
+  }
+
+  measure: max_conversationendtime {
+    type: time
+    sql: max(${conversationendtime_raw}) ;;
+  }
+
+  dimension: agent_days_experience {
+    label: "Log"
+    type: number
+    sql: round(log(${agent_days_experience_raw})::numeric,1)  ;;
+  }
+
+  dimension: agent_days_experience_raw {
+    type: number
+    sql: EXTRACT(DAY FROM ${conversationendtime_raw}-${care_agent_min_max_dates.min_conversationendtime_raw});;
+  }
+
+
   dimension: conversationid {
     type: string
     sql: ${TABLE}."conversationid" ;;
