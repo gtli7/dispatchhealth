@@ -84,6 +84,13 @@ view: target_staffing {
     filters: [acute_tele_flag: "yes"]
   }
 
+  measure: sum_acute_tele_hours_adj_dual {
+    type: sum_distinct
+    sql_distinct_key: concat(${dates_rolling.day_date}::varchar, ${markets.name_adj_dual}, ${TABLE}.shift_type);;
+    sql: ${target_hours} ;;
+    filters: [acute_tele_flag: "yes"]
+  }
+
   measure: diff_to_target_hours {
     value_format: "0"
     type: number

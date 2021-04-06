@@ -209,6 +209,27 @@ view: shift_admin_hours {
               (DATE_PART('month', ${shift_day_date}::date) - DATE_PART('month', now()::date)) ;;
   }
 
+  dimension: acute_tele_flag {
+    type: yesno
+    sql: (${app_shift} = 'yes' and ${tele_shift} = 'no') OR (${dhmt_shift} = 'yes' and ${tele_shift} = 'yes') ;;
+  }
+
+  measure: sum_shift_car_hours {
+    type: sum_distinct
+    label: "Scheduled Car Hours (acute, tele only)"
+    sql: ${total_shift_hours} ;;
+    sql_distinct_key: ${primary_key} ;;
+    filters: [
+      acute_tele_flag: "yes",
+      mfr_shift: "no",
+      pierce_county_shift: "no",
+      delta_shift: "no",
+      on_call_shift: "no",
+      count_as_shift: "1"
+    ]
+  }
+
+
   measure: sum_shift_hours {
     type: sum_distinct
     sql:  ${total_shift_hours} ;;
