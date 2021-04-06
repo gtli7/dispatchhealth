@@ -2601,6 +2601,11 @@ explore: channel_items {
     sql_on: ${care_request_flat.care_request_id} = ${care_requests.id} ;;
   }
 
+  join: patients {
+    relationship: many_to_one
+    sql_on:  ${care_requests.patient_id} = ${patients.id} ;;
+  }
+
 
   join: channel_item_emr_providers {
     relationship: many_to_one
