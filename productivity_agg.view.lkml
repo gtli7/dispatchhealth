@@ -210,7 +210,7 @@ view: productivity_agg {
   }
   dimension: name_adj {
     description: "Market name where WMFR is included as part of Denver"
-    drill_fields: [granular_shift_tracking_agg.app_car_staff,granular_shift_tracking_agg.dhmt_car_staff ]
+    drill_fields: [granular_shift_tracking_agg.app_car_staff,granular_shift_tracking_agg.dhmt_car_staff, granular_shift_tracking_agg.car_name ]
 
   }
   dimension: id_adj {
