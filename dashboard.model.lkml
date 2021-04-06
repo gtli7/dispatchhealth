@@ -2302,6 +2302,9 @@ join: ga_pageviews_clone {
   join: saved_care_requests {
     sql_on: ${care_request_flat.care_request_id}=${saved_care_requests.completed_id} ;;
   }
+  join: goals_by_day_of_week {
+    sql_on: ${markets.id_adj} =${goals_by_day_of_week.market_id} and ${goals_by_day_of_week.month_month}=${shift_teams.start_month};;
+  }
 
 }
 
