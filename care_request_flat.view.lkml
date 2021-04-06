@@ -6070,7 +6070,7 @@ end  ;;
           ${most_recent_eta_start_date} is null
         )
         AND
-        ${notes_aggregated.notes_aggregated} not like '%pushed pt: pt availability%'
+       (${notes_aggregated.notes_aggregated} not like '%pushed pt: pt availability%' or ${notes_aggregated.notes_aggregated} is null)
         and not ${too_late_for_overflow}
         ;;
   }
