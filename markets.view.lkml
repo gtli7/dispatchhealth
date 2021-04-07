@@ -349,6 +349,12 @@ when ${short_name} = 'TUS' then 29
     sql: min(${finance_market_id}) ;;
   }
 
+  measure: market_name_adj_concatenated {
+    description: "Concatenated market name combining metro fire districts into parent market"
+    type: string
+    sql: array_to_string(array_agg(DISTINCT ${name_adj} ORDER BY ${name_adj}), ' | ' ) ;;
+  }
+
   # measure: digital_adjusted {
   #   type: number
   #   sql: ${care_request_complete.count_distinct}+${incontact_spot_check_by_market.spot_check_care_requests} ;;
