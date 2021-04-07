@@ -91,16 +91,22 @@ view: target_staffing {
     filters: [acute_tele_flag: "yes"]
   }
 
+  measure: dashboard_hours_adj {
+    value_format: "0"
+    type: number
+    sql:${shift_teams.sum_shift_hours_no_arm_advanced_only}-${daily_variable_shift_tracking.sum_actual_recommendation_captured}-${daily_on_call_tracking.sum_on_call_diff}  ;;
+  }
+
   measure: diff_to_target_hours {
     value_format: "0"
     type: number
-    sql:${shift_teams.sum_shift_hours_no_arm_advanced_only}- ${sum_acute_tele_hours} -${daily_variable_shift_tracking.sum_actual_recommendation_captured}-${daily_on_call_tracking.sum_on_call_diff}  ;;
+    sql:${dashboard_hours_adj}-${sum_acute_tele_hours_adj_dual}  ;;
   }
 
   measure: diff_to_target_percent {
     type: number
     value_format: "0%"
-    sql:  case when ${sum_acute_tele_hours} >0 then ${diff_to_target_hours}::float/${sum_acute_tele_hours}::float else 0 end;;
+    sql:  case when ${sum_acute_tele_hours_adj_dual} >0 then ${diff_to_target_hours}::float/${sum_acute_tele_hours_adj_dual}::float else 0 end;;
   }
 
   measure: percent_to_plan {

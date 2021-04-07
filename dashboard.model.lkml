@@ -5184,6 +5184,13 @@ explore:  on_call_tracking
     join: market_regions {
       sql_on: ${markets.id_adj_dual} = ${market_regions.market_id} ;;
     }
+    join: daily_on_call_tracking {
+      sql_on: ${daily_on_call_tracking.date_date} = ${shift_teams.start_date} and ${markets.short_name_adj_dual}=${daily_on_call_tracking.short_name_adj_dual} ;;
+    }
+
+    join: daily_variable_shift_tracking {
+      sql_on: ${daily_variable_shift_tracking.date_date} = ${shift_teams.start_date} and ${markets.short_name_adj_dual}=${daily_variable_shift_tracking.short_name_adj_dual} ;;
+    }
   }
 
 
