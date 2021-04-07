@@ -284,6 +284,40 @@ view: shift_teams {
     }
   }
 
+  measure: sum_app_hours_no_arm_advanced_only {
+    label: "Sum Shift Hours (no arm, advanced)"
+    type: sum_distinct
+    group_label: "Hours"
+    value_format: "0.0"
+    sql_distinct_key: ${id} ;;
+    sql: ${shift_hours} ;;
+    filters: [
+      cars.mfr_flex_car: "no",
+      cars.advanced_care_car: "no",
+      cars.test_car: "no",
+      provider_profiles.position: "advanced practice provider",
+      cars.name: "-NULL",
+      shift_types.name: "-multicare"
+      ]
+  }
+
+  measure: sum_dhmt_hours_no_arm_advanced_only {
+    label: "Sum Shift Hours (no arm, advanced)"
+    type: sum_distinct
+    group_label: "Hours"
+    value_format: "0.0"
+    sql_distinct_key: ${id} ;;
+    sql: ${shift_hours} ;;
+    filters: [
+      cars.mfr_flex_car: "no",
+      cars.advanced_care_car: "no",
+      cars.test_car: "no",
+      provider_profiles.position: "emt",
+      cars.name: "-NULL",
+      shift_types.name: "-multicare"
+    ]
+  }
+
   measure: productivity {
     type: number
     value_format: "0.00"

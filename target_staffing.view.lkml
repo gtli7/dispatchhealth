@@ -91,6 +91,22 @@ view: target_staffing {
     filters: [acute_tele_flag: "yes"]
   }
 
+  measure: sum_app_acute_tele_hours {
+    label: "Target APP Hours (acute, tele only)"
+    type: sum_distinct
+    sql_distinct_key: concat(${dates_rolling.day_date}::varchar, ${markets.name_adj_dual}, ${TABLE}.shift_type, ${TABLE}.provider_type);;
+    sql: ${target_hours} ;;
+    filters: [provider_type: "APP", shift_type: "Acute, Tele"]
+  }
+
+  measure: sum_dhmt_acute_tele_hours {
+    label: "Target DHMT Hours (acute, tele only)"
+    type: sum_distinct
+    sql_distinct_key: concat(${dates_rolling.day_date}::varchar, ${markets.name_adj_dual}, ${TABLE}.shift_type, ${TABLE}.provider_type);;
+    sql: ${target_hours} ;;
+    filters: [provider_type: "DHMT", shift_type: "Acute, Tele"]
+  }
+
   measure: dashboard_hours_adj {
     value_format: "0"
     type: number
@@ -153,6 +169,54 @@ view: target_staffing {
     sql_distinct_key: concat(${shift_details.local_expected_end_date}::varchar, ${markets_loan.name});;
     sql: ${target_hours} ;;
     filters: [provider_type: "APP", shift_type: "Acute"]
+  }
+
+  measure: dashboard_app_hours_adj {
+    value_format: "0"
+    type: number
+    sql:${shift_teams.sum_app_hours_no_arm_advanced_only}-${daily_variable_shift_tracking.sum_actual_recommendation_captured}-${daily_on_call_tracking.sum_on_call_diff}  ;;
+  }
+
+  measure: diff_to_target_app_hours {
+    value_format: "0"
+    type: number
+    sql:${dashboard_app_hours_adj}-${sum_app_acute_tele_hours}  ;;
+  }
+
+  measure: diff_to_target_app_percent {
+    type: number
+    value_format: "0%"
+    sql:  case when ${sum_app_acute_tele_hours} >0 then ${diff_to_target_app_hours}::float/${sum_app_acute_tele_hours}::float else 0 end;;
+  }
+
+  measure: percent_to_app_plan {
+    type: number
+    value_format: "0%"
+    sql:  1+${diff_to_target_app_percent};;
+  }
+
+  measure: dashboard_dhmt_hours_adj {
+    value_format: "0"
+    type: number
+    sql:${shift_teams.sum_dhmt_hours_no_arm_advanced_only}-${daily_variable_shift_tracking.sum_actual_recommendation_captured}-${daily_on_call_tracking.sum_on_call_diff}  ;;
+  }
+
+  measure: diff_to_target_dhmt_hours {
+    value_format: "0"
+    type: number
+    sql:${dashboard_dhmt_hours_adj}-${sum_dhmt_acute_tele_hours}  ;;
+  }
+
+  measure: diff_to_target_dhmt_percent {
+    type: number
+    value_format: "0%"
+    sql:  case when ${sum_dhmt_acute_tele_hours} >0 then ${diff_to_target_dhmt_hours}::float/${sum_dhmt_acute_tele_hours}::float else 0 end;;
+  }
+
+  measure: percent_to_dhmt_plan {
+    type: number
+    value_format: "0%"
+    sql:  1+${diff_to_target_dhmt_percent};;
   }
 
 }
