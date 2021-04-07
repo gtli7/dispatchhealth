@@ -4,7 +4,7 @@ view: adt_first_encounter_report {
 # Pending view updates. Consider changing all measures using count_distinct sql to use the adt_first_encounter_report.care_request_id.
 
 
-# Always update when any new ADT vendor or market of coverage is added. This, when added as a filter to a report, ensure that only valid data is populated
+# Always update active_market_bounceback_data AND active_market_bounceback_go_live_date when any new ADT vendor or market of coverage is added. This, when added as a filter to a report, ensure that only valid data is populated
   dimension: active_market_bounceback_data {
     description: "Flag defining market and time period valid ADT (bunceback) data is avilable for. Settng this flag to 'yes' will ensure the report only populates valid data "
     type:  yesno
@@ -26,6 +26,31 @@ view: adt_first_encounter_report {
 
             ;;
   }
+
+  dimension: active_market_bounceback_go_live_date {
+    description: "Go live date for valid data dependent on vendor and market.  "
+    type: string
+    sql: CASE
+          WHEN lower(${markets.name}) IN (
+              'springfield',
+              'richmond',
+              'seattle',
+              'spokane',
+              'olympia',
+              'tacoma')
+            AND ${care_request_flat.complete_date} > '2020/03/01' THEN '2020/03/01'
+          WHEN lower(${markets.name}) IN (
+              'denver',
+              'colorado springs')
+            AND ${care_request_flat.complete_date} > '2020/11/01' THEN '2020/11/01'
+            ELSE NULL
+            END
+
+            ;;
+  }
+
+
+
 
   dimension_group: care_request_begin {
     type: time
