@@ -132,11 +132,19 @@ view: target_staffing {
   }
 
   measure: sum_target_hours_datetime_explore {
-    label: "Target Hours"
+    label: "Target Hours (acute only)"
     type: sum_distinct
     sql_distinct_key: concat(${date_placeholder.date_placeholder_date}::varchar, ${markets.name});;
     sql: ${target_hours} ;;
     filters: [provider_type: "APP", shift_type: "Acute"]
+  }
+
+  measure: sum_acute_tele_hours_datetime_explore {
+    label: "Target Hours (acute, tele only)"
+    type: sum_distinct
+    sql_distinct_key: concat(${date_placeholder.date_placeholder_date}::varchar, ${markets.name_adj_dual}, ${TABLE}.shift_type);;
+    sql: ${target_hours} ;;
+    filters: [acute_tele_flag: "yes"]
   }
 
   measure: sum_target_hours_future {
