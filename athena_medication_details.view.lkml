@@ -232,10 +232,11 @@ view: athena_medication_details {
   dimension: skin_soft_tissue_first_line_antibiotics {
     description: "First line antibiotics for skin and soft tissue treatment (Antibiotic HIC3 classes: %cephalosporin%, %penicillin%, nitrofuran derivatives antibacterial agents, absorbable sulfonamide antibacterial agents AND a subset of medications in the 'antibiotic antibacterial misc' [trimethoprim% and fosfomycin%])"
     type: yesno
-    sql: lower(${medication_name}) LIKE '%cephalexin%'
+    sql: (lower(${medication_name}) LIKE '%cephalexin%'
         OR lower(${medication_name}) LIKE '%mupirocin%'
         OR lower(${medication_name}) LIKE '%clindamycin%'
-        OR lower(${medication_name}) LIKE '%augmentin%';;
+        OR lower(${medication_name}) LIKE '%augmentin%')
+        AND ${antibiotic_medication} ;;
     group_label: "Care Pathway First Line Antibiotic Groups"
     }
 
