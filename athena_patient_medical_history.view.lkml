@@ -131,7 +131,7 @@ view: athena_patient_medical_history {
 
     dimension: history_captured {
       type: yesno
-      sql: ${review_date} IS NOT NULL AND ${number_comorbidities} ;;
+      sql: ${review_date} IS NOT NULL AND ${number_comorbidities} > 0 ;;
     }
 
     dimension: notes {
