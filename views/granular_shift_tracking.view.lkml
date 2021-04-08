@@ -611,6 +611,7 @@ view: granular_shift_tracking {
     type: count_distinct
     sql: ${care_request_id} ;;
     sql_distinct_key: ${care_request_id} ;;
+    filters: [complete_bool: "yes"]
   }
 
 

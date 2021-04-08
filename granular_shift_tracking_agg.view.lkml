@@ -37,6 +37,7 @@ view: granular_shift_tracking_agg {
           field: cars.name
           value: "-%Swab%,-%Advanced%,-%MFR%,-%Screening%"
         }
+        filters: [granular_shift_tracking.complete_bool: "yes"]
       }
     }
 
