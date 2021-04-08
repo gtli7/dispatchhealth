@@ -2532,7 +2532,7 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
   }
 
    parameter: care_request_complete_timeframe_picker {
-    label: "Select care request Complete Date grouping "
+    label: "Complete Date Interval Selector"
     type: string
     allowed_value: { value: "Date" }
     allowed_value: { value: "Week" }
@@ -2543,6 +2543,8 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
   }
 
   dimension: dynamic_care_request_complete_timeframe {
+    label: "Complete Date Interval as Selected"
+    description: "Only use in the conjuction with the 'Complete Date Interval Selector' report level filter"
     type: string
     sql:
     CASE
