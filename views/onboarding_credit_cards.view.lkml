@@ -18,6 +18,7 @@ view: onboarding_credit_cards {
   dimension_group: created {
     type: time
     hidden: yes
+    convert_tz: no
     timeframes: [
       raw,
       time,
@@ -27,7 +28,17 @@ view: onboarding_credit_cards {
       quarter,
       year
     ]
-    sql: ${TABLE}."created_at" ;;
+    sql: ${TABLE}."created_at" AT TIME ZONE 'UTC' AT TIME ZONE ${timezones.pg_tz} ;;
+  }
+
+  dimension: credit_card_capture_source {
+    type: string
+    description: "The source of credit card capture: Onboarding, On-scene or None"
+    sql: CASE
+          WHEN ${created_raw} > ${care_request_flat.on_scene_raw} THEN 'On-Scene'
+          WHEN ${created_raw} < ${care_request_flat.on_scene_raw} THEN 'Onboarding'
+          ELSE 'None'
+        END;;
   }
 
   dimension_group: deleted {

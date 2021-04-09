@@ -112,24 +112,6 @@ view: credit_cards {
     sql: ${TABLE}.updated_at ;;
   }
 
-  dimension: cc_captured_at_onboarding {
-    type: yesno
-    hidden: yes
-    sql: ${onboarding_care_request_credit_cards.care_request_id} IS NOT NULL ;;
-  }
-
-  dimension: cc_captured_on_scene {
-    type: yesno
-    hidden: yes
-    sql: ${care_request_id} IS NOT NULL ;;
-  }
-
-  dimension: cc_captured_any {
-    type: yesno
-    hidden: yes
-    sql: ${cc_captured_at_onboarding} OR ${cc_captured_on_scene} ;;
-  }
-
   measure: count {
     type: count
     drill_fields: [id, ehr_name, care_requests.ehr_name, care_requests.consenter_name, care_requests.id]
@@ -139,21 +121,21 @@ view: credit_cards {
     type: count_distinct
     description: "Count of credit cards captured during patient onboarding"
     sql: ${care_requests.id} ;;
-    filters: [cc_captured_at_onboarding: "yes"]
+    filters: [onboarding_credit_cards.credit_card_capture_source: "Onboarding"]
   }
 
   measure: credit_card_count_onscene {
     type: count_distinct
     description: "Count of credit cards captured by DHMT on-scene"
     sql: ${care_requests.id} ;;
-    filters: [cc_captured_on_scene: "yes"]
+    filters: [onboarding_credit_cards.credit_card_capture_source: "On-Scene"]
   }
 
   measure: credit_card_count_any {
     type: count_distinct
     description: "Count of credit cards captured either during onboarding or on-scene"
     sql: ${care_requests.id} ;;
-    filters: [cc_captured_any: "yes"]
+    filters: [onboarding_credit_cards.credit_card_capture_source: "Onboarding, On-Scene"]
   }
 
   measure: credit_card_count_commercial {
