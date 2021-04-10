@@ -2532,7 +2532,7 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
   }
 
    parameter: care_request_complete_timeframe_picker {
-    label: "Complete Date Interval Selector"
+    label: "Date Interval Selector"
     type: string
     allowed_value: { value: "Date" }
     allowed_value: { value: "Week" }
@@ -2544,21 +2544,59 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
 
   dimension: dynamic_care_request_complete_timeframe {
     label: "Complete Date Interval as Selected"
-    description: "Only use in the conjuction with the 'Complete Date Interval Selector' report level filter"
+    description: "Complete date dynamic interval. Only use in the conjuction with the 'Complete Date Interval Selector' report level filter"
     type: string
     sql:
     CASE
-    WHEN {% parameter care_request_complete_timeframe_picker %} = 'Date' THEN TO_CHAR(${care_request_flat.complete_date},'YYYY-MM-DD')
-    WHEN {% parameter care_request_complete_timeframe_picker %} = 'Week' THEN ${care_request_flat.complete_week}
-    WHEN{% parameter care_request_complete_timeframe_picker %} = 'Month' THEN ${care_request_flat.complete_month}
+    WHEN {% parameter care_request_complete_timeframe_picker %} = 'Date' THEN TO_CHAR(${complete_date},'YYYY-MM-DD')
+    WHEN {% parameter care_request_complete_timeframe_picker %} = 'Week' THEN ${complete_week}
+    WHEN{% parameter care_request_complete_timeframe_picker %} = 'Month' THEN ${complete_month}
     WHEN{% parameter care_request_complete_timeframe_picker %} = 'Quarter' THEN
       CASE
-      WHEN substring(${care_request_flat.complete_quarter},6,2) = '01' THEN substring(${care_request_flat.complete_quarter},1,5)||'Q1'
-      WHEN substring(${care_request_flat.complete_quarter},6,2) = '04' THEN substring(${care_request_flat.complete_quarter},1,5)||'Q2'
-      WHEN substring(${care_request_flat.complete_quarter},6,2) = '07' THEN substring(${care_request_flat.complete_quarter},1,5)||'Q3'
-      WHEN substring(${care_request_flat.complete_quarter},6,2) = '10' THEN substring(${care_request_flat.complete_quarter},1,5)||'Q4'
+      WHEN substring(${complete_quarter},6,2) = '01' THEN substring(${complete_quarter},1,5)||'Q1'
+      WHEN substring(${complete_quarter},6,2) = '04' THEN substring(${complete_quarter},1,5)||'Q2'
+      WHEN substring(${complete_quarter},6,2) = '07' THEN substring(${complete_quarter},1,5)||'Q3'
+      WHEN substring(${complete_quarter},6,2) = '10' THEN substring(${complete_quarter},1,5)||'Q4'
       END
-    WHEN{% parameter care_request_complete_timeframe_picker %} = 'Year' THEN to_char(${care_request_flat.complete_date},'YYYY')
+    WHEN{% parameter care_request_complete_timeframe_picker %} = 'Year' THEN to_char(${complete_date},'YYYY')
+    END ;;
+  }
+
+  dimension: created_date_interval_as_selected {
+    description: "Created date dynamic interval. Only use in the conjuction with the 'Date Interval Selector' report level filter"
+    type: string
+    sql:
+    CASE
+    WHEN {% parameter care_request_complete_timeframe_picker %} = 'Date' THEN TO_CHAR(${created_date},'YYYY-MM-DD')
+    WHEN {% parameter care_request_complete_timeframe_picker %} = 'Week' THEN ${created_week}
+    WHEN{% parameter care_request_complete_timeframe_picker %} = 'Month' THEN ${created_month}
+    WHEN{% parameter care_request_complete_timeframe_picker %} = 'Quarter' THEN
+      CASE
+      WHEN substring(${created_quarter},6,2) = '01' THEN substring(${created_quarter},1,5)||'Q1'
+      WHEN substring(${created_quarter},6,2) = '04' THEN substring(${created_quarter},1,5)||'Q2'
+      WHEN substring(${created_quarter},6,2) = '07' THEN substring(${created_quarter},1,5)||'Q3'
+      WHEN substring(${created_quarter},6,2) = '10' THEN substring(${created_quarter},1,5)||'Q4'
+      END
+    WHEN{% parameter care_request_complete_timeframe_picker %} = 'Year' THEN to_char(${created_date},'YYYY')
+    END ;;
+  }
+
+  dimension: complete_resolved_date_interval_as_selected {
+    description: "Complete/resovled date dynamic interval. Only use in the conjuction with the 'Complete Date Interval Selector' report level filter"
+    type: string
+    sql:
+    CASE
+    WHEN {% parameter care_request_complete_timeframe_picker %} = 'Date' THEN TO_CHAR(${complete_resolved_date},'YYYY-MM-DD')
+    WHEN {% parameter care_request_complete_timeframe_picker %} = 'Week' THEN ${complete_resolved_week}
+    WHEN{% parameter care_request_complete_timeframe_picker %} = 'Month' THEN ${complete_resolved_month}
+    WHEN{% parameter care_request_complete_timeframe_picker %} = 'Quarter' THEN
+      CASE
+      WHEN substring(${complete_resolved_quarter},6,2) = '01' THEN substring(${complete_resolved_quarter},1,5)||'Q1'
+      WHEN substring(${complete_resolved_quarter},6,2) = '04' THEN substring(${complete_resolved_quarter},1,5)||'Q2'
+      WHEN substring(${complete_resolved_quarter},6,2) = '07' THEN substring(${complete_resolved_quarter},1,5)||'Q3'
+      WHEN substring(${complete_resolved_quarter},6,2) = '10' THEN substring(${complete_resolved_quarter},1,5)||'Q4'
+      END
+    WHEN{% parameter care_request_complete_timeframe_picker %} = 'Year' THEN to_char(${complete_resolved_date},'YYYY')
     END ;;
   }
 
@@ -2627,6 +2665,7 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
       time,
       week,
       month,
+      quarter,
       day_of_week_index,
       day_of_week,
       day_of_month

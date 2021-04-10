@@ -2618,6 +2618,12 @@ explore: channel_items {
     sql_on: ${channels.market_id} = ${markets.id} ;;
   }
 
+  join: timezones {
+    relationship: one_to_many
+    sql_on: ${markets.sa_time_zone} = ${timezones.rails_tz} ;;
+  }
+
+
 
   join: care_requests {
     sql_on:  ${channel_items.id} =${care_requests.channel_item_id} ;;
