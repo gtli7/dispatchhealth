@@ -229,8 +229,8 @@ view: athena_medication_details {
     group_label: "Care Pathway First Line Antibiotic Groups"
   }
 
-  dimension: skin_soft_tissue_first_line_antibiotics {
-    description: "First line antibiotics for skin and soft tissue treatment (Antibiotic HIC3 classes: %cephalosporin%, %penicillin%, nitrofuran derivatives antibacterial agents, absorbable sulfonamide antibacterial agents AND a subset of medications in the 'antibiotic antibacterial misc' [trimethoprim% and fosfomycin%])"
+  dimension: skin_soft_tissue_first_line_oral_antibiotics {
+    description: "Oral first line antibiotics for skin and soft tissue treatment (Antibiotic medication names: %cephalexin%, %mupirocin%, %clindamycin%, %augmentin%'. Only includes HIC3 categories defined in the antibiotic_medication dimension"
     type: yesno
     sql: (lower(${medication_name}) LIKE '%cephalexin%'
         OR lower(${medication_name}) LIKE '%mupirocin%'
@@ -244,7 +244,7 @@ view: athena_medication_details {
     description: "Count appointments where first line skin and soft antibiotics were employed (Antibiotic HIC3 classes: %cephalosporin%, %penicillin%, nitrofuran derivatives antibacterial agents, absorbable sulfonamide antibacterial agents AND a subset of medications in the 'antibiotic antibacterial misc' [trimethoprim% and fosfomycin%])"
     type: count_distinct
     sql:  ${athena_clinicalencounter.clinical_encounter_id};;
-    filters: [skin_soft_tissue_first_line_antibiotics: "yes"]
+    filters: [skin_soft_tissue_first_line_oral_antibiotics: "yes"]
     group_label: "Care Pathway First Line Antibiotic Groups"
   }
 

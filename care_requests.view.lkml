@@ -156,6 +156,7 @@ view: care_requests {
 
   dimension_group: created {
     type: time
+    convert_tz: no
     timeframes: [
       raw,
       time,
@@ -169,7 +170,7 @@ view: care_requests {
       quarter,
       year, day_of_month
     ]
-    sql: ${TABLE}.created_at ;;
+    sql: ${TABLE}.created_at AT TIME ZONE 'UTC' AT TIME ZONE ${timezones.pg_tz};;
   }
 
 

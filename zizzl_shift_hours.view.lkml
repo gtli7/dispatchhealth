@@ -15,7 +15,8 @@ SELECT
     FROM zizzl.weekly_rates_hours
     WHERE counter_name IN ('Holiday Worked 0.5','Double Pay','Overtime','Regular','Time and Half',
                            'Solo Shift','On Call Premium','Training','Salary Plus','Ambassador','Overtime 0.5')
-    AND latest AND clinical_shift AND position_full_path SIMILAR TO '%(DHMT/|NP/PA/)%'
+    AND latest AND clinical_shift AND (position_full_path SIMILAR TO '%(DHMT/|NP/PA/)%'
+      OR (default_provider_type_full_path in ('APP', 'DHMT') AND position_full_path = ''))
     GROUP BY 1,2,3,4)
 SELECT
     st.id AS shift_team_id,
@@ -35,7 +36,7 @@ SELECT
         ON stm.user_id = z.employee_id AND DATE(st.start_time) = z.counter_date
     WHERE pp.position IN ('emt','advanced practice provider') ;;
 
-      sql_trigger_value: SELECT MAX(id) FROM public.shift_teams ;;
+      sql_trigger_value: SELECT MAX(updated_at) FROM zizzl.weekly_rates_hours ;;
       indexes: ["shift_team_id", "user_id"]
     }
 
