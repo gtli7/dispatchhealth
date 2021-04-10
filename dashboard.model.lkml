@@ -2331,6 +2331,18 @@ join: ga_pageviews_clone {
     sql_on: ${all_on_route_shift_teams.id}=${all_on_route_shifts.shift_team_id};;
   }
 
+  join: all_on_route_cars {
+    from: cars
+    relationship: many_to_one
+    sql_on: ${all_on_route_shift_teams.car_id} = ${all_on_route_cars.id} ;;
+  }
+  join: all_on_routes_shifts_end_of_shift_times {
+    from: shifts_end_of_shift_times
+    sql_on: ${all_on_route_shift_teams.id} = ${all_on_routes_shifts_end_of_shift_times.shift_team_id} ;;
+
+  }
+
+
 
 
 }
