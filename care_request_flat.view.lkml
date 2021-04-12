@@ -4375,6 +4375,7 @@ measure: avg_first_on_route_mins {
     label: "Escalated On-Scene to Ed Count"
     type: count_distinct
     sql: ${care_request_id} ;;
+    drill_fields: [detail*]
     filters: {
       field: escalated_on_scene
       value: "yes"
@@ -4418,6 +4419,7 @@ measure: avg_first_on_route_mins {
   dimension: escalated_on_phone_ed {
     type: yesno
     sql:  (${archive_comment} LIKE '%Referred - Phone Triage: ED%' or  ${archive_comment} LIKE '%Referred via Phone: ED%' or ${archive_comment} LIKE '%Referred via Phone: Emergency Department%')  ;;
+    drill_fields: [detail*]
 
   }
 
@@ -4753,6 +4755,7 @@ measure: non_screened_escalated_phone_count_funnel_percent {
   measure: escalated_on_phone_ed_count {
     type: count_distinct
     sql: ${care_request_id} ;;
+    drill_fields: [detail*]
     filters: {
       field: escalated_on_phone_ed
       value: "yes"
@@ -6740,6 +6743,28 @@ end  ;;
     group_label: "Grouped Procedure: Appointment Counts"
     filters: [non_approved_DHMT_solo_visits: "yes", care_requests.billable_est: "yes"]
 
+  }
+
+  # ----- Sets of fields for drilling ------
+  set: detail {
+    fields: [
+      care_requests.id,
+      patients.ehr_id,
+      created_date,
+      care_request_flat.complete_date,
+      markets.name,
+      patients.first_name,
+      patients.last_name,
+      patients.age,
+      patients.gender,
+      care_requests.chief_complaint,
+      risk_assessments.protocol_name,
+      care_request_flat.on_scene_time_minutes,
+      channel_items.sub_type,
+      channel_items.name,
+      primary_resolved_reason,
+      secondary_resolved_reason
+    ]
   }
 
 }
