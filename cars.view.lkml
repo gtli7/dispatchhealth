@@ -154,6 +154,16 @@ view: cars {
     sql:  max(case when provider_profiles.position ='advanced practice provider' then concat(${users.first_name},' ',${users.last_name})  else null end);;
   }
 
+  measure: all_on_route_emt_car_staff {
+    type: string
+    sql:  max(case when ${all_on_route_shifts_provider_profiles.position} ='emt' then concat(${all_on_route_shifts_users.first_name},' ',${all_on_route_shifts_users.last_name})  else null end);;
+  }
+
+  measure: all_on_route_app_car_staff {
+    type: string
+    sql:  max(case when ${all_on_route_shifts_provider_profiles.position} ='advanced practice provider' then concat(${all_on_route_shifts_users.first_name},' ',${all_on_route_shifts_users.last_name})  else null end);;
+  }
+
   measure: count {
     type: count
     drill_fields: [id, name]

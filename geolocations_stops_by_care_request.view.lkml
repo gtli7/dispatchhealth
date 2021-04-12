@@ -142,7 +142,7 @@ view: geolocations_stops_by_care_request {
     type: string
     case: {
       when: {
-        sql: ${care_request_flat.complete_date} < '2021-04-07'::date ;;
+        sql: ${care_request_flat.complete_date} < '2021-04-09'::date ;;
         label: "v1.0.0"
       }
       else: "v2.0.0"

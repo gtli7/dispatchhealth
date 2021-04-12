@@ -368,6 +368,7 @@ include: "daily_variable_shift_tracking.view.lkml"
 include: "geneysis_pre_ivr_abandons_by_date_and_dnis.view.lkml"
 include: "saved_care_requests.view.lkml"
 include: "care_agent_min_max_dates.view.lkml"
+include: "all_on_route_shifts.view.lkml"
 
 
 datagroup: care_request_datagroup {
@@ -2305,6 +2306,44 @@ join: ga_pageviews_clone {
   join: goals_by_day_of_week {
     sql_on: ${markets.id_adj} =${goals_by_day_of_week.market_id} and ${goals_by_day_of_week.month_month}=${shift_teams.start_month};;
   }
+  join: all_on_route_shifts {
+    sql_on: ${care_request_flat.care_request_id}= ${all_on_route_shifts.care_request_id} ;;
+  }
+  join: all_on_route_shift_team_members {
+    from: shift_team_members
+    sql_on: ${all_on_route_shifts.shift_team_id}=${all_on_route_shift_team_members.shift_team_id} ;;
+  }
+  join:all_on_route_shifts_users
+   {
+    from: users
+    relationship: one_to_one
+    sql_on:  ${all_on_route_shift_team_members.user_id} = ${all_on_route_shifts_users.id};;
+  }
+  join: all_on_route_shifts_provider_profiles
+   {
+    from: provider_profiles
+    relationship: one_to_one
+    sql_on: ${all_on_route_shifts_provider_profiles.user_id} = ${all_on_route_shifts_users.id} ;;
+  }
+
+  join: all_on_route_shift_teams {
+    from: shift_teams
+    sql_on: ${all_on_route_shift_teams.id}=${all_on_route_shifts.shift_team_id};;
+  }
+
+  join: all_on_route_cars {
+    from: cars
+    relationship: many_to_one
+    sql_on: ${all_on_route_shift_teams.car_id} = ${all_on_route_cars.id} ;;
+  }
+  join: all_on_routes_shifts_end_of_shift_times {
+    from: shifts_end_of_shift_times
+    sql_on: ${all_on_route_shift_teams.id} = ${all_on_routes_shifts_end_of_shift_times.shift_team_id} ;;
+
+  }
+
+
+
 
 }
 

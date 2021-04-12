@@ -45,7 +45,8 @@ view: shift_teams {
       month,
       quarter,
       year,
-      hour_of_day
+      hour_of_day,
+      time_of_day
     ]
     sql: ${TABLE}.end_time AT TIME ZONE 'UTC' AT TIME ZONE ${timezones.pg_tz}  ;;
   }

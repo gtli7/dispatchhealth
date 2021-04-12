@@ -109,6 +109,16 @@ view: athena_payers {
     sql: ${TABLE}."insurance_package_id" ;;
   }
 
+  dimension: advanced_care_payer {
+    description: "The advanced care payer based on package ID and state (InnovAge, Humana or Denver Health)"
+    type: string
+    sql: CASE WHEN ${package_id} = 56872 AND ${states.abbreviation} = 'CO' THEN 'InnovAge'
+    WHEN ${package_id} IN (33532,47006,98660) AND ${states.abbreviation} = 'WA' THEN 'Humana'
+    WHEN ${package_id} IN (59381,320602,59346,59255) AND ${states.abbreviation} = 'CO' THEN 'Denver Health'
+    ELSE NULL
+    END;;
+  }
+
   dimension: insurance_package_id {
     type: string
     sql: ${TABLE}."insurance_package_id"::varchar ;;
