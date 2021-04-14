@@ -1826,29 +1826,29 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
     sql:    ${notes_aggregated.notes_aggregated}  like '%pushed pt, market delay%'
     or ${notes_aggregated.notes_aggregated}  like '%pushed pt: market delay%';;
   }
-  measure: count_pushed_overflow_note {
-    type: count_distinct
-    sql:  ${care_request_id} ;;
-    sql_distinct_key:  ${care_request_id} ;;
-    filters: [pushed_overflow_note: "yes"]
-  }
+  #measure: count_pushed_overflow_note {
+  #  type: count_distinct
+  #  sql:  ${care_request_id} ;;
+  #  sql_distinct_key:  ${care_request_id} ;;
+  #  filters: [pushed_overflow_note: "yes"]
+  #}
 
 
-  dimension: pushed_overflow {
-    type: yesno
-    sql:   (not ${pafu_or_follow_up}) and ${scheduled_visit} and lower(${service_lines.name}) like '%acute%' and
-     ${created_date} != ${scheduled_care_date}
-         and ${first_accepted_date}=${created_date} AND
-        ${notes_aggregated.notes_aggregated} not like '%pushed pt: pt availability%'
-        and
-         ${notes_aggregated.notes_aggregated} not like '%pushed pt, pt availability%';;
-  }
-  measure: count_pushed_overflow {
-    type: count_distinct
-    sql:  ${care_request_id} ;;
-    sql_distinct_key:  ${care_request_id} ;;
-    filters: [pushed_overflow: "yes"]
-  }
+  #dimension: pushed_overflow {
+  #  type: yesno
+  #  sql:   (not ${pafu_or_follow_up}) and ${scheduled_visit} and lower(${service_lines.name}) like '%acute%' and
+  #   ${created_date} != ${scheduled_care_date}
+  #       and ${first_accepted_date}=${created_date} AND
+  #      ${notes_aggregated.notes_aggregated} not like '%pushed pt: pt availability%'
+  #      and
+  #       ${notes_aggregated.notes_aggregated} not like '%pushed pt, pt availability%';;
+  #}
+  #measure: count_pushed_overflow {
+  #  type: count_distinct
+  #  sql:  ${care_request_id} ;;
+  #  sql_distinct_key:  ${care_request_id} ;;
+  #  filters: [pushed_overflow: "yes"]
+  #}
 
 
   dimension: accepted_cr_at_shift_start {
@@ -6201,6 +6201,18 @@ end  ;;
       value: "yes"
     }
   }
+
+  measure: count_pushed_visits {
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    sql_distinct_key: ${care_request_id} ;;
+    filters: {
+      field: pushed_visits
+      value: "yes"
+    }
+
+  }
+
 
 
 
