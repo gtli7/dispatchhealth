@@ -42,6 +42,7 @@ view: shift_teams {
       time,
       date,
       week,
+      day_of_week,
       month,
       quarter,
       year,
@@ -286,7 +287,7 @@ view: shift_teams {
   }
 
   measure: sum_app_hours_no_arm_advanced_only {
-    label: "Sum Shift Hours (no arm, advanced)"
+    label: "Sum Shift Hours APP (no arm, advanced)"
     type: sum_distinct
     group_label: "Hours"
     value_format: "0.0"
@@ -303,7 +304,7 @@ view: shift_teams {
   }
 
   measure: sum_dhmt_hours_no_arm_advanced_only {
-    label: "Sum Shift Hours (no arm, advanced)"
+    label: "Sum Shift Hours DHMT (no arm, advanced)"
     type: sum_distinct
     group_label: "Hours"
     value_format: "0.0"
