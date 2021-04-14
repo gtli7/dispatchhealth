@@ -235,7 +235,8 @@ view: athena_medication_details {
     sql: (lower(${medication_name}) LIKE '%cephalexin%'
         OR lower(${medication_name}) LIKE '%mupirocin%'
         OR lower(${medication_name}) LIKE '%clindamycin%'
-        OR lower(${medication_name}) LIKE '%augmentin%')
+        OR lower(${medication_name}) LIKE '%augmentin%'
+        OR lower(${medication_name}) LIKE '%doxycycline%')
         AND ${antibiotic_medication} ;;
     group_label: "Care Pathway First Line Antibiotic Groups"
     }
