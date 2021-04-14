@@ -27,8 +27,14 @@ union all
 select
 on_route.care_request_id, 0 as on_route_cs_id, 0 as accept_cs_id, cst.shift_team_id as cs_shift_team_id, cst.shift_team_id as cst_shift_team_id, t.pg_tz, max(on_route.started_at) AT TIME ZONE 'UTC' AT TIME ZONE t.pg_tz as started_at, max(on_route.created_at) AT TIME ZONE 'UTC' AT TIME ZONE t.pg_tz as created_at, null as accepted_at, 'final' as type
 from public.care_request_statuses on_route
-join public.care_requests_shift_teams cst
-on cst.care_request_id=on_route.care_request_id and cst.is_dispatched is true
+join (select care_request_id, shift_team_id
+from
+(select ROW_NUMBER() OVER(PARTITION BY care_request_id
+                                ORDER BY updated_at DESC) AS rn, care_request_id, care_requests_shift_teams.shift_team_id
+from public.care_requests_shift_teams
+where care_requests_shift_teams.is_dispatched is true)lq
+where rn=1) cst
+on cst.care_request_id=on_route.care_request_id
 join public.care_requests cr
 on cr.id=on_route.care_request_id
 JOIN markets

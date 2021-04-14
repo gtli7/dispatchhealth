@@ -2,11 +2,19 @@ view: care_request_flat {
   derived_table: {
     sql:
 WITH ort AS (
-    SELECT DISTINCT
+    select shift_team_id,
+        start_time,
+        care_request_id,
+        on_route
+        from
+    (SELECT DISTINCT
         st.id AS shift_team_id,
         st.start_time,
         crst.care_request_id,
-        crs.on_route
+        crs.on_route,
+        crst.updated_at,
+         ROW_NUMBER() OVER(PARTITION BY crst.care_request_id
+                                ORDER BY crst.updated_at DESC) AS rn
         FROM (
             SELECT
                 care_request_id,
@@ -18,7 +26,9 @@ WITH ort AS (
             ON crs.care_request_id = crst.care_request_id AND crst.is_dispatched
         LEFT JOIN public.shift_teams st
             ON crst.shift_team_id = st.id
-        GROUP BY 1,2,3,4)
+         where  crst.care_request_id =584195
+        GROUP BY 1,2,3,4,5)lq
+        where rn=1)
     SELECT
         markets.id AS market_id,
         cr.id as care_request_id,

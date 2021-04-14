@@ -1,5 +1,16 @@
 view: care_requests_shift_teams {
-  sql_table_name: (SELECT
+  derived_table: {
+    sql:select
+    id,
+    care_request_id,
+     on_scene_shift_team_id,
+    virtual_shift_team_id,
+    is_dispatched,
+    created_at,
+    updated_at, rn
+from
+(SELECT ROW_NUMBER() OVER(PARTITION BY st1.care_request_id
+                                ORDER BY st1.updated_at DESC) AS rn,
     st1.id,
     st1.care_request_id,
     st1.shift_team_id AS on_scene_shift_team_id,
@@ -19,7 +30,12 @@ view: care_requests_shift_teams {
             on shift_types.id=shift_teams.shift_type_id
             WHERE NOT is_dispatched and shift_types.name='telepresentation_virtual_app') AS st2
         ON st1.care_request_id = st2.care_request_id
-    WHERE st1.is_dispatched);;
+    WHERE st1.is_dispatched)lq
+    where rn=1;;
+
+      sql_trigger_value: select max(care_requests_shift_teams.care_request_id from public.care_requests_shift_teams where care_requests_shift_teams.created_at > current_date- interval '3 day'' ;;
+      indexes: ["care_request_id", "on_scene_shift_team_id", "virtual_shift_team_id"]
+    }
 
   drill_fields: [id]
 
