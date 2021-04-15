@@ -71,6 +71,13 @@ view: athena_diagnosis_codes {
     drill_fields: [bodily_system, diagnosis_code_group, athena_medication_details.medication_name_short]
   }
 
+  dimension: factors_of_health_status_and_contact_health_services_diagnoses {
+    description: "Identifies 'z' prefixed ICD-10 codes (Bodily System = 'Factors influencing health status and contact with health services' OR diagnosis_group = 'Persons encountering health services in circumstances related to reproduction')"
+    type: yesno
+    sql: lower(${bodily_system}) = 'factors influencing health status and contact with health services'
+          OR lower(${diagnosis_code_group}) = 'persons encountering health services in circumstances related to reproduction (z30-z39)';;
+  }
+
   dimension: asymptomatic_covid_related {
     type: yesno
     group_label: "Diagnosis Descriptions"
