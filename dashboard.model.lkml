@@ -912,7 +912,8 @@ join: athena_patient_medical_history {
             athena_primary_diagnosis_codes.diagnosis_codes_concatenated,
             athena_primary_diagnosis_codes.diagnosis_descriptions_concatenated,
             athena_primary_diagnosis_codes.likely_flu_diganosis,
-            athena_primary_diagnosis_codes.symptom_based_diagnosis]
+            athena_primary_diagnosis_codes.symptom_based_diagnosis,
+            athena_primary_diagnosis_codes.factors_of_health_status_and_contact_health_services_diagnoses]
   }
 
   join: athena_secondary_diagnosis_codes {
@@ -930,7 +931,8 @@ join: athena_patient_medical_history {
       athena_secondary_diagnosis_codes.diagnosis_description,
       athena_secondary_diagnosis_codes.disease_state,
       athena_secondary_diagnosis_codes.diagnosis_codes_concatenated,
-      athena_secondary_diagnosis_codes.diagnosis_descriptions_concatenated]
+      athena_secondary_diagnosis_codes.diagnosis_descriptions_concatenated,
+      athena_secondary_diagnosis_codes.factors_of_health_status_and_contact_health_services_diagnoses]
   }
 
   join: athena_tertiary_diagnosis_codes {
@@ -948,7 +950,8 @@ join: athena_patient_medical_history {
       athena_tertiary_diagnosis_codes.diagnosis_description,
       athena_tertiary_diagnosis_codes.disease_state,
       athena_tertiary_diagnosis_codes.diagnosis_codes_concatenated,
-      athena_tertiary_diagnosis_codes.diagnosis_descriptions_concatenated]
+      athena_tertiary_diagnosis_codes.diagnosis_descriptions_concatenated,
+      athena_tertiary_diagnosis_codes.factors_of_health_status_and_contact_health_services_diagnoses]
   }
 
 join: athena_diagnosis_codes {
