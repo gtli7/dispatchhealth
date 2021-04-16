@@ -36,7 +36,7 @@ SELECT
         ON stm.user_id = z.employee_id AND DATE(st.start_time) = z.counter_date
     WHERE pp.position IN ('emt','advanced practice provider') ;;
 
-      sql_trigger_value: SELECT MAX(updated_at) FROM zizzl.weekly_rates_hours ;;
+      sql_trigger_value: SELECT SUM(counter_hours) FROM zizzl.weekly_rates_hours ;;
       indexes: ["shift_team_id", "user_id"]
     }
 
