@@ -5251,6 +5251,10 @@ explore: eligible_patients_full_table {
     relationship: one_to_many
     sql_on: ${eligibility_files.id} = ${eligible_patients_full_table.eligibility_file_id} ;;
   }
+  join: care_request_flat {
+    relationship: many_to_one
+    sql_on: ${care_request_flat.patient_id} = ${eligible_patients_full_table.patient_id};;
+  }
 
 
 }
