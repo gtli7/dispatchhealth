@@ -217,7 +217,7 @@ view: channel_items {
     description: "Source name split into more granular groups"
     sql: CASE
         WHEN lower(${channel_items.name}) LIKE 'healthcare provider' THEN 'Provider Group'
-        WHEN lower(${channel_items.name}) LIKE 'health insurance company' THEN 'Payer'
+        WHEN lower(${channel_items.name}) IN ('health insurance company', 'employer') THEN 'Payer'
         WHEN ${source_name} LIKE 'Emergency Medical Service%' THEN ${name}
         WHEN ${source_name} = 'Direct Access' THEN ${source_name}
         WHEN ${source_name} = 'Healthcare Partners' THEN ${type_name}
