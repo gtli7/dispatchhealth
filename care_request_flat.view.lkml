@@ -3303,6 +3303,30 @@ measure: avg_first_on_route_mins {
     sql: trim(split_part(${resolved_reason_full}, ':', 3)) ;;
   }
 
+  measure: resolved_primary_cancelled_patient_partner_count {
+    type: count_distinct
+    description: "Count of of care requests where the primary resolved reason is 'Cancelled by Patient or Partner"
+    sql: ${care_request_id} ;;
+    sql_distinct_key: ${care_request_id} ;;
+    filters: [primary_resolved_reason: "Cancelled by Patient or Partner"]
+  }
+
+  measure: resolved_primary_referred_phone_triage_count {
+    type: count_distinct
+    description: "Count of of care requests where the primary resolved reason is 'Referred - Phone Triage"
+    sql: ${care_request_id} ;;
+    sql_distinct_key: ${care_request_id} ;;
+    filters: [primary_resolved_reason: "Referred - Phone Triage"]
+  }
+
+  measure: resolved_primary_unable_fulfill_request_count {
+    type: count_distinct
+    description: "Count of of care requests where the primary resolved reason is 'Unable to fulfill request"
+    sql: ${care_request_id} ;;
+    sql_distinct_key: ${care_request_id} ;;
+    filters: [primary_resolved_reason: "Unable to fulfill request"]
+  }
+
   dimension: resolved_to_advanced_care {
     description: "Resolved to Advanced Care (resolved reason contains 'Advanced Care)"
     type: yesno
