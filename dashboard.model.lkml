@@ -369,7 +369,7 @@ include: "geneysis_pre_ivr_abandons_by_date_and_dnis.view.lkml"
 include: "saved_care_requests.view.lkml"
 include: "care_agent_min_max_dates.view.lkml"
 include: "all_on_route_shifts.view.lkml"
-
+include: "views/custom_five_types.view.lkml"
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -5085,6 +5085,9 @@ explore: bounce_back_risk_3day_models {
 }
 
 explore: geneysis_custom_conversation_attributes {
+  join: custom_five_types {
+    sql_on: trim(lower(${geneysis_custom_conversation_attributes.customstring05}))=${custom_five_types.custom5} ;;
+  }
   join: genesys_conversation_summary {
     sql_on: ${genesys_conversation_summary.conversationid} = ${geneysis_custom_conversation_attributes.conversationid} ;;
   }

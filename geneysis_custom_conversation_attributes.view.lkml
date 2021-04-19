@@ -114,6 +114,11 @@ view: geneysis_custom_conversation_attributes {
     sql: ${TABLE}."customstring01" ;;
   }
 
+  dimension: direct_to_queue_bool {
+    type: yesno
+    sql: trim(lower(${customstring01})) ='directtoqueue' ;;
+  }
+
   dimension: customstring02 {
     type: string
     label: "Exittype"
