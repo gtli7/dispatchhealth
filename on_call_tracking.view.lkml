@@ -43,7 +43,7 @@ view: on_call_tracking {
 
   dimension: on_call_diff_greater_than_6{
     type: yesno
-    sql: ${on_call_diff}>6  ;;
+    sql: ${on_call_diff}>5  ;;
   }
 
 
