@@ -20,8 +20,10 @@ JOIN markets
 ON cr.market_id = markets.id
 JOIN looker_scratch.timezones t
 ON markets.sa_time_zone = t.rails_tz
+left join public.care_request_statuses real_on_route
+on real_on_route.care_request_id=cr.id and real_on_route.name='on_route' and  real_on_route.deleted_at is null
 where lq.rn=1 and lq.shift_team_id is not null
-and (lq.shift_team_id::int  != cst.shift_team_id or cst.shift_team_id is null)
+and (lq.shift_team_id::int  != cst.shift_team_id or cst.shift_team_id is null or real_on_route.care_request_id is null)
 group by 1,2,3,4,5,6
 union all
 select
@@ -42,12 +44,6 @@ group by 1,2,3,4,5,6;;
     indexes: ["care_request_id", "started_at", "cs_shift_team_id"]
     }
 
-
-    dimension: id {
-      primary_key: yes
-      type: number
-      sql: ${TABLE}."id" ;;
-    }
 
     dimension: care_request_id {
       type: number
