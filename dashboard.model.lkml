@@ -2344,11 +2344,24 @@ join: ga_pageviews_clone {
     sql_on: ${all_on_route_shift_teams.id} = ${all_on_routes_shifts_end_of_shift_times.shift_team_id} ;;
 
   }
-
-
-
-
 }
+
+# Place in `dashboard` model
+  explore: +care_requests {
+    aggregate_table: rollup__athena_claim_claim_service_month__markets_id_adj {
+      query: {
+        dimensions: [athena_claim.claim_service_month, markets.id_adj]
+        measures: [athena_claim.count_distinct_claims, athena_transaction_summary.average_total_rvus]
+        filters: [athena_claim.claim_service_month: "12 months ago for 12 months"]
+        timezone: "America/Denver"
+      }
+
+      materialization: {
+        datagroup_trigger: care_request_datagroup
+      }
+    }
+  }
+
 
 explore: stops_summary {
 

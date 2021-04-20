@@ -277,6 +277,12 @@ view: athena_document_orders {
     sql: ${TABLE}."clinical_order_type" ;;
   }
 
+  dimension: results_received {
+    type: yesno
+    description: "A flag indicating that the order results have been received"
+    sql: ${athena_document_results.document_id} IS NOT NULL ;;
+  }
+
   dimension: urinalysis_performed {
     type: yesno
     description: "A flag indicating a Urinalysis was performed (culture, panel, dipstick or complete)"
