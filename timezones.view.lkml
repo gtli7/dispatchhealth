@@ -16,4 +16,9 @@ view: timezones {
     type: count
     drill_fields: []
   }
+
+  dimension: car_visit_timezone_diff {
+    type: number
+    sql: EXTRACT(EPOCH FROM now() AT TIME ZONE 'UTC' AT TIME ZONE ${timezones.pg_tz} -  now() AT TIME ZONE 'UTC' AT TIME ZONE ${car_timezones.pg_tz})::float/3600;;
+  }
 }

@@ -2021,6 +2021,17 @@ join: resolved_reasons_summary {
     sql_on: ${timezones.rails_tz} = ${markets.sa_time_zone} ;;
   }
 
+  join: cars_markets {
+    from: markets
+    sql_on: ${cars_markets.id} =${cars.market_id} ;;
+  }
+
+  join: car_timezones {
+    from: timezones
+    relationship: many_to_one
+    sql_on: ${car_timezones.rails_tz} = ${cars_markets.sa_time_zone} ;;
+  }
+
   join: budget_projections_by_market_clone {
     sql_on: ${markets.id_adj} = ${budget_projections_by_market_clone.market_dim_id}
       AND ${care_request_flat.on_scene_month}=${budget_projections_by_market_clone.month_month};;
