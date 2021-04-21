@@ -6336,6 +6336,14 @@ end  ;;
     }
   }
 
+  dimension: lwbs_not_accepted_type {
+    type: string
+    sql: case when not ${lwbs_not_accepted}  then 'not LWBS not acccepted'
+              when ${care_requests.request_type} in ('mobile', 'web', 'mobile_android') then 'web/moible'
+              when ${created_to_resolved_minutes} <3 then '<3 minute resolve'
+              else '>= 3 minute resolve' end;;
+  }
+
   measure: lwbs_minus_accepted_scheduled_booked_overflow {
     type: count_distinct
     sql: ${care_request_id} ;;
