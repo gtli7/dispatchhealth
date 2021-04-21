@@ -82,7 +82,7 @@ group by 1,2,3,4,5,6;;
         year,
         time_of_day
       ]
-      sql: ${TABLE}."started_at" ;;
+      sql: ${TABLE}."started_at" +  interval '1h' * ${timezones.all_on_route_car_visit_timezone_diff} ;;
     }
 
   dimension_group: min_accepted_at {
