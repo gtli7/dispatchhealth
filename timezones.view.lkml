@@ -21,4 +21,9 @@ view: timezones {
     type: number
     sql: EXTRACT(EPOCH FROM now() AT TIME ZONE 'UTC' AT TIME ZONE ${timezones.pg_tz} -  now() AT TIME ZONE 'UTC' AT TIME ZONE ${car_timezones.pg_tz})::float/3600;;
   }
+
+  dimension: all_on_route_car_visit_timezone_diff {
+    type: number
+    sql: EXTRACT(EPOCH FROM now() AT TIME ZONE 'UTC' AT TIME ZONE ${timezones.pg_tz} -  now() AT TIME ZONE 'UTC' AT TIME ZONE ${all_on_route_car_timezones.pg_tz})::float/3600;;
+  }
 }
