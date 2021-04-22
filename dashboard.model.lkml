@@ -1037,7 +1037,8 @@ join: athena_document_orders {
     from: athena_document_orders
     relationship: one_to_many
     sql_on: ${athena_clinicalencounter.clinical_encounter_id} = ${athena_lab_imaging_orders.clinical_encounter_id}
-      AND ${athena_lab_imaging_orders.clinical_order_type_group} IN ('LAB','IMAGING');;
+      AND ${athena_lab_imaging_orders.clinical_order_type_group} IN ('LAB','IMAGING')
+      AND ${athena_lab_imaging_orders.deleted_date} IS NULL;;
   }
 
 join: athena_document_order_provider {
