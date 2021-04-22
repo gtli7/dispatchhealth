@@ -198,6 +198,11 @@ view: shift_admin_hours {
     sql: lower(${shift_name}) like '%delta%'  ;;
   }
 
+  dimension: closed_shift {
+    type: yesno
+    sql: lower(${first_name}) = 'closed' and lower(${last_name}) = 'closed'  ;;
+  }
+
   dimension: total_shift_hours {
     type: number
     sql: ${TABLE}."shift_hours" * ${TABLE}."num_shifts" ;;
@@ -225,6 +230,7 @@ view: shift_admin_hours {
       pierce_county_shift: "no",
       delta_shift: "no",
       on_call_shift: "no",
+      closed_shift: "no",
       count_as_shift: "1"
     ]
   }
@@ -246,6 +252,7 @@ view: shift_admin_hours {
       delta_shift: "no",
       on_call_shift: "no",
       count_as_shift: "1",
+      closed_shift: "no",
       tele_shift: "no"
       ]
     label: "APP Scheduled Hrs"
@@ -260,6 +267,7 @@ view: shift_admin_hours {
       pierce_county_shift: "no",
       delta_shift: "no",
       on_call_shift: "no",
+      closed_shift: "no",
       count_as_shift: "1"
       ]
     label: "DHMT Scheduled Hrs"
