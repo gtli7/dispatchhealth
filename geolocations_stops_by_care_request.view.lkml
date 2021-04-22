@@ -45,6 +45,8 @@ view: geolocations_stops_by_care_request {
     description: "The total stop time for the care request.
       Total stop time is divided by the number of patients when multiple patients are treated
       at the same location"
+      value_format: "0.0"
+      sql: ${TABLE}.on_scene_time ;;
   }
 
   dimension: stop_time_per_care_request {
