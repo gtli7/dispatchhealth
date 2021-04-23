@@ -12,7 +12,7 @@ view: shifts_by_cars {
     ;;
 
 #     sql_trigger_value: SELECT MAX(start) FROM shift_teams ;;
-    sql_trigger_value: SELECT FLOOR(EXTRACT(epoch from NOW()) / (2*60*60));;
+    # sql_trigger_value: SELECT FLOOR(EXTRACT(epoch from NOW()) / (2*60*60));;
     indexes: ["car_id"]
 
 
