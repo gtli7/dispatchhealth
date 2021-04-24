@@ -41,6 +41,12 @@ view: granular_shift_tracking_agg {
       }
     }
 
+
+  dimension: invalid_date {
+    type: yesno
+    sql: ${shift_date} in('2021-04-20') ;;
+  }
+
   dimension_group: shift {
     type: time
     timeframes: [
@@ -166,12 +172,15 @@ view: granular_shift_tracking_agg {
     value_format: "0"
     sql: ${drive_time}*60 ;;
     sql_distinct_key: ${primary_key} ;;
+    filters: [invalid_date: "no"]
   }
   measure: avg_drive_time_minutes {
     type: average_distinct
     value_format: "0"
     sql: ${drive_time}*60 ;;
     sql_distinct_key: ${primary_key} ;;
+    filters: [invalid_date: "no"]
+
   }
 
   measure: avg_drive_time_minutes_shift {
@@ -185,12 +194,16 @@ view: granular_shift_tracking_agg {
     value_format: "0"
     sql: ${on_scene_time} *60;;
     sql_distinct_key: ${primary_key} ;;
+    filters: [invalid_date: "no"]
+
   }
   measure: avg_on_scene_time_minutes {
     type: average_distinct
     value_format: "0"
     sql: ${on_scene_time} *60;;
     sql_distinct_key: ${primary_key} ;;
+    filters: [invalid_date: "no"]
+
   }
   measure: avg_on_scene_time_minutes_shift {
     type: number
@@ -223,6 +236,8 @@ view: granular_shift_tracking_agg {
     value_format: "0"
     sql: ${shift_time}*60 ;;
     sql_distinct_key: ${primary_key_shift} ;;
+    filters: [invalid_date: "no"]
+
   }
 
   measure: sum_shift_time_hours{
@@ -230,6 +245,8 @@ view: granular_shift_tracking_agg {
     value_format: "0"
     sql: ${shift_time} ;;
     sql_distinct_key: ${primary_key_shift} ;;
+    filters: [invalid_date: "no"]
+
   }
 
   measure:  sum_dead_time_proxy_minutes{
@@ -248,6 +265,8 @@ view: granular_shift_tracking_agg {
     value_format: "0"
     sql: ${primary_key_shift} ;;
     sql_distinct_key: ${primary_key_shift} ;;
+    filters: [invalid_date: "no"]
+
   }
   measure: sum_deadtime_start_of_shift_minutes{
     type: sum_distinct
@@ -258,6 +277,8 @@ view: granular_shift_tracking_agg {
       field: first_accepted_bool
       value: "1"
     }
+    filters: [invalid_date: "no"]
+
   }
   measure: avg_deadtime_start_of_shift_minutes{
     value_format: "0"
@@ -300,6 +321,8 @@ view: granular_shift_tracking_agg {
       field: patient_assigned_at_start_bool
       value: "1"
     }
+    filters: [invalid_date: "no"]
+
   }
 
   measure: count_distinct_shifts_w_assigned {
@@ -311,6 +334,8 @@ view: granular_shift_tracking_agg {
       field: patient_assigned_at_start_bool
       value: "1"
     }
+    filters: [invalid_date: "no"]
+
   }
 
   measure: count_distinct_shifts_w_high_overflow {
@@ -322,6 +347,8 @@ view: granular_shift_tracking_agg {
       field: high_overflow_days.high_overflow_bool
       value: "yes"
     }
+    filters: [invalid_date: "no"]
+
   }
 
 
@@ -357,6 +384,8 @@ view: granular_shift_tracking_agg {
       field: high_overflow_days.high_overflow_bool
       value: "yes"
     }
+    filters: [invalid_date: "no"]
+
   }
 
 
@@ -389,6 +418,8 @@ view: granular_shift_tracking_agg {
       field: high_overflow_days.high_overflow_bool
       value: "yes"
     }
+    filters: [invalid_date: "no"]
+
   }
 
 
@@ -415,6 +446,8 @@ view: granular_shift_tracking_agg {
       field: last_care_request_bool
       value: "1"
     }
+    filters: [invalid_date: "no"]
+
   }
 
   measure: sum_drive_back_to_office_minutes_high_overflow{
@@ -430,6 +463,8 @@ view: granular_shift_tracking_agg {
       field: high_overflow_days.high_overflow_bool
       value: "yes"
     }
+    filters: [invalid_date: "no"]
+
   }
 
   measure: avg_drive_back_to_office_minutes{
@@ -454,6 +489,8 @@ view: granular_shift_tracking_agg {
       field: first_accepted_bool
       value: "0"
     }
+    filters: [invalid_date: "no"]
+
   }
 
   measure: sum_complete_count{
@@ -461,6 +498,7 @@ view: granular_shift_tracking_agg {
     value_format: "0"
     sql: ${complete_count};;
     sql_distinct_key: ${primary_key} ;;
+    filters: [invalid_date: "no"]
   }
 
   measure: sum_dead_time_intra_minutes_w_assigned{
@@ -476,6 +514,8 @@ view: granular_shift_tracking_agg {
       field: patient_assigned_bool
       value: "1"
     }
+    filters: [invalid_date: "no"]
+
   }
 
   measure: avg_dead_time_intra_minutes_w_assigned{

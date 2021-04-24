@@ -122,7 +122,7 @@ view: target_staffing {
   measure: diff_to_target_percent {
     type: number
     value_format: "0%"
-    sql:  case when ${sum_acute_tele_hours_adj_dual} >0 then ${diff_to_target_hours}::float/${sum_acute_tele_hours_adj_dual}::float else 0 end;;
+    sql:  case when ${sum_acute_tele_hours_adj_dual} >0 then (${diff_to_target_hours}::float)/(${sum_acute_tele_hours_adj_dual}::float) else 0 end;;
   }
 
   measure: percent_to_plan {
