@@ -87,6 +87,17 @@ view: genesys_conversation_wrapup {
               else 'Control' end;;
   }
 
+  dimension: superuser_bool {
+    type: yesno
+    sql:  lower(${username}) like '%sabrina wilder%' OR
+          lower(${username}) like '%ashley salvador%' OR
+          lower(${username}) like '%ellen dameron%' OR
+          lower(${username}) like '%maria ibarra%' OR
+          lower(${username}) like '%najolie abellard%' OR
+          lower(${username}) like '%karen stokes%' OR
+          lower(${username}) like '%tiffany alvarado%' ;;
+  }
+
   dimension: sykes {
     type: yesno
     sql: lower(${username}) like '%sykes%' ;;
