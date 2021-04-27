@@ -75,6 +75,22 @@ view: funnel_agg {
     ]
   }
 
+  dimension_group: yesterday_mountain{
+    type: time
+    timeframes: [date, day_of_week_index, week, month, day_of_month, quarter]
+    sql: current_date - interval '1 day';;
+  }
+
+  dimension:  same_day_of_week {
+    type: yesno
+    sql:  ${yesterday_mountain_day_of_week_index} = ${created_day_of_week_index};;
+  }
+
+  dimension: this_week {
+    type:  yesno
+    sql: ${yesterday_mountain_week} =  ${created_week};;
+  }
+
   dimension: complete_count {
     type: number
   }
