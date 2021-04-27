@@ -281,11 +281,21 @@ END;;
     filters: [is_valid_claim: "yes"]
   }
 
+  # dimension: expected_allowable {
+  #   type: number
+  #   value_format: "0.00"
+  #   group_label: "Expected Allowable"
+  #   sql: ${TABLE}.expected_allowable ;;
+  # }
+
   dimension: expected_allowable {
+    description: "Expected Allowable values sourced from Athena. $0.01 placeholder values (defined as pre-paid) are hard coded to return a value of $210.00"
     type: number
     value_format: "0.00"
     group_label: "Expected Allowable"
-    sql: ${TABLE}.expected_allowable ;;
+    sql: CASE WHEN ${TABLE}.expected_allowable = 0.01 THEN 210.00
+    ELSE ${TABLE}.expected_allowable
+    END;;
   }
 
   measure: total_expected_allowable {
