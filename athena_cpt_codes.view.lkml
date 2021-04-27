@@ -186,4 +186,18 @@ view: athena_cpt_codes {
     group_label: "Grouped Procedures"
   }
 
+  dimension: incision_and_drainage_procedures {
+    type: yesno
+    sql: ${cpt_code} IN ('10060', '10061', '10080', '10081', '10140', '26010') ;;
+    group_label: "Grouped Procedures"
+  }
+
+  measure: count_appointments_with_incision_and_drainage_procedures {
+    description: "Count of appointments with incision and drainage procedures"
+    type: count_distinct
+    sql: ${athena_clinicalencounter.clinical_encounter_id};;
+    group_label: "Grouped Procedure: Appointment Counts"
+    filters: [incision_and_drainage_procedures: "yes"]
+  }
+
 }
