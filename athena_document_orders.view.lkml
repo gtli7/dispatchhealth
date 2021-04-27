@@ -287,13 +287,14 @@ view: athena_document_orders {
     type: yesno
     description: "A flag indicating a Urinalysis was performed (culture, panel, dipstick or complete)"
     group_label: "Description"
-    sql: ${clinical_order_type} IN ('URINALYSIS REFLEX CULTURE',
-        'URINALYSIS PANEL AUTO',
-        'URINALYSIS DIPSTICK REFLEX MICRO',
-        'URINALYSIS DIPSTICK AUTO',
-        'URINALYSIS DIPSTICK',
+    sql: ${clinical_order_type} IN (
         'URINALYSIS COMPLETE REFLEX CULTURE',
-        'URINALYSIS COMPLETE') ;;
+        'URINALYSIS REFLEX CULTURE',
+        'URINALYSIS DIPSTICK',
+        'URINALYSIS DIPSTICK REFLEX MICRO',
+        'URINALYSIS COMPLETE',
+        'URINALYSIS DIPSTICK AUTO',
+        'URINALYSIS MICROSCOPIC') ;;
   }
 
   measure: count_urinalysis_performed_care_requests {
@@ -311,8 +312,12 @@ view: athena_document_orders {
     type: yesno
     description: "A flag indicating a Urinalysis Culture was performed (culture only)"
     group_label: "Description"
-    sql: ${clinical_order_type} IN ('URINALYSIS REFLEX CULTURE',
-      'URINALYSIS COMPLETE REFLEX CULTURE') ;;
+    sql: ${clinical_order_type} IN (
+        'URINALYSIS COMPLETE REFLEX CULTURE',
+        'URINALYSIS REFLEX CULTURE',
+        'CULTURE + SENSITIVITY URINE',
+        'CULTURE URINE',
+        'CULTURE URINE + SENSITIVITY') ;;
   }
 
   measure: count_urinalysis_culture_performed_care_requests {
