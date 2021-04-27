@@ -173,13 +173,13 @@ view: accepted_agg {
     label: "Percent Capacity Constrainted"
     type: number
     value_format: "0%"
-    sql: (1-case when ${captured_sum} >0 then ${accepted_care_requests}::float/${captured_sum}::float else 0 end);;
+    sql: (1-case when ${captured_sum} >0 then (${accepted_care_requests}::float)/(${captured_sum}::float) else 0 end);;
   }
   measure: lwbs_rate {
     label: "Percent LWBS"
     type: number
     value_format: "0%"
-    sql: (1-case when ${accepted_care_requests} >0 then ${sum_complete}::float/${accepted_care_requests}::float else 0 end);;
+    sql: (1-case when ${accepted_care_requests} >0 then (${sum_complete}::float)/(${accepted_care_requests}::float) else 0 end);;
   }
 
 }

@@ -1396,9 +1396,9 @@ join: athena_procedurecode {
   }
 
   join: drg_to_icd10_crosswalk {
-    view_label: "ZZZZ - DRG to ICD10 Crosswalk"
+    view_label: "DRG to ICD10 Crosswalk"
     relationship: one_to_one
-    sql_on: ${icd_code_dimensions_clone.diagnosis_code} = ${drg_to_icd10_crosswalk.icd_10_code} ;;
+    sql_on: ${athena_diagnosis_codes.diagnosis_code_short} = ${drg_to_icd10_crosswalk.icd_10_code} ;;
   }
 
   ### Diversion tables for cost savings model - 2/13/2019
