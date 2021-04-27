@@ -22,6 +22,9 @@ view: outbound_out_reach {
         column: min_diff_to_outbound_call_minutes { field: care_request_flat.min_diff_to_outbound_call_minutes }
         column: max_diff_to_outbound_call_minutes { field: care_request_flat.max_diff_to_outbound_call_minutes }
         column: count_distinct_outbound_calls { field: care_request_flat.count_distinct_outbound_calls }
+        column: total_handle_time { field: genesys_conversation_outbound.total_handle_time }
+
+
         filters: {
           field: care_request_flat.created_date
           value: "365 days ago for 365 days"
@@ -50,6 +53,11 @@ view: outbound_out_reach {
     ]
   }
   dimension: time_call_to_creation_minutes {
+    type: number
+
+  }
+
+  dimension: total_handle_time {
     type: number
 
   }
@@ -182,6 +190,24 @@ view: outbound_out_reach {
     type: average_distinct
     sql: ${count_distinct_outbound_calls} ;;
     sql_distinct_key: ${care_request_id} ;;
+  }
+
+  measure: avg_handle_time {
+    value_format: "0.0"
+    type: median_distinct
+    sql: ${total_handle_time} ;;
+    sql_distinct_key: ${care_request_id} ;;
+    filters: [outbound_call_occured: "yes"]
+
+  }
+
+  measure: avg_handle_time_complete_cr {
+    value_format: "0.0"
+    type: median_distinct
+    sql: ${total_handle_time} ;;
+    sql_distinct_key: ${care_request_id} ;;
+    filters: [outbound_call_occured: "yes", complete: "yes"]
+
   }
 
   measure: count_distinct_care_requests {
