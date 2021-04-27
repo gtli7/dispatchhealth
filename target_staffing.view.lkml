@@ -14,6 +14,7 @@ view: target_staffing {
           AND hrs.market_short = frac.market_short
           AND hrs.shift_type = frac.shift_type
       ;;
+    indexes: ["month", "market_short", "market_id", "dow", "provider_type"]
   }
 
   dimension: acute_tele_flag {
