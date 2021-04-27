@@ -2206,6 +2206,11 @@ join: ga_pageviews_clone {
       ;;
   }
 
+  join: genesys_conversation_wrapup_outbound {
+    from: genesys_conversation_wrapup
+    sql_on: ${genesys_conversation_wrapup_outbound.conversationid}=${genesys_conversation_outbound.conversationid} ;;
+  }
+
 
 
   join: number_to_market {

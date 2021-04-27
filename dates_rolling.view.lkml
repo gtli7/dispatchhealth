@@ -10,6 +10,7 @@ view: dates_rolling {
                '1 day'::interval) dd
        ;;
     sql_trigger_value: SELECT current_date ;;
+    indexes: ["day", "month", "dow"]
   }
 
   measure: count {
@@ -17,11 +18,11 @@ view: dates_rolling {
     drill_fields: []
   }
 
-  # dimension: day {
-  #   primary_key: yes
-  #   type: date
-  #   sql: ${TABLE}."day" ;;
-  # }
+  dimension: primary_key {
+    primary_key: yes
+    type: date
+    sql: ${TABLE}."day_date" ;;
+  }
 
   dimension_group: day {
     type: time

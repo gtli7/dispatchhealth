@@ -77,6 +77,24 @@ view: genesys_conversation_summary {
     ]
     sql: ${TABLE}."conversationstarttime" AT TIME ZONE 'UTC';;
   }
+
+  dimension_group: utc_conversationstarttime {
+    type: time
+    convert_tz: no
+    timeframes: [
+      raw,
+      time,
+      date,
+      week,
+      month,
+      day_of_week,
+      day_of_week_index,
+      hour_of_day,
+      quarter,
+      year
+    ]
+    sql: ${TABLE}."conversationstarttime" ;;
+  }
   dimension: hhs_removed {
     type: yesno
     sql: ${conversationstarttime_date} >='2021-03-04';;
@@ -621,7 +639,6 @@ measure: percent_repeat_callers {
 
   measure: max_start {
     type: time
-    description: "The local date/time that the care request team arrived on-scene"
     convert_tz: no
     timeframes: [
       raw,
@@ -641,6 +658,26 @@ measure: percent_repeat_callers {
     sql: max(${conversationstarttime_raw}) ;;
   }
 
+  measure: max_utc_start {
+    type: time
+    convert_tz: no
+    timeframes: [
+      raw,
+      hour_of_day,
+      time_of_day,
+      date,
+      time,
+      week,
+      month,
+      month_num,
+      day_of_week,
+      day_of_week_index,
+      quarter,
+      hour,
+      year
+    ]
+    sql: max(${utc_conversationstarttime_raw}) ;;
+  }
 
   dimension_group: yesterday_mountain{
     type: time
