@@ -1,5 +1,6 @@
 view: drg_to_icd10_crosswalk {
-  sql_table_name: looker_scratch.drg_to_icd10_crosswalk ;;
+  sql_table_name: athena.drg_to_icd10_crosswalk ;;
+  view_label: "athena_drg_to_icd10_crosswalk"
 
   dimension: id {
     primary_key: yes
