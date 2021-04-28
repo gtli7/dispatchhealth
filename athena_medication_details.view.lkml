@@ -241,10 +241,28 @@ view: athena_medication_details {
     }
 
   measure: count_skin_soft_tissue_care_pathway_first_line_antibiotic_appointments {
-    description: "Count appointments where first line skin and soft antibiotics were employed (Antibiotic HIC3 classes: %cephalosporin%, %penicillin%, nitrofuran derivatives antibacterial agents, absorbable sulfonamide antibacterial agents AND a subset of medications in the 'antibiotic antibacterial misc' [trimethoprim% and fosfomycin%])"
+    description: "Count appointments where first line skin and soft antibiotics were employed (Antibiotic medication names: %cephalexin%, %mupirocin%, %clindamycin%, %augmentin%'. Only includes HIC3 categories defined in the antibiotic_medication dimension"
     type: count_distinct
     sql:  ${athena_clinicalencounter.clinical_encounter_id};;
     filters: [skin_soft_tissue_first_line_oral_antibiotics: "yes"]
+    group_label: "Care Pathway First Line Antibiotic Groups"
+  }
+
+  dimension: abscess_first_line_oral_antibiotics {
+    description: "Oral first line antibiotics for abscess treatment (Antibiotic medication names: %Clindamycin%, %Bactrim%, %Doxycycline%. Only includes HIC3 categories defined in the antibiotic_medication dimension"
+    type: yesno
+    sql: (lower(${medication_name}) LIKE '%bactrim%'
+        OR lower(${medication_name}) LIKE '%doxycycline%'
+        OR lower(${medication_name}) LIKE '%clindamycin%')
+        AND ${antibiotic_medication} ;;
+    group_label: "Care Pathway First Line Antibiotic Groups"
+  }
+
+  measure: count_abscess_first_line_oral_antibiotics_appointments {
+    description: "Count appointments where first line abscess antibiotics were employed (Antibiotic medication names: %Clindamycin%, %Bactrim%, %Doxycycline%. Only includes HIC3 categories defined in the antibiotic_medication dimension."
+    type: count_distinct
+    sql:  ${athena_clinicalencounter.clinical_encounter_id};;
+    filters: [abscess_first_line_oral_antibiotics: "yes"]
     group_label: "Care Pathway First Line Antibiotic Groups"
   }
 
