@@ -295,22 +295,30 @@ view: geneysis_evaluations {
 
   measure: total_number_of_questions_yes{
     type: count_distinct
-    sql: ${conversationid} ;;
+    sql: ${primary_key} ;;
     sql_distinct_key: ${primary_key} ;;
-    filters: [questionscore: "1"]
+    filters: [questionscore: ">0",failedkillquestion: "no",markedna: "no"]
+
+  }
+
+  measure: total_number_of_questions_no{
+    type: count_distinct
+    sql: ${primary_key} ;;
+    sql_distinct_key: ${primary_key} ;;
+    filters: [questionscore: "0",failedkillquestion: "no",markedna: "no"]
 
   }
 
   measure: total_number_of_questions{
     type: count_distinct
-    sql: ${conversationid} ;;
+    sql: ${primary_key} ;;
     sql_distinct_key: ${primary_key} ;;
 
   }
 
   measure: total_number_of_failed_kill_questions {
     type: count_distinct
-    sql: ${conversationid} ;;
+    sql: ${primary_key} ;;
     sql_distinct_key: ${primary_key} ;;
     filters: {
       field: failedkillquestion
@@ -321,11 +329,15 @@ view: geneysis_evaluations {
 
   measure: total_number_marked_na {
     type: count_distinct
-    sql: ${conversationid} ;;
+    sql: ${primary_key} ;;
     sql_distinct_key: ${primary_key} ;;
     filters: {
       field: markedna
       value: "yes"
+    }
+    filters: {
+      field: failedkillquestion
+      value: "no"
     }
   }
 
@@ -339,8 +351,8 @@ view: geneysis_evaluations {
 
   measure: number_complete_evaluations {
     type: count_distinct
-    sql: ${conversationid} ;;
-    sql_distinct_key: ${conversationid} ;;
+    sql: ${primary_key} ;;
+    sql_distinct_key: ${primary_key} ;;
     filters: {
       field: evaluationformname
       value: "Complete Ambassador Evaluation Form"
@@ -349,8 +361,8 @@ view: geneysis_evaluations {
 
   measure: number_short_calls {
     type: count_distinct
-    sql: ${conversationid} ;;
-    sql_distinct_key: ${conversationid} ;;
+    sql: ${primary_key} ;;
+    sql_distinct_key: ${primary_key} ;;
     filters: {
       field: evaluationformname
       value: "Short Call Monitoring Assessment"
@@ -359,8 +371,8 @@ view: geneysis_evaluations {
 
   measure: number_of_ma_adherence_evaluations {
     type: count_distinct
-    sql: ${conversationid} ;;
-    sql_distinct_key: ${conversationid} ;;
+    sql: ${primary_key} ;;
+    sql_distinct_key: ${primary_key} ;;
     filters: {
       field: evaluationformname
       value: "MA - Adherence and Unique Features Quality Assessment"
@@ -386,7 +398,7 @@ view: geneysis_evaluations {
 
   measure: count_agent_read {
     type: count_distinct
-    sql: ${conversationid} ;;
+    sql: ${primary_key} ;;
     sql_distinct_key: ${primary_key} ;;
     filters: {
       field: agenthasread
