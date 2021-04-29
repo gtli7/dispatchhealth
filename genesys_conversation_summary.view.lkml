@@ -655,7 +655,7 @@ measure: percent_repeat_callers {
       hour,
       year
     ]
-    sql: max(${conversationstarttime) ;;
+    sql: max(${conversationstarttime_raw}) ;;
   }
 
   dimension_group: yesterday_mountain{

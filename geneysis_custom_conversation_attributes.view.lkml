@@ -63,7 +63,7 @@ view: geneysis_custom_conversation_attributes {
       hour,
       year
     ]
-    sql: max(${conversationstarttime) ;;
+    sql: max(${conversationstarttime_raw}) ;;
   }
 
 

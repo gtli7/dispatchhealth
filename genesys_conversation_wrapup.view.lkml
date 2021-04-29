@@ -78,7 +78,7 @@ view: genesys_conversation_wrapup {
       hour,
       year
     ]
-    sql: max(${conversationstarttime) ;;
+    sql: max(${conversationstarttime_raw}) ;;
   }
 
   dimension: purpose {

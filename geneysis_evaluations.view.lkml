@@ -106,7 +106,7 @@ view: geneysis_evaluations {
       hour,
       year
     ]
-    sql: max(${conversationstarttime) ;;
+    sql: max(${conversationstarttime_raw}) ;;
   }
 
 
