@@ -4579,7 +4579,7 @@ explore: sf_accounts {
   }
 
   join: channel_items {
-    sql_on: ${channel_items.id} =${sf_accounts.channel_items_id} ;;
+    sql_on: ${channel_items.id} in(${sf_accounts.channel_items_id}, ${sf_accounts.al_id}, ${sf_accounts.il_id}) ;;
   }
   join: care_requests{
     sql_on: ${care_requests.channel_item_id}=${channel_items.id} ;;

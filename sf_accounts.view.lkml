@@ -26,6 +26,22 @@ view: sf_accounts {
     sql: ${TABLE}."channel_items_id" ;;
   }
 
+  dimension: al_id {
+    type: number
+    sql: ${TABLE}."al_id" ;;
+  }
+
+  dimension: il_id {
+    type: number
+    sql: ${TABLE}."il_id" ;;
+  }
+
+  dimension: definitive_health_id {
+    type: number
+    sql: ${TABLE}."definitive_health_id" ;;
+  }
+
+
   dimension: channel_items_id_is_set {
     type: yesno
     sql:  ${channel_items_id} is not null;;
