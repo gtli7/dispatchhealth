@@ -37,6 +37,24 @@ view: risk_assessments {
     sql: lower(${protocol_name}) in('covid-19 testing request (for patients without symptoms)');;
   }
 
+  dimension: advanced_care_protocol {
+    type: yesno
+    sql: trim(lower(${protocol_name})) in(
+          'cough/upper respiratory symptoms',
+          'dehydration',
+          'extremity swelling',
+          'fever',
+          'flu-like symptoms',
+          'general respiratory complaint - senior living',
+          'hypotension (low blood pressure)',
+          'pain with urinating and/or blood in urine',
+          'rash',
+          'shortness of breath',
+          'skin rash(cellulitis)/skin abscesses - extremities, torso (trunk)',
+          'unable to urinate',
+          'wound evaluation');;
+  }
+
 
 
 
