@@ -180,6 +180,21 @@ view: athena_cpt_codes {
     filters: [blood_tests: "yes"]
   }
 
+  dimension: ekg_procedures {
+    type: yesno
+    sql: ${cpt_code} IN ('93005', '93010', '93000') ;;
+    group_label: "Grouped Procedures"
+  }
+
+  measure: count_appointments_with_ekg_procedures {
+    description: "Count of appointments with a EKG procedures"
+    type: count_distinct
+    sql: ${athena_clinicalencounter.clinical_encounter_id};;
+    group_label: "Grouped Procedure: Appointment Counts"
+    filters: [ekg_procedures: "yes"]
+  }
+
+
   dimension: catheter_procedures {
     type: yesno
     sql: ${cpt_code} IN ('51701', '51702', '51703', '51705', 'A4338', 'P9612') ;;
