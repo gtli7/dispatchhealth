@@ -658,27 +658,6 @@ measure: percent_repeat_callers {
     sql: max(${conversationstarttime_raw}) ;;
   }
 
-  measure: max_utc_start {
-    type: time
-    convert_tz: no
-    timeframes: [
-      raw,
-      hour_of_day,
-      time_of_day,
-      date,
-      time,
-      week,
-      month,
-      month_num,
-      day_of_week,
-      day_of_week_index,
-      quarter,
-      hour,
-      year
-    ]
-    sql: max(${utc_conversationstarttime_raw}) ;;
-  }
-
   dimension_group: yesterday_mountain{
     type: time
     timeframes: [date, day_of_week_index, week, month, day_of_month]
@@ -688,9 +667,7 @@ measure: percent_repeat_callers {
 
   measure: month_percent_created {
     type: number
-    sql:
-
-        case when to_char(${max_start_date} , 'YYYY-MM') != ${yesterday_mountain_month} then 1
+    sql: case when to_char(${max_start_date} , 'YYYY-MM') != ${yesterday_mountain_month} then 1
         else
             extract(day from ${yesterday_mountain_date})
           /    DATE_PART('days',

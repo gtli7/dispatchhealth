@@ -1745,16 +1745,38 @@ measure: distinct_day_of_week {
   }
 
   dimension: advanced_care_eligibility {
-    description: "Care request is elgibile for AdvancedCare based on Dashboard configured Insurance Package, market and age"
+    label: "Advanced Care Eligible CR by Dashboard Market Insurance and Age"
+    description: "Care request is elgibile for AdvancedCare based on Dashboard market configured Insurance Package and age"
     type: string
     sql: ${TABLE}.advanced_care_eligibility ;;
   }
 
   measure: count_advanced_care_eligible_care_requests {
-    description: "Count of the care requests that are elgibile for AdvancedCare based on Dashboard congifured Insurance Package, market and age"
+    label: "Count Advanced Care Eligibile CR by Dashboard Market Insurance and Age"
+    description: "Count of the Care requests elgibile for AdvancedCare based on Dashboard market configured Insurance Package and age"
     type: count_distinct
     sql: ${id} ;;
     filters: [advanced_care_eligibility: "yes"]
+  }
+
+  dimension: advanced_care_eligibile_cr_all_components {
+    description: "Care request is eligible for AdvancedCare based on Diagnoses (if present) or risk protocol and Dashboard market configured Insurance Package and age"
+    type: yesno
+    sql: CASE WHEN ${drg_to_icd10_crosswalk.advanced_care_drg_top_3_diagnoses} AND
+            ${advanced_care_eligibility} THEN true
+          WHEN ${athena_diagnosis_codes.diagnosis_code_short} IS NULL AND
+            ${risk_assessments.advanced_care_protocol} AND
+            ${advanced_care_eligibility} THEN true
+          ELSE false
+          END
+            ;;
+  }
+
+  measure: count_advanced_care_eligibile_cr_all_components {
+    description: "Count of Care request eligible for AdvancedCare based on Diagnoses (if present) or risk protocol and Dashboard market configured Insurance Package and age"
+    type: count_distinct
+    sql: ${id} ;;
+    filters: [advanced_care_eligibile_cr_all_components: "yes"]
   }
 
   dimension: advanced_care_status {
