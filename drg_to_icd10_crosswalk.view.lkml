@@ -30,9 +30,11 @@ view: drg_to_icd10_crosswalk {
 
   dimension: advanced_care_drg_top_3_diagnoses {
     type: yesno
-    sql: athena_primary_diagnosis_codes.diagnosis_code_short = ${icd_10_code} OR
-    athena_secondary_diagnosis_codes.diagnosis_code_short = ${icd_10_code} OR
-    athena_tertiary_diagnosis_codes.diagnosis_code_short = ${icd_10_code};;
+    sql: CASE WHEN athena_diagnosis_codes.diagnosis_code_short = ${icd_10_code} AND athena_diagnosis_sequence.sequence_number = 1 THEN true
+    WHEN athena_diagnosis_codes.diagnosis_code_short = ${icd_10_code} AND athena_diagnosis_sequence.sequence_number = 2 THEN true
+    WHEN athena_diagnosis_codes.diagnosis_code_short = ${icd_10_code} AND athena_diagnosis_sequence.sequence_number = 3 THEN true
+    ELSE false
+    END;;
   }
 
 
