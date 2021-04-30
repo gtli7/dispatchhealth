@@ -370,6 +370,7 @@ include: "saved_care_requests.view.lkml"
 include: "care_agent_min_max_dates.view.lkml"
 include: "all_on_route_shifts.view.lkml"
 include: "views/custom_five_types.view.lkml"
+include: "views/sf_address_matching.view.lkml"
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -4560,32 +4561,61 @@ explore: zizzl_employee_roster {}
 explore: zizzl_employee_roster_details {}
 
 explore: sf_accounts {
-  sql_always_where: ( ${markets.name} != 'West Metro Fire Rescue' or  ${markets.name} is null and lower(${sf_accounts.account_name}) not like '%test%');;
+  sql_always_where: (lower(${sf_accounts.account_name}) not like '%test%') and ${sf_accounts.market} is not null;;
+
+  join: dates_rolling {
+    sql_on:  true ;;
+  }
 
   join: sf_priority_accounts {
     sql_on: ${sf_priority_accounts.account_id} = ${sf_accounts.account_id} ;;
+  }
+  join: sf_address_matching {
+    sql_on: ${sf_address_matching.account_id}=${sf_accounts.account_id} ;;
   }
 
   join: sf_markets_mapping {
     sql_on: ${sf_markets_mapping.market}=${sf_accounts.market} ;;
   }
   join: markets {
-    type: full_outer
-    sql_on: ${markets.id}=${sf_markets_mapping.market_id} ;;
+    sql_on: ${markets.id}=${sf_markets_mapping.market_id}  and ${markets.name} != 'West Metro Fire Rescue' ;;
   }
   join: regional_markets {
     relationship: one_to_one
     sql_on: ${regional_markets.market_id} = ${markets.id_adj} ;;
   }
 
-  join: channel_items {
-    sql_on: ${channel_items.id} in(${sf_accounts.channel_items_id}, ${sf_accounts.al_id}, ${sf_accounts.il_id}) ;;
+
+  join: care_request_flat{
+    sql_on: ${sf_address_matching.care_request_id}=${care_request_flat.care_request_id} and ${care_request_flat.on_scene_date} =${dates_rolling.day_date} ;;
   }
+
   join: care_requests{
+    sql_on: ${care_requests.id}=${care_request_flat.care_request_id};;
+  }
+
+
+  join: channel_items {
     sql_on: ${care_requests.channel_item_id}=${channel_items.id} ;;
   }
-  join: care_request_flat{
-    sql_on: ${care_request_flat.care_request_id}=${care_requests.id} ;;
+  join: service_lines {
+    sql_on: ${care_requests.service_line_id} =${service_lines.id} ;;
+  }
+
+
+  join: risk_assessments {
+    relationship: one_to_one
+    sql_on: ${care_requests.id} = ${risk_assessments.care_request_id} and ${risk_assessments.score} is not null ;;
+  }
+
+  join: addressable_items {
+    relationship: one_to_one
+    sql_on: ${addressable_items.addressable_type} = 'CareRequest' and ${care_requests.id} = ${addressable_items.addressable_id};;
+    fields: []
+  }
+  join: addresses {
+    relationship: many_to_one
+    sql_on:  ${addressable_items.address_id} = ${addresses.id} ;;
   }
   join: sf_activities {
     sql_on: ${sf_activities.account_id} = ${sf_accounts.account_id} ;;
