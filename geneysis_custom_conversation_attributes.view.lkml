@@ -42,8 +42,30 @@ view: geneysis_custom_conversation_attributes {
       quarter,
       year
     ]
-    sql: ${TABLE}."conversationstarttime" ;;
+    sql: ${TABLE}."conversationstarttime" AT TIME ZONE 'UTC' ;;
   }
+
+  measure: max_start {
+    type: time
+    convert_tz: no
+    timeframes: [
+      raw,
+      hour_of_day,
+      time_of_day,
+      date,
+      time,
+      week,
+      month,
+      month_num,
+      day_of_week,
+      day_of_week_index,
+      quarter,
+      hour,
+      year
+    ]
+    sql: max(${conversationstarttime_raw}) ;;
+  }
+
 
   dimension_group: customdatetime01 {
     type: time
