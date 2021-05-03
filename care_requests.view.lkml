@@ -1757,6 +1757,7 @@ measure: distinct_day_of_week {
     type: count_distinct
     sql: ${id} ;;
     filters: [advanced_care_eligibility: "yes"]
+    drill_fields: [detail*]
   }
 
   dimension: advanced_care_eligibile_cr_all_components {
@@ -1768,8 +1769,7 @@ measure: distinct_day_of_week {
             ${risk_assessments.advanced_care_protocol} AND
             ${advanced_care_eligibility} THEN true
           ELSE false
-          END
-            ;;
+          END;;
   }
 
   measure: count_advanced_care_eligibile_cr_all_components {
@@ -1777,6 +1777,7 @@ measure: distinct_day_of_week {
     type: count_distinct
     sql: ${id} ;;
     filters: [advanced_care_eligibile_cr_all_components: "yes"]
+    drill_fields: [detail*]
   }
 
   dimension: advanced_care_status {
@@ -1828,7 +1829,9 @@ measure: distinct_day_of_week {
       channel_items.sub_type,
       channel_items.name,
       primary_resolved_reason,
-      secondary_resolved_reason
+      secondary_resolved_reason,
+      athena_diagnosis_codes.diagnosis_codes_concatenated,
+      athena_diagnosis_codes.diagnosis_descriptions_concatenated
     ]
   }
 }
