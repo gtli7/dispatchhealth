@@ -45,7 +45,7 @@ view: funnel_agg {
 
       filters: {
         field: care_request_flat.created_date
-        value: "1460 days ago for 1460 days"
+        value: "365 days ago for 365 days"
       }
       filters: {
         field: service_lines.name
