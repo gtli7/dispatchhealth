@@ -1761,6 +1761,7 @@ measure: distinct_day_of_week {
   }
 
   dimension: advanced_care_eligibile_cr_all_components {
+    label: "Advanced Care Eligible CR by Dashboard Market Insurance and Age and Diagnosis or Risk Protocol"
     description: "Care request is eligible for AdvancedCare based on Diagnoses (if present) or risk protocol and Dashboard market configured Insurance Package and age"
     type: yesno
     sql: CASE WHEN ${drg_to_icd10_crosswalk.advanced_care_drg_top_3_diagnoses} AND
