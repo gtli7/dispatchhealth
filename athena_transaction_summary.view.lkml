@@ -188,7 +188,19 @@ END;;
     sql_distinct_key: ${claim_id} ;;
     sql: ${work_rvu} ;;
     filters: [is_valid_claim: "yes"]
+    drill_fields: [users.app_name, care_requests.count_billable_est, average_work_rvus, variance_work_rvus]
   }
+
+  measure: variance_work_rvus {
+    type: number
+    description: "Sample variance for work RVUs"
+    group_label: "RVUs"
+    value_format: "0.000"
+    sql: var_samp(${work_rvu}) ;;
+    drill_fields: [users.app_name, care_requests.count_billable_est, average_work_rvus, variance_work_rvus]
+
+  }
+
 
   dimension: practice_expense_rvu {
     type: number
