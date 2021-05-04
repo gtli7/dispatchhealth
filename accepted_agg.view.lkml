@@ -175,6 +175,12 @@ view: accepted_agg {
     value_format: "0%"
     sql: (1-case when ${captured_sum} >0 then (${accepted_care_requests}::float)/(${captured_sum}::float) else 0 end);;
   }
+
+  measure: capacity_lost_greater_than_5_percent {
+    type: number
+    value_format: "0"
+    sql: case when (((${percent_loss_after_capture}-.05)*${accepted_care_requests})*.95) >0 then  (((${percent_loss_after_capture}-.05)*${accepted_care_requests})*.95) else 0 end;;
+  }
   measure: lwbs_rate {
     label: "Percent LWBS"
     type: number
