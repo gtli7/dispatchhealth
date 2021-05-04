@@ -349,6 +349,9 @@ include: "care_requests_post_visit.view.lkml"
 include: "zizzl_shift_hours_daily.view.lkml"
 include: "stops_summary.view.lkml"
 include: "channel_item_packages.view.lkml"
+include: "dnis_partner_dnis_list.view.lkml"
+include: "dnis_partner_grouping.view.lkml"
+
 
 include: "SEM_cost_per_complete_derived.view.lkml"
 
@@ -2212,7 +2215,15 @@ join: ga_pageviews_clone {
     sql_on: ${genesys_conversation_wrapup_outbound.conversationid}=${genesys_conversation_outbound.conversationid} ;;
   }
 
+  join: dnis_partner_dnis_list {
+    relationship: many_to_one
+    sql_on: ${genesys_conversation_summary.dnis} = ${dnis_partner_dnis_list.partner_dnis_number} ;;
+  }
 
+  join: dnis_partner_grouping {
+    relationship: many_to_one
+    sql_on: ${dnis_partner_dnis_list.partner_dnis_grouping_id} = ${dnis_partner_grouping.id} ;;
+  }
 
   join: number_to_market {
     sql_on: ${number_to_market.number} = ${genesys_conversation_summary.dnis} ;;

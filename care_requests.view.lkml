@@ -1757,9 +1757,11 @@ measure: distinct_day_of_week {
     type: count_distinct
     sql: ${id} ;;
     filters: [advanced_care_eligibility: "yes"]
+    drill_fields: [detail*]
   }
 
   dimension: advanced_care_eligibile_cr_all_components {
+    label: "Advanced Care Eligible CR by Dashboard Market Insurance and Age and Diagnosis or Risk Protocol"
     description: "Care request is eligible for AdvancedCare based on Diagnoses (if present) or risk protocol and Dashboard market configured Insurance Package and age"
     type: yesno
     sql: CASE WHEN ${drg_to_icd10_crosswalk.advanced_care_drg_top_3_diagnoses} AND
@@ -1768,8 +1770,7 @@ measure: distinct_day_of_week {
             ${risk_assessments.advanced_care_protocol} AND
             ${advanced_care_eligibility} THEN true
           ELSE false
-          END
-            ;;
+          END;;
   }
 
   measure: count_advanced_care_eligibile_cr_all_components {
@@ -1777,6 +1778,7 @@ measure: distinct_day_of_week {
     type: count_distinct
     sql: ${id} ;;
     filters: [advanced_care_eligibile_cr_all_components: "yes"]
+    drill_fields: [detail*]
   }
 
   dimension: advanced_care_status {
@@ -1828,7 +1830,9 @@ measure: distinct_day_of_week {
       channel_items.sub_type,
       channel_items.name,
       primary_resolved_reason,
-      secondary_resolved_reason
+      secondary_resolved_reason,
+      athena_diagnosis_codes.diagnosis_codes_concatenated,
+      athena_diagnosis_codes.diagnosis_descriptions_concatenated
     ]
   }
 }
