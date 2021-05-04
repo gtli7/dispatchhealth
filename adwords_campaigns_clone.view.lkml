@@ -80,6 +80,7 @@ view: adwords_campaigns_clone {
           when ${campaign_name_lower}  like '%-mia%' then 193
           when ${campaign_name_lower}  like '%-sat%' then 194
           when ${campaign_name_lower}  like '%-tus%' then 195
+          when ${campaign_name_lower}  like '%-orl%' then 196
           else null end;;
   }
 

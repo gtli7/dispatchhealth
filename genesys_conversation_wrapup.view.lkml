@@ -116,7 +116,11 @@ view: genesys_conversation_wrapup {
           lower(${username}) like '%maria ibarra%' OR
           lower(${username}) like '%najolie abellard%' OR
           lower(${username}) like '%karen stokes%' OR
-          lower(${username}) like '%tiffany alvarado%' ;;
+          lower(${username}) like '%tiffany alvarado%' OR
+          lower(${username}) like '%april balderston%' OR
+          lower(${username}) like '%nichole utsler%';;
+    drill_fields: [username]
+
   }
 
   dimension: sykes {

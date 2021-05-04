@@ -341,6 +341,8 @@ when ${short_name} = 'NSH' then 26
 when ${short_name} = 'KNX' then 27
 when ${short_name} = 'SAT' then 28
 when ${short_name} = 'TUS' then 29
+when ${short_name} = 'ORL' then 30
+when ${short_name} = 'MIA' then 31
     else null end ;;
   }
 

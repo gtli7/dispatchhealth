@@ -3355,6 +3355,7 @@ measure: avg_first_on_route_mins {
     type: count_distinct
     sql: ${care_request_id} ;;
     filters: [advanced_care_external_referrals: "yes"]
+    drill_fields: [detail*]
   }
 
   dimension:extended_care_external_referrals {
@@ -3368,6 +3369,7 @@ measure: avg_first_on_route_mins {
     type: count_distinct
     sql: ${care_request_id} ;;
     filters: [extended_care_external_referrals: "yes"]
+    drill_fields: [detail*]
   }
 
 

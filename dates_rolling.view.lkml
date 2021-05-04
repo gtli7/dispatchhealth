@@ -5,8 +5,8 @@ view: dates_rolling {
         date_trunc('month', date_trunc('day', dd))::date as month,
         to_char(date_trunc('day', dd), 'Day') as dow
       FROM generate_series
-              ((date_trunc('month', current_date) - interval '6 month')::date,
-               (date_trunc('month', current_date) + interval '6 month' - interval '1 day')::date,
+              ((date_trunc('month', current_date) - interval '24 month')::date,
+               (date_trunc('month', current_date) + interval '24 month' - interval '1 day')::date,
                '1 day'::interval) dd
        ;;
     sql_trigger_value: SELECT current_date ;;
