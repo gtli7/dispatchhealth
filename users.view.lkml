@@ -143,6 +143,16 @@ view: users {
         END ;;
   }
 
+  dimension: app_concat_name_id {
+    label: "Advanced Practice Provider Full Name and Id"
+    type: string
+    sql: CASE
+          WHEN ${provider_profiles.position} = 'advanced practice provider'
+            THEN concat(initcap(trim(${first_name})), ' ', initcap(trim(${last_name})),' - ',${id})
+          ELSE NULL
+        END ;;
+  }
+
   filter: provider_select {
     suggest_dimension: csc_name
   }
