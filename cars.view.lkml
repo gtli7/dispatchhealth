@@ -173,4 +173,9 @@ view: cars {
     type: string
     sql: array_agg(distinct ${name}) ;;
     }
+
+  measure: car_names_string_agg {
+    type: string
+    sql: string_agg(distinct ${name}, ', ') ;;
+  }
 }
