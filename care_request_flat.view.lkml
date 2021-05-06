@@ -1221,6 +1221,22 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
     }
   }
 
+  measure: count_no_change_in_eta {
+    description: "Count of Complete Care Requests w/ No ETA Change"
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters: {
+      field: no_change_in_eta
+      value: "yes"
+    }
+    filters: {
+      field: complete
+      value: "yes"
+    }
+  }
+
+
+
   measure: count_complete_visits_weekends_or_after_hours {
     description: "Count of billable est on weekends or after 3 PM"
     type: count_distinct
@@ -1373,6 +1389,11 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
       day_of_month
     ]
     sql: ${TABLE}.most_recent_eta_start ;;
+  }
+
+  dimension: no_change_in_eta {
+    type: yesno
+    sql: ${most_recent_eta_start_raw}=${eta_range_start_raw} and ${most_recent_eta_end_raw}=${eta_range_end_raw}  ;;
   }
 
   dimension_group: most_recent_eta_end {

@@ -43,8 +43,7 @@ view: funnel_agg {
       column: lwbs_scheduled {field:care_request_flat.lwbs_scheduled_count}
       column: non_follow_up_limbo_count {field:care_request_flat.non_follow_up_limbo_count}
       column: count_reassigned_reordered_complete_care_requests {field:care_request_flat.count_reassigned_reordered_complete_care_requests}
-
-
+      column: count_no_change_in_eta {field:care_request_flat.count_no_change_in_eta}
       filters: {
         field: care_request_flat.created_date
         value: "365 days ago for 365 days"
@@ -111,6 +110,11 @@ view: funnel_agg {
   dimension: non_follow_up_limbo_count {
     type: number
   }
+  dimension: count_no_change_in_eta {
+    type: number
+  }
+
+
 
   measure: sum_complete {
     label: "Complete Care Requests"
@@ -130,10 +134,26 @@ view: funnel_agg {
     sql_distinct_key: ${primary_key}  ;;
   }
 
+  measure: sum_no_change_in_eta{
+    type: sum_distinct
+    sql: ${count_no_change_in_eta} ;;
+    sql_distinct_key: ${primary_key}  ;;
+  }
+
+  measure: no_change_in_eta_percent {
+    type: number
+    value_format: "0%"
+    sql:case when ${sum_complete} >0 then  (${sum_no_change_in_eta}::float)/(${sum_complete}::float) else 0.0 end;;
+    sql_distinct_key: ${primary_key}  ;;
+  }
+
+
+
+
   measure: reassigned_reordered_percent {
     type: number
     value_format: "0%"
-    sql:case when ${sum_complete} >0 then  ${sum_reassigned_reordered}::float/${sum_complete} else 0.0 end;;
+    sql:case when ${sum_complete} >0 then  (${sum_reassigned_reordered}::float)/(${sum_complete}) else 0.0 end;;
     sql_distinct_key: ${primary_key}  ;;
   }
 
@@ -169,7 +189,7 @@ view: funnel_agg {
     label: "Percent Capacity Constrainted"
     type: number
     value_format: "0%"
-    sql: (1-case when ${captured_sum} >0 then ${accepted_care_requests}::float/${captured_sum}::float else 0 end);;
+    sql: (1-case when ${captured_sum} >0 then (${accepted_care_requests}::float)/(${captured_sum}::float) else 0 end);;
   }
 
 
@@ -435,7 +455,7 @@ view: funnel_agg {
     label: "Percent Captured"
     type: number
     value_format: "0%"
-    sql: case when ${sum_care_request_count} >0 then ${captured_sum}::float/${sum_care_request_count}::float else 0 end ;;
+    sql: case when ${sum_care_request_count} >0 then (${captured_sum}::float)/(${sum_care_request_count}::float) else 0 end ;;
   }
 
 
