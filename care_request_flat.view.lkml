@@ -1207,6 +1207,20 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
     }
   }
 
+  measure: count_reassigned_reordered_complete_care_requests {
+    description: "Count of care requests that were reassigned or reordered by CSC"
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters: {
+      field: reassigned_or_reordered
+      value: "yes"
+    }
+    filters: {
+      field: complete
+      value: "yes"
+    }
+  }
+
   measure: count_complete_visits_weekends_or_after_hours {
     description: "Count of billable est on weekends or after 3 PM"
     type: count_distinct
@@ -5405,6 +5419,25 @@ measure: non_screened_escalated_phone_count_funnel_percent {
       value: "yes"
     }
 
+  }
+
+  measure: overflow_plus_booked_count {
+    label: "Overflow+Booked (.7) count"
+    description: "Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled) Count"
+    type: sum_distinct
+    value_format: "0.0"
+    sql: (case when ${booked_resolved} then .7 else 1 end)::float ;;
+    sql_distinct_key:  ${care_request_id} ;;
+    filters: {
+      field: accepted_or_scheduled
+      value: "yes"
+    }
+  }
+
+  measure: overflow_plus_booked_percent {
+    type: number
+    value_format: "0%"
+    sql: ${overflow_plus_booked_count}/${complete_count} ;;
   }
 
   measure: accepted_or_scheduled_count_address {
