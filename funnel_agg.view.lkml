@@ -42,6 +42,8 @@ view: funnel_agg {
       column: lwbs_accepted {field: care_request_flat.lwbs_accepted_count}
       column: lwbs_scheduled {field:care_request_flat.lwbs_scheduled_count}
       column: non_follow_up_limbo_count {field:care_request_flat.non_follow_up_limbo_count}
+      column: count_reassigned_reordered_complete_care_requests {field:care_request_flat.count_reassigned_reordered_complete_care_requests}
+
 
       filters: {
         field: care_request_flat.created_date
@@ -55,6 +57,9 @@ view: funnel_agg {
   }
   dimension: name_adj {
     description: "Market name where WMFR is included as part of Denver"
+  }
+
+  dimension: count_reassigned_reordered_complete_care_requests {
   }
 
 
@@ -119,6 +124,20 @@ view: funnel_agg {
     sql: ${lwbs_accepted} ;;
     sql_distinct_key: ${primary_key}  ;;
     }
+  measure: sum_reassigned_reordered {
+    type: sum_distinct
+    sql: ${count_reassigned_reordered_complete_care_requests} ;;
+    sql_distinct_key: ${primary_key}  ;;
+  }
+
+  measure: reassigned_reordered_percent {
+    type: number
+    value_format: "0%"
+    sql:case when ${sum_complete} >0 then  ${sum_reassigned_reordered}::float/${sum_complete} else 0.0 end;;
+    sql_distinct_key: ${primary_key}  ;;
+  }
+
+
 
   measure: sum_lwbs_scheduled {
     label: "Sum Scheduled Overflow Acute Resolved"
