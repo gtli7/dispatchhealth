@@ -96,14 +96,20 @@ view: channel_items {
     sql: ${TABLE}.emr_provider_id ;;
   }
 
+  dimension: name_orig {
+    type: string
+    hidden: yes
+    sql: ${TABLE}.name ;;
+  }
+
   dimension: name {
     type: string
     description: "Channel Name"
     group_label: "Description"
     sql: CASE
-    WHEN INITCAP(${TABLE}.name) LIKE '%Google Or Other Search%' THEN 'Google or Other Search'
-    WHEN INITCAP(${TABLE}.name) LIKE '%911 Channel%' THEN '911 Channel'
-    ELSE INITCAP(regexp_replace(${TABLE}.name, '\s+$', ''))
+    WHEN INITCAP(${name_orig}) LIKE '%Google Or Other Search%' THEN 'Google or Other Search'
+    WHEN INITCAP(${name_orig}) LIKE '%911 Channel%' THEN '911 Channel'
+    ELSE INITCAP(regexp_replace(${name_orig}, '\s+$', ''))
     END ;;
   }
 
