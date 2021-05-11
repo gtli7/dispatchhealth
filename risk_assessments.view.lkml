@@ -52,7 +52,8 @@ view: risk_assessments {
           'shortness of breath',
           'skin rash(cellulitis)/skin abscesses - extremities, torso (trunk)',
           'unable to urinate',
-          'wound evaluation');;
+          'wound evaluation',
+          'dispatchhealth acute care - follow up visit');;
   }
 
 
