@@ -89,6 +89,7 @@ SELECT
   }
 
   dimension: member_id_strip_trailing_zeros {
+    label: "Member Id (strip trailing zeros)"
     description: "Developed for Optum specific reporting requriements for member ID to strip trailing zeros"
     type: string
     sql: CASE WHEN length(${insurance_coalese.member_id}) = 11 AND
