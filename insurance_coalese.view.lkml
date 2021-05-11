@@ -88,4 +88,13 @@ SELECT
     sql: ${TABLE}.custom_insurance_grouping ;;
   }
 
+  dimension: member_id_strip_trailing_zeros {
+    description: "Developed for Optum specific reporting requriements for member ID to strip trailing zeros"
+    type: string
+    sql: CASE WHEN length(${insurance_coalese.member_id}) = 11 AND
+                    substring(${insurance_coalese.member_id}, length(${insurance_coalese.member_id})-1,2)='00' THEN substring(${insurance_coalese.member_id}, 1,length(${insurance_coalese.member_id})-2)
+        ELSE ${insurance_coalese.member_id}
+        END;;
+  }
+
 }
