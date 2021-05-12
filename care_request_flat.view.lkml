@@ -5054,6 +5054,10 @@ measure: non_screened_escalated_phone_count_funnel_percent {
       value: "Direct to Consumer"
     }
   }
+  measure: total_category_volume {
+    type: number
+    sql: ${complete_count_dtc}+${complete_count_community}+${complete_count_strategic} ;;
+  }
 
   measure: dtc_percent {
     type: number
