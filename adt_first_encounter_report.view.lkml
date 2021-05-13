@@ -222,6 +222,7 @@ view: adt_first_encounter_report {
       value: "yes"
     }
     group_label: "Emergency First Admittance Intervals"
+    drill_fields: [care_request_flat.detail*,bb_detail*]
   }
 
   measure: count_24_hour_first_admit_emergency {
@@ -234,6 +235,7 @@ view: adt_first_encounter_report {
       value: "yes"
     }
     group_label: "Emergency First Admittance Intervals"
+    drill_fields: [care_request_flat.detail*,bb_detail*]
   }
 
   measure: count_3_day_first_admit_emergency {
@@ -246,6 +248,7 @@ view: adt_first_encounter_report {
       value: "yes"
     }
     group_label: "Emergency First Admittance Intervals"
+    drill_fields: [care_request_flat.detail*,bb_detail*]
   }
 
   measure: count_7_day_first_admit_emergency {
@@ -258,6 +261,7 @@ view: adt_first_encounter_report {
       value: "yes"
     }
     group_label: "Emergency First Admittance Intervals"
+    drill_fields: [care_request_flat.detail*,bb_detail*]
   }
 
 
@@ -271,6 +275,7 @@ view: adt_first_encounter_report {
       value: "yes"
     }
     group_label: "Emergency First Admittance Intervals"
+    drill_fields: [care_request_flat.detail*,bb_detail*]
   }
 
   measure: count_30_day_first_admit_emergency {
@@ -283,6 +288,7 @@ view: adt_first_encounter_report {
       value: "yes"
     }
     group_label: "Emergency First Admittance Intervals"
+    drill_fields: [care_request_flat.detail*,bb_detail*]
   }
 
   dimension: 24_hour_first_admit_inpatient_emergency {
@@ -341,7 +347,7 @@ view: adt_first_encounter_report {
     sql: ${7_day_bb_pct} ;;
     sql_distinct_key: ${care_requests.id} ;;
     filters: [care_requests.billable_est: "yes", provider_profiles.position: "advanced practice provider"]
-    drill_fields: [users.app_name, care_requests.count_billable_est, 7_day_avg_bounceback_rate]
+    drill_fields: [care_request_flat.detail*,bb_detail*]
   }
 
   dimension: 30_day_bb_pct {
@@ -373,6 +379,7 @@ view: adt_first_encounter_report {
       value: "yes"
     }
     group_label: "Inpatient Emergency Admittance Intervals"
+    drill_fields: [care_request_flat.detail*,bb_detail*]
   }
 
   measure: count_3_day_first_admit_inpatient_emergency {
@@ -385,6 +392,7 @@ view: adt_first_encounter_report {
       value: "yes"
     }
     group_label: "Inpatient Emergency Admittance Intervals"
+    drill_fields: [care_request_flat.detail*,bb_detail*]
   }
 
   measure: count_7_day_first_admit_inpatient_emergency {
@@ -397,6 +405,7 @@ view: adt_first_encounter_report {
       value: "yes"
     }
     group_label: "Inpatient Emergency Admittance Intervals"
+    drill_fields: [care_request_flat.detail*,bb_detail*]
   }
 
   measure: count_14_day_first_admit_inpatient_emergency {
@@ -409,6 +418,7 @@ view: adt_first_encounter_report {
       value: "yes"
     }
     group_label: "Inpatient Emergency Admittance Intervals"
+    drill_fields: [care_request_flat.detail*,bb_detail*]
   }
 
   measure: count_30_day_first_admit_inpatient_emergency {
@@ -421,6 +431,7 @@ view: adt_first_encounter_report {
       value: "yes"
     }
     group_label: "Inpatient Emergency Admittance Intervals"
+    drill_fields: [care_request_flat.detail*,bb_detail*]
   }
 
   dimension: 1_to_48_hour_cumulative_emergency_admittance_framework {
@@ -545,5 +556,22 @@ view: adt_first_encounter_report {
           ;;
 
     }
+
+  set: bb_detail {
+    fields: [
+      er_admit_date,
+      hosp_admit_date,
+      count_12_hour_first_admit_emergency,
+      count_3_day_first_admit_emergency,
+      count_7_day_first_admit_emergency,
+      count_14_day_first_admit_emergency,
+      count_30_day_first_admit_emergency,
+      count_24_hour_first_admit_inpatient_emergency,
+      count_3_day_first_admit_inpatient_emergency,
+      count_7_day_first_admit_inpatient_emergency,
+      count_14_day_first_admit_inpatient_emergency,
+      count_30_day_first_admit_inpatient_emergency
+    ]
+  }
 
 }

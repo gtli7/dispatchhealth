@@ -6889,6 +6889,7 @@ end  ;;
       patients.gender,
       care_requests.chief_complaint,
       risk_assessments.protocol_name,
+      escalated_on_scene,
       care_request_flat.on_scene_time_minutes,
       channel_items.sub_type,
       channel_items.name,
