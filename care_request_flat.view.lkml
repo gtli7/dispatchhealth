@@ -5054,6 +5054,10 @@ measure: non_screened_escalated_phone_count_funnel_percent {
       value: "Direct to Consumer"
     }
   }
+  measure: total_category_volume {
+    type: number
+    sql: ${complete_count_dtc}+${complete_count_community}+${complete_count_strategic} ;;
+  }
 
   measure: dtc_percent {
     type: number
@@ -6220,7 +6224,7 @@ end  ;;
           ${most_recent_eta_start_date} is null
         )
         AND
-       (${notes_aggregated.notes_aggregated} not like '%pushed pt: pt availability%' or ${notes_aggregated.notes_aggregated} is null)
+       ((${notes_aggregated.notes_aggregated} not like '%pushed pt: pt availability%' and ${notes_aggregated.notes_aggregated} not like '%panasonic covid testing%')  or ${notes_aggregated.notes_aggregated} is null)
         and not ${too_late_for_overflow}
         ;;
   }
