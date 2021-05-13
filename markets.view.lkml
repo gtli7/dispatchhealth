@@ -149,6 +149,7 @@ view: markets {
     sql: case when ${TABLE}.name = 'West Metro Fire Rescue'
       OR ${TABLE}.name = 'South Metro Fire Rescue' then 'Denver'
     else ${name} end;;
+    drill_fields: [users.app_concat_name_id]
 
   }
 
@@ -341,6 +342,8 @@ when ${short_name} = 'NSH' then 26
 when ${short_name} = 'KNX' then 27
 when ${short_name} = 'SAT' then 28
 when ${short_name} = 'TUS' then 29
+when ${short_name} = 'ORL' then 30
+when ${short_name} = 'MIA' then 31
     else null end ;;
   }
 
@@ -353,6 +356,28 @@ when ${short_name} = 'TUS' then 29
     description: "Concatenated market name combining metro fire districts into parent market"
     type: string
     sql: array_to_string(array_agg(DISTINCT ${name_adj} ORDER BY ${name_adj}), ' | ' ) ;;
+  }
+
+  # ----- Sets of fields for drilling ------
+  set: detail {
+    fields: [
+      care_requests.id,
+      patients.ehr_id,
+      created_date,
+      care_request_flat.complete_date,
+      markets.name,
+      patients.first_name,
+      patients.last_name,
+      patients.age,
+      patients.gender,
+      care_requests.chief_complaint,
+      risk_assessments.protocol_name,
+      care_request_flat.on_scene_time_minutes,
+      channel_items.sub_type,
+      channel_items.name,
+      care_request_flat.primary_resolved_reason,
+      care_request_flat.secondary_resolved_reason
+    ]
   }
 
   # measure: digital_adjusted {

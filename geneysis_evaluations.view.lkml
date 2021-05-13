@@ -511,14 +511,14 @@ view: geneysis_evaluations {
 
   measure: number_of_evaluations {
     type: count_distinct
-    sql: ${evaluationformid} ;;
-    sql_distinct_key: ${primary_key} ;;
+    sql: ${evaluationid} ;;
+    sql_distinct_key: ${evaluationid} ;;
   }
 
   measure: number_of_evaluations_read {
     type: count_distinct
-    sql: ${evaluationformid} ;;
-    sql_distinct_key: ${primary_key} ;;
+    sql: ${evaluationid} ;;
+    sql_distinct_key: ${evaluationid} ;;
     filters: {
       field: agenthasread
       value: "true"
@@ -528,8 +528,8 @@ view: geneysis_evaluations {
 
   measure: number_of_evaluations_unread {
     type: count_distinct
-    sql: ${evaluationformid} ;;
-    sql_distinct_key: ${primary_key} ;;
+    sql: ${evaluationid} ;;
+    sql_distinct_key: ${evaluationid} ;;
     filters: {
       field: agenthasread
       value: "false"

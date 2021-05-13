@@ -263,6 +263,16 @@ END;;
     drill_fields: [users.app_name, care_requests.count_billable_est, average_total_rvus]
   }
 
+  measure: variance_total_rvus {
+    type: number
+    description: "Sample variance for total RVUs"
+    group_label: "RVUs"
+    value_format: "0.000"
+    sql: var_samp(${total_rvu}) ;;
+    drill_fields: [users.app_name, care_requests.count_billable_est, average_total_rvus, variance_total_rvus]
+
+  }
+
   dimension: allowed_amount {
     type: number
     group_label: "Expected Allowable"
