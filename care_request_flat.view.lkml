@@ -1221,6 +1221,22 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
     }
   }
 
+measure: count_complete_visits_weekend {
+  description: "Count of billable est on weekends"
+  type: count_distinct
+  sql: ${care_request_id} ;;
+  filters: {
+    field:  complete_day_of_week
+    value: "Saturday,Sunday"
+  }
+  filters: {
+    field:  care_requests.billable_est
+    value: "yes"
+  }
+}
+
+
+
   dimension: complete_comment {
     type: string
     sql: ${TABLE}.complete_comment ;;
