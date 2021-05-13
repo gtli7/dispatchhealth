@@ -40,16 +40,31 @@ SELECT
       indexes: ["shift_team_id", "user_id"]
     }
 
-    dimension: primary_key {
-      type: number
-      primary_key: yes
-      sql: CONCAT(${shift_team_id},${user_id}) ;;
-    }
+  dimension: primary_key {
+    type: number
+    primary_key: yes
+    sql: CONCAT(${shift_team_id},${user_id}) ;;
+  }
 
-    dimension: shift_team_id {
-      type: number
-      sql: ${TABLE}.shift_team_id ;;
-    }
+  dimension: shift_team_id {
+    type: number
+    sql: ${TABLE}.shift_team_id ;;
+  }
+
+dimension_group: shift_date {
+  type: time
+  hidden: yes
+  timeframes: [
+    raw,
+    time,
+    date,
+    week,
+    month,
+    quarter,
+    year
+  ]
+  sql: ${TABLE}.shift_date ;;
+  }
 
   dimension: user_id {
     type: number
@@ -107,6 +122,16 @@ SELECT
     group_label: "Hours Worked"
     sql_distinct_key: ${primary_key} ;;
     description: "Zizzl Punched Hours"
+    sql: ${punched_clinical_hours} ;;
+    filters: [cars.test_car: "no"]
+  }
+
+  measure: sum_punched_hours_daily {
+    type: sum_distinct
+    value_format: "0.00"
+    group_label: "Hours Worked"
+    sql_distinct_key: CONCAT(${shift_date_date}, ${user_id}) ;;
+    description: "Zizzl Punched Hours Daily"
     sql: ${punched_clinical_hours} ;;
     filters: [cars.test_car: "no"]
   }

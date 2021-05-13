@@ -127,6 +127,11 @@ view: shift_teams {
     sql: (EXTRACT(EPOCH FROM ${end_raw}) - EXTRACT(EPOCH FROM ${start_raw})) / 3600 ;;
   }
 
+  dimension: exclude_short_shifts {
+    type: yesno
+    sql: ${shift_hours} > 0.25 ;;
+  }
+
   # dimension: actual_app_hours {
   #   type: number
   #   description: "Zizzl hours if available.  Otherwise scheduled hours"
@@ -224,10 +229,7 @@ view: shift_teams {
     group_label: "Hours"
     sql_distinct_key: ${id} ;;
     sql: ${shift_hours} ;;
-    filters:  {
-      field: cars.test_car
-      value: "no"
-    }
+    filters: [cars.test_car: "no", exclude_short_shifts: "yes"]
   }
 
   measure: sum_shift_hours_no_advanced_mc {
@@ -451,6 +453,16 @@ view: shift_teams {
     value_format: "0.00"
     type: number
     sql: ${care_request_flat.complete_count}::float / ${count_distinct_car_hour_shift}::float ;;
+  }
+
+  measure: shift_start_min {
+    type: number
+    sql: min(${start_hour_of_day}) ;;
+  }
+
+  measure: shift_end_max {
+    type: number
+    sql: max(${end_hour_of_day}) ;;
   }
 
 

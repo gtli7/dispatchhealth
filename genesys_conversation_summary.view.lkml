@@ -1136,7 +1136,7 @@ measure: percent_repeat_callers {
 
   measure: average_handle_time {
     label: "Average Handle Time"
-
+    description: "Inbound only"
     type: average_distinct
     sql: ${handle_time}::float/1000/60 ;;
     sql_distinct_key:  concat(${conversationid}, ${queuename});;
@@ -1149,11 +1149,12 @@ measure: percent_repeat_callers {
       field: has_queue
       value: "yes"
     }
+    filters: [direction: "inbound"]
   }
 
   measure: average_handle_time_care_request_created{
     label: "Average Handle Time (Care Request Created)"
-
+    description: "Inbound only"
     type: average_distinct
     sql: ${handle_time}::float/1000/60 ;;
     sql_distinct_key:  concat(${conversationid}, ${queuename});;
@@ -1170,11 +1171,13 @@ measure: percent_repeat_callers {
       field: care_request_call
       value: "yes"
     }
+    filters: [direction: "inbound"]
+
   }
 
   measure: average_handle_time_complete_care_request{
     label: "Average Handle Time (Complete Care Request)"
-
+    description: "Inbound only"
     type: average_distinct
     sql: ${handle_time}::float/1000/60 ;;
     sql_distinct_key:  concat(${conversationid}, ${queuename});;
@@ -1191,6 +1194,7 @@ measure: percent_repeat_callers {
       field: complete_care_request_call
       value: "yes"
     }
+    filters: [direction: "inbound"]
   }
 
   measure: average_handle_time_inbound {

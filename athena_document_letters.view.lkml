@@ -324,7 +324,7 @@ view: athena_document_letters {
 
   dimension: clinical_letters_sent_pcp {
     description: "Identifies clinical letters sent to the patient's primary care provider"
-    hidden: yes
+    hidden: no
     type: yesno
     sql:  (upper(${document_subclass}) NOT IN
       ('LETTER_PATIENTCORRESPONDENCE','LETTER_PATIENTCARESUMMARY')

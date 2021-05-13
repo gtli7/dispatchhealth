@@ -194,16 +194,17 @@ view: athena_cpt_codes {
     filters: [ekg_procedures: "yes"]
   }
 
-
+# Removed catheter CPT codes 51701, '51703', 'A4338' per Athena, RCM, Caren M. thread
   dimension: catheter_procedures {
     type: yesno
-    sql: ${cpt_code} IN ('51701', '51702', '51703', '51705', 'A4338', 'P9612') ;;
+    sql: ${cpt_code} IN ('51702', '51705', 'P9612') ;;
     group_label: "Grouped Procedures"
   }
 
+  # Added I&D CPT codes '11730', '11732', '11750', '11765' per Athena, RCM, Caren M. thread
   dimension: incision_and_drainage_procedures {
     type: yesno
-    sql: ${cpt_code} IN ('10060', '10061', '10080', '10081', '10140', '26010') ;;
+    sql: ${cpt_code} IN ('10060', '10061', '10140', '10080', '10081', '26010', '11730', '11732', '11750', '11765') ;;
     group_label: "Grouped Procedures"
   }
 

@@ -9,7 +9,7 @@ view: adt_first_encounter_report {
     description: "Flag defining market and time period valid ADT (bunceback) data is avilable for. Settng this flag to 'yes' will ensure the report only populates valid data "
     type:  yesno
     sql: CASE
-          WHEN lower(${markets.name}) IN (
+          WHEN lower(${markets.name_adj}) IN (
               'springfield',
               'richmond',
               'seattle',
@@ -17,7 +17,7 @@ view: adt_first_encounter_report {
               'olympia',
               'tacoma')
             AND ${care_request_flat.complete_date} > '2020/03/01' THEN true
-          WHEN lower(${markets.name}) IN (
+          WHEN lower(${markets.name_adj}) IN (
               'denver',
               'colorado springs')
             AND ${care_request_flat.complete_date} > '2020/11/01' THEN true
