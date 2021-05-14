@@ -5,23 +5,44 @@ view: adt_first_encounter_report {
 
 
 # Always update active_market_bounceback_data AND active_market_bounceback_go_live_date when any new ADT vendor or market of coverage is added. This, when added as a filter to a report, ensure that only valid data is populated
+  # dimension: active_market_bounceback_data {
+  #   description: "Flag defining market and time period valid ADT (bunceback) data is avilable for. Settng this flag to 'yes' will ensure the report only populates valid data "
+  #   type:  yesno
+  #   sql: CASE
+  #         WHEN lower(${markets.name_adj}) IN (
+  #             'springfield',
+  #             'richmond',
+  #             'seattle',
+  #             'spokane',
+  #             'olympia',
+  #             'tacoma')
+  #           AND ${care_request_flat.complete_date} > '2020/03/01' THEN true
+  #         WHEN lower(${markets.name_adj}) IN (
+  #             'denver',
+  #             'colorado springs')
+  #           AND ${care_request_flat.complete_date} > '2020/11/01' THEN true
+  #           ELSE false
+  #           END
+
+  #           ;;
+  # }
+
   dimension: active_market_bounceback_data {
     description: "Flag defining market and time period valid ADT (bunceback) data is avilable for. Settng this flag to 'yes' will ensure the report only populates valid data "
     type:  yesno
     sql: CASE
-          WHEN lower(${markets.name_adj}) IN (
-              'springfield',
-              'richmond',
-              'seattle',
-              'spokane',
-              'olympia',
-              'tacoma')
+          WHEN ${markets.state} IN (
+              'WA',
+              'MA',
+              'VA')
             AND ${care_request_flat.complete_date} > '2020/03/01' THEN true
-          WHEN lower(${markets.name_adj}) IN (
-              'denver',
-              'colorado springs')
+          WHEN ${markets.state} IN (
+              'CO')
             AND ${care_request_flat.complete_date} > '2020/11/01' THEN true
-            ELSE false
+          WHEN ${markets.state} IN (
+              'ID', 'NJ', 'NV', 'OR', 'AZ', 'IN', 'NC', 'OK', 'TX')
+            AND ${care_request_flat.complete_date} > '2021/05/15' THEN true
+          ELSE false
             END
 
             ;;
