@@ -56,7 +56,6 @@ SELECT
     LEFT JOIN z
         ON stm.user_id = z.employee_id AND DATE(st.start_time) = z.counter_date
     WHERE pp.position IN ('emt','advanced practice provider')
-    AND DATE(st.start_time) <= '2021-05-12'
     GROUP BY 1,2,3,4,5,6,7,8,9,10
     HAVING CASE
       WHEN ((EXTRACT(EPOCH FROM end_time) - EXTRACT(EPOCH FROM start_time)) / 3600) < 0.25  AND z.direct_clinical_hours IS NULL THEN NULL
