@@ -56,7 +56,6 @@ SELECT
     LEFT JOIN z
         ON stm.user_id = z.employee_id AND DATE(st.start_time) = z.counter_date
     WHERE pp.position IN ('emt','advanced practice provider')
-    AND DATE(st.start_time) <= '2021-05-12'
     GROUP BY 1,2,3,4,5,6,7,8,9,10
     HAVING CASE
       WHEN ((EXTRACT(EPOCH FROM end_time) - EXTRACT(EPOCH FROM start_time)) / 3600) < 0.25  AND z.direct_clinical_hours IS NULL THEN NULL
@@ -110,6 +109,13 @@ dimension_group: shift_date {
     value_format: "0.00"
     description: "Zizzl hours only"
     sql: ${TABLE}.punched_clinical_hours ;;
+  }
+
+  dimension: scheduled_hours {
+    type: number
+    value_format: "0.00"
+    description: "Scheduled hours only"
+    sql: ${TABLE}.scheduled_hours ;;
   }
 
   dimension: direct_clinical_pay {
