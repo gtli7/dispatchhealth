@@ -175,34 +175,34 @@ view: genesys_agent_summary {
 
   measure: average_handle_time {
     type: average
-    sql: ${interactduration}/1000 + ${holdduration}/1000 + ${wrapupduration}/1000 ;;
+    sql: coalesce(${interactduration},0)/1000 + coalesce(${holdduration},0)/1000 + coalesce(${wrapupduration},0)/1000 ;;
     value_format_name: decimal_0
   }
 
   measure: AHT_voice {
     type: average
-    sql: ${interactduration}/1000 + ${holdduration}/1000 + ${wrapupduration}/1000;;
+    sql: coalesce(${interactduration},0)/1000 + coalesce(${holdduration},0)/1000 + coalesce(${wrapupduration},0)/1000;;
     filters: [mediatype: "voice"]
     value_format_name: decimal_0
   }
 
   measure: AHT_callback {
     type: average
-    sql: ${interactduration}/1000 + ${holdduration}/1000 + ${wrapupduration}/1000;;
+    sql: coalesce(${interactduration},0)/1000 + coalesce(${holdduration},0)/1000 + coalesce(${wrapupduration},0)/1000;;
     filters: [mediatype: "callback", direction: "outbound"]
     value_format_name: decimal_0
   }
 
   measure: AHT_chat {
     type: average
-    sql: ${interactduration}/1000 + ${holdduration}/1000 + ${wrapupduration}/1000;;
+    sql: coalesce(${interactduration},0)/1000 + coalesce(${holdduration},0)/1000 + coalesce(${wrapupduration},0)/1000;;
     filters: [mediatype: "chat", direction: "inbound"]
     value_format_name: decimal_0
   }
 
   measure: AHT_email {
     type: average
-    sql: ${interactduration}/1000 + ${holdduration}/1000 + ${wrapupduration}/1000;;
+    sql: coalesce(${interactduration},0)/1000 + coalesce(${holdduration},0)/1000 + coalesce(${wrapupduration},0)/1000;;
     filters: [mediatype: "email", direction: "inbound"]
     value_format_name: decimal_0
   }
