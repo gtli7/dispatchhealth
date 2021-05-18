@@ -1,9 +1,33 @@
 view: eligible_patients {
   # sql_table_name: public.eligible_patients ;;
   derived_table: {
-    sql: SELECT *
-          FROM public.eligible_patients
-          WHERE deleted_at IS NULL AND patient_id IS NOT NULL;;
+    sql:
+select
+  ep.id,
+  ep.first_name,
+  ep.last_name,
+  ep.email,
+  ep.dob,
+  ep.gender,
+  ep.city,
+  ep.state,
+  ep.zipcode,
+  ep.pcp,
+  ep.channel_item_id,
+  p.id AS patient_id
+from public.eligible_patients ep
+left join public.patients p
+  on trim(initcap(ep.first_name)) = trim(initcap(p.first_name))
+  and trim(initcap(ep.last_name)) = trim(initcap(p.last_name))
+  and ep.dob = p.dob
+where (ep.patient_id is not null or COALESCE(ep.patient_id, p.id) is not null)
+  AND ep.deleted_at IS NULL AND (ep.first_name is not null or ep.first_name <> '')
+  and (ep.last_name is not null or ep.last_name <> '')
+  and ep.dob is not null
+  AND p.deleted_at IS NULL;;
+
+  sql_trigger_value: SELECT MAX(id) FROM public.eligible_patients ;;
+  indexes: ["patient_id", "channel_item_id"]
   }
 
   dimension: id {

@@ -1788,11 +1788,20 @@ measure: distinct_day_of_week {
   }
 
   measure: count_advanced_care_submitted_care_requests {
-    description: "Count of care requests that were submitted for review by AdvancedCare"
+    label: "Count Advanced Care Total Submitted Care Requests"
+    description: "Count of total care requests that were submitted for review by AdvancedCare"
     type: count_distinct
     sql: ${id} ;;
     drill_fields: [detail*]
     filters: [advanced_care_status: "pending, accepted, rejected"]
+  }
+
+  measure: count_advanced_care_pending_care_requests {
+    description: "Count of care requests that are pending evaluation by AdvancedCare"
+    type: count_distinct
+    sql: ${id} ;;
+    drill_fields: [detail*]
+    filters: [advanced_care_status: "pending"]
   }
 
   measure: count_advanced_care_accepted_care_requests {

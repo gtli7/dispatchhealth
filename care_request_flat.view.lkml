@@ -1207,6 +1207,36 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
     }
   }
 
+  measure: count_reassigned_reordered_complete_care_requests {
+    description: "Count of care requests that were reassigned or reordered by CSC"
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters: {
+      field: reassigned_or_reordered
+      value: "yes"
+    }
+    filters: {
+      field: complete
+      value: "yes"
+    }
+  }
+
+  measure: count_no_change_in_eta {
+    description: "Count of Complete Care Requests w/ No ETA Change"
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters: {
+      field: no_change_in_eta
+      value: "yes"
+    }
+    filters: {
+      field: complete
+      value: "yes"
+    }
+  }
+
+
+
   measure: count_complete_visits_weekends_or_after_hours {
     description: "Count of billable est on weekends or after 3 PM"
     type: count_distinct
@@ -1220,6 +1250,22 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
       value: "yes"
     }
   }
+
+measure: count_complete_visits_weekend {
+  description: "Count of billable est on weekends"
+  type: count_distinct
+  sql: ${care_request_id} ;;
+  filters: {
+    field:  complete_day_of_week
+    value: "Saturday,Sunday"
+  }
+  filters: {
+    field:  care_requests.billable_est
+    value: "yes"
+  }
+}
+
+
 
   dimension: complete_comment {
     type: string
@@ -1359,6 +1405,11 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
       day_of_month
     ]
     sql: ${TABLE}.most_recent_eta_start ;;
+  }
+
+  dimension: no_change_in_eta {
+    type: yesno
+    sql: ${most_recent_eta_start_raw}=${eta_range_start_raw} and ${most_recent_eta_end_raw}=${eta_range_end_raw}  ;;
   }
 
   dimension_group: most_recent_eta_end {
@@ -5019,6 +5070,10 @@ measure: non_screened_escalated_phone_count_funnel_percent {
       value: "Direct to Consumer"
     }
   }
+  measure: total_category_volume {
+    type: number
+    sql: ${complete_count_dtc}+${complete_count_community}+${complete_count_strategic} ;;
+  }
 
   measure: dtc_percent {
     type: number
@@ -5405,6 +5460,25 @@ measure: non_screened_escalated_phone_count_funnel_percent {
       value: "yes"
     }
 
+  }
+
+  measure: overflow_plus_booked_count {
+    label: "Overflow+Booked (.7) count"
+    description: "Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled) Count"
+    type: sum_distinct
+    value_format: "0.0"
+    sql: (case when ${booked_resolved} then .7 else 1 end)::float ;;
+    sql_distinct_key:  ${care_request_id} ;;
+    filters: {
+      field: accepted_or_scheduled
+      value: "yes"
+    }
+  }
+
+  measure: overflow_plus_booked_percent {
+    type: number
+    value_format: "0%"
+    sql: ${overflow_plus_booked_count}/${complete_count} ;;
   }
 
   measure: accepted_or_scheduled_count_address {
@@ -6166,7 +6240,7 @@ end  ;;
           ${most_recent_eta_start_date} is null
         )
         AND
-       (${notes_aggregated.notes_aggregated} not like '%pushed pt: pt availability%' or ${notes_aggregated.notes_aggregated} is null)
+       ((${notes_aggregated.notes_aggregated} not like '%pushed pt: pt availability%' and ${notes_aggregated.notes_aggregated} not like '%panasonic covid testing%')  or ${notes_aggregated.notes_aggregated} is null)
         and not ${too_late_for_overflow}
         ;;
   }
@@ -6831,6 +6905,7 @@ end  ;;
       patients.gender,
       care_requests.chief_complaint,
       risk_assessments.protocol_name,
+      escalated_on_scene,
       care_request_flat.on_scene_time_minutes,
       channel_items.sub_type,
       channel_items.name,

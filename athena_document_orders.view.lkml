@@ -354,12 +354,25 @@ view: athena_document_orders {
     }
   }
 
+  dimension: chem8_istat_bmp_cmp_serum_plasma {
+    label: "CHEM8 or BMP or CMP Serum or Plasma"
+    type: yesno
+    group_label: "Description"
+    sql:  ${clinical_order_type} in(
+            'CHEM8+ ISTAT',
+            'BMP + IONIZED CALCIUM SERUM OR PLASMA',
+            'BMP SERUM OR PLASMA',
+            'CMP SERUM OR PLASMA')
+            ;;
+  }
+
   measure: count_chem8_istat_performed_care_requests {
+    label: "Count CHEM8 or BMP or CMP Serum or Plasma"
     type: count_distinct
-    description: "Count the distinct visits where a CHEM8 ISTAT was performed / ordered"
+    description: "Count the distinct visits where a CHEM8 ISTAT, BMP + IONIZED CALCIUM SERUM OR PLASMA, BMP SERUM OR PLASMA, CMP SERUM OR PLASMA was performed / ordered"
     group_label: "Counts"
     sql: ${care_requests.id} ;;
-    filters: [clinical_order_type: "CHEM8+ ISTAT"]
+    filters: [chem8_istat_bmp_cmp_serum_plasma: "yes"]
 
   }
 
@@ -401,6 +414,25 @@ view: athena_document_orders {
           ELSE NULL
         END ;;
     }
+
+  dimension: pcp_referrals_flag {
+    type: yesno
+    group_label: "Referral Flags"
+    sql: ${clinical_order_type} LIKE 'PRIMARY CARE% REFERRAL' ;;
+  }
+
+  dimension: home_health_referrals_flag {
+    type: yesno
+    group_label: "Referral Flags"
+    sql: ${clinical_order_type} LIKE 'HOME HEALTH%REFERRAL' ;;
+  }
+
+  dimension: provider_referrals_flag {
+    type: yesno
+    description: "Provider referrals that are not home health"
+    group_label: "Referral Flags"
+    sql: ${clinical_order_type} LIKE '%REFERRAL%' AND ${clinical_order_type} NOT LIKE 'HOME HEALTH%' ;;
+  }
 
 
   measure: aggregated_referrals {

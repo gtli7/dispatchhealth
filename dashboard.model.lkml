@@ -375,6 +375,12 @@ include: "all_on_route_shifts.view.lkml"
 include: "views/custom_five_types.view.lkml"
 include: "views/sf_address_matching.view.lkml"
 
+include: "views/genesys_wfm_adherence_actual_activities.view.lkml"
+include: "views/genesys_wfm_adherence_exceptions.view.lkml"
+include: "views/genesys_wfm_day_metrics.view.lkml"
+include: "views/genesys_user_details.view.lkml"
+include: "views/genesys_agent_summary.view.lkml"
+
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
   max_cache_age: "6 hours"
@@ -5196,7 +5202,17 @@ explore: geneysis_evaluations {
   }
 }
 
-explore: geneysis_wfm_schedules {}
+explore: geneysis_wfm_schedules {
+  join: genesys_user_details {
+    sql_on: ${geneysis_wfm_schedules.userid} = ${genesys_user_details.id};;
+  }
+  join: genesys_agent_summary {
+    sql_on: ${genesys_agent_summary.userid} = ${geneysis_wfm_schedules.userid} and
+    ${genesys_agent_summary.conversationstarttime_date} = ${geneysis_wfm_schedules.activitystarttime_date};;
+  }
+
+
+}
 
 explore: adwords_campaigns_clone {
   join: markets {

@@ -265,6 +265,13 @@ view: athena_diagnosis_codes {
     sql: ${diagnosis_code_short} in('J09', 'J11', 'J10','J06', 'J20', 'J18') ;;
   }
 
+  dimension: abscess_based_diagnosis {
+    description: "Diagnosis descritpion contians the word 'abscess'"
+    type: yesno
+    group_label: "Diagnosis Descriptions"
+    sql: lower(${diagnosis_description}) LIKE '%abscess%';;
+  }
+
   measure: count {
     type: count
     drill_fields: []
