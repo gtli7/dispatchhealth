@@ -1251,6 +1251,34 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
     }
   }
 
+measure: count_complete_visits_weekend {
+  description: "Count of billable est on weekends"
+  type: count_distinct
+  sql: ${care_request_id} ;;
+  filters: {
+    field:  complete_day_of_week
+    value: "Saturday,Sunday"
+  }
+  filters: {
+    field:  care_requests.billable_est
+    value: "yes"
+  }
+}
+
+  measure: count_complete_visits_after_hours {
+    description: "Count of billable est after hours (3pm)"
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters: {
+      field: care_request_flat.complete_hour_of_day
+      value: ">= 15"
+    }
+    filters: {
+      field:  care_requests.billable_est
+      value: "yes"
+    }
+  }
+
   dimension: complete_comment {
     type: string
     sql: ${TABLE}.complete_comment ;;
@@ -6889,6 +6917,7 @@ end  ;;
       patients.gender,
       care_requests.chief_complaint,
       risk_assessments.protocol_name,
+      escalated_on_scene,
       care_request_flat.on_scene_time_minutes,
       channel_items.sub_type,
       channel_items.name,

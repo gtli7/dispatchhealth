@@ -132,6 +132,11 @@ view: shift_teams {
     sql: ${shift_hours} > 0.25 ;;
   }
 
+  dimension: exclude_long_shifts {
+    type: yesno
+    sql: ${shift_hours} <= 12 ;;
+  }
+
   # dimension: actual_app_hours {
   #   type: number
   #   description: "Zizzl hours if available.  Otherwise scheduled hours"
@@ -229,7 +234,9 @@ view: shift_teams {
     group_label: "Hours"
     sql_distinct_key: ${id} ;;
     sql: ${shift_hours} ;;
-    filters: [cars.test_car: "no", exclude_short_shifts: "yes"]
+    filters: [cars.test_car: "no",
+      exclude_short_shifts: "yes",
+      exclude_long_shifts: "yes"]
   }
 
   measure: sum_shift_hours_no_advanced_mc {
