@@ -160,4 +160,50 @@ view: genesys_agent_summary {
     sql: CASE WHEN ${direction} = 'outbound' then 1
           ELSE 0 END;;
   }
+
+  measure: avg_talk_time {
+    type: average
+    sql: ${interactduration}/1000;;
+    value_format_name: decimal_0
+  }
+
+  measure: avg_wrap_time {
+    type: average
+    sql: ${wrapupduration}/1000;;
+    value_format_name: decimal_0
+  }
+
+  measure: average_handle_time {
+    type: average
+    sql: ${interactduration}/1000 + ${holdduration}/1000 + ${wrapupduration}/1000 ;;
+    value_format_name: decimal_0
+  }
+
+  measure: AHT_voice {
+    type: average
+    sql: ${interactduration}/1000 + ${holdduration}/1000 + ${wrapupduration}/1000;;
+    filters: [mediatype: "voice"]
+    value_format_name: decimal_0
+  }
+
+  measure: AHT_callback {
+    type: average
+    sql: ${interactduration}/1000 + ${holdduration}/1000 + ${wrapupduration}/1000;;
+    filters: [mediatype: "callback", direction: "outbound"]
+    value_format_name: decimal_0
+  }
+
+  measure: AHT_chat {
+    type: average
+    sql: ${interactduration}/1000 + ${holdduration}/1000 + ${wrapupduration}/1000;;
+    filters: [mediatype: "chat", direction: "inbound"]
+    value_format_name: decimal_0
+  }
+
+  measure: AHT_email {
+    type: average
+    sql: ${interactduration}/1000 + ${holdduration}/1000 + ${wrapupduration}/1000;;
+    filters: [mediatype: "email", direction: "inbound"]
+    value_format_name: decimal_0
+  }
 }
