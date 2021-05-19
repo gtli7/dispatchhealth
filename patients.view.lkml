@@ -119,6 +119,13 @@ view: patients {
     group_label: "Age of Patient"
   }
 
+  dimension: age_18_plus {
+    description: "A flag indicating patients age >= 18"
+    type: yesno
+    sql: ${age} >= 18 AND NOT ${bad_age_filter} ;;
+    group_label: "Age of Patient"
+  }
+
 
   dimension: age_band_sort {
     type: string
