@@ -417,6 +417,7 @@ view: athena_document_orders {
 
   dimension: pcp_referrals_flag {
     type: yesno
+    description: "A flag indicating that a referral to primary care was made"
     group_label: "Referral Flags"
     sql: ${clinical_order_type} LIKE 'PRIMARY CARE% REFERRAL' ;;
   }
