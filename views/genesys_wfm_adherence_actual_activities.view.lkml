@@ -17,7 +17,7 @@ view: genesys_wfm_adherence_actual_activities {
       quarter,
       year
     ]
-    sql: ${TABLE}."activityendtime" ;;
+    sql: ${TABLE}."activityendtime" AT TIME ZONE 'UTC';;
   }
 
   dimension_group: activitystarttime {
@@ -31,7 +31,7 @@ view: genesys_wfm_adherence_actual_activities {
       quarter,
       year
     ]
-    sql: ${TABLE}."activitystarttime" ;;
+    sql: ${TABLE}."activitystarttime" AT TIME ZONE 'UTC';;
   }
 
   dimension: durationseconds {
