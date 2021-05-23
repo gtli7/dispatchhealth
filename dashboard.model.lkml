@@ -1946,12 +1946,12 @@ join: athena_procedurecode {
     sql_on: ${insurance_coalese.package_id_coalese} = ${insurance_coalese_crosswalk.insurance_package_id} ;;
   }
 
-  # join: insurance_coalese_crosswalk {
-  #   from: primary_payer_dimensions_clone
-  #   relationship: many_to_one
-  #   sql_on: ${insurance_coalese.package_id_coalese} = ${insurance_coalese_crosswalk.insurance_package_id}
-  #           AND ${insurance_coalese_crosswalk.custom_insurance_grouping} IS NOT NULL;;
-  # }
+  join: athena_claim_primary_insurance {
+    from:  athena_payers
+    relationship: many_to_one
+    sql_on: ${insurance_coalese.claim_package_id} = ${athena_claim_primary_insurance.package_id} ;;
+  }
+
 
   join: expected_allowable_corporate {
     relationship: many_to_one
