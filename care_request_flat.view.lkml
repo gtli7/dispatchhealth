@@ -1271,7 +1271,7 @@ measure: count_complete_visits_weekend {
     sql: ${care_request_id} ;;
     filters: {
       field: care_request_flat.complete_hour_of_day
-      value: ">= 15"
+      value: "> 15"
     }
     filters: {
       field:  care_requests.billable_est
