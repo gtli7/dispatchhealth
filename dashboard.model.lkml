@@ -196,6 +196,7 @@ include: "cpt_code_dimensions_clone.view.lkml"
 include: "power_of_attorneys.view.lkml"
 include: "ed_diversion_survey_response_clone.view.lkml"
 include: "athenadwh_patientinsurance_clone.view.lkml"
+include: "views/athena_patientinsurance.view.lkml"
 include: "icd_code_dimensions_clone.view.lkml"
 include: "propensity_by_zip.view.lkml"
 include: "credit_card_errors.view.lkml"
@@ -432,6 +433,16 @@ explore: care_requests {
           AND (${athenadwh_patientinsurance_clone.sequence_number}::int = 1 OR ${athenadwh_patientinsurance_clone.insurance_package_id}::int = -100) ;;
     # fields: []
   }
+
+  join: athena_patientinsurance {
+    relationship: one_to_many
+    sql_on: ${patients.ehr_id} = ${athena_patientinsurance.patient_char}
+          AND ${athena_patientinsurance.cancellation_date} IS NULL
+          AND ${athena_patientinsurance.expiration_date} IS NULL
+          AND ${athena_patientinsurance.insurance_package_id}::int <> 0
+          AND (${athena_patientinsurance.sequence_number}::int = 1 OR ${athena_patientinsurance.insurance_package_id}::int = -100) ;;
+    # fields: []
+    }
 
   join: athenadwh_payers_clone {
     relationship: many_to_one
@@ -1024,7 +1035,7 @@ join: athena_procedures_by_claim {
   join: athena_transaction {
     relationship: one_to_many
     sql_on: ${athena_claim.claim_id} = ${athena_transaction.claim_id} ;;
-    fields: []
+    # fields: []
   }
 
 join: athena_department {
@@ -1935,12 +1946,12 @@ join: athena_procedurecode {
     sql_on: ${insurance_coalese.package_id_coalese} = ${insurance_coalese_crosswalk.insurance_package_id} ;;
   }
 
-  # join: insurance_coalese_crosswalk {
-  #   from: primary_payer_dimensions_clone
-  #   relationship: many_to_one
-  #   sql_on: ${insurance_coalese.package_id_coalese} = ${insurance_coalese_crosswalk.insurance_package_id}
-  #           AND ${insurance_coalese_crosswalk.custom_insurance_grouping} IS NOT NULL;;
-  # }
+  join: athena_claim_primary_insurance {
+    from:  athena_payers
+    relationship: many_to_one
+    sql_on: ${insurance_coalese.claim_package_id} = ${athena_claim_primary_insurance.package_id} ;;
+  }
+
 
   join: expected_allowable_corporate {
     relationship: many_to_one

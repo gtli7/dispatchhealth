@@ -153,6 +153,26 @@ view: users {
         END ;;
   }
 
+  dimension: dhmt_name {
+    label: "DHMT Full Name"
+    type: string
+    sql: CASE
+          WHEN ${provider_profiles.position} = 'emt'
+            THEN initcap(concat(trim(${first_name}), ' ', trim(${last_name})))
+          ELSE NULL
+        END ;;
+  }
+
+  dimension: dhmt_concat_name_id {
+    label: "DHMT Full Name and Id"
+    type: string
+    sql: CASE
+          WHEN ${provider_profiles.position} = 'emt'
+            THEN concat(initcap(trim(${first_name})), ' ', initcap(trim(${last_name})),' - ',${id})
+          ELSE NULL
+        END ;;
+  }
+
   filter: provider_select {
     suggest_dimension: csc_name
   }
