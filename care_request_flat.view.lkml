@@ -1265,7 +1265,19 @@ measure: count_complete_visits_weekend {
   }
 }
 
-
+  measure: count_complete_visits_after_hours {
+    description: "Count of billable est after hours (3pm)"
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters: {
+      field: care_request_flat.complete_hour_of_day
+      value: "> 15"
+    }
+    filters: {
+      field:  care_requests.billable_est
+      value: "yes"
+    }
+  }
 
   dimension: complete_comment {
     type: string

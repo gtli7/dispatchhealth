@@ -111,6 +111,13 @@ dimension_group: shift_date {
     sql: ${TABLE}.punched_clinical_hours ;;
   }
 
+  dimension: scheduled_hours {
+    type: number
+    value_format: "0.00"
+    description: "Scheduled hours only"
+    sql: ${TABLE}.scheduled_hours ;;
+  }
+
   dimension: direct_clinical_pay {
     type: number
     value_format: "0.00"
