@@ -59,27 +59,27 @@ view: adt_first_encounter_report {
   }
 
 
-  dimension: active_market_bounceback_go_live_date {
-    description: "Go live date for valid data dependent on vendor and market.  "
-    type: string
-    sql: CASE
-          WHEN lower(${markets.name}) IN (
-              'springfield',
-              'richmond',
-              'seattle',
-              'spokane',
-              'olympia',
-              'tacoma')
-            AND ${care_request_flat.complete_date} > '2020/03/01' THEN '2020/03/01'
-          WHEN lower(${markets.name}) IN (
-              'denver',
-              'colorado springs')
-            AND ${care_request_flat.complete_date} > '2020/11/01' THEN '2020/11/01'
-            ELSE NULL
-            END
+  # dimension: active_market_bounceback_go_live_date {
+  #   description: "Go live date for valid data dependent on vendor and market.  "
+  #   type: string
+  #   sql: CASE
+  #         WHEN lower(${markets.name}) IN (
+  #             'springfield',
+  #             'richmond',
+  #             'seattle',
+  #             'spokane',
+  #             'olympia',
+  #             'tacoma')
+  #           AND ${care_request_flat.complete_date} > '2020/03/01' THEN '2020/03/01'
+  #         WHEN lower(${markets.name}) IN (
+  #             'denver',
+  #             'colorado springs')
+  #           AND ${care_request_flat.complete_date} > '2020/11/01' THEN '2020/11/01'
+  #           ELSE NULL
+  #           END
 
-            ;;
-  }
+  #           ;;
+  # }
 
 
 
