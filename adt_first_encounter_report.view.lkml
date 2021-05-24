@@ -35,18 +35,29 @@ view: adt_first_encounter_report {
               'WA',
               'MA',
               'VA')
-            AND ${care_request_flat.complete_date} > '2020/03/01' THEN true
+              AND ${care_request_flat.complete_date} > '2020/03/01' THEN true
           WHEN ${markets.state} IN (
               'CO')
-            AND ${care_request_flat.complete_date} > '2020/11/01' THEN true
+              AND ${care_request_flat.complete_date} > '2020/11/01' THEN true
           WHEN ${markets.state} IN (
-              'ID', 'NJ', 'NV', 'OR', 'AZ', 'IN', 'NC', 'OK', 'TX')
-            AND ${care_request_flat.complete_date} > '2021/05/15' THEN true
+              'ID',
+              'NJ',
+              'NV',
+              'OR')
+              AND ${care_request_flat.complete_date} > '2021/05/10' THEN true
+          WHEN ${markets.state} IN (
+              'AZ',
+              'IN',
+              'NC',
+              'OK',
+              'TX')
+              AND ${care_request_flat.complete_date} > '2021/05/10' THEN true
           ELSE false
             END
 
             ;;
   }
+
 
   dimension: active_market_bounceback_go_live_date {
     description: "Go live date for valid data dependent on vendor and market.  "
