@@ -4040,7 +4040,7 @@ measure: avg_first_on_route_mins {
 
   measure: lwbs_not_accepted_percent {
     type: number
-    value_format: "0%"
+    value_format: "0.0%"
     sql: ${lwbs_not_accepted_count}::float/nullif(${care_request_count},0)::float ;;
   }
 
@@ -4559,7 +4559,7 @@ measure: avg_first_on_route_mins {
 
   measure: lwbs_accepted_percent {
     type: number
-    value_format: "0%"
+    value_format: "0.0%"
     sql: ${lwbs_accepted_count}::float/nullif(${care_request_count},0)::float ;;
   }
 

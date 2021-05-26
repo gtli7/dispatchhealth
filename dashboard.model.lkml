@@ -5068,7 +5068,8 @@ explore: productivity_agg {
   }
 
   join:granular_shift_tracking_agg  {
-    sql_on:  ${granular_shift_tracking_agg.shift_date}=${productivity_agg.start_date} and ${granular_shift_tracking_agg.market_name_adj} =${productivity_agg.name_adj};;
+    sql_on:  ${granular_shift_tracking_agg.shift_date}=${productivity_agg.start_date} and ${granular_shift_tracking_agg.market_name_adj} =${productivity_agg.name_adj}
+    and ${productivity_agg.telepresentation}=${granular_shift_tracking_agg.telepresentation};;
   }
 
   join: high_overflow_days {

@@ -1,6 +1,6 @@
 view: granular_shift_tracking_agg {
     derived_table: {
-      sql_trigger_value:  SELECT count(*) FROM looker_scratch.granular_shift_tracking where shift_date > current_date - interval '16 days';;
+      sql_trigger_value:  SELECT count(*) FROM looker_scratch.granular_shift_tracking where shift_date > current_date - interval '14 days';;
       indexes: ["shift_date", "shift_team_id", "car_name", "market_id", "market_name_adj"]
       explore_source: granular_shift_tracking {
         column: shift_date {}
