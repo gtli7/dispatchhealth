@@ -50,4 +50,10 @@ view: shift_types {
     type: count
     drill_fields: [id, name]
   }
+
+  dimension: telepresentation {
+    type: yesno
+    sql: lower( ${name}) like '%telepresentation%';;
+  }
+
 }

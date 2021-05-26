@@ -149,7 +149,7 @@ view: markets {
     sql: case when ${TABLE}.name = 'West Metro Fire Rescue'
       OR ${TABLE}.name = 'South Metro Fire Rescue' then 'Denver'
     else ${name} end;;
-    drill_fields: [users.app_concat_name_id]
+    drill_fields: [users.app_concat_name_id, users.dhmt_concat_name_id]
 
   }
 

@@ -375,6 +375,25 @@ view: shift_teams {
     sql: ${id} ;;
   }
 
+  measure: count_distinct_cars_per_day {
+    description: "Count of distinct cars per day, not including SMFR/WMFR/Flex/Virtual/Advanced"
+    type: count_distinct
+    sql: concat(${cars.name},${start_date}) ;;
+    filters: {
+      field: cars.mfr_flex_car
+      value: "no"
+    }
+    filters: {
+      field: cars.advanced_care_car
+      value: "no"
+    }
+  }
+
+  measure: count_distinct_days {
+    type: count_distinct
+    sql: ${start_date} ;;
+  }
+
   measure: count_distinct_car_date_shift {
     label: "Count of Distinct Cars by Date (Shift Teams)"
     type: count_distinct

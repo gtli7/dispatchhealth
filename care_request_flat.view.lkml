@@ -1271,7 +1271,7 @@ measure: count_complete_visits_weekend {
     sql: ${care_request_id} ;;
     filters: {
       field: care_request_flat.complete_hour_of_day
-      value: ">= 15"
+      value: "> 15"
     }
     filters: {
       field:  care_requests.billable_est
@@ -4068,7 +4068,7 @@ measure: avg_first_on_route_mins {
 
   measure: lwbs_not_accepted_percent {
     type: number
-    value_format: "0%"
+    value_format: "0.0%"
     sql: ${lwbs_not_accepted_count}::float/nullif(${care_request_count},0)::float ;;
   }
 
@@ -4587,7 +4587,7 @@ measure: avg_first_on_route_mins {
 
   measure: lwbs_accepted_percent {
     type: number
-    value_format: "0%"
+    value_format: "0.0%"
     sql: ${lwbs_accepted_count}::float/nullif(${care_request_count},0)::float ;;
   }
 

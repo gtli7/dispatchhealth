@@ -100,7 +100,14 @@ view: patient_satisfaction {
     sql: ${nps_response_rate} ;;
     sql_distinct_key: ${care_requests.id} ;;
     filters: [care_requests.billable_est: "yes"]
-    drill_fields: [users.app_name, average_net_promoter_score, nps_survey_response_rate]
+    link: {
+      label: "by APP Full Name"
+      url: "{{ nps_app_drilldown._link }}"
+    }
+    link: {
+      label: "by DHMT Full Name"
+      url: "{{ nps_dhmt_drilldown._link }}"
+    }
   }
 
   measure: er_alternative_response_rate {
@@ -160,7 +167,14 @@ view: patient_satisfaction {
     sql: ${net_promoter_score} ;;
     sql_distinct_key: ${care_request_id} ;;
     value_format: "0"
-    drill_fields: [users.app_name, average_net_promoter_score, nps_survey_response_rate]
+    link: {
+      label: "by APP Full Name"
+      url: "{{ nps_app_drilldown._link }}"
+    }
+    link: {
+      label: "by DHMT Full Name"
+      url: "{{ nps_dhmt_drilldown._link }}"
+    }
   }
 
   dimension: overall_rating_response {
@@ -196,6 +210,20 @@ view: patient_satisfaction {
       year
     ]
     sql: ${TABLE}."updated_at" ;;
+  }
+
+  measure: nps_app_drilldown {
+    type: sum
+    sql: 0 ;;
+    drill_fields: [users.app_name, average_net_promoter_score, nps_survey_response_rate]
+    hidden: yes
+  }
+
+  measure: nps_dhmt_drilldown {
+    type: sum
+    sql: 0 ;;
+    drill_fields: [users.dhmt_name, average_net_promoter_score, nps_survey_response_rate]
+    hidden: yes
   }
 
 }

@@ -25,6 +25,7 @@ view: productivity_agg {
       column: escalated_on_scene_count { field: care_request_flat.escalated_on_scene_count }
       column: complete_count_asymptomatic_covid_testing { field: care_request_flat.complete_count_asymptomatic_covid_testing }
       column: complete_count_communicable_protocol { field: care_request_flat.complete_count_communicable_protocol }
+      column: telepresentation { field: shift_types.telepresentation}
       filters: {
         field: shift_teams.start_date
         value: "365 days ago for 365 days"
@@ -36,6 +37,10 @@ view: productivity_agg {
       filters: {
         field: cars.name
         value: "-%Screening%,-%Swab%,-%Test%"
+      }
+      filters: {
+        field: shift_types.name
+        value: "-%multicare%,-%covid_vaccination%,-%test%"
       }
 
     }
@@ -66,6 +71,10 @@ view: productivity_agg {
     type: number
   }
 
+  dimension: telepresentation {
+    type: yesno
+  }
+
 
   dimension: sum_shift_hours_no_arm_advanced {
     label: "Shift Teams Sum Shift Hours (no arm, advanced)"
@@ -79,6 +88,11 @@ view: productivity_agg {
     type: number
   }
 
+  dimension: primary_key {
+    type: string
+    sql: concat(${start_date}, ${name_adj}, ${telepresentation})  ;;
+  }
+
   dimension: after_15_minutes_experiment {
     type: yesno
     sql: ${start_date} >= '2020-09-10' ;;
@@ -88,14 +102,14 @@ view: productivity_agg {
     type: sum_distinct
     value_format: "0"
     sql: ${sum_shift_hours_no_arm_advanced} ;;
-    sql_distinct_key: concat(${start_date}, ${name_adj}) ;;
+    sql_distinct_key: ${primary_key} ;;
   }
 
   measure: total_clinical_hours_no_arm_advanced {
     type: sum_distinct
     value_format: "0"
     sql: ${sum_clinical_hours_no_arm_advanced} ;;
-    sql_distinct_key: concat(${start_date}, ${name_adj}) ;;
+    sql_distinct_key:  ${primary_key} ;;
   }
 
   dimension: complete_count {
@@ -108,7 +122,7 @@ view: productivity_agg {
   measure: total_complete_count_no_arm_advanced {
     type: sum_distinct
     sql: ${complete_count_no_arm_advanced} ;;
-    sql_distinct_key: concat(${start_date}, ${name_adj}) ;;
+    sql_distinct_key:  ${primary_key};;
   }
 
 
@@ -116,13 +130,13 @@ view: productivity_agg {
   measure: total_complete_count_asymptomatic {
     type: sum_distinct
     sql: ${complete_count_asymptomatic_covid_testing} ;;
-    sql_distinct_key: concat(${start_date}, ${name_adj}) ;;
+    sql_distinct_key:  ${primary_key} ;;
   }
 
   measure: total_complete_count_communicable_protocol {
     type: sum_distinct
     sql: ${complete_count_communicable_protocol} ;;
-    sql_distinct_key: concat(${start_date}, ${name_adj}) ;;
+    sql_distinct_key:  ${primary_key} ;;
   }
 
   measure: total_complete_count_communicable_asymptomatic_protocol {
@@ -133,25 +147,25 @@ view: productivity_agg {
   measure: communicable_asymptomatic_protocol_percent {
     type: number
     value_format: "0%"
-    sql:case when ${total_complete_count}>0 then${total_complete_count_communicable_asymptomatic_protocol}::float/${total_complete_count}::float else 0 end;;
+    sql:case when ${total_complete_count}>0 then ${total_complete_count_communicable_asymptomatic_protocol}::float/${total_complete_count}::float else 0 end;;
   }
 
   measure: asymptomatic_protocol_percent {
     type: number
     value_format: "0%"
-    sql:case when ${total_complete_count}>0 then${total_complete_count_asymptomatic}::float/${total_complete_count}::float else 0 end;;
+    sql:case when ${total_complete_count}>0 then ${total_complete_count_asymptomatic}::float/${total_complete_count}::float else 0 end;;
   }
 
   measure: communicable_protocol_percent {
     type: number
     value_format: "0%"
-    sql:case when ${total_complete_count}>0 then${total_complete_count_communicable_protocol}::float/${total_complete_count}::float else 0 end;;
+    sql:case when ${total_complete_count}>0 then ${total_complete_count_communicable_protocol}::float/${total_complete_count}::float else 0 end;;
   }
 
   measure: total_complete_count {
     type: sum_distinct
     sql: ${complete_count} ;;
-    sql_distinct_key: concat(${start_date}, ${name_adj}) ;;
+    sql_distinct_key:  ${primary_key} ;;
   }
 
   measure: count_distinct_days {

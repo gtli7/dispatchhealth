@@ -196,6 +196,7 @@ include: "cpt_code_dimensions_clone.view.lkml"
 include: "power_of_attorneys.view.lkml"
 include: "ed_diversion_survey_response_clone.view.lkml"
 include: "athenadwh_patientinsurance_clone.view.lkml"
+include: "views/athena_patientinsurance.view.lkml"
 include: "icd_code_dimensions_clone.view.lkml"
 include: "propensity_by_zip.view.lkml"
 include: "credit_card_errors.view.lkml"
@@ -432,6 +433,16 @@ explore: care_requests {
           AND (${athenadwh_patientinsurance_clone.sequence_number}::int = 1 OR ${athenadwh_patientinsurance_clone.insurance_package_id}::int = -100) ;;
     # fields: []
   }
+
+  join: athena_patientinsurance {
+    relationship: one_to_many
+    sql_on: ${patients.ehr_id} = ${athena_patientinsurance.patient_char}
+          AND ${athena_patientinsurance.cancellation_date} IS NULL
+          AND ${athena_patientinsurance.expiration_date} IS NULL
+          AND ${athena_patientinsurance.insurance_package_id}::int <> 0
+          AND (${athena_patientinsurance.sequence_number}::int = 1 OR ${athena_patientinsurance.insurance_package_id}::int = -100) ;;
+    # fields: []
+    }
 
   join: athenadwh_payers_clone {
     relationship: many_to_one
@@ -1024,7 +1035,7 @@ join: athena_procedures_by_claim {
   join: athena_transaction {
     relationship: one_to_many
     sql_on: ${athena_claim.claim_id} = ${athena_transaction.claim_id} ;;
-    fields: []
+    # fields: []
   }
 
 join: athena_department {
@@ -1935,12 +1946,12 @@ join: athena_procedurecode {
     sql_on: ${insurance_coalese.package_id_coalese} = ${insurance_coalese_crosswalk.insurance_package_id} ;;
   }
 
-  # join: insurance_coalese_crosswalk {
-  #   from: primary_payer_dimensions_clone
-  #   relationship: many_to_one
-  #   sql_on: ${insurance_coalese.package_id_coalese} = ${insurance_coalese_crosswalk.insurance_package_id}
-  #           AND ${insurance_coalese_crosswalk.custom_insurance_grouping} IS NOT NULL;;
-  # }
+  join: athena_claim_primary_insurance {
+    from:  athena_payers
+    relationship: many_to_one
+    sql_on: ${insurance_coalese.claim_package_id} = ${athena_claim_primary_insurance.package_id} ;;
+  }
+
 
   join: expected_allowable_corporate {
     relationship: many_to_one
@@ -2187,7 +2198,7 @@ join: ga_pageviews_clone {
   }
 
   join: genesys_conversation_summary {
-    sql_on:  ${genesys_conversation_summary.conversationid} =${care_request_flat.contact_id}
+    sql_on:  ${genesys_conversation_summary.conversationid} =${care_request_flat.contact_id} and ${genesys_conversation_summary.conversationid} not in('c7673a97-04df-4d22-af20-8dbed34ddb10', '915f11ff-17ab-4491-9cf0-ab44422fefbd', '96017792-9b4e-461b-8e47-4c0f7f92ba19', 'd3a1d1f5-95fe-4515-9d7a-591176877575', '9ffb7c0b-065a-4a34-b2fc-bb2d0fc67c89', '461d7648-e167-4ac5-af63-1d8bdb12329d', '13cdebf6-ceef-4d3c-9c34-471084666602', 'e507a389-53da-4861-a2a5-b7b080a067c1')
       ;;
   }
   join: inbound_not_answered_or_abandoned  {
@@ -4041,6 +4052,7 @@ explore: expected_allowables_market_budget {
 
 
 explore: genesys_conversation_summary {
+  sql_always_where: ${genesys_conversation_summary.conversationid} not in('c7673a97-04df-4d22-af20-8dbed34ddb10', '915f11ff-17ab-4491-9cf0-ab44422fefbd', '96017792-9b4e-461b-8e47-4c0f7f92ba19', 'd3a1d1f5-95fe-4515-9d7a-591176877575', '9ffb7c0b-065a-4a34-b2fc-bb2d0fc67c89', '461d7648-e167-4ac5-af63-1d8bdb12329d', '13cdebf6-ceef-4d3c-9c34-471084666602', 'e507a389-53da-4861-a2a5-b7b080a067c1') ;;
   join: inbound_not_answered_or_abandoned  {
     sql_on: ${genesys_conversation_summary.conversationid}=${inbound_not_answered_or_abandoned.conversationid} ;;
   }
@@ -5078,7 +5090,8 @@ explore: productivity_agg {
   }
 
   join:granular_shift_tracking_agg  {
-    sql_on:  ${granular_shift_tracking_agg.shift_date}=${productivity_agg.start_date} and ${granular_shift_tracking_agg.market_name_adj} =${productivity_agg.name_adj};;
+    sql_on:  ${granular_shift_tracking_agg.shift_date}=${productivity_agg.start_date} and ${granular_shift_tracking_agg.market_name_adj} =${productivity_agg.name_adj}
+    and ${productivity_agg.telepresentation}=${granular_shift_tracking_agg.telepresentation};;
   }
 
   join: high_overflow_days {
@@ -5290,12 +5303,8 @@ explore: adwords_campaigns_clone {
   }
 }
 explore: granular_shift_tracking {
-  join: cars {
-    sql_on: ${cars.id} =${granular_shift_tracking.car_id} ;;
-  }
-  join: markets {
-    sql_on: ${markets.id} =${cars.market_id} ;;
-  }
+
+
   join: shift_teams {
     relationship: many_to_one
     sql_on: ${granular_shift_tracking.shift_team_id} = ${shift_teams.id} ;;
@@ -5303,6 +5312,27 @@ explore: granular_shift_tracking {
   join: shift_types {
     relationship: many_to_one
     sql_on: ${shift_teams.shift_type_id} = ${shift_types.id} ;;
+  }
+
+  join: shift_team_market_assignment_logs {
+    sql_on: ${shift_teams.id} = ${shift_team_market_assignment_logs.shift_team_id} AND ${shift_team_market_assignment_logs.lend} ;;
+  }
+  join: cars {
+    sql_on: ${cars.id}=${shift_teams.car_id} ;;
+  }
+
+  join: markets {
+    sql_on: ${markets.id}= coalesce(${shift_team_market_assignment_logs.market_id}, ${cars.market_id}) ;;
+  }
+
+  join: regional_markets {
+    relationship: one_to_one
+    sql_on: ${regional_markets.market_id} = ${markets.id_adj} ;;
+  }
+
+  join: market_regions {
+    relationship: one_to_one
+    sql_on: ${markets.id_adj} = ${market_regions.market_id} ;;
   }
 
 

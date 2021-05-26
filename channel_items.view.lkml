@@ -406,9 +406,9 @@ measure: count_direct_access_sub_type {
     sql: case
           when ${name_no_tabs} is null then 'No Channel'
           when  (${type_name} is null and lower(${name_no_tabs}) not in('family or friend', 'healthcare provider', 'healthcare provider', 'employer', 'employer organization', 'health insurance company', '911 channel', 'west metro fire rescue', 'south metro fire rescue', 'central pierce fire & rescue', 'ymca/jcc/rec center/community event', 'lighthouse of houston/council of the blind', 'presentation / meeting','event/in-service', 'bridgewater assisted living avondale', 'dementia conference', 'harris county aging and disability resource center- care connection', 'fort bend senior event/expo', 'jcc/jewish community', 'senior event/tradeshow/expo', 'community fair/event','stafford center expo/event', 'tacoma fire', 'business network group','humana at home',
-          'multicare clinic without walls', 'mass covid testing', 'medstar - 911', 'south metro fire rescue clinic', 'seniorific news'))  then 'Direct to Consumer'
+          'multicare clinic without walls', 'mass covid testing', 'medstar - 911', 'south metro fire rescue clinic', 'seniorific news', 'richmond ambulance authority', 'medstar / ems'))  then 'Direct to Consumer'
           when lower(${type_name}) in('senior care', 'hospice & palliative care', 'snf' , 'home health') or  lower(${name_no_tabs}) in('healthcare provider', 'healthcare provider', 'ymca/jcc/rec center/community event', 'lighthouse of houston/council of the blind','presentation / meeting', 'event/in-service', 'bridgewater assisted living avondale','dementia conference', 'harris county aging and disability resource center- care connection', 'fort bend senior event/expo', 'jcc/jewish community', 'senior event/tradeshow/expo', 'community fair/event','stafford center expo/event', 'seniorific news')  then 'Senior Care'
-          when lower(${type_name}) in('health system', 'employer', 'payer', 'provider group', 'injury finance') or lower(${name_no_tabs}) in('tacoma fire', 'business network group','humana at home', 'employer', 'employer organization', 'health insurance company', '911 channel', 'west metro fire rescue', 'south metro fire rescue', 'central pierce fire & rescue', 'multicare clinic without walls', 'mass covid testing', 'medstar - 911', 'south metro fire rescue clinic') then 'Strategic'
+          when lower(${type_name}) in('health system', 'employer', 'payer', 'provider group', 'injury finance') or lower(${name_no_tabs}) in('tacoma fire', 'business network group','humana at home', 'employer', 'employer organization', 'health insurance company', '911 channel', 'west metro fire rescue', 'south metro fire rescue', 'central pierce fire & rescue', 'multicare clinic without walls', 'mass covid testing', 'medstar - 911', 'south metro fire rescue clinic', 'richmond ambulance authority', 'medstar / ems') then 'Strategic'
           when lower(${name_no_tabs}) ='family or friend' then 'Family or Friends'
         else concat(coalesce(${type_name}, 'Direct'), ': ', ${name_no_tabs}) end;;
     drill_fields: [sub_type, name]
@@ -421,12 +421,12 @@ measure: count_direct_access_sub_type {
     sql: case
          when ${name_no_tabs} is null then 'No Channel'
          when  (${type_name} is null and lower(${name_no_tabs}) not in('family or friend', 'healthcare provider', 'healthcare provider', 'employer', 'employer organization', 'health insurance company', '911 channel', 'west metro fire rescue', 'south metro fire rescue', 'central pierce fire & rescue', 'ymca/jcc/rec center/community event', 'lighthouse of houston/council of the blind', 'presentation / meeting','event/in-service', 'bridgewater assisted living avondale', 'dementia conference', 'harris county aging and disability resource center- care connection', 'fort bend senior event/expo', 'jcc/jewish community', 'senior event/tradeshow/expo', 'community fair/event','stafford center expo/event', 'tacoma fire', 'business network group','humana at home',
-        'multicare clinic without walls', 'mass covid testing', 'medstar - 911','south metro fire rescue clinic', 'seniorific news'))  then 'Direct to Consumer'
+        'multicare clinic without walls', 'mass covid testing', 'medstar - 911','south metro fire rescue clinic', 'seniorific news', 'richmond ambulance authority', 'medstar / ems'))  then 'Direct to Consumer'
          when lower(${type_name}) in('home health') then 'Home Health'
          when lower(${name_no_tabs}) in('healthcare provider') then 'Provider (Generic)'
          when lower(${type_name}) in('provider group') then 'Provider Group'
          when lower(${type_name}) in('senior care', 'hospice & palliative care', 'snf') or  lower(${name_no_tabs}) in('ymca/jcc/rec center/community event', 'lighthouse of houston/council of the blind','presentation / meeting', 'event/in-service', 'bridgewater assisted living avondale','dementia conference', 'harris county aging and disability resource center- care connection', 'fort bend senior event/expo','jcc/jewish community', 'senior event/tradeshow/expo', 'community fair/event','stafford center expo/event', 'seniorific news')  then 'Senior Care'
-         when lower(${type_name}) in('health system', 'employer', 'payer', 'injury finance') or lower(${name_no_tabs}) in('tacoma fire', 'business network group','humana at home', 'employer', 'employer organization', 'health insurance company', '911 channel', 'west metro fire rescue', 'south metro fire rescue', 'central pierce fire & rescue', 'multicare clinic without walls', 'mass covid testing', 'medstar - 911', 'south metro fire rescue clinic') then 'Strategic'
+         when lower(${type_name}) in('health system', 'employer', 'payer', 'injury finance') or lower(${name_no_tabs}) in('tacoma fire', 'business network group','humana at home', 'employer', 'employer organization', 'health insurance company', '911 channel', 'west metro fire rescue', 'south metro fire rescue', 'central pierce fire & rescue', 'multicare clinic without walls', 'mass covid testing', 'medstar - 911', 'south metro fire rescue clinic', 'richmond ambulance authority', 'medstar / ems') then 'Strategic'
          when lower(${name_no_tabs}) ='family or friend' then 'Family or Friends'
         else concat(coalesce(${type_name}, 'Direct'), ': ', ${name_no_tabs}) end;;
     drill_fields: [sub_type, name]
@@ -612,5 +612,134 @@ else null end;;
 
           else 'None Attributed' end;;
   }
+
+
+dimension: uhc_partner_profile {
+  description: "The UHC program based on dnis and channel name"
+  type: string
+  group_label: "Partner Specific Descriptions"
+  sql:  CASE
+          WHEN ${genesys_conversation_summary.dnis} in('+18884890212') OR ${channel_items.name} = 'Public Sector Nurse Line (Uhc Nurseline)' then 'UHC Nurse Line'
+          WHEN ${genesys_conversation_summary.dnis} in('+18334311989') OR ${channel_items.name} = 'UHC Call Us First' then 'UHC Nurse Line'
+          WHEN ${genesys_conversation_summary.dnis} in('+18334811807') OR ${channel_items.name} = 'UHC Navigate for Me' then 'UHC Navigate for Me'
+          WHEN ${genesys_conversation_summary.dnis} in('+18334851437') OR ${channel_items.name} = 'UHC Patient Connect' then 'UHC Patient Connect'
+          WHEN ${genesys_conversation_summary.dnis} in(
+                                                      '+16783903016',
+                                                      '+12082989653',
+                                                      '+12164789205',
+                                                      '+17194010147',
+                                                      '+14694449341',
+                                                      '+17207389539',
+                                                      '+18176427764',
+                                                      '+19598819570',
+                                                      '+19592025890',
+                                                      '+12818628551',
+                                                      '+13175970701',
+                                                      '+13177398540',
+                                                      '+18652804092',
+                                                      '+17028055711',
+                                                      '+17866446416',
+                                                      '+19737862227',
+                                                      '+16154555874',
+                                                      '+12018704540',
+                                                      '+14053370838',
+                                                      '+13602005876',
+                                                      '+14805816774',
+                                                      '+15034683350',
+                                                      '+19198978788',
+                                                      '+17754425870',
+                                                      '+18042941871',
+                                                      '+12108915230',
+                                                      '+14255280217',
+                                                      '+15095427295',
+                                                      '+14132395662',
+                                                      '+12533728763',
+                                                      '+18135536314',
+                                                      '+15204423235',
+                                                      '+18334920263')
+                                                      OR ${channel_items.name} in (
+                                                                                    'UHC General',
+                                                                                    'Unitedhealthcare Community Plan (Uhccp)',
+                                                                                    'United Healthcare Hou',
+                                                                                    'United Healthcare Community Plan / Whole Person Care Team',
+                                                                                    'Optum',
+                                                                                    'Optum Medical Group',
+                                                                                    'Unitedhealthcare/Optumcare/Health Plan Of Nevada (Hpn)/Sierra Health & Life Medicare Plans'
+                                                                                    )
+                                                      then 'UHC General'
+          WHEN ${genesys_conversation_summary.dnis} in('+18336660798') OR ${channel_items.name} = 'naviHealth' then 'naviHealth'
+          WHEN ${genesys_conversation_summary.dnis} in( '+18339761528',
+                                                        '+18336721641') OR ${channel_items.name} = 'Optum I-SNP' then 'Optum I-SNP'
+          WHEN ${genesys_conversation_summary.dnis} in(
+                                                        '+18339013127',
+                                                        '+16783839048',
+                                                        '+12083159838',
+                                                        '+12167589707',
+                                                        '+17194010127',
+                                                        '+14694154633',
+                                                        '+17207226114',
+                                                        '+18178096809',
+                                                        '+19598819691',
+                                                        '+12818849904',
+                                                        '+13176200400',
+                                                        '+18652948755',
+                                                        '+17028275579',
+                                                        '+17866385853',
+                                                        '+19737671685',
+                                                        '+16157519490',
+                                                        '+12015469247',
+                                                        '+14053387272',
+                                                        '+13606390859',
+                                                        '+14805874446',
+                                                        '+15039174089',
+                                                        '+19194430766',
+                                                        '+17753167559',
+                                                        '+18044240637',
+                                                        '+12108915231',
+                                                        '+14256699540',
+                                                        '+15093816858',
+                                                        '+14132486318',
+                                                        '+12533192848',
+                                                        '+18137554667',
+                                                        '+15204422267')
+                                                      OR ${channel_items.name} in (
+                                                                                    'Optum Housecalls (Apc)',
+                                                                                    'UHC Housecalls National')
+                                                      then 'UHC Housecalls'
+          WHEN ${genesys_conversation_summary.dnis} in(
+                                                        '+18889050616',
+                                                        '+18333892576') OR ${channel_items.name} = 'Direct Mail or Door Hanger' then 'Optum National Mailer'
+          WHEN ${channel_items.name} in (
+                                          'Uhc/Optum Case Management',
+                                          'Uhc / Optum Care Manager',
+                                          'Optum (Complex Care Management Team)',
+                                          'Uhc Case Management') then 'UHC/Optum Case management'
+          WHEN ${channel_items.name} in (
+                                          'Optum At Home/United Healthcare At Home Care Navigators',
+                                          'United Healthcare At Home Care Navigators') then 'Optum At Home/United Healthcare At Home Care Navigators'
+          WHEN ${genesys_conversation_summary.dnis} in ('+16783218305')
+                                                    OR ${channel_items.name} in ('Optum At Home / United Healthcare At Home',
+                                                                                  'Optum - Other') then 'Optum at Home'
+          WHEN ${channel_items.name} = 'Optumcare Primary Care-Deer Valley' then 'Optum Primary Care-Deer Valley'
+          WHEN ${genesys_conversation_summary.dnis} in('+17026596193') OR ${channel_items.name} = 'Optumcare Resource Coordination Center (Rcc)' then 'Optumcare Resource Coordination Center (Rcc)'
+          WHEN ${genesys_conversation_summary.dnis} in(
+                                                      '+18339143500',
+                                                      '+18334100839')
+                                                    OR ${channel_items.name} = 'Optum Ctp (Community Transitions Program)' then 'Optum Transitions to Home CTP'
+          WHEN ${genesys_conversation_summary.dnis} in('+17202951986',
+                                                      '+12064299968')
+                                                    OR ${channel_items.name} in('Denver Optum Vivage',
+                                                                                'Optum Snf Program Pnw',
+                                                                                'Seattle Optum Snf') then 'Optum SNF'
+          WHEN ${genesys_conversation_summary.dnis} in('+18336851060') OR ${channel_items.name} = 'Uhc C&S Ltss' then 'UHC C&S LTSS'
+          WHEN ${genesys_conversation_summary.dnis} in('+14808770765') OR ${channel_items.name} = 'Optumcare' then 'Optumcare'
+          WHEN ${genesys_conversation_summary.dnis} in('+18336371670') then 'Prospero'
+          WHEN ${genesys_conversation_summary.dnis} in('+18336370622') then 'Aspire'
+          WHEN ${genesys_conversation_summary.dnis} in('+18336792314') then 'Optum Oncology'
+        END;;
+}
+
+
+
 
 }
