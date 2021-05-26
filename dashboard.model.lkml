@@ -2198,7 +2198,7 @@ join: ga_pageviews_clone {
   }
 
   join: genesys_conversation_summary {
-    sql_on:  ${genesys_conversation_summary.conversationid} =${care_request_flat.contact_id}
+    sql_on:  ${genesys_conversation_summary.conversationid} =${care_request_flat.contact_id} and ${genesys_conversation_summary.conversationid} not in('c7673a97-04df-4d22-af20-8dbed34ddb10', '915f11ff-17ab-4491-9cf0-ab44422fefbd', '96017792-9b4e-461b-8e47-4c0f7f92ba19', 'd3a1d1f5-95fe-4515-9d7a-591176877575', '9ffb7c0b-065a-4a34-b2fc-bb2d0fc67c89', '461d7648-e167-4ac5-af63-1d8bdb12329d', '13cdebf6-ceef-4d3c-9c34-471084666602', 'e507a389-53da-4861-a2a5-b7b080a067c1')
       ;;
   }
   join: inbound_not_answered_or_abandoned  {
@@ -4052,6 +4052,7 @@ explore: expected_allowables_market_budget {
 
 
 explore: genesys_conversation_summary {
+  sql_always_where: ${genesys_conversation_summary.conversationid} not in('c7673a97-04df-4d22-af20-8dbed34ddb10', '915f11ff-17ab-4491-9cf0-ab44422fefbd', '96017792-9b4e-461b-8e47-4c0f7f92ba19', 'd3a1d1f5-95fe-4515-9d7a-591176877575', '9ffb7c0b-065a-4a34-b2fc-bb2d0fc67c89', '461d7648-e167-4ac5-af63-1d8bdb12329d', '13cdebf6-ceef-4d3c-9c34-471084666602', 'e507a389-53da-4861-a2a5-b7b080a067c1') ;;
   join: inbound_not_answered_or_abandoned  {
     sql_on: ${genesys_conversation_summary.conversationid}=${inbound_not_answered_or_abandoned.conversationid} ;;
   }
