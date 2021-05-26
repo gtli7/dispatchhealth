@@ -415,6 +415,26 @@ view: athena_document_orders {
         END ;;
     }
 
+  dimension: pcp_referrals_flag {
+    type: yesno
+    description: "A flag indicating that a referral to primary care was made"
+    group_label: "Referral Flags"
+    sql: ${clinical_order_type} LIKE 'PRIMARY CARE% REFERRAL' ;;
+  }
+
+  dimension: home_health_referrals_flag {
+    type: yesno
+    group_label: "Referral Flags"
+    sql: ${clinical_order_type} LIKE 'HOME HEALTH%REFERRAL' ;;
+  }
+
+  dimension: provider_referrals_flag {
+    type: yesno
+    description: "Provider referrals that are not home health"
+    group_label: "Referral Flags"
+    sql: ${clinical_order_type} LIKE '%REFERRAL%' AND ${clinical_order_type} NOT LIKE 'HOME HEALTH%' ;;
+  }
+
 
   measure: aggregated_referrals {
     type: string

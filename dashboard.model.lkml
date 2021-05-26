@@ -196,6 +196,7 @@ include: "cpt_code_dimensions_clone.view.lkml"
 include: "power_of_attorneys.view.lkml"
 include: "ed_diversion_survey_response_clone.view.lkml"
 include: "athenadwh_patientinsurance_clone.view.lkml"
+include: "views/athena_patientinsurance.view.lkml"
 include: "icd_code_dimensions_clone.view.lkml"
 include: "propensity_by_zip.view.lkml"
 include: "credit_card_errors.view.lkml"
@@ -375,6 +376,12 @@ include: "all_on_route_shifts.view.lkml"
 include: "views/custom_five_types.view.lkml"
 include: "views/sf_address_matching.view.lkml"
 
+include: "views/genesys_wfm_adherence_actual_activities.view.lkml"
+include: "views/genesys_wfm_adherence_exceptions.view.lkml"
+include: "views/genesys_wfm_day_metrics.view.lkml"
+include: "views/genesys_user_details.view.lkml"
+include: "views/genesys_agent_summary.view.lkml"
+
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
   max_cache_age: "6 hours"
@@ -426,6 +433,16 @@ explore: care_requests {
           AND (${athenadwh_patientinsurance_clone.sequence_number}::int = 1 OR ${athenadwh_patientinsurance_clone.insurance_package_id}::int = -100) ;;
     # fields: []
   }
+
+  join: athena_patientinsurance {
+    relationship: one_to_many
+    sql_on: ${patients.ehr_id} = ${athena_patientinsurance.patient_char}
+          AND ${athena_patientinsurance.cancellation_date} IS NULL
+          AND ${athena_patientinsurance.expiration_date} IS NULL
+          AND ${athena_patientinsurance.insurance_package_id}::int <> 0
+          AND (${athena_patientinsurance.sequence_number}::int = 1 OR ${athena_patientinsurance.insurance_package_id}::int = -100) ;;
+    # fields: []
+    }
 
   join: athenadwh_payers_clone {
     relationship: many_to_one
@@ -1018,7 +1035,7 @@ join: athena_procedures_by_claim {
   join: athena_transaction {
     relationship: one_to_many
     sql_on: ${athena_claim.claim_id} = ${athena_transaction.claim_id} ;;
-    fields: []
+    # fields: []
   }
 
 join: athena_department {
@@ -1929,12 +1946,12 @@ join: athena_procedurecode {
     sql_on: ${insurance_coalese.package_id_coalese} = ${insurance_coalese_crosswalk.insurance_package_id} ;;
   }
 
-  # join: insurance_coalese_crosswalk {
-  #   from: primary_payer_dimensions_clone
-  #   relationship: many_to_one
-  #   sql_on: ${insurance_coalese.package_id_coalese} = ${insurance_coalese_crosswalk.insurance_package_id}
-  #           AND ${insurance_coalese_crosswalk.custom_insurance_grouping} IS NOT NULL;;
-  # }
+  join: athena_claim_primary_insurance {
+    from:  athena_payers
+    relationship: many_to_one
+    sql_on: ${insurance_coalese.claim_package_id} = ${athena_claim_primary_insurance.package_id} ;;
+  }
+
 
   join: expected_allowable_corporate {
     relationship: many_to_one
@@ -5197,7 +5214,17 @@ explore: geneysis_evaluations {
   }
 }
 
-explore: geneysis_wfm_schedules {}
+explore: geneysis_wfm_schedules {
+  join: genesys_user_details {
+    sql_on: ${geneysis_wfm_schedules.userid} = ${genesys_user_details.id};;
+  }
+  join: genesys_agent_summary {
+    sql_on: ${genesys_agent_summary.userid} = ${geneysis_wfm_schedules.userid} and
+    ${genesys_agent_summary.conversationstarttime_date} = ${geneysis_wfm_schedules.activitystarttime_date};;
+  }
+
+
+}
 
 explore: adwords_campaigns_clone {
   join: markets {

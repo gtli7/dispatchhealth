@@ -119,6 +119,13 @@ view: patients {
     group_label: "Age of Patient"
   }
 
+  dimension: age_18_plus {
+    description: "A flag indicating patients age >= 18"
+    type: yesno
+    sql: ${age} >= 18 AND NOT ${bad_age_filter} ;;
+    group_label: "Age of Patient"
+  }
+
 
   dimension: age_band_sort {
     type: string
@@ -175,6 +182,90 @@ view: patients {
           ELSE NULL
          END ;;
     group_label: "Age of Patient"
+  }
+
+  measure: complete_visits_age_0_to_5 {
+    description: "Count completed visits with patients between 0 and 5 years old"
+    type: count_distinct
+    sql: ${care_request_flat.care_request_id};;
+    filters: {
+      field: care_requests.billable_est
+      value: "yes" }
+    filters: {
+      field: age_categories_risk_strat
+      value: "a (0 - 5)" }
+}
+
+  measure: complete_visits_age_6_to_10 {
+    description: "Count completed visits with patients between 6 and 10 years old"
+    type: count_distinct
+    sql: ${care_request_flat.care_request_id};;
+    filters: {
+      field: care_requests.billable_est
+      value: "yes" }
+    filters: {
+      field: age_categories_risk_strat
+      value: "b (6 - 10)" }
+  }
+
+  measure: complete_visits_age_11_to_18 {
+    description: "Count completed visits with patients between 11 and 18 years old"
+    type: count_distinct
+    sql: ${care_request_flat.care_request_id};;
+    filters: {
+      field: care_requests.billable_est
+      value: "yes" }
+    filters: {
+      field: age_categories_risk_strat
+      value: "c (11 - 18)" }
+  }
+
+  measure: complete_visits_age_19_to_39 {
+    description: "Count completed visits with patients between 19 to 39 years old"
+    type: count_distinct
+    sql: ${care_request_flat.care_request_id};;
+    filters: {
+      field: care_requests.billable_est
+      value: "yes" }
+    filters: {
+      field: age_categories_risk_strat
+      value: "d (19 - 39)" }
+  }
+
+  measure: complete_visits_age_40_to_60 {
+    description: "Count completed visits with patients between 40 and 60 years old"
+    type: count_distinct
+    sql: ${care_request_flat.care_request_id};;
+    filters: {
+      field: care_requests.billable_est
+      value: "yes" }
+    filters: {
+      field: age_categories_risk_strat
+      value: "e (40 - 60)" }
+  }
+
+  measure: complete_visits_age_61_to_79 {
+    description: "Count completed visits with patients between 61 and 79 years old"
+    type: count_distinct
+    sql: ${care_request_flat.care_request_id};;
+    filters: {
+      field: care_requests.billable_est
+      value: "yes" }
+    filters: {
+      field: age_categories_risk_strat
+      value: "f (61 - 79)" }
+  }
+
+  measure: complete_visits_age_80_plus{
+    description: "Count completed visits with patients above 80 years old"
+    type: count_distinct
+    sql: ${care_request_flat.care_request_id};;
+    filters: {
+      field: care_requests.billable_est
+      value: "yes" }
+    filters: {
+      field: age_categories_risk_strat
+      value: "g (80+)" }
   }
 
   dimension: age_band_sort_2 {

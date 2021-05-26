@@ -1,7 +1,7 @@
 view: athena_transaction {
   sql_table_name: athena.transaction ;;
   drill_fields: [transaction_id]
-  view_label: "Athena Transactions (DO NOT USE - Use Transaction Summary)"
+  view_label: "Athena Transactions (Use Transaction Summary Unless Instructed)"
 
   dimension: transaction_id {
     primary_key: yes
@@ -41,6 +41,18 @@ view: athena_transaction {
     type: number
     description: "The dollar amount of the transaction.  Negative numbers represent payments, positive represent charges"
     sql: ${TABLE}."amount" ;;
+  }
+
+  dimension: payment_amount {
+    type: number
+    description: "The dollar amount of the payment"
+    sql: (${TABLE}."amount") * -1 ;;
+  }
+
+  dimension: payment_transaction {
+    type: yesno
+    hidden: no
+    sql: ${transaction_type} = 'PAYMENT' ;;
   }
 
   dimension_group: charge_from {

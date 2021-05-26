@@ -14,7 +14,7 @@ SELECT
             patient_id,
             MAX(id) AS id_to_join
         FROM public.insurances
-        WHERE priority = '1' AND end_date IS NULL
+        WHERE priority = '1' --AND end_date IS NULL
         GROUP BY 1) AS i2
         ON i1.id = i2.id_to_join
     GROUP BY 1,2,3),
@@ -22,7 +22,8 @@ insclm AS (
 SELECT
     cr.id AS care_request_id,
     apt.appointment_id,
-    pay.insurance_package_id::varchar AS package_id
+    pi.insurance_package_id AS claim_package_id,
+    pay.insurance_package_id::varchar AS package_id_char
     FROM public.care_requests cr
     JOIN athena.appointment apt
         ON cr.ehr_id = apt.appointment_char
@@ -50,19 +51,20 @@ SELECT
     LEFT JOIN athena.payer pay
         ON pi.insurance_package_id = pay.insurance_package_id
     WHERE pi.sequence_number = '1'
-    GROUP BY 1,2,3)
+    GROUP BY 1,2,3,4)
 
 SELECT
     slf.care_request_id,
-    COALESCE(insclm.package_id,slf.self_report_package_id,NULL) AS package_id_coalese,
+    COALESCE(insclm.package_id_char,slf.self_report_package_id,NULL) AS package_id_coalese,
+    insclm.claim_package_id,
     slf.member_id,
     pay.custom_insurance_grouping
     FROM slf
     LEFT JOIN insclm
         ON slf.care_request_id = insclm.care_request_id
     LEFT JOIN athena.payer pay
-        ON COALESCE(insclm.package_id,slf.self_report_package_id,NULL) = pay.insurance_package_id::varchar
-    GROUP BY 1,2,3,4 ;;
+        ON COALESCE(insclm.package_id_char,slf.self_report_package_id,NULL) = pay.insurance_package_id::varchar
+    GROUP BY 1,2,3,4,5 ;;
 
   sql_trigger_value: SELECT MAX(id) FROM public.care_request_insurance_packages ;;
   indexes: ["care_request_id", "package_id_coalese"]
@@ -76,6 +78,12 @@ SELECT
   dimension: package_id_coalese {
     type: string
     sql: ${TABLE}.package_id_coalese ;;
+  }
+
+  dimension: claim_package_id {
+    type: number
+    description: "The primary insurance package that the claim was billed against"
+    sql: ${TABLE}.claim_package_id ;;
   }
 
   dimension: member_id {
