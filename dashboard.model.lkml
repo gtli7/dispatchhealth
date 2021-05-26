@@ -5236,12 +5236,8 @@ explore: adwords_campaigns_clone {
   }
 }
 explore: granular_shift_tracking {
-  join: cars {
-    sql_on: ${cars.id} =${granular_shift_tracking.car_id} ;;
-  }
-  join: markets {
-    sql_on: ${markets.id} =${cars.market_id} ;;
-  }
+
+
   join: shift_teams {
     relationship: many_to_one
     sql_on: ${granular_shift_tracking.shift_team_id} = ${shift_teams.id} ;;
@@ -5249,6 +5245,27 @@ explore: granular_shift_tracking {
   join: shift_types {
     relationship: many_to_one
     sql_on: ${shift_teams.shift_type_id} = ${shift_types.id} ;;
+  }
+
+  join: shift_team_market_assignment_logs {
+    sql_on: ${shift_teams.id} = ${shift_team_market_assignment_logs.shift_team_id} AND ${shift_team_market_assignment_logs.lend} ;;
+  }
+  join: cars {
+    sql_on: ${cars.id}=${shift_teams.car_id} ;;
+  }
+
+  join: markets {
+    sql_on: ${markets.id}= coalesce(${shift_team_market_assignment_logs.market_id}, ${cars.market_id}) ;;
+  }
+
+  join: regional_markets {
+    relationship: one_to_one
+    sql_on: ${regional_markets.market_id} = ${markets.id_adj} ;;
+  }
+
+  join: market_regions {
+    relationship: one_to_one
+    sql_on: ${markets.id_adj} = ${market_regions.market_id} ;;
   }
 
 
