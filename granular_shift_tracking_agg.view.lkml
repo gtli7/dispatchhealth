@@ -27,6 +27,8 @@ view: granular_shift_tracking_agg {
 
         column: address_name_agg {}
         column: shift_type { field: shift_types.name}
+        column: telepresentation { field: shift_types.telepresentation}
+
         column: market_id { field: markets.id }
         column: market_name_adj { field: markets.name_adj }
         #filters: {
@@ -69,7 +71,6 @@ view: granular_shift_tracking_agg {
   dimension: shift_type {}
   dimension: telepresentation {
     type: yesno
-    sql: lower( ${shift_type}) like '%telepresentation%';;
   }
 
 

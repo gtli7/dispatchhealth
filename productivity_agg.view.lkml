@@ -25,7 +25,7 @@ view: productivity_agg {
       column: escalated_on_scene_count { field: care_request_flat.escalated_on_scene_count }
       column: complete_count_asymptomatic_covid_testing { field: care_request_flat.complete_count_asymptomatic_covid_testing }
       column: complete_count_communicable_protocol { field: care_request_flat.complete_count_communicable_protocol }
-      column: shift_type { field: shift_types.name}
+      column: telepresentation { field: shift_types.telepresentation}
       filters: {
         field: shift_teams.start_date
         value: "365 days ago for 365 days"
@@ -70,13 +70,9 @@ view: productivity_agg {
   dimension: complete_count_communicable_protocol {
     type: number
   }
-  dimension: shift_type {
-    type: string
 
-  }
   dimension: telepresentation {
     type: yesno
-    sql: lower( ${shift_type}) like '%telepresentation%';;
   }
 
 
@@ -134,7 +130,7 @@ view: productivity_agg {
   measure: total_complete_count_asymptomatic {
     type: sum_distinct
     sql: ${complete_count_asymptomatic_covid_testing} ;;
-    sql_distinct_key:  ${primary_key}) ;;
+    sql_distinct_key:  ${primary_key} ;;
   }
 
   measure: total_complete_count_communicable_protocol {
