@@ -4063,10 +4063,14 @@ explore: genesys_conversation_summary {
     sql_on: ${genesys_conversation_summary_same_day.ani}=${genesys_conversation_summary.ani} and ${genesys_conversation_summary_same_day.conversationstarttime_date}=${genesys_conversation_summary.conversationstarttime_date}
       and ${genesys_conversation_summary_same_day.conversationstarttime_raw}>${genesys_conversation_summary.conversationstarttime_raw}
       and ${genesys_conversation_summary_same_day.direction} ='inbound' and ${genesys_conversation_summary.direction} = 'inbound'
-      and ${genesys_conversation_summary.inbound_demand}
+      and ${genesys_conversation_summary.inbound_demand} ;;
+  }
 
-      ;;
-
+  join: genesys_agent_summary {
+    sql_on: ${genesys_conversation_summary.conversationid} = ${genesys_agent_summary.conversationid} and
+            ${genesys_conversation_summary.queuename} = ${genesys_agent_summary.queuename} and
+            ${genesys_conversation_summary.direction} = ${genesys_agent_summary.direction} and
+            ${genesys_conversation_summary.mediatype} = ${genesys_agent_summary.mediatype}  ;;
   }
 
   join: geneysis_pre_ivr_abandons_by_date_and_dnis {
@@ -5210,6 +5214,69 @@ explore: geneysis_wfm_schedules {
     sql_on: ${genesys_agent_summary.userid} = ${geneysis_wfm_schedules.userid} and
     ${genesys_agent_summary.conversationstarttime_date} = ${geneysis_wfm_schedules.activitystarttime_date};;
   }
+}
+
+  explore: genesys_wfm_adherence_actual_activities {
+    sql_always_where: ${genesys_agent_summary.firstwrapupcodename} is not NULL ;;
+    join: genesys_user_details {
+      sql_on: ${genesys_wfm_adherence_actual_activities.userid} = ${genesys_user_details.id};;
+    }
+    join: genesys_agent_summary {
+      sql_on: ${genesys_agent_summary.userid} = ${genesys_wfm_adherence_actual_activities.userid} and
+        ${genesys_agent_summary.conversationstarttime_date} = ${genesys_wfm_adherence_actual_activities.activitystarttime_date};;
+    }
+    join: genesys_conversation_summary {
+      sql_on: ${genesys_agent_summary.conversationid} = ${genesys_conversation_summary.conversationid} and
+                ${genesys_agent_summary.queuename} = ${genesys_conversation_summary.queuename} and
+                ${genesys_agent_summary.mediatype} = ${genesys_conversation_summary.mediatype} and
+                ${genesys_agent_summary.direction} = ${genesys_conversation_summary.direction};;
+    }
+
+      join: inbound_not_answered_or_abandoned  {
+        sql_on: ${genesys_conversation_summary.conversationid}=${inbound_not_answered_or_abandoned.conversationid} ;;
+      }
+      join: number_to_market {
+        relationship: one_to_one
+        sql_on: (${number_to_market.number}=${genesys_conversation_summary.dnis})  ;;
+      }
+
+      join: care_request_flat {
+        sql_on: ${genesys_conversation_summary.conversationid} =${care_request_flat.contact_id};;
+      }
+
+      join: care_requests {
+        relationship: one_to_one
+        sql_on: ${care_request_flat.care_request_id} = ${care_requests.id} ;;
+      }
+
+      join: risk_assessments {
+        relationship: one_to_one
+        sql_on: ${care_request_flat.care_request_id} = ${risk_assessments.care_request_id} ;;
+      }
+
+      join: service_lines {
+        sql_on: ${care_requests.service_line_id} =${service_lines.id} ;;
+      }
+
+      join: markets {
+        relationship: one_to_one
+        sql_on: (${markets.id}=${genesys_conversation_summary.market_id}) ;;
+      }
+
+      join: regional_markets {
+        relationship: one_to_one
+        sql_on: ${regional_markets.market_id} = ${markets.id_adj} ;;
+      }
+
+      join: market_regions {
+        relationship: one_to_one
+        sql_on: ${markets.id_adj} = ${market_regions.market_id} ;;
+      }
+
+    join: geneysis_wfm_schedules {
+      sql_on: ${geneysis_wfm_schedules.userid} = ${genesys_wfm_adherence_actual_activities.userid} and
+      ${geneysis_wfm_schedules.activitystarttime_date} = ${genesys_wfm_adherence_actual_activities.activitystarttime_date} ;;
+    }
 
 
 }

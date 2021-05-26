@@ -76,4 +76,10 @@ view: genesys_user_details {
     type: count
     drill_fields: [id, divisionname, managername, name]
   }
+
+  dimension: company {
+    type: string
+    sql: CASE WHEN ${name} like '%(SYKES%' THEN 'SYKES'
+      ELSE 'DispatchHealth' END;;
+  }
 }

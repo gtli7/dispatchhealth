@@ -63,4 +63,24 @@ view: genesys_wfm_adherence_actual_activities {
     type: count
     drill_fields: [managementunitname, username]
   }
+
+  dimension: primary_key {
+    type: string
+    sql: concat(${userid},${managementunitid},${activitystarttime_raw},${activitycategory}) ;;
+    primary_key: yes
+  }
+
+  measure: conformance_numerator {
+    type: sum_distinct
+    sql: ${durationseconds} ;;
+    sql_distinct_key: ${primary_key};;
+    filters: [activitycategory: "OnQueueWork"]
+  }
+
+  measure: conformance_denominator {
+    type: sum_distinct
+    sql: ${geneysis_wfm_schedules.durationminutes} * 60 ;;
+    sql_distinct_key: concat(${geneysis_wfm_schedules.userid},${geneysis_wfm_schedules.managementunitid},${geneysis_wfm_schedules.activitystarttime_raw},${geneysis_wfm_schedules.activitycategory}) ;;
+    filters: [geneysis_wfm_schedules.activityname : "OnQueueWork"]#, Extended Hours, On Queue,OT,'Mandatory OT','MR OT'"]
+  }
 }
