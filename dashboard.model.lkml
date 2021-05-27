@@ -381,6 +381,7 @@ include: "views/genesys_wfm_adherence_exceptions.view.lkml"
 include: "views/genesys_wfm_day_metrics.view.lkml"
 include: "views/genesys_user_details.view.lkml"
 include: "views/genesys_agent_summary.view.lkml"
+include: "double_assigned_crs.view.lkml"
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -5466,3 +5467,4 @@ explore: outbound_out_reach {}
 explore: all_on_route_shifts {}
 
 explore: genesys_conversation_summary_null {}
+explore: double_assigned_crs {}
