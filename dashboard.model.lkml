@@ -381,6 +381,7 @@ include: "views/genesys_wfm_adherence_exceptions.view.lkml"
 include: "views/genesys_wfm_day_metrics.view.lkml"
 include: "views/genesys_user_details.view.lkml"
 include: "views/genesys_agent_summary.view.lkml"
+include: "views/protocol_requirements.view.lkml"
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -1812,6 +1813,12 @@ join: athena_procedurecode {
   join: icd_code_risk_assessment_crosswalk {
     relationship: one_to_many
     sql_on:upper(trim(${icd_primary_diagnosis_code.diagnosis_code_full})) = upper(trim(${icd_code_risk_assessment_crosswalk.diagnosis_code})) and upper(trim(${risk_assessments.protocol_name})) = upper(trim(${icd_code_risk_assessment_crosswalk.risk_assessments_protocol_name})) ;;
+  }
+
+  join: protocol_requirements {
+    relationship: many_to_one
+    type: left_outer
+    sql: lower(trim(${risk_assessments.protocol_name})) = lower(trim(${protocol_requirements.name})) and ${care_requests.service_line_id} = ${protocol_requirements.service_line_id} ;;
   }
 
   # 6/27/2019 - DE - This join used to be on care_request_requested, which I removed.  Not sure what this is going to break

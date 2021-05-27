@@ -2155,8 +2155,9 @@ measure: count_complete_visits_weekend {
 
   dimension: on_scene_weekened {
     type: string
+    label: "On scene weekend"
     sql: CASE WHEN ${on_scene_day_of_week} IN ('Saturday','Sunday') THEN 'Weekend'
-    WHEN ${on_scene_day_of_week} NOT IN ('Monday','Tuesday','Wednesday','Thursday','Friday') THEN 'Weekday'
+    WHEN ${on_scene_day_of_week} IN ('Monday','Tuesday','Wednesday','Thursday','Friday') THEN 'Weekday'
     ELSE NULL
     END;;
   }
