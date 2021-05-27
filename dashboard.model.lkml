@@ -382,6 +382,7 @@ include: "views/genesys_wfm_day_metrics.view.lkml"
 include: "views/genesys_user_details.view.lkml"
 include: "views/genesys_agent_summary.view.lkml"
 include: "views/protocol_requirements.view.lkml"
+include: "double_assigned_crs.view.lkml"
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -2409,6 +2410,9 @@ join: ga_pageviews_clone {
     from: shifts_end_of_shift_times
     sql_on: ${all_on_route_shift_teams.id} = ${all_on_routes_shifts_end_of_shift_times.shift_team_id} ;;
 
+  }
+  join: double_assigned_crs {
+    sql_on: ${double_assigned_crs.care_request_id} =${care_request_flat.care_request_id} ;;
   }
 }
 
@@ -5473,3 +5477,4 @@ explore: outbound_out_reach {}
 explore: all_on_route_shifts {}
 
 explore: genesys_conversation_summary_null {}
+explore: double_assigned_crs {}
