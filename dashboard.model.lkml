@@ -2404,6 +2404,9 @@ join: ga_pageviews_clone {
     sql_on: ${all_on_route_shift_teams.id} = ${all_on_routes_shifts_end_of_shift_times.shift_team_id} ;;
 
   }
+  join: double_assigned_crs {
+    sql_on: ${double_assigned_crs.care_request_id} =${care_request_flat.care_request_id} ;;
+  }
 }
 
 # Place in `dashboard` model
