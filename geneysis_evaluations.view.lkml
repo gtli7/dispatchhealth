@@ -367,7 +367,7 @@ view: geneysis_evaluations {
   measure: avg_question_score {
     type: average_distinct
     value_format: "0%"
-    sql: ${questionscore} ;;
+    sql: ${questionscore}/${maxquestionscore} ;;
     sql_distinct_key: ${primary_key} ;;
   }
 

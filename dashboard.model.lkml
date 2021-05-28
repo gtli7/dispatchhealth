@@ -381,6 +381,7 @@ include: "views/genesys_wfm_adherence_exceptions.view.lkml"
 include: "views/genesys_wfm_day_metrics.view.lkml"
 include: "views/genesys_user_details.view.lkml"
 include: "views/genesys_agent_summary.view.lkml"
+include: "double_assigned_crs.view.lkml"
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -2198,7 +2199,7 @@ join: ga_pageviews_clone {
   }
 
   join: genesys_conversation_summary {
-    sql_on:  ${genesys_conversation_summary.conversationid} =${care_request_flat.contact_id}
+    sql_on:  ${genesys_conversation_summary.conversationid} =${care_request_flat.contact_id} and ${genesys_conversation_summary.conversationid} not in('c7673a97-04df-4d22-af20-8dbed34ddb10', '915f11ff-17ab-4491-9cf0-ab44422fefbd', '96017792-9b4e-461b-8e47-4c0f7f92ba19', 'd3a1d1f5-95fe-4515-9d7a-591176877575', '9ffb7c0b-065a-4a34-b2fc-bb2d0fc67c89', '461d7648-e167-4ac5-af63-1d8bdb12329d', '13cdebf6-ceef-4d3c-9c34-471084666602', 'e507a389-53da-4861-a2a5-b7b080a067c1')
       ;;
   }
   join: inbound_not_answered_or_abandoned  {
@@ -2402,6 +2403,9 @@ join: ga_pageviews_clone {
     from: shifts_end_of_shift_times
     sql_on: ${all_on_route_shift_teams.id} = ${all_on_routes_shifts_end_of_shift_times.shift_team_id} ;;
 
+  }
+  join: double_assigned_crs {
+    sql_on: ${double_assigned_crs.care_request_id} =${care_request_flat.care_request_id} ;;
   }
 }
 
@@ -4052,6 +4056,7 @@ explore: expected_allowables_market_budget {
 
 
 explore: genesys_conversation_summary {
+  sql_always_where: ${genesys_conversation_summary.conversationid} not in('c7673a97-04df-4d22-af20-8dbed34ddb10', '915f11ff-17ab-4491-9cf0-ab44422fefbd', '96017792-9b4e-461b-8e47-4c0f7f92ba19', 'd3a1d1f5-95fe-4515-9d7a-591176877575', '9ffb7c0b-065a-4a34-b2fc-bb2d0fc67c89', '461d7648-e167-4ac5-af63-1d8bdb12329d', '13cdebf6-ceef-4d3c-9c34-471084666602', 'e507a389-53da-4861-a2a5-b7b080a067c1') ;;
   join: inbound_not_answered_or_abandoned  {
     sql_on: ${genesys_conversation_summary.conversationid}=${inbound_not_answered_or_abandoned.conversationid} ;;
   }
@@ -4074,10 +4079,14 @@ explore: genesys_conversation_summary {
     sql_on: ${genesys_conversation_summary_same_day.ani}=${genesys_conversation_summary.ani} and ${genesys_conversation_summary_same_day.conversationstarttime_date}=${genesys_conversation_summary.conversationstarttime_date}
       and ${genesys_conversation_summary_same_day.conversationstarttime_raw}>${genesys_conversation_summary.conversationstarttime_raw}
       and ${genesys_conversation_summary_same_day.direction} ='inbound' and ${genesys_conversation_summary.direction} = 'inbound'
-      and ${genesys_conversation_summary.inbound_demand}
+      and ${genesys_conversation_summary.inbound_demand} ;;
+  }
 
-      ;;
-
+  join: genesys_agent_summary {
+    sql_on: ${genesys_conversation_summary.conversationid} = ${genesys_agent_summary.conversationid} and
+            ${genesys_conversation_summary.queuename} = ${genesys_agent_summary.queuename} and
+            ${genesys_conversation_summary.direction} = ${genesys_agent_summary.direction} and
+            ${genesys_conversation_summary.mediatype} = ${genesys_agent_summary.mediatype}  ;;
   }
 
   join: geneysis_pre_ivr_abandons_by_date_and_dnis {
@@ -5085,7 +5094,8 @@ explore: productivity_agg {
   }
 
   join:granular_shift_tracking_agg  {
-    sql_on:  ${granular_shift_tracking_agg.shift_date}=${productivity_agg.start_date} and ${granular_shift_tracking_agg.market_name_adj} =${productivity_agg.name_adj};;
+    sql_on:  ${granular_shift_tracking_agg.shift_date}=${productivity_agg.start_date} and ${granular_shift_tracking_agg.market_name_adj} =${productivity_agg.name_adj}
+    and ${productivity_agg.telepresentation}=${granular_shift_tracking_agg.telepresentation};;
   }
 
   join: high_overflow_days {
@@ -5221,6 +5231,69 @@ explore: geneysis_wfm_schedules {
     sql_on: ${genesys_agent_summary.userid} = ${geneysis_wfm_schedules.userid} and
     ${genesys_agent_summary.conversationstarttime_date} = ${geneysis_wfm_schedules.activitystarttime_date};;
   }
+}
+
+  explore: genesys_wfm_adherence_actual_activities {
+    sql_always_where: ${genesys_agent_summary.firstwrapupcodename} is not NULL ;;
+    join: genesys_user_details {
+      sql_on: ${genesys_wfm_adherence_actual_activities.userid} = ${genesys_user_details.id};;
+    }
+    join: genesys_agent_summary {
+      sql_on: ${genesys_agent_summary.userid} = ${genesys_wfm_adherence_actual_activities.userid} and
+        ${genesys_agent_summary.conversationstarttime_date} = ${genesys_wfm_adherence_actual_activities.activitystarttime_date};;
+    }
+    join: genesys_conversation_summary {
+      sql_on: ${genesys_agent_summary.conversationid} = ${genesys_conversation_summary.conversationid} and
+                ${genesys_agent_summary.queuename} = ${genesys_conversation_summary.queuename} and
+                ${genesys_agent_summary.mediatype} = ${genesys_conversation_summary.mediatype} and
+                ${genesys_agent_summary.direction} = ${genesys_conversation_summary.direction};;
+    }
+
+      join: inbound_not_answered_or_abandoned  {
+        sql_on: ${genesys_conversation_summary.conversationid}=${inbound_not_answered_or_abandoned.conversationid} ;;
+      }
+      join: number_to_market {
+        relationship: one_to_one
+        sql_on: (${number_to_market.number}=${genesys_conversation_summary.dnis})  ;;
+      }
+
+      join: care_request_flat {
+        sql_on: ${genesys_conversation_summary.conversationid} =${care_request_flat.contact_id};;
+      }
+
+      join: care_requests {
+        relationship: one_to_one
+        sql_on: ${care_request_flat.care_request_id} = ${care_requests.id} ;;
+      }
+
+      join: risk_assessments {
+        relationship: one_to_one
+        sql_on: ${care_request_flat.care_request_id} = ${risk_assessments.care_request_id} ;;
+      }
+
+      join: service_lines {
+        sql_on: ${care_requests.service_line_id} =${service_lines.id} ;;
+      }
+
+      join: markets {
+        relationship: one_to_one
+        sql_on: (${markets.id}=${genesys_conversation_summary.market_id}) ;;
+      }
+
+      join: regional_markets {
+        relationship: one_to_one
+        sql_on: ${regional_markets.market_id} = ${markets.id_adj} ;;
+      }
+
+      join: market_regions {
+        relationship: one_to_one
+        sql_on: ${markets.id_adj} = ${market_regions.market_id} ;;
+      }
+
+    join: geneysis_wfm_schedules {
+      sql_on: ${geneysis_wfm_schedules.userid} = ${genesys_wfm_adherence_actual_activities.userid} and
+      ${geneysis_wfm_schedules.activitystarttime_date} = ${genesys_wfm_adherence_actual_activities.activitystarttime_date} ;;
+    }
 
 
 }
@@ -5234,12 +5307,8 @@ explore: adwords_campaigns_clone {
   }
 }
 explore: granular_shift_tracking {
-  join: cars {
-    sql_on: ${cars.id} =${granular_shift_tracking.car_id} ;;
-  }
-  join: markets {
-    sql_on: ${markets.id} =${cars.market_id} ;;
-  }
+
+
   join: shift_teams {
     relationship: many_to_one
     sql_on: ${granular_shift_tracking.shift_team_id} = ${shift_teams.id} ;;
@@ -5247,6 +5316,27 @@ explore: granular_shift_tracking {
   join: shift_types {
     relationship: many_to_one
     sql_on: ${shift_teams.shift_type_id} = ${shift_types.id} ;;
+  }
+
+  join: shift_team_market_assignment_logs {
+    sql_on: ${shift_teams.id} = ${shift_team_market_assignment_logs.shift_team_id} AND ${shift_team_market_assignment_logs.lend} ;;
+  }
+  join: cars {
+    sql_on: ${cars.id}=${shift_teams.car_id} ;;
+  }
+
+  join: markets {
+    sql_on: ${markets.id}= coalesce(${shift_team_market_assignment_logs.market_id}, ${cars.market_id}) ;;
+  }
+
+  join: regional_markets {
+    relationship: one_to_one
+    sql_on: ${regional_markets.market_id} = ${markets.id_adj} ;;
+  }
+
+  join: market_regions {
+    relationship: one_to_one
+    sql_on: ${markets.id_adj} = ${market_regions.market_id} ;;
   }
 
 
@@ -5380,3 +5470,4 @@ explore: outbound_out_reach {}
 explore: all_on_route_shifts {}
 
 explore: genesys_conversation_summary_null {}
+explore: double_assigned_crs {}
