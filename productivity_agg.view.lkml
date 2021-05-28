@@ -94,7 +94,7 @@ view: productivity_agg {
 
   dimension: primary_key {
     type: string
-    sql: concat(${start_date}, ${name_adj}, ${telepresentation})  ;;
+    sql: concat(${start_date}, ${name_adj}, ${telepresentation}, ${service_line})  ;;
   }
 
   dimension: after_15_minutes_experiment {
