@@ -383,6 +383,7 @@ include: "views/genesys_user_details.view.lkml"
 include: "views/genesys_agent_summary.view.lkml"
 include: "views/protocol_requirements.view.lkml"
 include: "double_assigned_crs.view.lkml"
+include: "tele_shifts_by_market.view.lkml"
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -1819,7 +1820,8 @@ join: athena_procedurecode {
   join: protocol_requirements {
     relationship: many_to_one
     type: left_outer
-    sql: lower(trim(${risk_assessments.protocol_name})) = lower(trim(${protocol_requirements.name})) and ${care_requests.service_line_id} = ${protocol_requirements.service_line_id} ;;
+    sql_on: lower(trim(${protocol_requirements.name})) like concat('%',lower(trim(${risk_assessments.protocol_name})),'%')
+    or lower(trim(${risk_assessments.protocol_name})) like concat('%',lower(trim(${protocol_requirements.name})),'%') ;;
   }
 
   # 6/27/2019 - DE - This join used to be on care_request_requested, which I removed.  Not sure what this is going to break
@@ -2413,6 +2415,10 @@ join: ga_pageviews_clone {
   }
   join: double_assigned_crs {
     sql_on: ${double_assigned_crs.care_request_id} =${care_request_flat.care_request_id} ;;
+  }
+  join: tele_shifts_by_market {
+    sql_on: ${care_request_flat.on_scene_time} between ${tele_shifts_by_market.shift_start_time} and ${tele_shifts_by_market.shift_end_time}
+      and ${care_request_flat.market_id} = ${tele_shifts_by_market.market_id} ;;
   }
 }
 

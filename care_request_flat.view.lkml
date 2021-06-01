@@ -5557,6 +5557,7 @@ measure: non_screened_escalated_phone_count_funnel_percent {
         field: insurance_coalese_crosswalk.custom_insurance_grouping
         value: "(MAID)MEDICAID"
       }
+      drill_fields: [care_request_id, risk_assessments.protocol_name, patients.age, risk_assessments.score]
     }
 
   measure: complete_count_tricare {

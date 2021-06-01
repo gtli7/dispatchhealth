@@ -23,6 +23,11 @@ view: protocol_requirements {
     sql: ${TABLE}."service_line_id" ;;
   }
 
+  dimension: tele_eligible {
+    type: yesno
+    sql: ${name} is not null and ${service_line_id} = 17 ;;
+  }
+
   measure: count {
     type: count
     drill_fields: [id, name]
