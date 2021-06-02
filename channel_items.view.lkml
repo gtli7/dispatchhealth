@@ -656,7 +656,17 @@ dimension: uhc_partner_profile {
                                                       '+12533728763',
                                                       '+18135536314',
                                                       '+15204423235',
-                                                      '+18334920263')
+                                                      '+18334920263',
+                                                      '+17372271842',
+                                                      '+14074901364',
+                                                      '+15132756491',
+                                                      '+16146969714',
+                                                      '+13868684767',
+                                                      '+12393223524',
+                                                      '+19133088455',
+                                                      '+15022094305',
+                                                      '+15713851946',
+                                                      '+13524150987')
                                                       OR ${channel_items.name} in (
                                                                                     'UHC General',
                                                                                     'Unitedhealthcare Community Plan (Uhccp)',
@@ -701,7 +711,17 @@ dimension: uhc_partner_profile {
                                                         '+14132486318',
                                                         '+12533192848',
                                                         '+18137554667',
-                                                        '+15204422267')
+                                                        '+15204422267',
+                                                        '+17372346255',
+                                                        '+14077435380',
+                                                        '+15132160157',
+                                                        '+16146622340',
+                                                        '+13863102841',
+                                                        '+12393223491',
+                                                        '+19133088456',
+                                                        '+15022253216',
+                                                        '+15713273130',
+                                                        '+13524030068')
                                                       OR ${channel_items.name} in (
                                                                                     'Optum Housecalls (Apc)',
                                                                                     'UHC Housecalls National')
@@ -709,11 +729,10 @@ dimension: uhc_partner_profile {
           WHEN ${genesys_conversation_summary.dnis} in(
                                                         '+18889050616',
                                                         '+18333892576') OR ${channel_items.name} = 'Direct Mail or Door Hanger' then 'Optum National Mailer'
-          WHEN ${channel_items.name} in (
-                                          'Uhc/Optum Case Management',
+          WHEN ${channel_items.name} in ( 'Uhc/Optum Case Management',
                                           'Uhc / Optum Care Manager',
                                           'Optum (Complex Care Management Team)',
-                                          'Uhc Case Management') then 'UHC/Optum Case management'
+                                          'Uhc Case Management') then 'UHC/Optum Case Management'
           WHEN ${channel_items.name} in (
                                           'Optum At Home/United Healthcare At Home Care Navigators',
                                           'United Healthcare At Home Care Navigators') then 'Optum At Home/United Healthcare At Home Care Navigators'
@@ -733,10 +752,14 @@ dimension: uhc_partner_profile {
                                                                                 'Seattle Optum Snf') then 'Optum SNF'
           WHEN ${genesys_conversation_summary.dnis} in('+18336851060') OR ${channel_items.name} = 'Uhc C&S Ltss' then 'UHC C&S LTSS'
           WHEN ${genesys_conversation_summary.dnis} in('+14808770765') OR ${channel_items.name} = 'Optumcare' then 'Optumcare'
-          WHEN ${genesys_conversation_summary.dnis} in('+18336371670') then 'Prospero'
-          WHEN ${genesys_conversation_summary.dnis} in('+18336370622') then 'Aspire'
+          WHEN ${genesys_conversation_summary.dnis} in('+18336371670') OR ${channel_items.name} = 'Prospero' then 'Prospero'
+          WHEN ${genesys_conversation_summary.dnis} in('+18336370622') OR ${channel_items.name} in ('Aspire Health', 'Aspire Home Care') then 'Aspire'
           WHEN ${genesys_conversation_summary.dnis} in('+18336792314') then 'Optum Oncology'
-        END;;
+          WHEN ${genesys_conversation_summary.dnis} in('+18652900579','+16153344869') OR ${channel_items.name} = 'Somatus' then 'Somatus'
+          WHEN ${genesys_conversation_summary.dnis} = '+18337171858' then 'Optum KRS'
+          WHEN ${genesys_conversation_summary.dnis} = '+18336851062' then 'UHC C&S Post Acute'
+          WHEN ${genesys_conversation_summary.dnis} = '+18337171870' then 'CareAngel'
+          END;;
 }
 
 
