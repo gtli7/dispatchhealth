@@ -27,6 +27,15 @@ view: adt_first_encounter_report {
   #           ;;
   # }
 
+  # Add new CORHIO markets once data is available - modify date to when data is available
+            # WHEN ${markets.state} IN (
+            #   'AZ',
+            #   'IN',
+            #   'NC',
+            #   'OK',
+            #   'TX')
+            #   AND ${care_request_flat.complete_date} > '2021/05/10' THEN true
+
   dimension: active_market_bounceback_data {
     description: "Flag defining market and time period valid ADT (bunceback) data is avilable for. Settng this flag to 'yes' will ensure the report only populates valid data "
     type:  yesno
@@ -45,13 +54,7 @@ view: adt_first_encounter_report {
               'NV',
               'OR')
               AND ${care_request_flat.complete_date} > '2021/05/10' THEN true
-          WHEN ${markets.state} IN (
-              'AZ',
-              'IN',
-              'NC',
-              'OK',
-              'TX')
-              AND ${care_request_flat.complete_date} > '2021/05/10' THEN true
+
           ELSE false
             END
 
