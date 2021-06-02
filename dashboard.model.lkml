@@ -1519,15 +1519,14 @@ join: athena_procedurecode {
     sql_on: ${markets.name_adj} = ${market_projections_by_month.market} AND ${care_request_flat.complete_date} = ${market_projections_by_month.month_date} ;;
   }
 
-  join: payer_dimensions_clone {
-    relationship: many_to_one
-    sql_on: ${transaction_facts_clone.primary_payer_dim_id} = ${primary_payer_dimensions_clone.id}  ;;
-  }
+  # join: payer_dimensions_clone {
+  #   relationship: many_to_one
+  #   sql_on: ${transaction_facts_clone.primary_payer_dim_id} = ${primary_payer_dimensions_clone.id}  ;;
+  # }
 
   join: primary_payer_dimensions_clone {
-    relationship: many_to_one
-    sql_on: ${transaction_facts_clone.primary_payer_dim_id} = ${primary_payer_dimensions_clone.id} ;;
-    # AND ${transaction_facts_clone.voided_date} IS NULL ;;
+    relationship: one_to_one
+    sql_on: ${care_requests.ehr_id} = ${primary_payer_dimensions_clone.appointment_id} ;;
   }
 
   join: care_requests_post_visit {
