@@ -18,10 +18,9 @@ view: markets {
 
   dimension: id_adj_dual {
     type: string
-    description: "Market ID where WMFR or SMFR is included as part of Denver (159), and dual markets are combined respectively (TACOLY AND NJRMOR)"
+    description: "Market ID where WMFR or SMFR is included as part of Denver (159), and dual markets are combined (TACOLY)"
     sql: case when ${TABLE}.name = 'West Metro Fire Rescue' OR ${TABLE}.name = 'South Metro Fire Rescue' then 159
       when ${TABLE}.name = 'Olympia' then 170
-      when ${TABLE}.name = 'Morristown' then 171
       else ${id} end;;
   }
 
@@ -155,21 +154,21 @@ view: markets {
 
   dimension: name_adj_dfw {
     type: string
-    description: "Market name where WMFR/SMFR are included as part of Denver and merges Dallas FTW"
+    description: "Market name where WMFR/SMFR are included as part of Denver and merges Dallas FTW and NJRMOR"
     sql: case when ${TABLE}.name = 'West Metro Fire Rescue' then 'Denver'
     when ${TABLE}.name = 'South Metro Fire Rescue' then 'Denver'
     when ${TABLE}.name in('Dallas', 'Fort Worth') then 'Dallas/Fort Worth'
+    when ${TABLE}.name in('Ridgewood', 'Morristown') then 'Ridgewood/Morristown'
       else ${name} end;;
 
   }
 
   dimension: name_adj_dual {
     type: string
-    description: "Market name where WMFR/SMFR are included as part of Denver, and merges dual markets Tacoma/Olympia and Ridgewood/Morristown"
+    description: "Market name where WMFR/SMFR are included as part of Denver, and merges dual markets Tacoma/Olympia"
     sql: case when ${TABLE}.name = 'West Metro Fire Rescue' then 'Denver'
           when ${TABLE}.name = 'South Metro Fire Rescue' then 'Denver'
           when ${TABLE}.name in('Tacoma', 'Olympia') then 'Tacoma/Olympia'
-          when ${TABLE}.name in('Ridgewood', 'Morristown') then 'Ridgewood/Morristown'
             else ${name} end;;
 
     }
@@ -246,10 +245,9 @@ view: markets {
 
   dimension: short_name_adj_dual {
     type: string
-    description: "Market short name where WMFR/SMFR are included in Denver, and dual markets are combined respectively (TACOLY AND NJRMOR) "
+    description: "Market short name where WMFR/SMFR are included in Denver, and dual markets are combined (TACOLY) "
     sql: case when ${short_name} in('WMFR', 'SMFR') then 'DEN'
       when ${short_name} in('TAC', 'OLY') then 'TACOLY'
-      when ${short_name} in('NJR', 'MOR') then 'NJRMOR'
       else ${short_name} end;;
   }
 
