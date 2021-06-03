@@ -551,7 +551,7 @@ explore: care_requests {
     relationship: one_to_one
    # type: inner
     sql_on: ${athenadwh_clinical_encounters_clone.appointment_id} = ${athenadwh_claims_clone.claim_appointment_id} ;;
-    fields: []
+    # fields: []
   }
 
   join: prior_claims {
