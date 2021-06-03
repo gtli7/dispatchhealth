@@ -1941,7 +1941,7 @@ join: athena_procedurecode {
   join: self_report_insurance_crosswalk {
     from: primary_payer_dimensions_clone
     relationship: many_to_one
-    sql_on: ${care_request_flat.self_report_primary_package_id} = ${self_report_insurance_crosswalk.insurance_package_id} ;;
+    sql_on: ${care_request_flat.self_report_primary_package_id} = ${self_report_insurance_crosswalk.insurance_package_id_raw} ;;
   }
 
   join: insurance_coalese {

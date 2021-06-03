@@ -286,7 +286,6 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
 
   dimension: self_report_primary_package_id {
     type: number
-    hidden: yes
     sql: ${TABLE}.package_id ;;
   }
 

@@ -78,9 +78,14 @@ view: tele_shifts_by_market {
     sql: ${TABLE}.car ;;
   }
 
+  # dimension: tele_car_available {
+  #   type: number
+  #   sql: case when ${shift_team_id} is not null then 1 else 0 end ;;
+  # }
+
   dimension: tele_car_available {
-    type: number
-    sql: case when ${shift_team_id} is not null then 1 else 0 end ;;
+    type: yesno
+    sql: ${shift_team_id} is not null ;;
   }
 
   }
