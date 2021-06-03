@@ -5471,7 +5471,16 @@ measure: non_screened_escalated_phone_count_funnel_percent {
       field: accepted_or_scheduled
       value: "yes"
     }
+  }
 
+  measure: accepted_or_scheduled_count_inbound {
+    label: "Captured Care Requests Inbound"
+    description: "Accepted, Scheduled (Acute-Care) or Booked Resolved (.7 scaled) Count"
+    type: sum_distinct
+    value_format: "0.0"
+    sql: (case when ${booked_resolved} then .7 else 1 end)::float ;;
+    sql_distinct_key:  ${care_request_id} ;;
+    filters: [accepted_or_scheduled: "yes", genesys_conversation_summary.inbound_demand: "yes"]
   }
 
   measure: overflow_plus_booked_count {

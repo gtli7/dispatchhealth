@@ -424,7 +424,7 @@ explore: care_requests {
     AND ${athenadwh_patient_insurances_clone.cancellation_date} IS NULL
     AND (${athenadwh_patient_insurances_clone.sequence_number}::int = 1 OR ${athenadwh_patient_insurances_clone.insurance_package_id}::int = -100)
       /*AND ${athenadwh_patient_insurances_clone.insurance_package_id}::int != 0 */ ;;
-  # fields: []
+  fields: []
  }
 
   join: athenadwh_patientinsurance_clone {
@@ -434,7 +434,7 @@ explore: care_requests {
           AND ${athenadwh_patientinsurance_clone.expiration_date} IS NULL
           AND ${athenadwh_patientinsurance_clone.insurance_package_id}::int <> 0
           AND (${athenadwh_patientinsurance_clone.sequence_number}::int = 1 OR ${athenadwh_patientinsurance_clone.insurance_package_id}::int = -100) ;;
-    # fields: []
+    fields: []
   }
 
   join: athena_patientinsurance {
@@ -450,7 +450,7 @@ explore: care_requests {
   join: athenadwh_payers_clone {
     relationship: many_to_one
     sql_on: ${athenadwh_patient_insurances_clone.insurance_package_id} = ${athenadwh_payers_clone.insurance_package_id} ;;
-    # fields: []
+    fields: []
   }
 
 
@@ -473,7 +473,7 @@ explore: care_requests {
     relationship: one_to_one
     sql_on: ${athenadwh_clinical_encounters_clone.clinical_encounter_id} = ${athenadwh_chart_closing.clinical_encounter_id} ;;
     #AND ${athenadwh_clinical_encounters_clone.encounter_date}::date = ${athenadwh_chart_closing.encounter_date}::date ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_patient_medication_listing {
@@ -482,7 +482,7 @@ explore: care_requests {
     sql_on: ${athenadwh_clinical_encounters_clone.patient_id} = ${athenadwh_patient_medication_listing.patient_id} AND
     ${athenadwh_clinical_encounters_clone.chart_id} = ${athenadwh_patient_medication_listing.chart_id} AND
     ${athenadwh_patient_medication_listing.medication_type} = 'PATIENTMEDICATION' ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_patient_current_medication_listing {
@@ -490,7 +490,7 @@ explore: care_requests {
     relationship: one_to_many
     sql_on: ${athenadwh_clinical_encounters_clone.patient_id} = ${athenadwh_patient_current_medication_listing.patient_id} AND
           ${athenadwh_clinical_encounters_clone.chart_id} = ${athenadwh_patient_current_medication_listing.chart_id} ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_patient_prescriptions {
@@ -498,34 +498,34 @@ explore: care_requests {
     relationship: one_to_one
     sql_on: ${athenadwh_prescriptions.document_id} = ${athenadwh_patient_prescriptions.document_id} AND
           ${athenadwh_patient_prescriptions.medication_type} = 'CLINICALPRESCRIPTION' ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_medication_clone {
     relationship: many_to_one
     sql_on: ${athenadwh_patient_current_medication_listing.medication_id} = ${athenadwh_medication_clone.medication_id} ;;
-    # fields: []
+    fields: []
   }
 
   join: prescribed_medications  {
     from: athenadwh_medication_clone
     relationship: many_to_one
     sql_on: UPPER(${athenadwh_prescriptions.clinical_order_type}) = UPPER(${prescribed_medications.medication_name}) ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_provider_clone {
     relationship: many_to_one
     sql_on: ${athenadwh_clinical_encounters_clone.provider_id} = ${athenadwh_provider_clone.provider_id} ;;
     #sql_where: ${athenadwh_provider_clone.provider_id} != ${athenadwh_provider_clone.supervising_provider_id} ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_supervising_provider_clone {
     from: athenadwh_provider_clone
     relationship: many_to_one
     sql_on: ${athenadwh_provider_clone.supervising_provider_id} = ${athenadwh_supervising_provider_clone.provider_id} ;;
-    # fields: []
+    fields: []
   }
 
     join: oversight_provider {
@@ -539,14 +539,14 @@ explore: care_requests {
   join: athenadwh_appointments_clone {
     relationship: one_to_one
     sql_on: ${athenadwh_clinical_encounters_clone.appointment_id} = ${athenadwh_appointments_clone.appointment_id} ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_clinical_encounter_provider {
     from: athenadwh_clinical_providers_clone
     relationship: one_to_one
     sql_on:  ${athenadwh_clinical_encounters_clone.provider_id} = ${athenadwh_clinical_encounter_provider.clinical_provider_id} ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_claims_clone {
@@ -568,20 +568,20 @@ explore: care_requests {
   join: athenadwh_valid_claims {
     relationship: one_to_one
     sql_on: ${athenadwh_claims_clone.claim_id} = ${athenadwh_valid_claims.claim_id} ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_document_crosswalk_clone {
     relationship: one_to_many
     sql_on: ${athenadwh_clinical_encounters_clone.patient_id} = ${athenadwh_document_crosswalk_clone.patient_id} AND
             ${athenadwh_clinical_encounters_clone.chart_id} = ${athenadwh_document_crosswalk_clone.chart_id} ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_letters_encounters {
     relationship:  one_to_many
     sql_on: ${athenadwh_clinical_encounters_clone.clinical_encounter_id} = ${athenadwh_letters_encounters.clinical_encounter_id} ;;
-    # fields: []
+    fields: []
  }
 
 
@@ -610,14 +610,14 @@ explore: care_requests {
     sql_on: ${athenadwh_documents_clone.document_id} = ${athenadwh_lab_imaging_results.document_id} AND
       ${athenadwh_lab_imaging_results.clinical_order_type_group} IN ('IMAGING', 'LAB') AND
       ${athenadwh_documents_clone.status} != 'DELETED' ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_lab_imaging_providers {
     from: athenadwh_clinical_providers_clone
     relationship: many_to_one
     sql_on: ${athenadwh_lab_imaging_results.clinical_provider_id} = ${athenadwh_lab_imaging_providers.clinical_provider_id} ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_labs {
@@ -637,21 +637,21 @@ explore: care_requests {
     sql_on:  ${athenadwh_clinical_encounters_clone.clinical_encounter_id} = ${athenadwh_orders.clinical_encounter_id} AND
       ${athenadwh_orders.document_class} = 'ORDER' AND
       ${athenadwh_orders.status} != 'DELETED' ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_order_providers {
     from: athenadwh_clinical_providers_clone
     relationship: one_to_one
     sql_on: ${athenadwh_orders.clinical_provider_id} = ${athenadwh_order_providers.clinical_provider_id} ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_clinical_providers_clone {
     # type: inner
     relationship: many_to_one
     sql_on: ${athenadwh_documents_clone.clinical_provider_id} = ${athenadwh_clinical_providers_clone.clinical_provider_id} ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_referrals {
@@ -669,50 +669,50 @@ explore: care_requests {
     sql_on:  ${athenadwh_clinical_encounters_clone.clinical_encounter_id} = ${athenadwh_homehealth_referrals.clinical_encounter_id} AND
       ${athenadwh_homehealth_referrals.clinical_order_type} LIKE 'HOME HEALTH%REFERRAL' AND
       ${athenadwh_homehealth_referrals.status} != 'DELETED' ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_documents_clone {
     relationship: one_to_many
     sql_on:  ${athenadwh_clinical_encounters_clone.clinical_encounter_id} = ${athenadwh_documents_clone.clinical_encounter_id};;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_documentaction {
     relationship: one_to_many
     sql_on: ${athenadwh_documents_clone.document_id} = ${athenadwh_documentaction.document_id} ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_referral_providers {
     from: athenadwh_clinical_providers_clone
     relationship: one_to_one
     sql_on: ${athenadwh_referrals.clinical_provider_id} = ${athenadwh_referral_providers.clinical_provider_id} ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_documents_provider {
     from: athenadwh_clinical_providers_clone
     relationship: one_to_one
     sql_on: ${athenadwh_documents_clone.clinical_provider_id} = ${athenadwh_documents_provider.clinical_provider_id} ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_clinical_results_clone {
     relationship: one_to_one
     sql_on: ${athenadwh_documents_clone.document_id} = ${athenadwh_clinical_results_clone.document_id} ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_clinicalresultobservation {
     relationship: one_to_many
     sql_on: ${athenadwh_clinical_results_clone.clinical_result_id} = ${athenadwh_clinicalresultobservation.clinical_result_id} ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_clinical_providers_fax_clone {
     sql_on: ${athenadwh_clinical_providers_fax_clone.clinical_provider_id} = ${athenadwh_letter_recipient_provider.clinical_provider_id} ;;
-    # fields: []
+    fields: []
   }
 
   join: faxes_sent {
@@ -723,6 +723,7 @@ explore: care_requests {
     from: athenadwh_clinical_providers_clone
     relationship:  many_to_one
     sql_on: ${athenadwh_letters_encounters.clinical_provider_recipient_id} = ${athenadwh_letter_recipient_provider.clinical_provider_id} ;;
+    fields: []
   }
 
   join: collective_medical {
@@ -789,7 +790,7 @@ explore: care_requests {
     relationship:  many_to_one
     sql_on: ${athenadwh_letters_encounters.clinical_provider_recipient_id} = ${athenadwh_primary_care_provider.clinical_provider_id} AND
             ${athenadwh_letters_encounters.role} = 'Primary Care Provider' ;;
-    # fields: []
+    fields: []
  }
 
 
@@ -807,20 +808,20 @@ join: covid_testing_results {
   join: athenadwh_patientaudit {
     relationship: one_to_many
     sql_on: ${athenadwh_patients_clone.patient_id} = ${athenadwh_patientaudit.source_id};;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_procedure_codes_clone {
     relationship: one_to_one
     sql_on: ${cpt_code_dimensions_clone.cpt_code} = split_part(${athenadwh_procedure_codes_clone.procedure_code},' ',1) AND
       ${athenadwh_procedure_codes_clone.deleted_datetime_raw} IS NULL ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_transactions_clone {
     relationship: one_to_many
     sql_on: ${athenadwh_claims_clone.claim_id} = ${athenadwh_transactions_clone.claim_id} ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_collectibility_clone {
@@ -829,31 +830,31 @@ join: covid_testing_results {
     sql_on: ${athenadwh_claims_clone.claim_id} = ${athenadwh_collectibility_clone.claim_id} AND
             ${athenadwh_collectibility_clone.transaction_type} = 'PAYMENT' AND
             ${athenadwh_collectibility_clone.transaction_created_datetime_date} < ${athenadwh_claims_clone.claim_service_date}::date + interval '9 month';;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_social_history_clone {
     relationship: one_to_many
     sql_on: ${athenadwh_clinical_encounters_clone.patient_id} = ${athenadwh_social_history_clone.patient_id} ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_social_history_flat {
     relationship: many_to_one
     sql_on: ${athenadwh_clinical_encounters_clone.chart_id} = ${athenadwh_social_history_flat.chart_id} ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_medical_history_clone {
     relationship: one_to_many
     sql_on: ${athenadwh_clinical_encounters_clone.chart_id} = ${athenadwh_medical_history_clone.chart_id} ;;
-    # fields: []
+    fields: []
   }
 
   join: athenadwh_medical_history_flat {
     relationship: many_to_one
     sql_on: ${athenadwh_clinical_encounters_clone.chart_id} = ${athenadwh_medical_history_flat.chart_id} ;;
-    # fields: []
+    fields: []
   }
 
 
@@ -1291,37 +1292,44 @@ join: athena_procedurecode {
     view_label: "Visit Facts relevant ID's used for matching"
     relationship: one_to_one
     sql_on: ${care_requests.id} = ${visit_facts_clone.care_request_id} ;;
+    fields: []
   }
 
   join: visit_dimensions_clone {
     relationship: many_to_one
     sql_on: ${care_requests.id} = ${visit_dimensions_clone.care_request_id} ;;
+    fields: []
   }
 
   join: transaction_facts_clone {
     relationship: one_to_many
     sql_on: ${transaction_facts_clone.visit_dim_number} = ${visit_dimensions_clone.visit_number}
     AND ${transaction_facts_clone.voided_date} IS NULL ;;
+    fields: []
   }
 
   join: cpt_code_dimensions_clone {
     relationship: many_to_one
     sql_on: ${transaction_facts_clone.cpt_code_dim_id} = ${cpt_code_dimensions_clone.id} ;;
+    fields: []
   }
 
   join: cpt_code_types_clone {
     relationship: one_to_one
     sql_on: ${cpt_code_types_clone.cpt_code} = ${cpt_code_dimensions_clone.cpt_code} ;;
+    fields: []
   }
 
   join: icd_visit_joins_clone {
     relationship: many_to_one
     sql_on: ${transaction_facts_clone.visit_dim_number} = ${icd_visit_joins_clone.visit_dim_number} ;;
+    fields: []
   }
 
   join: icd_code_dimensions_clone {
     relationship: many_to_one
     sql_on: ${icd_code_dimensions_clone.id} = CAST(${icd_visit_joins_clone.icd_dim_id} AS INT) ;;
+    fields: []
   }
 
   join: notes_aggregated {
@@ -1337,6 +1345,7 @@ join: athena_procedurecode {
     view_label: "ZZZZ - ICD Primary Code Dimensions Clone"
     relationship: many_to_one
     sql_on: ${icd_primary_code_dimensions_clone.id} = CAST(${icd_visit_joins_clone.icd_dim_id} AS INT) AND ${icd_visit_joins_clone.sequence_number} = 1 ;;
+    fields: []
   }
 
   join: icd_secondary_code_dimensions_clone {
@@ -1344,6 +1353,7 @@ join: athena_procedurecode {
     view_label: "ZZZZ - ICD Secondary Code Dimensions Clone"
     relationship: many_to_one
     sql_on: ${icd_secondary_code_dimensions_clone.id} = CAST(${icd_visit_joins_clone.icd_dim_id} AS INT) AND ${icd_visit_joins_clone.sequence_number} = 2 ;;
+    fields: []
   }
 
   join: icd_tertiary_code_dimensions_clone {
@@ -1351,29 +1361,34 @@ join: athena_procedurecode {
     view_label: "ZZZZ - ICD Tertiary Code Dimensions Clone"
     relationship: many_to_one
     sql_on: ${icd_secondary_code_dimensions_clone.id} = CAST(${icd_visit_joins_clone.icd_dim_id} AS INT) AND ${icd_visit_joins_clone.sequence_number} = 3 ;;
+    fields: []
   }
 
   join: athenadwh_clinicalencounter_diagnosis {
     relationship: one_to_many
     sql_on: ${athenadwh_clinical_encounters_clone.clinical_encounter_id} = ${athenadwh_clinicalencounter_diagnosis.clinical_encounter_id}
     AND ${athenadwh_clinicalencounter_diagnosis.deleted_datetime_raw} IS NULL;;
+    fields: []
   }
 
   join: athenadwh_clinicalencounter_dxicd10 {
     relationship: one_to_one
     #type: inner
     sql_on: ${athenadwh_clinicalencounter_diagnosis.clinical_encounter_dx_id} = ${athenadwh_clinicalencounter_dxicd10.clinical_encounter_dx_id} ;;
+    fields: []
   }
 
   join: athenadwh_icdcodeall {
     relationship: many_to_one
     sql_on: ${athenadwh_clinicalencounter_dxicd10.icd_code_id} = ${athenadwh_icdcodeall.icd_code_id} ;;
-  }
+    fields: []
+ }
 
   join:  icd_code_to_disease_state_mapping {
     view_label: "ZZZZ - ICD Code to Disease State Mapping"
     relationship: one_to_one
     sql_on: ${icd_code_dimensions_clone.diagnosis_code} = ${icd_code_to_disease_state_mapping.diagnosis_code};;
+    fields: []
   }
 
   join: icd_primary_diagnosis_code {
@@ -1382,20 +1397,21 @@ join: athena_procedurecode {
     relationship: one_to_one
     sql_on: ${athenadwh_clinicalencounter_dxicd10.icd_code_id} = ${icd_primary_diagnosis_code.icd_code_id} AND
     ${athenadwh_clinicalencounter_diagnosis.ordering} = 0 ;;
+    # fields: []
   }
 
   join: diagnosis_rank_clone {
       type: inner
       relationship: many_to_one
       sql_on: ${athenadwh_icdcodeall.diagnosis_description} = ${diagnosis_rank_clone.diagnosis_description} ;;
+    fields: []
     }
   join: diagnosis_code_group_rank_clone {
     type: inner
     relationship: many_to_one
     sql_on: ${athenadwh_icdcodeall.diagnosis_code_group} = ${diagnosis_code_group_rank_clone.diagnosis_code_group} ;;
+    fields: []
   }
-
-
 
   join: icd_nonprimary_diagnosis_code {
     from: athenadwh_icdcodeall
@@ -1403,6 +1419,7 @@ join: athena_procedurecode {
     relationship: one_to_one
     sql_on: ${athenadwh_clinicalencounter_dxicd10.icd_code_id} = ${icd_primary_diagnosis_code.icd_code_id} AND
       ${athenadwh_clinicalencounter_diagnosis.ordering} <> 0 ;;
+    fields: []
   }
 
   join: icd_secondary_diagnosis_code {
@@ -1410,6 +1427,7 @@ join: athena_procedurecode {
     view_label: "ZZZZ - ICD Secondary Diagnosis Codes"
     relationship: one_to_one
     sql_on: ${athenadwh_clinicalencounter_dxicd10.icd_code_id} = ${icd_secondary_diagnosis_code.icd_code_id} AND ${athenadwh_clinicalencounter_diagnosis.ordering} = 1 ;;
+    # fields: []
   }
 
   join: icd_tertiary_diagnosis_code {
@@ -1417,6 +1435,7 @@ join: athena_procedurecode {
     view_label: "ZZZZ - ICD Tertiary Diagnosis Codes"
     relationship: one_to_one
     sql_on: ${athenadwh_clinicalencounter_dxicd10.icd_code_id} = ${icd_tertiary_diagnosis_code.icd_code_id} AND ${athenadwh_clinicalencounter_diagnosis.ordering} = 2 ;;
+    fields: []
   }
 
   join: drg_to_icd10_crosswalk {
@@ -1425,53 +1444,6 @@ join: athena_procedurecode {
     sql_on: ${athena_diagnosis_codes.diagnosis_code_short} = ${drg_to_icd10_crosswalk.icd_10_code} ;;
   }
 
-  ### Diversion tables for cost savings model - 2/13/2019
-  # join: diversion {
-  #   relationship: many_to_many
-  #   sql_on: ${icd_code_dimensions_clone.diagnosis_code} = ${diversion.diagnosis_code} AND
-  #   ${icd_visit_joins_clone.sequence_number} <= 3 AND (
-  #   ${care_request_flat.dc1} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc2} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc3} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc4} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc5} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc6} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc7} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc8} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc9} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc10} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc11} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc12} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc13} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc14} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc15} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc16} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc17} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc18} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc19} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc20} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc21} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc22} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc23} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc24} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc25} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc26} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc27} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc28} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc29} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc30} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc31} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc32} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc33} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc34} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc35} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc36} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc37} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc38} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc39} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc40} = ${diversion.diversion_category_id} OR
-  #   ${care_request_flat.dc41} = ${diversion.diversion_category_id}) ;;
-  # }
 
   join: diversion_flat {
     relationship: many_to_one
@@ -1512,6 +1484,7 @@ join: athena_procedurecode {
   join: letter_recipient_dimensions_clone {
     relationship:  many_to_one
     sql_on: ${letter_recipient_dimensions_clone.id} = ${visit_facts_clone.letter_recipient_dim_id} ;;
+    fields: []
   }
 
   join: market_projections_by_month {
@@ -1527,6 +1500,7 @@ join: athena_procedurecode {
   join: primary_payer_dimensions_clone {
     relationship: one_to_one
     sql_on: ${care_requests.ehr_id} = ${primary_payer_dimensions_clone.appointment_id} ;;
+    fields: []
   }
 
   join: care_requests_post_visit {
@@ -1545,42 +1519,11 @@ join: athena_procedurecode {
     sql_on: ${toc_predictions.id} = ${care_request_toc_predictions.toc_prediction_id} ;;
   }
 
-#   join: pcp_dimensions_clone {
-#   sql_on: ??? ;;
-#   }
-
-#   join: shift_planning_facts_clone {
-#     sql_on: ${shift_planning_facts_clone.car_dim_id} = ${visit_facts_clone.car_dim_id} ;;
-#   }
-
-  # join: app_shift_planning_facts_clone {
-  #   view_label: "APP Shift Information"
-  #   from: shift_planning_facts_clone
-  #   type: full_outer
-  #   relationship: many_to_one
-  #   sql_on: TRIM(UPPER(${app_shift_planning_facts_clone.clean_employee_name})) =
-  #           replace(upper(trim(regexp_replace(replace(trim(${users.first_name}),'"',''), '^.* ', '')) || ' ' || trim(${users.last_name})), '''', '') AND
-  #           ${app_shift_planning_facts_clone.local_actual_start_date} = ${visit_dimensions_clone.local_visit_date} ;;
-  #   sql_where: ${app_shift_planning_facts_clone.schedule_role} LIKE '%Training%' OR
-  #             ${app_shift_planning_facts_clone.schedule_role} LIKE '%NP/PA%' OR
-  #             ${care_requests.id} IS NOT NULL ;;
-  # }
-
-  # join: dhmt_shift_planning_facts_clone {
-  #   view_label: "DHMT Shift Information"
-  #   from: shift_planning_facts_clone
-  #   type: full_outer
-  #   relationship: many_to_one
-  #   sql_on: TRIM(UPPER(${dhmt_shift_planning_facts_clone.clean_employee_name})) =
-  #           replace(upper(trim(regexp_replace(replace(${users.first_name},'"',''), '^.* ', '')) || ' ' || trim(${users.last_name})), '''', '') AND
-  #           ${dhmt_shift_planning_facts_clone.local_actual_start_date} = ${visit_dimensions_clone.local_visit_date} AND
-  #           ${dhmt_shift_planning_facts_clone.schedule_role} IN ('DHMT', 'EMT') AND
-  #           ${dhmt_shift_planning_facts_clone.car_dim_id} IS NOT NULL ;;
-  # }
 
   join: survey_responses_flat_clone {
     relationship: one_to_one
     sql_on: ${care_requests.id} = ${survey_responses_flat_clone.care_request_id};;
+    fields: []
   }
 
   join: patient_satisfaction {
@@ -1594,6 +1537,7 @@ join: athena_procedurecode {
   join: survey_response_facts_clone {
     relationship: one_to_many
     sql_on: ${care_requests.id} = ${survey_response_facts_clone.care_request_id} ;;
+    fields: []
   }
 
   join: last_care_request {
@@ -1941,12 +1885,14 @@ join: athena_procedurecode {
   join: self_report_insurance_crosswalk {
     from: primary_payer_dimensions_clone
     relationship: many_to_one
-    sql_on: ${care_request_flat.self_report_primary_package_id} = ${self_report_insurance_crosswalk.insurance_package_id_raw} ;;
+    sql_on: ${care_request_flat.self_report_primary_package_id} = ${self_report_insurance_crosswalk.insurance_package_id} ;;
+    fields: []
   }
 
   join: insurance_coalese {
     relationship: one_to_one
     sql_on: ${care_requests.id} = ${insurance_coalese.care_request_id} ;;
+    # fields: []
   }
 
   join: insurance_coalese_crosswalk {
@@ -1967,6 +1913,7 @@ join: athena_procedurecode {
     sql_on: ${markets.id} = ${expected_allowable_corporate.market_id} AND
             ${insurance_coalese_crosswalk.custom_insurance_grouping} = ${expected_allowable_corporate.custom_insurance_grouping}  AND
             ${athenadwh_claims_clone.service_month} = ${expected_allowable_corporate.claim_month_month} ;;
+    fields: []
   }
 
 
@@ -1975,30 +1922,11 @@ join: athena_procedurecode {
     sql_on: ${insurance_plans.insurance_classification_id} = ${insurance_classifications.id} ;;
   }
 
-
-#   join: care_request_complete{
-#     relationship: one_to_many
-#     from: care_request_statuses
-#     sql_on: ${care_request_complete.care_request_id} = ${care_requests.id} and ${care_request_complete.name}='complete';;
-#   }
-
   join: care_request_requested{
     relationship: one_to_many
     from: care_request_statuses
     sql_on: ${care_request_requested.care_request_id} = ${care_requests.id} and ${care_request_requested.name}='requested';;
   }
-
-#   join: care_request_accepted{
-#     relationship: one_to_many
-#     from: care_request_statuses
-#     sql_on: ${care_request_accepted.care_request_id} = ${care_requests.id} and ${care_request_accepted.name}='accepted';;
-#   }
-
-#   join: care_request_archived{
-#     relationship: one_to_many
-#     from: care_request_statuses
-#     sql_on: ${care_request_archived.care_request_id} = ${care_requests.id} and ${care_request_archived.name}='archived';;
-#   }
 
   join: care_request_scheduled{
     relationship: one_to_many
