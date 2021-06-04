@@ -382,6 +382,8 @@ include: "views/genesys_wfm_day_metrics.view.lkml"
 include: "views/genesys_user_details.view.lkml"
 include: "views/genesys_agent_summary.view.lkml"
 include: "double_assigned_crs.view.lkml"
+include: "views/queue_targets.view.lkml"
+include: "views/summer_camp_teams.view.lkml"
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -4164,6 +4166,10 @@ explore: genesys_conversation_summary {
   join: addresses {
     relationship: many_to_one
     sql_on:  ${addressable_items.address_id} = ${addresses.id} ;;
+  }
+
+  join: summer_camp_teams {
+    sql_on: ${genesys_agent_summary.userid} = ${summer_camp_teams.userid} ;;
   }
 }
 explore: propensity_by_zip {
