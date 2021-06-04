@@ -457,7 +457,7 @@ explore: care_requests {
   join: athenadwh_clinical_encounters_clone {
     relationship:  one_to_one
     sql_on: ${care_requests.ehr_id} = ${athenadwh_clinical_encounters_clone.appointment_id}::varchar;;
-    fields: []
+    # fields: []
   }
 
   join: athenadwh_clinical_encounters_clone_full {
@@ -465,7 +465,7 @@ explore: care_requests {
     type: inner
     sql_on: ${athenadwh_clinical_encounters_clone.clinical_encounter_id} = ${athenadwh_clinical_encounters_clone_full.clinical_encounter_id} AND
             ${athenadwh_clinical_encounters_clone.closed_datetime}::timestamp = ${athenadwh_clinical_encounters_clone_full.closed_datetime_raw}::timestamp ;;
-    fields: []
+    # fields: []
   }
 
   join: athenadwh_chart_closing {
@@ -553,7 +553,7 @@ explore: care_requests {
     relationship: one_to_one
    # type: inner
     sql_on: ${athenadwh_clinical_encounters_clone.appointment_id} = ${athenadwh_claims_clone.claim_appointment_id} ;;
-    fields: []
+    # fields: []
   }
 
   join: prior_claims {
@@ -591,7 +591,7 @@ explore: care_requests {
     sql_on:  ${athenadwh_prescriptions.clinical_encounter_id} = ${athenadwh_clinical_encounters_clone.clinical_encounter_id} AND
             ${athenadwh_prescriptions.document_class} = 'PRESCRIPTION' AND
             ${athenadwh_prescriptions.status} != 'DELETED';;
-    fields: []
+    # fields: []
   }
 
   join: athenadwh_dme {
@@ -600,7 +600,7 @@ explore: care_requests {
     sql_on:  ${athenadwh_dme.clinical_encounter_id} = ${athenadwh_clinical_encounters_clone.clinical_encounter_id} AND
       ${athenadwh_dme.document_class} = 'DME' AND
       ${athenadwh_dme.status} != 'DELETED' ;;
-    fields: []
+    # fields: []
   }
 
 
@@ -628,7 +628,7 @@ explore: care_requests {
     ${athenadwh_labs.status} != 'DELETED' ;;
     # sql_where:  ${athenadwh_clinical_results_clone.clinical_order_type_group} = 'LAB' ;;
     # AND ${athenadwh_clinical_results_clone.clinical_order_type_group} = 'LAB';;
-    fields: []
+    # fields: []
   }
 
   join: athenadwh_orders {
@@ -797,7 +797,7 @@ explore: care_requests {
   join: athenadwh_patients_clone {
     relationship: one_to_one
     sql_on: ${patients.ehr_id} = ${athenadwh_patients_clone.patient_id}::varchar ;;
-    fields: []
+    # fields: []
 }
 
 join: covid_testing_results {
@@ -1397,7 +1397,7 @@ join: athena_procedurecode {
     relationship: one_to_one
     sql_on: ${athenadwh_clinicalencounter_dxicd10.icd_code_id} = ${icd_primary_diagnosis_code.icd_code_id} AND
     ${athenadwh_clinicalencounter_diagnosis.ordering} = 0 ;;
-    fields: []
+    # fields: []
   }
 
   join: diagnosis_rank_clone {
@@ -1427,7 +1427,7 @@ join: athena_procedurecode {
     view_label: "ZZZZ - ICD Secondary Diagnosis Codes"
     relationship: one_to_one
     sql_on: ${athenadwh_clinicalencounter_dxicd10.icd_code_id} = ${icd_secondary_diagnosis_code.icd_code_id} AND ${athenadwh_clinicalencounter_diagnosis.ordering} = 1 ;;
-    fields: []
+    # fields: []
   }
 
   join: icd_tertiary_diagnosis_code {
@@ -1885,7 +1885,7 @@ join: athena_procedurecode {
   join: insurance_coalese {
     relationship: one_to_one
     sql_on: ${care_requests.id} = ${insurance_coalese.care_request_id} ;;
-    fields: []
+    # fields: []
   }
 
   join: insurance_coalese_crosswalk {
