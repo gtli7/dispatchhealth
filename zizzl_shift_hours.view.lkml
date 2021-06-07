@@ -133,6 +133,14 @@ dimension_group: shift_date {
     sql: ${TABLE}.direct_clinical_pay ;;
   }
 
+  measure: sum_direct_clinical_pay_daily {
+    type: sum_distinct
+    sql_distinct_key: CONCAT(${shift_date_date}, ${user_id}) ;;
+    value_format: "$#,##0.00"
+    description: "Total pay for clinical hours, including overtime, holiday pay, etc."
+    sql: ${TABLE}.direct_clinical_pay ;;
+  }
+
   dimension: position {
     type: string
     sql: ${TABLE}.position ;;

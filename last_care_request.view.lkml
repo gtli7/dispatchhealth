@@ -178,6 +178,11 @@ view: last_care_request {
     value_format: "0.0"
   }
 
+  measure: max_last_complete_shift_end_mins {
+    type: number
+    sql: (MAX(EXTRACT(EPOCH FROM ${care_request_flat.shift_end_raw})) - MAX(EXTRACT(EPOCH FROM ${last_care_request.complete_raw})))/60 ;;
+    value_format: "0.0"
+  }
 
 
 

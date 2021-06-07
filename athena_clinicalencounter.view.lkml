@@ -321,7 +321,7 @@ view: athena_clinicalencounter {
   dimension: hours_to_chart_sign {
     description: "The number of hours between the on-scene time and the chart signature"
     type: number
-    hidden: yes
+    hidden: no
     sql: CASE
           WHEN ${chart_first_closed_raw} >= ${chart_first_closed_raw}
                 THEN (EXTRACT(EPOCH FROM ${chart_first_closed_raw}) - EXTRACT(EPOCH FROM ${care_request_flat.on_scene_raw}))/3600
