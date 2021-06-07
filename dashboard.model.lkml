@@ -637,7 +637,7 @@ explore: care_requests {
     sql_on:  ${athenadwh_clinical_encounters_clone.clinical_encounter_id} = ${athenadwh_orders.clinical_encounter_id} AND
       ${athenadwh_orders.document_class} = 'ORDER' AND
       ${athenadwh_orders.status} != 'DELETED' ;;
-    fields: []
+    # fields: []
   }
 
   join: athenadwh_order_providers {
@@ -675,7 +675,7 @@ explore: care_requests {
   join: athenadwh_documents_clone {
     relationship: one_to_many
     sql_on:  ${athenadwh_clinical_encounters_clone.clinical_encounter_id} = ${athenadwh_documents_clone.clinical_encounter_id};;
-    fields: []
+    # fields: []
   }
 
   join: athenadwh_documentaction {
