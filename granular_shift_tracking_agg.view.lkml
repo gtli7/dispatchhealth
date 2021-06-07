@@ -46,7 +46,7 @@ view: granular_shift_tracking_agg {
 
   dimension: invalid_date {
     type: yesno
-    sql: ${shift_date} in('2021-04-20') ;;
+    sql: ${shift_date} in('2021-04-20', '2021-06-04') ;;
   }
 
   dimension_group: shift {
