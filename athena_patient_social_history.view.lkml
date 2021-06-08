@@ -1191,5 +1191,18 @@ LEFT JOIN (
       }
     }
 
+  measure:  Z10394321841 {
+    type: count_distinct
+    group_label: "Z Codes Mapped"
+    description: "Count of patients who indicate they feel unsteady when standing or walking"
+    hidden:  yes
+    sql: ${chart_id} ;;
+    drill_fields: [patients.ehr_id, patients.first_name, patients.last_name, patients.age]
+    filters: {
+      field: fall_risk_unsteady
+      value: "Y%"
+    }
+  }
+
 
   }

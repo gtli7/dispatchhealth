@@ -768,7 +768,92 @@ dimension: uhc_partner_profile {
           END;;
 }
 
-
+  dimension: hum_partner_profile {
+    description: "The HUM program based on dnis and channel name"
+    type: string
+    group_label: "Partner Specific Descriptions"
+    sql:  CASE
+          WHEN ${genesys_conversation_summary.dnis} in('+16785037909',
+                                                        '+17372346498',
+                                                        '+12082694709',
+                                                        '+15132853833',
+                                                        '+17194458249',
+                                                        '+16146600557',
+                                                        '+12164789448',
+                                                        '+12149034262',
+                                                        '+13862260648',
+                                                        '+17206479927',
+                                                        '+18176770692',
+                                                        '+12393223502',
+                                                        '+19592070456',
+                                                        '+12815038089',
+                                                        '+13176802143',
+                                                        '+19133086036',
+                                                        '+18652804094',
+                                                        '+17027447828',
+                                                        '+15022332597',
+                                                        '+17866446417',
+                                                        '+19737862468',
+                                                        '+16155053591',
+                                                        '+12013352933',
+                                                        '+15713273375',
+                                                        '+13524378762',
+                                                        '+14052947762',
+                                                        '+13603506407',
+                                                        '+14077892296',
+                                                        '+14805810509',
+                                                        '+15037148541',
+                                                        '+19198975715',
+                                                        '+17754425871',
+                                                        '+18042860307',
+                                                        '+12108915232',
+                                                        '+14253725440',
+                                                        '+15099563817',
+                                                        '+14132132623',
+                                                        '+12532403465',
+                                                        '+18135650224',
+                                                        '+15204422388',
+                                                        '+18337881366') OR ${channel_items.name} in('Humana') then 'Humana General'
+          WHEN ${genesys_conversation_summary.dnis} in('+18337570964',
+                                                        '+18337570449',
+                                                        '+18335890988',
+                                                        '+18334860661',
+                                                        '+18337600748',
+                                                        '+18336431786') OR ${channel_items.name} in('Direct Mail or Door Hanger') then 'Humana Marketing Campaigns'
+          WHEN ${genesys_conversation_summary.dnis} in('+18884011510',
+                                                      '+18339870809',
+                                                      '+18333892576') OR ${channel_items.name} in('Humana At Home',
+                                                                                                  'Humana At Home (Atl)') then 'Humana at Home'
+          WHEN ${genesys_conversation_summary.dnis} in('+18337441441',
+                                                      '+18339401609') then 'Humana Directory (Physician First)'
+          WHEN ${genesys_conversation_summary.dnis} in('+18337881365') then 'Humana Provider Directory'
+          WHEN ${genesys_conversation_summary.dnis} in('+18339722343') then 'Phillips Life Line Humana'
+          WHEN ${genesys_conversation_summary.dnis} in('+18338540209') then 'DaVita'
+          WHEN ${genesys_conversation_summary.dnis} in('+18449214633',
+                                                      '+18652900579',
+                                                      '+16153344869') then 'Somatus'
+          WHEN ${genesys_conversation_summary.dnis} in('+18449214635') then 'Fresenius'
+          WHEN ${genesys_conversation_summary.dnis} in('+18338800336',
+                                                      '+18449214622') then 'Monogram'
+          WHEN ${channel_items.name} in('Humana Care Management') then 'Humana Care Management'
+          WHEN ${genesys_conversation_summary.dnis} in('+18333521471') OR ${channel_items.name} in('Kindred At Home Richmond',
+                                                                                                  'Kindred At Home - Ind General (Do Not Use - Pick A Specific Site)',
+                                                                                                  'Kindred At Home',
+                                                                                                  'Kindred At Home - Dal',
+                                                                                                  'Kindred At Home - Tacoma',
+                                                                                                  'Kindred At Home - Cle',
+                                                                                                  'Kindred At Home - Spokane',
+                                                                                                  'Kindred At Home - Las',
+                                                                                                  'Kindred At Home - Puyallup',
+                                                                                                  'Kindred At Home - Kent',
+                                                                                                  'Kindred Healthcare - Las',
+                                                                                                  'Kindred At Home-Peachtree City',
+                                                                                                  'Kindred At Home-Sandy Springs',
+                                                                                                  'Kindred At Home - Portland',
+                                                                                                  'Kindred At Home - Knoxville',
+                                                                                                  'Kindred At Home - Cos') then 'Kindred'
+              END;;
+  }
 
 
 }
