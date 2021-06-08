@@ -381,7 +381,9 @@ include: "views/genesys_wfm_adherence_exceptions.view.lkml"
 include: "views/genesys_wfm_day_metrics.view.lkml"
 include: "views/genesys_user_details.view.lkml"
 include: "views/genesys_agent_summary.view.lkml"
+include: "views/protocol_requirements.view.lkml"
 include: "double_assigned_crs.view.lkml"
+include: "tele_shifts_by_market.view.lkml"
 include: "views/queue_targets.view.lkml"
 include: "views/summer_camp_teams.view.lkml"
 
@@ -1760,6 +1762,13 @@ join: athena_procedurecode {
     sql_on:upper(trim(${icd_primary_diagnosis_code.diagnosis_code_full})) = upper(trim(${icd_code_risk_assessment_crosswalk.diagnosis_code})) and upper(trim(${risk_assessments.protocol_name})) = upper(trim(${icd_code_risk_assessment_crosswalk.risk_assessments_protocol_name})) ;;
   }
 
+  join: protocol_requirements {
+    relationship: many_to_one
+    type: left_outer
+    sql_on: lower(trim(${protocol_requirements.name})) like concat('%',lower(trim(${risk_assessments.protocol_name})),'%')
+    or lower(trim(${risk_assessments.protocol_name})) like concat('%',lower(trim(${protocol_requirements.name})),'%') ;;
+  }
+
   # 6/27/2019 - DE - This join used to be on care_request_requested, which I removed.  Not sure what this is going to break
   join: csc_created {
     from: users
@@ -2341,6 +2350,10 @@ join: ga_pageviews_clone {
   }
   join: double_assigned_crs {
     sql_on: ${double_assigned_crs.care_request_id} =${care_request_flat.care_request_id} ;;
+  }
+  join: tele_shifts_by_market {
+    sql_on: ${care_request_flat.on_scene_time} between ${tele_shifts_by_market.shift_start_time} and ${tele_shifts_by_market.shift_end_time}
+      and ${care_request_flat.market_id} = ${tele_shifts_by_market.market_id} ;;
   }
 }
 

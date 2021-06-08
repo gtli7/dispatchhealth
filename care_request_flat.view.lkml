@@ -286,7 +286,6 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
 
   dimension: self_report_primary_package_id {
     type: number
-    hidden: yes
     sql: ${TABLE}.package_id ;;
   }
 
@@ -2155,8 +2154,9 @@ measure: count_complete_visits_weekend {
 
   dimension: on_scene_weekened {
     type: string
+    label: "On scene weekend"
     sql: CASE WHEN ${on_scene_day_of_week} IN ('Saturday','Sunday') THEN 'Weekend'
-    WHEN ${on_scene_day_of_week} NOT IN ('Monday','Tuesday','Wednesday','Thursday','Friday') THEN 'Weekday'
+    WHEN ${on_scene_day_of_week} IN ('Monday','Tuesday','Wednesday','Thursday','Friday') THEN 'Weekday'
     ELSE NULL
     END;;
   }
@@ -5565,6 +5565,7 @@ measure: non_screened_escalated_phone_count_funnel_percent {
         field: insurance_coalese_crosswalk.custom_insurance_grouping
         value: "(MAID)MEDICAID"
       }
+      drill_fields: [care_request_id, athena_appointment.appointment_id, markets.name, on_scene_time, risk_assessments.protocol_name, patients.age, risk_assessments.score]
     }
 
   measure: complete_count_tricare {
