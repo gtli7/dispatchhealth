@@ -1191,9 +1191,12 @@ LEFT JOIN (
       }
     }
 
-  measure:  Z10394321841 {
+# MAPPED Z CODES
+
+  measure:  count_feels_unsteady {
     type: count_distinct
     group_label: "Z Codes Mapped"
+    label: "Z91.81"
     description: "Count of patients who indicate they feel unsteady when standing or walking"
     hidden:  yes
     sql: ${chart_id} ;;
@@ -1204,5 +1207,134 @@ LEFT JOIN (
     }
   }
 
+  measure: count_struggle_daily_activities {
+    type: count_distinct
+    group_label: "Z Codes Mapped"
+    label: "Z74.1"
+    description: "Count of patients who indicate they need help with activities of daily living"
+    sql: ${chart_id} ;;
+    drill_fields: [patients.ehr_id, patients.first_name, patients.last_name, patients.age]
+    filters: {
+      field: activities_daily_living
+      value: "Y"
+    }
+  }
+
+  measure:  count_feel_unsafe {
+    type: count_distinct
+    group_label: "Z Codes Mapped"
+    label: "Z.TBD Unsafe"
+    description: "Count of patients who indicate 'N' when asked if they feel safe (does not include other free-form text)"
+    sql: ${chart_id} ;;
+    drill_fields: [patients.ehr_id, patients.first_name, patients.last_name, patients.age]
+    filters: {
+      field: safety_feeling
+      value: "N"
+    }
+  }
+
+  measure: count_financial_concerns {
+    type: count_distinct
+    description: "Count of patients who indicate they have financial concerns"
+    group_label: "Z Codes Mapped"
+    label: "Z.TBD Cost Concerns"
+    sql: ${chart_id} ;;
+    drill_fields: [patients.ehr_id, patients.first_name, patients.last_name, patients.age]
+    filters: {
+      field: cost_concerns_flag
+      value: "yes"
+    }
+  }
+
+  measure:  count_lack_food_security {
+    type: count_distinct
+    group_label: "Z Codes Mapped"
+    label: "Z59.4"
+    description: "Count where patient indicates food insecurity"
+    sql: ${chart_id} ;;
+    drill_fields: [patients.ehr_id, patients.first_name, patients.last_name, patients.age]
+    filters: {
+      field: food_insecurity
+      value: "Yes"
+    }
+  }
+
+  measure: count_lack_social_interaction {
+    type: count_distinct
+    group_label: "Z Codes Mapped"
+    label: "Z.TBD Social"
+    description: "Count of patients who have social interactions less than once per week"
+    sql: ${chart_id} ;;
+    drill_fields: [patients.ehr_id, patients.first_name, patients.last_name, patients.age]
+    filters: {
+      field: social_interactions
+      value: "Less Than Once Per Week"
+    }
+  }
+
+  measure:  count_lack_house_security {
+    type: count_distinct
+    group_label: "Z Codes Mapped"
+    label: "Z59.1"
+    description: "Count of patients who have indicated they have housing insecurity"
+    sql: ${chart_id} ;;
+    drill_fields: [patients.ehr_id, patients.first_name, patients.last_name, patients.age]
+    filters: {
+      field: housing_insecurity_flag
+      value: "yes"
+    }
+  }
+
+  measure:  count_connect_resources {
+    type: count_distinct
+    group_label: "Z Codes Mapped"
+    label: "Z.TBD Resources"
+    description: "Count of patients who have indicated they would like to be connected to resources"
+    sql: ${chart_id} ;;
+    drill_fields: [patients.ehr_id, patients.first_name, patients.last_name, patients.age]
+    filters: {
+      field: resource_requested_flag
+      value: "yes"
+    }
+  }
+
+  measure:  count_lack_transport {
+    type: count_distinct
+    group_label: "Z Codes Mapped"
+    label: "Z.TBD Transport"
+    description: "Count indicating lack of transportation"
+    sql: ${chart_id} ;;
+    drill_fields: [patients.ehr_id, patients.first_name, patients.last_name, patients.age]
+    filters: {
+      field: lack_of_transportation_flag
+      value: "yes"
+    }
+  }
+
+  measure:  count_lack_access_healthy_food {
+    type: count_distinct
+    group_label: "Z Codes Mapped"
+    label: "Z.TBD Access Healthy Food"
+    description: "Count indicating lack of access to healthy foods"
+    sql: ${chart_id} ;;
+    drill_fields: [patients.ehr_id, patients.first_name, patients.last_name, patients.age]
+    filters: {
+      field: lack_of_access_healthy_foods
+      value: "yes"
+    }
+  }
+
+  measure:  count_cant_afford_meds {
+    type: count_distinct
+    group_label: "Z Codes Mapped"
+    label: "Z.TBD Meds"
+    description: "Count indicating lack of ability to afford medications"
+    sql: ${chart_id} ;;
+    drill_fields: [patients.ehr_id, patients.first_name, patients.last_name, patients.age]
+    filters: {
+      field: cant_afford_medications_flag
+      value: "yes"
+    }
+  }
 
   }
