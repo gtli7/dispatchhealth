@@ -34,6 +34,11 @@ view: genesys_wfm_adherence_actual_activities {
     sql: ${TABLE}."activitystarttime" AT TIME ZONE 'UTC';;
   }
 
+  dimension: activitystartdatemt {
+    type: date_raw
+    sql: ${TABLE}."activitystartdatemt";;
+  }
+
   dimension: durationseconds {
     type: number
     sql: ${TABLE}."durationseconds" ;;

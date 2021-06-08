@@ -384,6 +384,8 @@ include: "views/genesys_agent_summary.view.lkml"
 include: "views/protocol_requirements.view.lkml"
 include: "double_assigned_crs.view.lkml"
 include: "tele_shifts_by_market.view.lkml"
+include: "views/queue_targets.view.lkml"
+include: "views/summer_camp_teams.view.lkml"
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -482,7 +484,7 @@ explore: care_requests {
     sql_on: ${athenadwh_clinical_encounters_clone.patient_id} = ${athenadwh_patient_medication_listing.patient_id} AND
     ${athenadwh_clinical_encounters_clone.chart_id} = ${athenadwh_patient_medication_listing.chart_id} AND
     ${athenadwh_patient_medication_listing.medication_type} = 'PATIENTMEDICATION' ;;
-    fields: []
+    # fields: []
   }
 
   join: athenadwh_patient_current_medication_listing {
@@ -490,7 +492,7 @@ explore: care_requests {
     relationship: one_to_many
     sql_on: ${athenadwh_clinical_encounters_clone.patient_id} = ${athenadwh_patient_current_medication_listing.patient_id} AND
           ${athenadwh_clinical_encounters_clone.chart_id} = ${athenadwh_patient_current_medication_listing.chart_id} ;;
-    fields: []
+    # fields: []
   }
 
   join: athenadwh_patient_prescriptions {
@@ -498,20 +500,20 @@ explore: care_requests {
     relationship: one_to_one
     sql_on: ${athenadwh_prescriptions.document_id} = ${athenadwh_patient_prescriptions.document_id} AND
           ${athenadwh_patient_prescriptions.medication_type} = 'CLINICALPRESCRIPTION' ;;
-    fields: []
+    # fields: []
   }
 
   join: athenadwh_medication_clone {
     relationship: many_to_one
     sql_on: ${athenadwh_patient_current_medication_listing.medication_id} = ${athenadwh_medication_clone.medication_id} ;;
-    fields: []
+    # fields: []
   }
 
   join: prescribed_medications  {
     from: athenadwh_medication_clone
     relationship: many_to_one
     sql_on: UPPER(${athenadwh_prescriptions.clinical_order_type}) = UPPER(${prescribed_medications.medication_name}) ;;
-    fields: []
+    # fields: []
   }
 
   join: athenadwh_provider_clone {
@@ -637,7 +639,7 @@ explore: care_requests {
     sql_on:  ${athenadwh_clinical_encounters_clone.clinical_encounter_id} = ${athenadwh_orders.clinical_encounter_id} AND
       ${athenadwh_orders.document_class} = 'ORDER' AND
       ${athenadwh_orders.status} != 'DELETED' ;;
-    fields: []
+    # fields: []
   }
 
   join: athenadwh_order_providers {
@@ -675,7 +677,7 @@ explore: care_requests {
   join: athenadwh_documents_clone {
     relationship: one_to_many
     sql_on:  ${athenadwh_clinical_encounters_clone.clinical_encounter_id} = ${athenadwh_documents_clone.clinical_encounter_id};;
-    fields: []
+    # fields: []
   }
 
   join: athenadwh_documentaction {
@@ -1772,6 +1774,12 @@ join: athena_procedurecode {
     from: users
     relationship: one_to_one
     sql_on:  ${care_request_requested.user_id} = ${csc_created.id} and lower(${care_requests.request_type}) ='phone';;
+  }
+
+  # joining summer_camp for Faye's metrics
+  join: summer_camp_teams {
+    relationship: one_to_one
+    sql_on: ${summer_camp_teams.userid} = ${csc_created.genesys_id} ;;
   }
 
   join: secondary_screening_provider {
@@ -4178,6 +4186,10 @@ explore: genesys_conversation_summary {
     relationship: many_to_one
     sql_on:  ${addressable_items.address_id} = ${addresses.id} ;;
   }
+
+  join: summer_camp_teams {
+    sql_on: ${genesys_agent_summary.userid} = ${summer_camp_teams.userid} ;;
+  }
 }
 explore: propensity_by_zip {
   join: zipcodes {
@@ -5180,7 +5192,7 @@ explore: geneysis_wfm_schedules {
     }
     join: genesys_agent_summary {
       sql_on: ${genesys_agent_summary.userid} = ${genesys_wfm_adherence_actual_activities.userid} and
-        ${genesys_agent_summary.conversationstarttime_date} = ${genesys_wfm_adherence_actual_activities.activitystarttime_date};;
+        ${genesys_agent_summary.conversationstartdatemt} = ${genesys_wfm_adherence_actual_activities.activitystartdatemt};;
     }
     join: genesys_conversation_summary {
       sql_on: ${genesys_agent_summary.conversationid} = ${genesys_conversation_summary.conversationid} and
@@ -5232,7 +5244,7 @@ explore: geneysis_wfm_schedules {
 
     join: geneysis_wfm_schedules {
       sql_on: ${geneysis_wfm_schedules.userid} = ${genesys_wfm_adherence_actual_activities.userid} and
-      ${geneysis_wfm_schedules.activitystarttime_date} = ${genesys_wfm_adherence_actual_activities.activitystarttime_date} ;;
+      ${geneysis_wfm_schedules.activitystartdatemt} = ${genesys_wfm_adherence_actual_activities.activitystartdatemt} ;;
     }
 
 

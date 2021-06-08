@@ -26,7 +26,6 @@ view: productivity_agg {
       column: complete_count_asymptomatic_covid_testing { field: care_request_flat.complete_count_asymptomatic_covid_testing }
       column: complete_count_communicable_protocol { field: care_request_flat.complete_count_communicable_protocol }
       column: telepresentation { field: shift_types.telepresentation}
-      column: service_line { field: service_lines.name}
       filters: {
         field: shift_teams.start_date
         value: "365 days ago for 365 days"
@@ -76,9 +75,6 @@ view: productivity_agg {
     type: yesno
   }
 
-  dimension: service_line {
-    type: string
-  }
 
   dimension: sum_shift_hours_no_arm_advanced {
     label: "Shift Teams Sum Shift Hours (no arm, advanced)"
@@ -94,7 +90,7 @@ view: productivity_agg {
 
   dimension: primary_key {
     type: string
-    sql: concat(${start_date}, ${name_adj}, ${telepresentation}, ${service_line})  ;;
+    sql: concat(${start_date}, ${name_adj}, ${telepresentation})  ;;
   }
 
   dimension: after_15_minutes_experiment {
