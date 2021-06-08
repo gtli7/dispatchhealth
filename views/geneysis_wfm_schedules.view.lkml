@@ -39,6 +39,11 @@ view: geneysis_wfm_schedules {
     sql: ${TABLE}."activitystarttime" ;;
   }
 
+  dimension: activitystartdatemt {
+    type: date_raw
+    sql: ${TABLE}."activitystartdatemt";;
+  }
+
   dimension: businessunitid {
     type: string
     sql: ${TABLE}."businessunitid" ;;

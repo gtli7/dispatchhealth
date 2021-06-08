@@ -45,6 +45,11 @@ view: genesys_agent_summary {
     sql: ${TABLE}."conversationstarttime" AT TIME ZONE 'UTC';;
   }
 
+  dimension: conversationstartdatemt {
+    type: date_raw
+    sql: ${TABLE}."conversationstartdatemt";;
+  }
+
   dimension: dialingduration {
     type: number
     sql: ${TABLE}."dialingduration" ;;

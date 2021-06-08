@@ -1767,6 +1767,12 @@ join: athena_procedurecode {
     sql_on:  ${care_request_requested.user_id} = ${csc_created.id} and lower(${care_requests.request_type}) ='phone';;
   }
 
+  # joining summer_camp for Faye's metrics
+  join: summer_camp_teams {
+    relationship: one_to_one
+    sql_on: ${summer_camp_teams.userid} = ${csc_created.genesys_id} ;;
+  }
+
   join: secondary_screening_provider {
     from: users
     relationship: one_to_one
@@ -5173,7 +5179,7 @@ explore: geneysis_wfm_schedules {
     }
     join: genesys_agent_summary {
       sql_on: ${genesys_agent_summary.userid} = ${genesys_wfm_adherence_actual_activities.userid} and
-        ${genesys_agent_summary.conversationstarttime_date} = ${genesys_wfm_adherence_actual_activities.activitystarttime_date};;
+        ${genesys_agent_summary.conversationstartdatemt} = ${genesys_wfm_adherence_actual_activities.activitystartdatemt};;
     }
     join: genesys_conversation_summary {
       sql_on: ${genesys_agent_summary.conversationid} = ${genesys_conversation_summary.conversationid} and
@@ -5225,7 +5231,7 @@ explore: geneysis_wfm_schedules {
 
     join: geneysis_wfm_schedules {
       sql_on: ${geneysis_wfm_schedules.userid} = ${genesys_wfm_adherence_actual_activities.userid} and
-      ${geneysis_wfm_schedules.activitystarttime_date} = ${genesys_wfm_adherence_actual_activities.activitystarttime_date} ;;
+      ${geneysis_wfm_schedules.activitystartdatemt} = ${genesys_wfm_adherence_actual_activities.activitystartdatemt} ;;
     }
 
 
