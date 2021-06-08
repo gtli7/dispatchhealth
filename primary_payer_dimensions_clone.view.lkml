@@ -149,7 +149,7 @@ view: primary_payer_dimensions_clone {
     label: "Insurance Package ID"
     type: string
     sql: case when ${TABLE}.insurance_package_id = '' then '9999999999999999'
-        else ${TABLE}.insurance_package_id end;;
+      else ${TABLE}.insurance_package_id end;;
   }
 
   dimension: insurance_package_name {
