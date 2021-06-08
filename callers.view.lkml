@@ -61,6 +61,13 @@ view: callers {
     sql: ${TABLE}.relationship_to_patient ;;
   }
 
+  dimension: relationship_to_patient_family_grouped {
+    label: "Relationship to Patient"
+    type: string
+    sql: CASE WHEN ${TABLE}.relationship_to_patient like '%family%' THEN 'family'
+          ELSE ${TABLE}.relationship_to_patient END;;
+  }
+
   dimension: senior_target {
     label: "Community or Home Health Caller"
     type: yesno
