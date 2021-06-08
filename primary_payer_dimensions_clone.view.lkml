@@ -1,27 +1,54 @@
 view: primary_payer_dimensions_clone {
-  sql_table_name: looker_scratch.primary_payer_dimensions_clone ;;
+  # sql_table_name: looker_scratch.primary_payer_dimensions_clone ;;
+  derived_table: {
+    sql:
+    SELECT
+  claim.claim_id,
+  claim.claim_appointment_id::varchar AS appointment_id,
+  pay.insurance_package_id,
+  pay.insurance_package_name,
+  pay.insurance_package_type,
+  pay.insurance_reporting_category,
+  pay.irc_group,
+  pay.custom_insurance_grouping
+    FROM athena.claim
+    INNER JOIN athena.patientinsurance pi
+        ON claim.claim_primary_patient_ins_id = pi.patient_insurance_id
+    LEFT JOIN athena.payer pay
+        ON pi.insurance_package_id = pay.insurance_package_id
+    WHERE pi.sequence_number = '1' AND claim.primary_claim_status = 'CLOSED'
+    GROUP BY 1,2,3,4,5;;
+    indexes: ["claim_id","insurance_package_id"]
 
-  dimension: id {
+  sql_trigger_value: SELECT MAX(claim_id) FROM athena.claim ;;
+
+  }
+
+  dimension: claim_id {
     hidden: yes
     primary_key: yes
     type: number
-    sql: ${TABLE}.id ;;
+    sql: ${TABLE}.claim_id ;;
   }
 
-  dimension_group: created {
-    hidden: yes
-    type: time
-    timeframes: [
-      raw,
-      time,
-      date,
-      week,
-      month,
-      quarter,
-      year
-    ]
-    sql: ${TABLE}.created_at ;;
+  dimension: appointment_id {
+    type: string
+    sql: ${TABLE}.appointment_id ;;
   }
+  # dimension_group: created {
+  #   hidden: yes
+  #   type: time
+  #   timeframes: [
+  #     raw,
+  #     time,
+  #     date,
+  #     week,
+  #     month,
+  #     quarter,
+  #     year
+  #   ]
+  #   sql: ${TABLE}.created_at ;;
+  # }
 
   dimension: custom_insurance_grouping {
     type: string
@@ -187,20 +214,20 @@ view: primary_payer_dimensions_clone {
     sql: ${TABLE}.irc_group ;;
   }
 
-  dimension_group: updated {
-    hidden: yes
-    type: time
-    timeframes: [
-      raw,
-      time,
-      date,
-      week,
-      month,
-      quarter,
-      year
-    ]
-    sql: ${TABLE}.updated_at ;;
-  }
+  # dimension_group: updated {
+  #   hidden: yes
+  #   type: time
+  #   timeframes: [
+  #     raw,
+  #     time,
+  #     date,
+  #     week,
+  #     month,
+  #     quarter,
+  #     year
+  #   ]
+  #   sql: ${TABLE}.updated_at ;;
+  # }
 
   dimension: expected_allowable_est_hardcoded {
     type: number
@@ -264,8 +291,4 @@ measure: revenue_per_hour {
     sql: ${insurance_package_id} in('42863', '64369', '2800', '22523', '17272', '70443', '36797', '12379', '1207', '69455', '38381', '476403', '44814', '130563', '15282', '725', '55649', '74324', '564', '22741', '65091', '447247', '128554', '16040', '476401', '31360', '2799', '2232', '12299', '2544', '29776', '79751', '457689', '17271', '476381', '475714', '12380', '484630', '44580', '1625', '113519', '42863', '725', '22523', '42862', '12059', '54360') ;;
   }
 
-  measure: count {
-    type: count
-    drill_fields: [id, insurance_package_name]
-  }
 }
