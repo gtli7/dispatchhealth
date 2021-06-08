@@ -432,6 +432,12 @@ measure: count_direct_access_sub_type {
     drill_fields: [sub_type, name]
   }
 
+  dimension: high_level_category_consolidated_new {
+    type: string
+    sql: case when ${high_level_category_new} in ('Family or Friends', 'Direct to Consumer') then 'Direct to Consumer'
+              else 'Partner' end;;
+  }
+
   dimension: high_level_clinical_integration {
     type: string
     label: "High Level Category (Clinical Integration)"
