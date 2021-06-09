@@ -143,7 +143,8 @@ view: athena_medication_details {
   }
 
   measure: count_antibiotic_appointments {
-    description: "Count appointments where an antibiotic was employed"
+    label: "Count Antibiotic Prescribed Appointments"
+    description: "Count appointments where an antibiotic was precribed"
     type: count_distinct
     sql:  ${care_requests.id};;
     filters: [antibiotic_medication: "yes", athena_patientmedication_prescriptions.prescribed_yn: "Y"]
