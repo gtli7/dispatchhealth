@@ -5255,8 +5255,7 @@ explore: genesys_agent_summary {
   sql_always_where: ${genesys_agent_summary.firstwrapupcodename} is not NULL ;;
 
   join: actual_user_mu_daily_mapping {
-    sql_on: ${actual_user_mu_daily_mapping.date} = ${genesys_agent_summary.conversationstarttime_date} and
-            ${genesys_agent_summary.userid} = ${actual_user_mu_daily_mapping.userid};;
+    sql_on: ${actual_user_mu_daily_mapping.date} = ${genesys_agent_summary.conversationstarttime_date} and ${genesys_agent_summary.userid} = ${actual_user_mu_daily_mapping.userid};;
   }
 
   join: genesys_user_details {

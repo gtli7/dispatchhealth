@@ -211,4 +211,35 @@ view: genesys_agent_summary {
     filters: [mediatype: "email", direction: "inbound"]
     value_format_name: decimal_0
   }
+
+  #start wrap up code compliance measures
+  measure: blank_wrap_up_code {
+    type: count
+    sql: ${conversationid} ;;
+    filters: [firstwrapupcodename: "EMPTY", answeredflag: "1"]
+  }
+
+  measure: inin_wrap_up_timeout_code {
+    type: count
+    sql: ${conversationid} ;;
+    filters: [firstwrapupcodename: "ININ-WRAP-UP-TIMEOUT", answeredflag: "1"]
+  }
+
+  measure: no_wrap_up_code {
+    type: number
+    sql: ${blank_wrap_up_code} + ${inin_wrap_up_timeout_code} ;;
+  }
+
+  measure: interactions {
+    type: count
+    sql: ${conversationid} ;;
+    filters: [answeredflag: "1"]
+  }
+
+  measure: wrap_up_code_compliance {
+    type: number
+    value_format_name: "percent_0"
+    sql: (${interactions} - ${no_wrap_up_code} - ${blank_wrap_up_code})::float
+            / nullif((${interactions} - ${blank_wrap_up_code}),0)::float;;
+  }
 }
