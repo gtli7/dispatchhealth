@@ -386,6 +386,7 @@ include: "double_assigned_crs.view.lkml"
 include: "tele_shifts_by_market.view.lkml"
 include: "views/queue_targets.view.lkml"
 include: "views/summer_camp_teams.view.lkml"
+include: "actual_user_mu_daily_mapping.view.lkml"
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -5248,6 +5249,19 @@ explore: geneysis_wfm_schedules {
     }
 
 
+}
+
+explore: genesys_agent_summary {
+  sql_always_where: ${genesys_agent_summary.firstwrapupcodename} is not NULL ;;
+
+  join: actual_user_mu_daily_mapping {
+    sql_on: ${actual_user_mu_daily_mapping.date} = ${genesys_agent_summary.conversationstarttime_date} and
+            ${genesys_agent_summary.userid} = ${actual_user_mu_daily_mapping.userid};;
+  }
+
+  join: genesys_user_details {
+    sql_on: ${genesys_user_details.id} = ${genesys_agent_summary.userid} ;;
+  }
 }
 
 explore: adwords_campaigns_clone {
