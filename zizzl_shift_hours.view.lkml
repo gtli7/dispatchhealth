@@ -181,6 +181,7 @@ dimension_group: shift_date {
     type: sum_distinct
     value_format: "0.00"
     group_label: "Hours Worked"
+    # sql_distinct_key: CONCAT(${shift_date_date}, ${user_id}) ;;
     sql_distinct_key: ${primary_key} ;;
     label: "Sum Clinical hours (no arm, advanced)"
     sql: case when ${shift_teams.start_date} >= '2020-09-14' and lower(${shift_types.name}) like '%tele%' and ${position} = 'emt' then ${actual_clinical_hours}
