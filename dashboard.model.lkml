@@ -389,6 +389,7 @@ include: "views/summer_camp_teams.view.lkml"
 include: "actual_user_mu_daily_mapping.view.lkml"
 include: "views/novel_lift_projects.view.lkml"
 include: "views/drg_insurance_data.view.lkml"
+include: "drg_insurance_zip_agg.view.lkml"
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -5496,4 +5497,4 @@ explore: drg_insurance_data {
   }
 
 
-}
+}explore: drg_insurance_zip_agg {}
