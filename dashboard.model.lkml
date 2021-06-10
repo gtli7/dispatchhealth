@@ -5488,6 +5488,12 @@ explore: drg_insurance_data {
     relationship: many_to_one
     sql_on: ${insurance_coalese.package_id_coalese} = ${insurance_coalese_crosswalk.insurance_package_id} ;;
   }
+  join: billing_cities {
+    sql_on: ${zipcodes.billing_city_id} = ${billing_cities.id} ;;
+  }
+  join: markets {
+    sql_on: ${billing_cities.market_id} = ${markets.id} ;;
+  }
 
 
 }
