@@ -388,6 +388,8 @@ include: "tele_shifts_by_market.view.lkml"
 include: "views/queue_targets.view.lkml"
 include: "views/summer_camp_teams.view.lkml"
 include: "actual_user_mu_daily_mapping.view.lkml"
+include: "views/novel_lift_projects.view.lkml"
+include: "views/drg_insurance_data.view.lkml"
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -4967,6 +4969,10 @@ explore: bulk_variable_shift_tracking {
   join: dates_rolling {
     sql_on: ${bulk_variable_shift_tracking.date_date} = ${dates_rolling.day_date} ;;
   }
+  join: provider_profiles {
+    relationship: one_to_one
+    sql_on: ${provider_profiles.user_id} = ${users.id} ;;
+  }
 }
 
 explore: variable_shift_tracking {
@@ -5003,6 +5009,8 @@ explore: variable_shift_tracking {
                AND (${zizzl_detailed_shift_hours.shift_name} != 'Administration' OR ${zizzl_detailed_shift_hours.shift_name} IS NULL)
                AND ${zizzl_detailed_shift_hours.shift_name} LIKE 'NP/PA/%' ;;
   }
+
+
 
 }
 
@@ -5452,3 +5460,56 @@ explore: all_on_route_shifts {}
 
 explore: genesys_conversation_summary_null {}
 explore: double_assigned_crs {}
+explore: novel_lift_projects {
+  join: markets {
+    sql_on: ${markets.id}=${novel_lift_projects.market_id} ;;
+  }
+}
+explore: drg_insurance_data {
+  join: propensity_by_zip {
+    sql_on: ${propensity_by_zip.zipcode}=${drg_insurance_data.zipcode} ;;
+  }
+
+  join: zipcodes {
+    sql_on: ${drg_insurance_data.zipcode} = ${zipcodes.zip};;
+  }
+
+  join: addresses {
+    relationship: many_to_one
+    sql_on: ${addresses.zipcode_short} = ${zipcodes.zip};;
+  }
+  join: addressable_items {
+    relationship: one_to_one
+    sql_on:  ${addressable_items.address_id} = ${addresses.id} ;;
+    fields: []
+  }
+
+  join: care_request_flat {
+    sql_on: ${addressable_items.addressable_type} = 'CareRequest' and ${care_request_flat.care_request_id} = ${addressable_items.addressable_id};;
+    }
+  join: sf_accounts {
+    sql_on: ${sf_accounts.zipcode}  =${drg_insurance_data.zipcode};;
+  }
+  join: care_requests {
+    sql_on: ${care_requests.id}=${care_request_flat.care_request_id} ;;
+  }
+  join: insurance_coalese {
+    relationship: one_to_one
+    sql_on: ${care_requests.id} = ${insurance_coalese.care_request_id} ;;
+    # fields: []
+  }
+
+  join: insurance_coalese_crosswalk {
+    from: athena_payers
+    relationship: many_to_one
+    sql_on: ${insurance_coalese.package_id_coalese} = ${insurance_coalese_crosswalk.insurance_package_id} ;;
+  }
+  join: billing_cities {
+    sql_on: ${zipcodes.billing_city_id} = ${billing_cities.id} ;;
+  }
+  join: markets {
+    sql_on: ${billing_cities.market_id} = ${markets.id} ;;
+  }
+
+
+}

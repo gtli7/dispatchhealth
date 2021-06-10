@@ -5377,6 +5377,35 @@ measure: non_screened_escalated_phone_count_funnel_percent {
     }
   }
 
+  measure: complete_count_commercial{
+    label: "Complete Count (Commercial)"
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters:  {
+      field: insurance_coalese_crosswalk.custom_insurance_grouping
+      value: "(CM)COMMERCIAL"
+    }
+    filters: {
+      field: complete
+      value: "yes"
+    }
+  }
+
+
+  measure: complete_count_ma{
+    label: "Complete Count (MA)"
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters:  {
+      field: insurance_coalese_crosswalk.custom_insurance_grouping
+      value: "(CM)COMMERCIAL"
+    }
+    filters: {
+      field: complete
+      value: "yes"
+    }
+  }
+
 
   measure: complete_tele_eligible{
     type: count_distinct
