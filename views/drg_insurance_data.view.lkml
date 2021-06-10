@@ -179,7 +179,7 @@ view: drg_insurance_data {
     sql:  case when ${sum_population}>0 then ${medicare_advantage_part_c}::float/${sum_population}::float else 0 end ;;
   }
 
-  measure: sum_commercial_fi_percent  {
+  measure: commercial_fi_percent  {
     type: number
     value_format: "0%"
     sql:  case when ${sum_population}>0 then ${sum_commercial_fi}::float/${sum_population}::float else 0 end ;;

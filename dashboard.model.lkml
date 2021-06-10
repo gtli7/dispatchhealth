@@ -5474,6 +5474,20 @@ explore: drg_insurance_data {
   join: sf_accounts {
     sql_on: ${sf_accounts.zipcode}  =${drg_insurance_data.zipcode};;
   }
+  join: care_requests {
+    sql_on: ${care_requests.id}=${care_request_flat.care_request_id} ;;
+  }
+  join: insurance_coalese {
+    relationship: one_to_one
+    sql_on: ${care_requests.id} = ${insurance_coalese.care_request_id} ;;
+    # fields: []
+  }
+
+  join: insurance_coalese_crosswalk {
+    from: athena_payers
+    relationship: many_to_one
+    sql_on: ${insurance_coalese.package_id_coalese} = ${insurance_coalese_crosswalk.insurance_package_id} ;;
+  }
 
 
 }
