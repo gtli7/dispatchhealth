@@ -86,6 +86,11 @@ view: insurance_plan_service_lines {
     sql: ${TABLE}."updated_at" ;;
   }
 
+  dimension: tele_eligible_plan {
+    type: yesno
+    sql: ${service_line_id} = 17 ;;
+  }
+
   measure: count {
     type: count
     drill_fields: [id]

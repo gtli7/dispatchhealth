@@ -382,6 +382,7 @@ include: "views/genesys_wfm_day_metrics.view.lkml"
 include: "views/genesys_user_details.view.lkml"
 include: "views/genesys_agent_summary.view.lkml"
 include: "views/protocol_requirements.view.lkml"
+include: "views/tele_risk_strat_new.view.lkml"
 include: "double_assigned_crs.view.lkml"
 include: "tele_shifts_by_market.view.lkml"
 include: "views/queue_targets.view.lkml"
@@ -1773,6 +1774,14 @@ join: athena_procedurecode {
     or lower(trim(${risk_assessments.protocol_name})) like concat('%',lower(trim(${protocol_requirements.name})),'%') ;;
   }
 
+  join: tele_risk_strat_new {
+    relationship: many_to_one
+    type: left_outer
+    sql_on: (lower(trim(${tele_risk_strat_new.protocol_name})) like concat('%',lower(trim(${risk_assessments.protocol_name})),'%')
+    or lower(trim(${risk_assessments.protocol_name})) like concat('%',lower(trim(${tele_risk_strat_new.protocol_name})),'%')) and
+    ${patients.age} between ${tele_risk_strat_new.age_lower_bound} and ${tele_risk_strat_new.age_upper_bound} ;;
+  }
+
   # 6/27/2019 - DE - This join used to be on care_request_requested, which I removed.  Not sure what this is going to break
   join: csc_created {
     from: users
@@ -1880,6 +1889,13 @@ join: athena_procedurecode {
             ${insurance_plans.state_id} = ${states.id} ;;
 #       sql_where: ${insurance_plans.active} ;;
     }
+
+  join: telepresentation_insurance_plans {
+    from: insurance_plan_service_lines
+    relationship: one_to_one
+    sql_on: ${insurance_plans.id} = ${telepresentation_insurance_plans.insurance_plan_id} and
+            ${telepresentation_insurance_plans.service_line_id} = 17;;
+  }
 
   join: insurance_member_id {
     relationship: one_to_one
