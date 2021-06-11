@@ -383,6 +383,7 @@ include: "views/genesys_user_details.view.lkml"
 include: "views/genesys_agent_summary.view.lkml"
 include: "views/protocol_requirements.view.lkml"
 include: "views/tele_risk_strat_new.view.lkml"
+include: "views/nv_tele_insurance_plans_est.view.lkml"
 include: "double_assigned_crs.view.lkml"
 include: "tele_shifts_by_market.view.lkml"
 include: "views/queue_targets.view.lkml"
@@ -1890,11 +1891,9 @@ join: athena_procedurecode {
 #       sql_where: ${insurance_plans.active} ;;
     }
 
-  join: telepresentation_insurance_plans {
-    from: insurance_plan_service_lines
+  join: nv_tele_insurance_plans_est {
     relationship: one_to_one
-    sql_on: ${insurance_plans.id} = ${telepresentation_insurance_plans.insurance_plan_id} and
-            ${telepresentation_insurance_plans.service_line_id} = 17;;
+    sql_on: ${insurance_plans.id} = ${nv_tele_insurance_plans_est.insurance_plan_id} ;;
   }
 
   join: insurance_member_id {
