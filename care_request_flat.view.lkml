@@ -537,6 +537,13 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
     sql: ${on_scene_time_minutes} < 30.0 ;;
   }
 
+  dimension: on_scene_time_20min_or_less {
+    type: yesno
+    group_label: "Care Delivery Times"
+    description: "A flag indicating the on scene time was less than or equal to 20 minutes"
+    sql: ${on_scene_time_minutes} <= 20.0 ;;
+  }
+
   dimension: auto_assigned_initial {
     type: string
     group_label: "Optimizer Details"
