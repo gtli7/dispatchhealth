@@ -5468,8 +5468,8 @@ explore: novel_lift_projects {
   }
 }
 explore: drg_insurance_data {
-  sql_always_where:  ${zipcodes.zip} is not null;;
   join: zipcodes {
+    type: inner
     sql_on: ${drg_insurance_data.zipcode} = ${zipcodes.zip};;
   }
 
