@@ -96,12 +96,47 @@ view: zipcode_summary {
     sql: ${TABLE}."zipcode" ;;
   }
 
+  dimension: market {
+    type: zipcode
+    sql: ${TABLE}."market" ;;
+  }
+
+  dimension: primary_key {
+    type: string
+    sql: concat(${market}, ${zipcode}) ;;
+  }
+
+  dimension: average_drive_time_minutes_ratio_to_average {
+    type: number
+    sql: ${TABLE}.average_drive_time_minutes_ratio_to_average ;;
+  }
+
+  dimension: aland_sqmi_ratio_to_average {
+    type: number
+    sql: ${TABLE}.aland_sqmi_ratio_to_average ;;
+  }
+
+  dimension: aland_sqmi_total {
+    type: number
+    sql: ${TABLE}.aland_sqmi_total ;;
+  }
+
+  dimension: density_ratio_to_average {
+    type: number
+    sql: ${TABLE}.density_ratio_to_average ;;
+  }
+
+  dimension: density_total {
+    type: number
+    sql: ${TABLE}.density_total ;;
+  }
+
   measure: count {
     type: count
     drill_fields: []
   }
 
-  dimension: zipcode_score {
+  dimension: all_ratio_score {
     type: number
     sql: ${complete_count_ratio_to_average}+
 ${complete_count_ma_ratio_to_average}+
@@ -111,6 +146,19 @@ ${total_propensity_ratio_to_average}+
 ${rank_1_10_propensity_ratio_to_average}+
 ${complete_count_ma_percent_ratio_to_average}+
 ${medicare_advantage_part_c_drg_percent_ratio_to_average}+
-${rank_1_10_propensity_percent_ratio_to_average} ;;
+${rank_1_10_propensity_percent_ratio_to_average}+
+${density_ratio_to_average}+
+${aland_sqmi_ratio_to_average}+
+${average_drive_time_minutes_ratio_to_average};;
+  }
+
+  dimension: zipcode_score {
+    type: number
+    sql: ${medicare_advantage_part_c_drg_percent_ratio_to_average}+
+    ${complete_count_ma_percent_ratio_to_average}+
+    ${average_drive_time_minutes_ratio_to_average}+
+    ${population_drg_ratio_to_average}+
+    ${complete_count_ratio_to_average}+
+    ${rank_1_10_propensity_ratio_to_average};;
   }
 }
