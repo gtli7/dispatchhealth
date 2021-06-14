@@ -5515,7 +5515,7 @@ explore: drg_insurance_data {
     sql_on: ${billing_cities.market_id} = ${markets.id} ;;
   }
   join: zipcode_squaremiles {
-    sql_on: ${drg_insurance_data.zipcode} =${zipcode_squaremiles.geoid}::varchar ;;
+    sql_on: ${drg_insurance_data.zipcode} =${zipcode_squaremiles.zipcode};;
   }
 
 
