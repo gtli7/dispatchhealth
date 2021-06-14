@@ -29,7 +29,7 @@ view: drg_insurance_zip_agg {
           value: ""
         }
       }
-      sql_trigger_value:  SELECT MAX(care_request_id) FROM ${care_request_flat.SQL_TABLE_NAME} where created_date > current_date - interval '2 days';;
+      sql_trigger_value:  SELECT MAX(care_request_id) FROM ${care_request_flat.SQL_TABLE_NAME} where created_date > current_date - interval '3 days';;
 
     }
     dimension: zip {
