@@ -208,6 +208,12 @@ view: athena_medication_details {
     drill_fields: [medication_id, medication_name]
   }
 
+  measure: dea_schedule_concat {
+    type: string
+    description: "A concatenated list of all DEA medication schedules"
+    sql: array_to_string(array_agg(DISTINCT ${dea_schedule}), ' | ') ;;
+  }
+
   measure: count_dea_scheduled_medication {
     label: "Count Visits with DEA Scheduled Medication"
     description: "Counts care requests assoacited with a DEA scheduled substance/medication"

@@ -516,9 +516,9 @@ explore: care_requests {
   }
 
   join: prescribed_medications  {
-    from: athenadwh_medication_clone
+    from: athena_medication_details
     relationship: many_to_one
-    sql_on: UPPER(${athenadwh_prescriptions.clinical_order_type}) = UPPER(${prescribed_medications.medication_name}) ;;
+    sql_on: UPPER(${athena_document_prescriptions.clinical_order_type}) = UPPER(${prescribed_medications.medication_name}) ;;
     # fields: []
   }
 
@@ -538,7 +538,7 @@ explore: care_requests {
 
     join: oversight_provider {
       relationship: one_to_one
-      sql_on: ${athenadwh_provider_clone.provider_user_name} = ${oversight_provider.user_name}
+      sql_on: ${athena_provider.provider_user_name} = ${oversight_provider.user_name}
             AND ${care_request_flat.on_scene_date} >= ${oversight_provider.activated_date_date}
             AND (${care_request_flat.on_scene_date} < ${oversight_provider.deactivated_date_date} OR ${oversight_provider.deactivated_date_date} IS NULL);;
       # fields: []
