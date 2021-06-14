@@ -18,7 +18,7 @@ view: propensity_by_zip {
 
   dimension: zipcode {
     type: zipcode
-    sql: right(concat('0', ${TABLE}."zipcode"),5) ;;
+    sql: ${TABLE}."zipcode_str" ;;
   }
 
 
