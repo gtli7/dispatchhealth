@@ -12,6 +12,7 @@ view: drg_insurance_zip_agg {
         column: name_adj { field: markets.name_adj }
         column: total_propensity { field: propensity_by_zip.sum_total }
         column: rank_1_10_propensity { field: propensity_by_zip.sum_rank_1_10 }
+        column: aland_sqmi  {field: zipcode_squaremiles.aland_sqmi}
         filters: {
           field: zipcodes.zip
           value: "-NULL"
@@ -61,6 +62,9 @@ view: drg_insurance_zip_agg {
       type: number
     }
     dimension: rank_1_10_propensity {
+      type: number
+    }
+    dimension: aland_sqmi {
       type: number
     }
   }

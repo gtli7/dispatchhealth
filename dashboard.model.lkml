@@ -391,6 +391,8 @@ include: "actual_user_mu_daily_mapping.view.lkml"
 include: "views/novel_lift_projects.view.lkml"
 include: "views/drg_insurance_data.view.lkml"
 include: "drg_insurance_zip_agg.view.lkml"
+include: "views/zipcode_summary.view.lkml"
+include: "views/zipcode_squaremiles.view.lkml"
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -5511,6 +5513,11 @@ explore: drg_insurance_data {
   join: markets {
     sql_on: ${billing_cities.market_id} = ${markets.id} ;;
   }
+  join: zipcode_squaremiles {
+    sql_on: ${drg_insurance_data.zipcode} =${zipcode_squaremiles.geoid}::varchar ;;
+  }
 
 
-}explore: drg_insurance_zip_agg {}
+}
+explore: drg_insurance_zip_agg {}
+explore: zipcode_summary {}
