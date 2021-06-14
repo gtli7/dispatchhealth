@@ -13,6 +13,8 @@ view: drg_insurance_zip_agg {
         column: total_propensity { field: propensity_by_zip.sum_total }
         column: rank_1_10_propensity { field: propensity_by_zip.sum_rank_1_10 }
         column: aland_sqmi  {field: zipcode_squaremiles.aland_sqmi}
+        column: average_drive_time_minutes  {field: care_request_flat.average_drive_time_minutes_coalesce}
+
         filters: {
           field: zipcodes.zip
           value: "-NULL"
@@ -67,4 +69,7 @@ view: drg_insurance_zip_agg {
     dimension: aland_sqmi {
       type: number
     }
+  dimension: average_drive_time_minutes {
+    type: number
+  }
   }
