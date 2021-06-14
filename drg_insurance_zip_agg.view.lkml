@@ -14,6 +14,7 @@ view: drg_insurance_zip_agg {
         column: rank_1_10_propensity { field: propensity_by_zip.sum_rank_1_10 }
         column: aland_sqmi  {field: zipcode_squaremiles.aland_sqmi}
         column: average_drive_time_minutes  {field: care_request_flat.average_drive_time_minutes_coalesce}
+        column: count_sf_community_broad  {field: sf_accounts.count_community_broad}
 
         filters: {
           field: zipcodes.zip
@@ -70,6 +71,9 @@ view: drg_insurance_zip_agg {
       type: number
     }
   dimension: average_drive_time_minutes {
+    type: number
+  }
+  dimension: count_sf_community_broad {
     type: number
   }
   }
