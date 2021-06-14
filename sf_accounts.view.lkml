@@ -53,6 +53,17 @@ view: sf_accounts {
     type: string
     sql: ${TABLE}."channel_type" ;;
   }
+  dimension: community_broad{
+    type: yesno
+    sql:  ${channel_type} in('Senior Living Community', 'Home Health Agency (Medical)', 'Hospice / Palliative Care', 'Non-Medical Home Health', 'Other - Community');;
+  }
+
+  measure: count_community_broad {
+    type: count_distinct
+    sql: ${account_id} ;;
+    sql_distinct_key: ${account_id} ;;
+    filters: [community_broad: "yes"]
+  }
 
   dimension_group: last_activity {
     type: time

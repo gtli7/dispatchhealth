@@ -5468,13 +5468,15 @@ explore: novel_lift_projects {
   }
 }
 explore: drg_insurance_data {
+  join: zipcodes {
+    type: inner
+    sql_on: ${drg_insurance_data.zipcode} = ${zipcodes.zip};;
+  }
+
   join: propensity_by_zip {
     sql_on: ${propensity_by_zip.zipcode}=${drg_insurance_data.zipcode} ;;
   }
 
-  join: zipcodes {
-    sql_on: ${drg_insurance_data.zipcode} = ${zipcodes.zip};;
-  }
 
   join: addresses {
     relationship: many_to_one
@@ -5513,7 +5515,7 @@ explore: drg_insurance_data {
     sql_on: ${billing_cities.market_id} = ${markets.id} ;;
   }
   join: zipcode_squaremiles {
-    sql_on: ${drg_insurance_data.zipcode} =${zipcode_squaremiles.geoid}::varchar ;;
+    sql_on: ${drg_insurance_data.zipcode} =${zipcode_squaremiles.zipcode};;
   }
 
 

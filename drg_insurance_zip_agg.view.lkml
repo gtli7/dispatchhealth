@@ -14,6 +14,7 @@ view: drg_insurance_zip_agg {
         column: rank_1_10_propensity { field: propensity_by_zip.sum_rank_1_10 }
         column: aland_sqmi  {field: zipcode_squaremiles.aland_sqmi}
         column: average_drive_time_minutes  {field: care_request_flat.average_drive_time_minutes_coalesce}
+        column: count_sf_community_broad  {field: sf_accounts.count_community_broad}
 
         filters: {
           field: zipcodes.zip
@@ -28,7 +29,7 @@ view: drg_insurance_zip_agg {
           value: ""
         }
       }
-      sql_trigger_value:  SELECT MAX(care_request_id) FROM ${care_request_flat.SQL_TABLE_NAME} where created_date > current_date - interval '2 days';;
+      sql_trigger_value:  SELECT MAX(care_request_id) FROM ${care_request_flat.SQL_TABLE_NAME} where created_date > current_date - interval '3 days';;
 
     }
     dimension: zip {
@@ -70,6 +71,9 @@ view: drg_insurance_zip_agg {
       type: number
     }
   dimension: average_drive_time_minutes {
+    type: number
+  }
+  dimension: count_sf_community_broad {
     type: number
   }
   }

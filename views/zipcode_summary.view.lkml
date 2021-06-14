@@ -131,6 +131,26 @@ view: zipcode_summary {
     sql: ${TABLE}.density_total ;;
   }
 
+  dimension: sf_community_broad_density_ratio_to_average {
+    type: number
+    sql: ${TABLE}.sf_community_broad_density_ratio_to_average ;;
+  }
+
+  dimension: sf_community_broad_density_total {
+    type: number
+    sql: ${TABLE}.sf_community_broad_density_total ;;
+  }
+
+  dimension: count_sf_community_broad_total {
+    type: number
+    sql: ${TABLE}.count_sf_community_broad_total ;;
+  }
+
+  dimension: count_sf_community_broad_ratio_to_average {
+    type: number
+    sql: ${TABLE}.count_sf_community_broad_ratio_to_average ;;
+  }
+
   measure: count {
     type: count
     drill_fields: []
@@ -149,7 +169,9 @@ ${medicare_advantage_part_c_drg_percent_ratio_to_average}+
 ${rank_1_10_propensity_percent_ratio_to_average}+
 ${density_ratio_to_average}+
 ${aland_sqmi_ratio_to_average}+
-${average_drive_time_minutes_ratio_to_average};;
+${average_drive_time_minutes_ratio_to_average}+
+${sf_community_broad_density_ratio_to_average}+
+${count_sf_community_broad_ratio_to_average};;
   }
 
   dimension: zipcode_score {
@@ -159,6 +181,7 @@ ${average_drive_time_minutes_ratio_to_average};;
     ${average_drive_time_minutes_ratio_to_average}+
     ${population_drg_ratio_to_average}+
     ${complete_count_ratio_to_average}+
-    ${rank_1_10_propensity_ratio_to_average};;
+    ${rank_1_10_propensity_ratio_to_average}+
+    ${sf_community_broad_density_ratio_to_average};;
   }
 }

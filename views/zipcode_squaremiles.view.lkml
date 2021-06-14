@@ -37,6 +37,11 @@ view: zipcode_squaremiles {
     sql: ${TABLE}."intptlong" ;;
   }
 
+  dimension: zipcode {
+    type: zipcode
+    sql: ${TABLE}.zipcode_str ;;
+  }
+
   measure: count {
     type: count
     drill_fields: []
