@@ -31,7 +31,12 @@ view: drg_insurance_zip_agg {
           value: ""
         }
       }
-      sql_trigger_value:  SELECT MAX(care_request_id) FROM ${care_request_flat.SQL_TABLE_NAME} where created_date > current_date - interval '3 days';;
+      sql_trigger_value: select sum(num) from
+      (SELECT count(*) as num FROM looker_scratch.sf_accounts
+      UNION ALL
+      SELECT MAX(care_request_id) as num FROM ${care_request_flat.SQL_TABLE_NAME} where created_date > current_date - interval '2 days')lq
+
+      ;;
 
     }
     dimension: zip {
