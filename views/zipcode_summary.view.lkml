@@ -151,6 +151,30 @@ view: zipcode_summary {
     sql: ${TABLE}.count_sf_community_broad_stds ;;
   }
 
+  dimension: sf_hospitals_density_stds {
+    type: number
+    sql: ${TABLE}.sf_hospitals_density_stds ;;
+
+  }
+
+  dimension: sf_hospitals_density_total{
+    type: number
+    sql: ${TABLE}.sf_hospitals_density_total ;;
+
+  }
+
+  dimension: count_sf_hospitals_stds {
+    type: number
+    sql: ${TABLE}.count_sf_hospitals_stds ;;
+
+  }
+
+  dimension: count_sf_hospitals_total{
+    type: number
+    sql: ${TABLE}.count_sf_hospitals_total ;;
+
+  }
+
   measure: count {
     type: count
     drill_fields: []
@@ -171,7 +195,9 @@ view: zipcode_summary {
       ${aland_sqmi_stds}+
       ${average_drive_time_minutes_stds}*-1+
       ${sf_community_broad_density_stds}+
-      ${count_sf_community_broad_stds};;
+      ${count_sf_community_broad_stds}+
+      ${count_sf_hospitals_stds}+
+      ${sf_hospitals_density_stds};;
   }
 
   dimension: zipcode_score {
@@ -181,7 +207,8 @@ view: zipcode_summary {
           ${average_drive_time_minutes_stds}*-1+
           ${population_drg_stds}+
           ${rank_1_10_propensity_stds}+
-          ${sf_community_broad_density_stds}
+          ${sf_community_broad_density_stds}+
+          ${sf_hospitals_density_stds}
           ;;
   }
 
