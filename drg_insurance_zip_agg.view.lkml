@@ -15,6 +15,8 @@ view: drg_insurance_zip_agg {
         column: aland_sqmi  {field: zipcode_squaremiles.aland_sqmi}
         column: average_drive_time_minutes  {field: care_request_flat.average_drive_time_minutes_coalesce}
         column: count_sf_community_broad  {field: sf_accounts.count_community_broad}
+        column: count_sf_hospitals {field: sf_accounts.count_hospitals}
+
 
         filters: {
           field: zipcodes.zip
@@ -29,7 +31,12 @@ view: drg_insurance_zip_agg {
           value: ""
         }
       }
-      sql_trigger_value:  SELECT MAX(care_request_id) FROM ${care_request_flat.SQL_TABLE_NAME} where created_date > current_date - interval '3 days';;
+      sql_trigger_value: select sum(num) from
+      (SELECT count(*) as num FROM looker_scratch.sf_accounts
+      UNION ALL
+      SELECT MAX(care_request_id) as num FROM ${care_request_flat.SQL_TABLE_NAME} where created_date > current_date - interval '2 days')lq
+
+      ;;
 
     }
     dimension: zip {
@@ -74,6 +81,9 @@ view: drg_insurance_zip_agg {
     type: number
   }
   dimension: count_sf_community_broad {
+    type: number
+  }
+  dimension: count_sf_hospitals {
     type: number
   }
   }
