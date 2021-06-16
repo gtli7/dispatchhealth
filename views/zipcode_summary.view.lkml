@@ -1,9 +1,9 @@
 view: zipcode_summary {
   sql_table_name: looker_scratch.zipcode_summary ;;
 
-  dimension: complete_count_ma_percent_ratio_to_average {
+  dimension: complete_count_ma_percent_stds {
     type: number
-    sql: ${TABLE}."complete_count_ma_percent_ratio_to_average" ;;
+    sql: ${TABLE}."complete_count_ma_percent_stds" ;;
   }
 
   dimension: complete_count_ma_percent_total {
@@ -11,9 +11,9 @@ view: zipcode_summary {
     sql: ${TABLE}."complete_count_ma_percent_total" ;;
   }
 
-  dimension: complete_count_ma_ratio_to_average {
+  dimension: complete_count_ma_stds {
     type: number
-    sql: ${TABLE}."complete_count_ma_ratio_to_average" ;;
+    sql: ${TABLE}."complete_count_ma_stds" ;;
   }
 
   dimension: complete_count_ma_total {
@@ -21,9 +21,9 @@ view: zipcode_summary {
     sql: ${TABLE}."complete_count_ma_total" ;;
   }
 
-  dimension: complete_count_ratio_to_average {
+  dimension: complete_count_stds {
     type: number
-    sql: ${TABLE}."complete_count_ratio_to_average" ;;
+    sql: ${TABLE}."complete_count_stds" ;;
   }
 
   dimension: complete_count_total {
@@ -31,9 +31,9 @@ view: zipcode_summary {
     sql: ${TABLE}."complete_count_total" ;;
   }
 
-  dimension: medicare_advantage_part_c_drg_percent_ratio_to_average {
+  dimension: medicare_advantage_part_c_drg_percent_stds {
     type: number
-    sql: ${TABLE}."medicare_advantage_part_c_drg_percent_ratio_to_average" ;;
+    sql: ${TABLE}."medicare_advantage_part_c_drg_percent_stds" ;;
   }
 
   dimension: medicare_advantage_part_c_drg_percent_total {
@@ -41,9 +41,9 @@ view: zipcode_summary {
     sql: ${TABLE}."medicare_advantage_part_c_drg_percent_total" ;;
   }
 
-  dimension: medicare_advantage_part_c_drg_ratio_to_average {
+  dimension: medicare_advantage_part_c_drg_stds {
     type: number
-    sql: ${TABLE}."medicare_advantage_part_c_drg_ratio_to_average" ;;
+    sql: ${TABLE}."medicare_advantage_part_c_drg_stds" ;;
   }
 
   dimension: medicare_advantage_part_c_drg_total {
@@ -51,9 +51,9 @@ view: zipcode_summary {
     sql: ${TABLE}."medicare_advantage_part_c_drg_total" ;;
   }
 
-  dimension: population_drg_ratio_to_average {
+  dimension: population_drg_stds {
     type: number
-    sql: ${TABLE}."population_drg_ratio_to_average" ;;
+    sql: ${TABLE}."population_drg_stds" ;;
   }
 
   dimension: population_drg_total {
@@ -61,9 +61,9 @@ view: zipcode_summary {
     sql: ${TABLE}."population_drg_total" ;;
   }
 
-  dimension: rank_1_10_propensity_percent_ratio_to_average {
+  dimension: rank_1_10_propensity_percent_stds {
     type: number
-    sql: ${TABLE}."rank_1_10_propensity_percent_ratio_to_average" ;;
+    sql: ${TABLE}."rank_1_10_propensity_percent_stds" ;;
   }
 
   dimension: rank_1_10_propensity_percent_total {
@@ -71,9 +71,9 @@ view: zipcode_summary {
     sql: ${TABLE}."rank_1_10_propensity_percent_total" ;;
   }
 
-  dimension: rank_1_10_propensity_ratio_to_average {
+  dimension: rank_1_10_propensity_stds {
     type: number
-    sql: ${TABLE}."rank_1_10_propensity_ratio_to_average" ;;
+    sql: ${TABLE}."rank_1_10_propensity_stds" ;;
   }
 
   dimension: rank_1_10_propensity_total {
@@ -81,9 +81,9 @@ view: zipcode_summary {
     sql: ${TABLE}."rank_1_10_propensity_total" ;;
   }
 
-  dimension: total_propensity_ratio_to_average {
+  dimension: total_propensity_stds {
     type: number
-    sql: ${TABLE}."total_propensity_ratio_to_average" ;;
+    sql: ${TABLE}."total_propensity_stds" ;;
   }
 
   dimension: total_propensity_total {
@@ -106,14 +106,14 @@ view: zipcode_summary {
     sql: concat(${market}, ${zipcode}) ;;
   }
 
-  dimension: average_drive_time_minutes_ratio_to_average {
+  dimension: average_drive_time_minutes_stds {
     type: number
-    sql: ${TABLE}.average_drive_time_minutes_ratio_to_average ;;
+    sql: ${TABLE}.average_drive_time_minutes_stds ;;
   }
 
-  dimension: aland_sqmi_ratio_to_average {
+  dimension: aland_sqmi_stds {
     type: number
-    sql: ${TABLE}.aland_sqmi_ratio_to_average ;;
+    sql: ${TABLE}.aland_sqmi_stds ;;
   }
 
   dimension: aland_sqmi_total {
@@ -121,9 +121,9 @@ view: zipcode_summary {
     sql: ${TABLE}.aland_sqmi_total ;;
   }
 
-  dimension: density_ratio_to_average {
+  dimension: density_stds {
     type: number
-    sql: ${TABLE}.density_ratio_to_average ;;
+    sql: ${TABLE}.density_stds ;;
   }
 
   dimension: density_total {
@@ -131,9 +131,9 @@ view: zipcode_summary {
     sql: ${TABLE}.density_total ;;
   }
 
-  dimension: sf_community_broad_density_ratio_to_average {
+  dimension: sf_community_broad_density_stds {
     type: number
-    sql: ${TABLE}.sf_community_broad_density_ratio_to_average ;;
+    sql: ${TABLE}.sf_community_broad_density_stds ;;
   }
 
   dimension: sf_community_broad_density_total {
@@ -146,9 +146,9 @@ view: zipcode_summary {
     sql: ${TABLE}.count_sf_community_broad_total ;;
   }
 
-  dimension: count_sf_community_broad_ratio_to_average {
+  dimension: count_sf_community_broad_stds {
     type: number
-    sql: ${TABLE}.count_sf_community_broad_ratio_to_average ;;
+    sql: ${TABLE}.count_sf_community_broad_stds ;;
   }
 
   measure: count {
@@ -158,30 +158,32 @@ view: zipcode_summary {
 
   dimension: all_ratio_score {
     type: number
-    sql: ${complete_count_ratio_to_average}+
-${complete_count_ma_ratio_to_average}+
-${population_drg_ratio_to_average}+
-${medicare_advantage_part_c_drg_ratio_to_average}+
-${total_propensity_ratio_to_average}+
-${rank_1_10_propensity_ratio_to_average}+
-${complete_count_ma_percent_ratio_to_average}+
-${medicare_advantage_part_c_drg_percent_ratio_to_average}+
-${rank_1_10_propensity_percent_ratio_to_average}+
-${density_ratio_to_average}+
-${aland_sqmi_ratio_to_average}+
-${average_drive_time_minutes_ratio_to_average}+
-${sf_community_broad_density_ratio_to_average}+
-${count_sf_community_broad_ratio_to_average};;
+    sql: ${complete_count_stds}+
+      ${complete_count_ma_stds}+
+      ${population_drg_stds}+
+      ${medicare_advantage_part_c_drg_stds}+
+      ${total_propensity_stds}+
+      ${rank_1_10_propensity_stds}+
+      ${complete_count_ma_percent_stds}+
+      ${medicare_advantage_part_c_drg_percent_stds}+
+      ${rank_1_10_propensity_percent_stds}+
+      ${density_stds}+
+      ${aland_sqmi_stds}+
+      ${average_drive_time_minutes_stds}*-1+
+      ${sf_community_broad_density_stds}+
+      ${count_sf_community_broad_stds};;
   }
 
   dimension: zipcode_score {
     type: number
-    sql: ${medicare_advantage_part_c_drg_percent_ratio_to_average}+
-    ${complete_count_ma_percent_ratio_to_average}+
-    ${average_drive_time_minutes_ratio_to_average}+
-    ${population_drg_ratio_to_average}+
-    ${complete_count_ratio_to_average}+
-    ${rank_1_10_propensity_ratio_to_average}+
-    ${sf_community_broad_density_ratio_to_average};;
+    sql: ${medicare_advantage_part_c_drg_percent_stds}+
+          ${complete_count_ma_percent_stds}+
+          ${average_drive_time_minutes_stds}*-1+
+          ${population_drg_stds}+
+          ${rank_1_10_propensity_stds}+
+          ${sf_community_broad_density_stds}
+          ;;
   }
+
+
 }
