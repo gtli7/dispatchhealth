@@ -65,6 +65,13 @@ view: sf_accounts {
     filters: [community_broad: "yes"]
   }
 
+  measure: count_hospitals {
+    type: count_distinct
+    sql: ${account_id} ;;
+    sql_distinct_key: ${account_id} ;;
+    filters: [channel_type: "Hospital"]
+  }
+
   dimension_group: last_activity {
     type: time
     timeframes: [

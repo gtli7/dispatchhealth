@@ -5521,4 +5521,8 @@ explore: drg_insurance_data {
 
 }
 explore: drg_insurance_zip_agg {}
-explore: zipcode_summary {}
+explore: zipcode_summary {
+  join: sf_accounts {
+    sql_on: ${zipcode_summary.zipcode} = ${sf_accounts.zipcode} ;;
+  }
+}
