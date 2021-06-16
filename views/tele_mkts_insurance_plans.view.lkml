@@ -1,5 +1,5 @@
-view: nv_tele_insurance_plans_est {
-  sql_table_name: looker_scratch.nv_tele_insurance_plans_est ;;
+view: tele_mkts_insurance_plans {
+  sql_table_name: looker_scratch.tele_mkts_insurance_plans ;;
 
   dimension: active {
     type: string
@@ -60,6 +60,11 @@ view: nv_tele_insurance_plans_est {
     sql: ${TABLE}."state_id" ;;
   }
 
+  dimension: state_name {
+    type: string
+    sql: ${TABLE}."state_name" ;;
+  }
+
   dimension: tele_eligible_plan {
     type: yesno
     sql: ${insurance_plan_id} is not null ;;
@@ -67,6 +72,6 @@ view: nv_tele_insurance_plans_est {
 
   measure: count {
     type: count
-    drill_fields: [insurance_name]
+    drill_fields: [state_name, insurance_name]
   }
 }
