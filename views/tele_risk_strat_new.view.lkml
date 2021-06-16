@@ -53,7 +53,13 @@ view: tele_risk_strat_new {
 
   dimension: eligible_age_and_protocol {
     type: yesno
-    sql: ${protocol_name} is not null and ${status} ilike '%yes%' ;;
+    sql: ${protocol_name} is not null
+         and ${status} ilike '%yes%'
+         and (
+          (${protocol_name} ilike '%extremity injury%' and ${age_band} = 'Age> 60' and ${care_requests.chief_complaint} not ilike '%hip%')
+          or ${protocol_name} not ilike '%extremity injury%'
+          or ${age_band} != 'Age> 60'
+          ) ;;
   }
 
   measure: count {
