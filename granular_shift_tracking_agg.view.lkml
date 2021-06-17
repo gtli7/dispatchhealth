@@ -502,6 +502,16 @@ view: granular_shift_tracking_agg {
     filters: [invalid_date: "no"]
   }
 
+  measure: count_on_sig {}
+
+  measure: count_on_site{
+    type: count_distinct
+    value_format: "0"
+    sql: ${primary_key};;
+    sql_distinct_key: ${primary_key} ;;
+    filters: [invalid_date: "no", complete_count: ">0"]
+  }
+
   measure: sum_dead_time_intra_minutes_w_assigned{
     type: sum_distinct
     value_format: "0"

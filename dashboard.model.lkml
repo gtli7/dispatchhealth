@@ -382,6 +382,8 @@ include: "views/genesys_wfm_day_metrics.view.lkml"
 include: "views/genesys_user_details.view.lkml"
 include: "views/genesys_agent_summary.view.lkml"
 include: "views/protocol_requirements.view.lkml"
+include: "views/tele_risk_strat_new.view.lkml"
+include: "views/tele_mkts_insurance_plans.view.lkml"
 include: "double_assigned_crs.view.lkml"
 include: "tele_shifts_by_market.view.lkml"
 include: "views/queue_targets.view.lkml"
@@ -389,6 +391,11 @@ include: "views/summer_camp_teams.view.lkml"
 include: "actual_user_mu_daily_mapping.view.lkml"
 include: "expected_care_requests_by_agent_day_queue.view.lkml"
 
+include: "views/novel_lift_projects.view.lkml"
+include: "views/drg_insurance_data.view.lkml"
+include: "drg_insurance_zip_agg.view.lkml"
+include: "views/zipcode_summary.view.lkml"
+include: "views/zipcode_squaremiles.view.lkml"
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -513,9 +520,9 @@ explore: care_requests {
   }
 
   join: prescribed_medications  {
-    from: athenadwh_medication_clone
+    from: athena_medication_details
     relationship: many_to_one
-    sql_on: UPPER(${athenadwh_prescriptions.clinical_order_type}) = UPPER(${prescribed_medications.medication_name}) ;;
+    sql_on: UPPER(${athena_document_prescriptions.clinical_order_type}) = UPPER(${prescribed_medications.medication_name}) ;;
     # fields: []
   }
 
@@ -535,7 +542,7 @@ explore: care_requests {
 
     join: oversight_provider {
       relationship: one_to_one
-      sql_on: ${athenadwh_provider_clone.provider_user_name} = ${oversight_provider.user_name}
+      sql_on: ${athena_provider.provider_user_name} = ${oversight_provider.user_name}
             AND ${care_request_flat.on_scene_date} >= ${oversight_provider.activated_date_date}
             AND (${care_request_flat.on_scene_date} < ${oversight_provider.deactivated_date_date} OR ${oversight_provider.deactivated_date_date} IS NULL);;
       # fields: []
@@ -1772,6 +1779,14 @@ join: athena_procedurecode {
     or lower(trim(${risk_assessments.protocol_name})) like concat('%',lower(trim(${protocol_requirements.name})),'%') ;;
   }
 
+  join: tele_risk_strat_new {
+    relationship: many_to_one
+    type: left_outer
+    sql_on: (lower(trim(${tele_risk_strat_new.protocol_name})) like concat('%',lower(trim(${risk_assessments.protocol_name})),'%')
+    or lower(trim(${risk_assessments.protocol_name})) like concat('%',lower(trim(${tele_risk_strat_new.protocol_name})),'%')) and
+    ${patients.age} between ${tele_risk_strat_new.age_lower_bound} and ${tele_risk_strat_new.age_upper_bound} ;;
+  }
+
   # 6/27/2019 - DE - This join used to be on care_request_requested, which I removed.  Not sure what this is going to break
   join: csc_created {
     from: users
@@ -1879,6 +1894,11 @@ join: athena_procedurecode {
             ${insurance_plans.state_id} = ${states.id} ;;
 #       sql_where: ${insurance_plans.active} ;;
     }
+
+  join: tele_mkts_insurance_plans {
+    relationship: many_to_one
+    sql_on: ${insurance_plans.id} = ${tele_mkts_insurance_plans.insurance_plan_id} ;;
+  }
 
   join: insurance_member_id {
     relationship: one_to_one
@@ -4953,6 +4973,10 @@ explore: bulk_variable_shift_tracking {
   join: dates_rolling {
     sql_on: ${bulk_variable_shift_tracking.date_date} = ${dates_rolling.day_date} ;;
   }
+  join: provider_profiles {
+    relationship: one_to_one
+    sql_on: ${provider_profiles.user_id} = ${users.id} ;;
+  }
 }
 
 explore: variable_shift_tracking {
@@ -4989,6 +5013,8 @@ explore: variable_shift_tracking {
                AND (${zizzl_detailed_shift_hours.shift_name} != 'Administration' OR ${zizzl_detailed_shift_hours.shift_name} IS NULL)
                AND ${zizzl_detailed_shift_hours.shift_name} LIKE 'NP/PA/%' ;;
   }
+
+
 
 }
 
@@ -5464,3 +5490,67 @@ explore: all_on_route_shifts {}
 
 explore: genesys_conversation_summary_null {}
 explore: double_assigned_crs {}
+explore: novel_lift_projects {
+  join: markets {
+    sql_on: ${markets.id}=${novel_lift_projects.market_id} ;;
+  }
+}
+explore: drg_insurance_data {
+  join: zipcodes {
+    type: inner
+    sql_on: ${drg_insurance_data.zipcode} = ${zipcodes.zip};;
+  }
+
+  join: propensity_by_zip {
+    sql_on: ${propensity_by_zip.zipcode}=${drg_insurance_data.zipcode} ;;
+  }
+
+
+  join: addresses {
+    relationship: many_to_one
+    sql_on: ${addresses.zipcode_short} = ${zipcodes.zip};;
+  }
+  join: addressable_items {
+    relationship: one_to_one
+    sql_on:  ${addressable_items.address_id} = ${addresses.id} ;;
+    fields: []
+  }
+
+  join: care_request_flat {
+    sql_on: ${addressable_items.addressable_type} = 'CareRequest' and ${care_request_flat.care_request_id} = ${addressable_items.addressable_id};;
+    }
+  join: sf_accounts {
+    sql_on: ${sf_accounts.zipcode}  =${drg_insurance_data.zipcode};;
+  }
+  join: care_requests {
+    sql_on: ${care_requests.id}=${care_request_flat.care_request_id} ;;
+  }
+  join: insurance_coalese {
+    relationship: one_to_one
+    sql_on: ${care_requests.id} = ${insurance_coalese.care_request_id} ;;
+    # fields: []
+  }
+
+  join: insurance_coalese_crosswalk {
+    from: athena_payers
+    relationship: many_to_one
+    sql_on: ${insurance_coalese.package_id_coalese} = ${insurance_coalese_crosswalk.insurance_package_id} ;;
+  }
+  join: billing_cities {
+    sql_on: ${zipcodes.billing_city_id} = ${billing_cities.id} ;;
+  }
+  join: markets {
+    sql_on: ${billing_cities.market_id} = ${markets.id} ;;
+  }
+  join: zipcode_squaremiles {
+    sql_on: ${drg_insurance_data.zipcode} =${zipcode_squaremiles.zipcode};;
+  }
+
+
+}
+explore: drg_insurance_zip_agg {}
+explore: zipcode_summary {
+  join: sf_accounts {
+    sql_on: ${zipcode_summary.zipcode} = ${sf_accounts.zipcode} ;;
+  }
+}

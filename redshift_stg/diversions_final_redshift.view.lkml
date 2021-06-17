@@ -7,6 +7,12 @@ view: diversions_final_redshift {
     sql: ${TABLE}.care_request_id ;;
   }
 
+  measure: count_visits {
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    sql_distinct_key: ${care_request_id} ;;
+  }
+
   dimension: div_911 {
     type: number
     label: "911 Diversion (0/1)"
@@ -42,6 +48,19 @@ view: diversions_final_redshift {
   dimension: div_er_prob {
     type: number
     sql: ${TABLE}.div_er_prob ;;
+  }
+
+  measure: count_er_diversions {
+    type: count_distinct
+    description: "Count of all ER diversions"
+    sql: ${care_request_id} ;;
+    filters: [div_er: ">0"]
+  }
+
+  measure: sum_er_diversion_probs {
+    type: sum_distinct
+    sql: ${div_er_prob} ;;
+    sql_distinct_key: ${care_request_id} ;;
   }
 
   dimension: div_hosp {

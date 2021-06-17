@@ -1259,7 +1259,7 @@ view: care_requests {
     description: "Count of completed care requests where a referral to a provider was made"
     sql: ${id} ;;
     filters: {
-      field: athenadwh_orders.provider_referrals_flag
+      field: athenadwh_referrals.provider_referrals_flag
       value: "yes"
     }
     filters: {

@@ -537,6 +537,13 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
     sql: ${on_scene_time_minutes} < 30.0 ;;
   }
 
+  dimension: on_scene_time_20min_or_less {
+    type: yesno
+    group_label: "Care Delivery Times"
+    description: "A flag indicating the on scene time was less than or equal to 20 minutes"
+    sql: ${on_scene_time_minutes} <= 20.0 ;;
+  }
+
   dimension: auto_assigned_initial {
     type: string
     group_label: "Optimizer Details"
@@ -5377,6 +5384,35 @@ measure: non_screened_escalated_phone_count_funnel_percent {
     }
   }
 
+  measure: complete_count_commercial{
+    label: "Complete Count (Commercial)"
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters:  {
+      field: insurance_coalese_crosswalk.custom_insurance_grouping
+      value: "(CM)COMMERCIAL"
+    }
+    filters: {
+      field: complete
+      value: "yes"
+    }
+  }
+
+
+  measure: complete_count_ma{
+    label: "Complete Count (MA)"
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters:  {
+      field: insurance_coalese_crosswalk.custom_insurance_grouping
+      value: "(CM)COMMERCIAL"
+    }
+    filters: {
+      field: complete
+      value: "yes"
+    }
+  }
+
 
   measure: complete_tele_eligible{
     type: count_distinct
@@ -5565,7 +5601,7 @@ measure: non_screened_escalated_phone_count_funnel_percent {
         field: insurance_coalese_crosswalk.custom_insurance_grouping
         value: "(MAID)MEDICAID"
       }
-      drill_fields: [care_request_id, athena_appointment.appointment_id, markets.name, on_scene_time, risk_assessments.protocol_name, patients.age, risk_assessments.score]
+      drill_fields: [care_request_id, athena_patient.patient_id, markets.name, on_scene_time, risk_assessments.protocol_name, patients.age, risk_assessments.score]
     }
 
   measure: complete_count_tricare {

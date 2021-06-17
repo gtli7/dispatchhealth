@@ -384,6 +384,7 @@ measure: sum_diagnosis_olny {
     type: sum_distinct
     sql_distinct_key: ${care_request_id} ;;
     sql: ${wheelchair_hb} ;;
+    group_label: "Diversion Category Sum Measures"
     filters: {
       field: identify_pops_exclude_from_diversion_cats
       value: "no"
