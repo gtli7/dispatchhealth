@@ -5,10 +5,11 @@ view: actual_user_mu_daily_mapping {
       username
       ,userid
       ,managementunitname
-      ,managementunitid
       ,date(activitystarttime at time zone 'utc' at time zone 'America/Denver') as date
     from looker_scratch.genesys_wfm_adherence_actual_activities
       ;;
+    sql_trigger_value: SELECT count(*) FROM looker_scratch.genesys_wfm_adherence_actual_activities  where genesys_wfm_adherence_actual_activities.activitystarttime > current_date - interval '2 day';;
+    indexes: ["userid","userid","date"]
   }
 
   dimension: username {

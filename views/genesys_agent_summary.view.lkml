@@ -237,9 +237,30 @@ view: genesys_agent_summary {
   }
 
   measure: wrap_up_code_compliance {
+    label: "Wrap Compliance"
     type: number
-    value_format_name: "percent_0"
+    value_format_name: "percent_2"
     sql: (${interactions} - ${no_wrap_up_code} - ${blank_wrap_up_code})::float
             / nullif((${interactions} - ${blank_wrap_up_code}),0)::float;;
   }
+
+  #start "Nordmark" metrics
+  measure: queue_expected_care_requests {
+    type: number
+    #value_format_name: decimal_2
+    sql: ${queue_targets.max_target_rate} * ${count_distinct_conversationid} ;;
+  }
+
+  measure: daily_expected_care_requests {
+    type: sum_distinct
+    sql_distinct_key: concat(${username},${conversationstarttime_date}) ;;
+    # sql: ${queue_expected_care_requests} ;;
+    sql: (${queue_targets.max_target_rate} * ${count_distinct_conversationid}) ;;
+  }
+
+  # measure: percentage_of_target {
+  #   type: number
+  #   sql: ${daily_expected_care_requests} / ${care_requests.count_distinct} ;;
+
+  # }
 }

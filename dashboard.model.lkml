@@ -387,6 +387,8 @@ include: "tele_shifts_by_market.view.lkml"
 include: "views/queue_targets.view.lkml"
 include: "views/summer_camp_teams.view.lkml"
 include: "actual_user_mu_daily_mapping.view.lkml"
+include: "expected_care_requests_by_agent_day_queue.view.lkml"
+
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -5186,7 +5188,7 @@ explore: geneysis_wfm_schedules {
   }
 }
 
-  explore: genesys_wfm_adherence_actual_activities {
+explore: genesys_wfm_adherence_actual_activities {
     sql_always_where: ${genesys_agent_summary.firstwrapupcodename} is not NULL ;;
     join: genesys_user_details {
       sql_on: ${genesys_wfm_adherence_actual_activities.userid} = ${genesys_user_details.id};;
@@ -5261,6 +5263,27 @@ explore: genesys_agent_summary {
   join: genesys_user_details {
     sql_on: ${genesys_user_details.id} = ${genesys_agent_summary.userid} ;;
   }
+
+  join: users {
+    sql_on: ${users.genesys_id} =  ${genesys_agent_summary.userid};;
+  }
+
+  join: care_request_statuses {
+    sql_on: ${care_request_statuses.user_id} = ${users.id}  and ${care_request_statuses.name} = 'requested' and ${care_request_statuses.created_mountain_date} = ${genesys_agent_summary.conversationstarttime_date};;
+  }
+
+  join: care_requests {
+    sql_on:  ${care_requests.id} =${care_request_statuses.care_request_id};;
+  }
+
+  join: care_request_flat {
+    sql_on: ${care_requests.id} = ${care_request_flat.care_request_id} ;;
+  }
+
+  join: queue_targets {
+    relationship: many_to_one
+    sql_on: ${genesys_agent_summary.queuename}= ${queue_targets.queuename} ;;
+  }
 }
 
 explore: adwords_campaigns_clone {
@@ -5271,6 +5294,11 @@ explore: adwords_campaigns_clone {
     sql_on: ${markets.name} = ${most_recent_intraday.market} ;;
   }
 }
+
+
+explore: expected_care_requests_by_agent_day_queue {}
+
+
 explore: granular_shift_tracking {
 
 
