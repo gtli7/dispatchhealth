@@ -193,7 +193,7 @@ view: granular_shift_tracking_agg {
   measure: avg_drive_time_minutes_shift {
     type: number
     value_format: "0"
-    sql: ${sum_drive_time_minutes}/${count_distinct_shifts} ;;
+    sql: case when ${count_distinct_shifts}>0.0 then ${sum_drive_time_minutes}::float/${count_distinct_shifts}::float else 0.0 end;;
   }
 
   measure: sum_on_scene_time_minutes {
@@ -215,7 +215,7 @@ view: granular_shift_tracking_agg {
   measure: avg_on_scene_time_minutes_shift {
     type: number
     value_format: "0"
-    sql: ${sum_on_scene_time_minutes}/${count_distinct_shifts} ;;
+    sql: case when ${count_distinct_shifts} > 0.0 then ${sum_on_scene_time_minutes}::float/${count_distinct_shifts}::float else 0.0 end ;;
   }
 
 
@@ -290,7 +290,7 @@ view: granular_shift_tracking_agg {
   measure: avg_deadtime_start_of_shift_minutes{
     value_format: "0"
     type: number
-    sql: ${sum_deadtime_start_of_shift_minutes}/${count_distinct_shifts} ;;
+    sql: case when ${count_distinct_shifts}  >0.0 then ${sum_deadtime_start_of_shift_minutes}::float/${count_distinct_shifts}::float else 0.0 end ;;
   }
 
   measure: sum_deadtime_total_minutes {
@@ -400,7 +400,7 @@ view: granular_shift_tracking_agg {
   measure: avg_deadtime_end_of_shift_minutes{
     value_format: "0"
     type: number
-    sql: ${sum_deadtime_end_of_shift_minutes}/${count_distinct_shifts} ;;
+    sql: case when ${count_distinct_shifts} >0 then ${sum_deadtime_end_of_shift_minutes}/${count_distinct_shifts} else 0 end ;;
   }
 
   measure: avg_deadtime_end_of_shift_minutes_high_overflow{
@@ -433,7 +433,7 @@ view: granular_shift_tracking_agg {
   measure: avg_dead_time_at_office_after_shift{
     value_format: "0"
     type: number
-    sql: ${sum_dead_time_at_office_after_shift}/${count_distinct_shifts} ;;
+    sql: case when ${count_distinct_shifts} >0 then ${sum_dead_time_at_office_after_shift}/${count_distinct_shifts}  else 0 end;;
   }
 
   measure: avg_dead_time_at_office_after_shift_high_overflow{
@@ -477,7 +477,7 @@ view: granular_shift_tracking_agg {
   measure: avg_drive_back_to_office_minutes{
     value_format: "0"
     type: number
-    sql: ${sum_drive_back_to_office_minutes}/${count_distinct_shifts} ;;
+    sql: case when ${count_distinct_shifts} >0 then ${sum_drive_back_to_office_minutes}/${count_distinct_shifts} else 0 end;;
   }
 
   measure: avg_drive_back_to_office_minutes_high_overflow{
