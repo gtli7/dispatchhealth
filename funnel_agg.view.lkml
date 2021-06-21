@@ -46,7 +46,7 @@ view: funnel_agg {
       column: count_no_change_in_eta {field:care_request_flat.count_no_change_in_eta}
       filters: {
         field: care_request_flat.created_date
-        value: "365 days ago for 365 days"
+        value: "2365 days ago for 2365 days"
       }
       filters: {
         field: service_lines.name

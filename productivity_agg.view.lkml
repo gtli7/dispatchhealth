@@ -16,7 +16,6 @@ view: productivity_agg {
       column: count_wmfr_billable { field: care_requests.count_wmfr_billable }
       column: count_smfr_billable { field: care_requests.count_smfr_billable }
       column: complete_count_advanced { field: care_request_flat.complete_count_advanced }
-      column: productivity {}
       column: sum_goal_volume {}
       column: id_adj { field: markets.id_adj }
       column: name_adj { field: markets.name_adj }
@@ -28,7 +27,7 @@ view: productivity_agg {
       column: telepresentation { field: shift_types.telepresentation}
       filters: {
         field: shift_teams.start_date
-        value: "365 days ago for 365 days"
+        value: "2365 days ago for 2365 days"
       }
       filters: {
         field: service_lines.name
@@ -73,6 +72,7 @@ view: productivity_agg {
 
   dimension: telepresentation {
     type: yesno
+    sql: case when ${TABLE}.telepresentation is not null then ${TABLE}.telepresentation else null end  ;;
   }
 
 
@@ -215,10 +215,7 @@ view: productivity_agg {
   dimension: complete_count_advanced {
     type: number
   }
-  dimension: productivity {
-    value_format: "0.00"
-    type: number
-  }
+
   dimension: sum_goal_volume {
     type: number
   }

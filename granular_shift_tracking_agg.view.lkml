@@ -71,6 +71,8 @@ view: granular_shift_tracking_agg {
   dimension: shift_type {}
   dimension: telepresentation {
     type: yesno
+    sql:   case when ${TABLE}.telepresentation is not null then ${TABLE}.telepresentation else false end  ;;
+
   }
 
 
@@ -496,7 +498,7 @@ view: granular_shift_tracking_agg {
 
   measure: sum_complete_count{
     type: sum_distinct
-    value_format: "0"
+    value_format: "#,###"
     sql: ${complete_count};;
     sql_distinct_key: ${primary_key} ;;
     filters: [invalid_date: "no"]
@@ -506,10 +508,16 @@ view: granular_shift_tracking_agg {
 
   measure: count_on_site{
     type: count_distinct
-    value_format: "0"
+    value_format: "#,###"
     sql: ${primary_key};;
     sql_distinct_key: ${primary_key} ;;
     filters: [invalid_date: "no", complete_count: ">0"]
+  }
+
+  measure: visits_per_site{
+    type: number
+    value_format: "0.00"
+    sql: case when ${count_on_site} > 0 then ${sum_complete_count}::float/${count_on_site}::float else 0 end;;
   }
 
   measure: sum_dead_time_intra_minutes_w_assigned{
