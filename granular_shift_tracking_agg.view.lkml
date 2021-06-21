@@ -39,6 +39,10 @@ view: granular_shift_tracking_agg {
           field: cars.name
           value: "-%Swab%,-%Advanced%,-%MFR%,-%Screening%"
         }
+        filters: {
+          field: granular_shift_tracking.shift_date
+          value: "365 days ago for 365 days"
+        }
 
       }
     }
