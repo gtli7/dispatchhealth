@@ -5,7 +5,7 @@ view: productivity_agg {
 
   derived_table: {
     sql_trigger_value:  SELECT MAX(care_request_id) FROM ${care_request_flat.SQL_TABLE_NAME} where created_date > current_date - interval '2 days';;
-    indexes: ["start", "name_adj"]
+    indexes: ["start", "name_adj", "telepresentation"]
 
     explore_source: shift_teams {
       column: start { field: shift_teams.start_date}
@@ -72,7 +72,7 @@ view: productivity_agg {
 
   dimension: telepresentation {
     type: yesno
-    sql: case when ${TABLE}.telepresentation is not null then ${TABLE}.telepresentation else null end  ;;
+    sql: ${TABLE}.telepresentation   ;;
   }
 
 
