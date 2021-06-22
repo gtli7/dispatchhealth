@@ -1,7 +1,7 @@
 view: granular_shift_tracking_agg {
     derived_table: {
       sql_trigger_value:  SELECT count(*) FROM looker_scratch.granular_shift_tracking where shift_date > current_date - interval '14 days';;
-      indexes: ["shift_date", "shift_team_id", "car_name", "market_id", "market_name_adj"]
+      indexes: ["shift_date", "shift_team_id", "car_name", "market_id", "market_name_adj", "telepresentation"]
       explore_source: granular_shift_tracking {
         column: shift_date {}
         column: shift_team_id {}
@@ -39,6 +39,10 @@ view: granular_shift_tracking_agg {
           field: cars.name
           value: "-%Swab%,-%Advanced%,-%MFR%,-%Screening%"
         }
+        filters: {
+          field: granular_shift_tracking.shift_date
+          value: "365 days ago for 365 days"
+        }
 
       }
     }
@@ -71,6 +75,8 @@ view: granular_shift_tracking_agg {
   dimension: shift_type {}
   dimension: telepresentation {
     type: yesno
+    sql: ${TABLE}.telepresentation   ;;
+
   }
 
 
@@ -187,7 +193,7 @@ view: granular_shift_tracking_agg {
   measure: avg_drive_time_minutes_shift {
     type: number
     value_format: "0"
-    sql: ${sum_drive_time_minutes}/${count_distinct_shifts} ;;
+    sql: case when ${count_distinct_shifts}>0.0 then ${sum_drive_time_minutes}::float/${count_distinct_shifts}::float else 0.0 end;;
   }
 
   measure: sum_on_scene_time_minutes {
@@ -209,7 +215,7 @@ view: granular_shift_tracking_agg {
   measure: avg_on_scene_time_minutes_shift {
     type: number
     value_format: "0"
-    sql: ${sum_on_scene_time_minutes}/${count_distinct_shifts} ;;
+    sql: case when ${count_distinct_shifts} > 0.0 then ${sum_on_scene_time_minutes}::float/${count_distinct_shifts}::float else 0.0 end ;;
   }
 
 
@@ -284,7 +290,7 @@ view: granular_shift_tracking_agg {
   measure: avg_deadtime_start_of_shift_minutes{
     value_format: "0"
     type: number
-    sql: ${sum_deadtime_start_of_shift_minutes}/${count_distinct_shifts} ;;
+    sql: case when ${count_distinct_shifts}  >0.0 then ${sum_deadtime_start_of_shift_minutes}::float/${count_distinct_shifts}::float else 0.0 end ;;
   }
 
   measure: sum_deadtime_total_minutes {
@@ -394,7 +400,7 @@ view: granular_shift_tracking_agg {
   measure: avg_deadtime_end_of_shift_minutes{
     value_format: "0"
     type: number
-    sql: ${sum_deadtime_end_of_shift_minutes}/${count_distinct_shifts} ;;
+    sql: case when ${count_distinct_shifts} >0 then ${sum_deadtime_end_of_shift_minutes}/${count_distinct_shifts} else 0 end ;;
   }
 
   measure: avg_deadtime_end_of_shift_minutes_high_overflow{
@@ -427,7 +433,7 @@ view: granular_shift_tracking_agg {
   measure: avg_dead_time_at_office_after_shift{
     value_format: "0"
     type: number
-    sql: ${sum_dead_time_at_office_after_shift}/${count_distinct_shifts} ;;
+    sql: case when ${count_distinct_shifts} >0 then ${sum_dead_time_at_office_after_shift}/${count_distinct_shifts}  else 0 end;;
   }
 
   measure: avg_dead_time_at_office_after_shift_high_overflow{
@@ -471,7 +477,7 @@ view: granular_shift_tracking_agg {
   measure: avg_drive_back_to_office_minutes{
     value_format: "0"
     type: number
-    sql: ${sum_drive_back_to_office_minutes}/${count_distinct_shifts} ;;
+    sql: case when ${count_distinct_shifts} >0 then ${sum_drive_back_to_office_minutes}/${count_distinct_shifts} else 0 end;;
   }
 
   measure: avg_drive_back_to_office_minutes_high_overflow{
@@ -496,7 +502,7 @@ view: granular_shift_tracking_agg {
 
   measure: sum_complete_count{
     type: sum_distinct
-    value_format: "0"
+    value_format: "#,###"
     sql: ${complete_count};;
     sql_distinct_key: ${primary_key} ;;
     filters: [invalid_date: "no"]
@@ -506,10 +512,16 @@ view: granular_shift_tracking_agg {
 
   measure: count_on_site{
     type: count_distinct
-    value_format: "0"
+    value_format: "#,###"
     sql: ${primary_key};;
     sql_distinct_key: ${primary_key} ;;
     filters: [invalid_date: "no", complete_count: ">0"]
+  }
+
+  measure: visits_per_site{
+    type: number
+    value_format: "0.00"
+    sql: case when ${count_on_site} > 0 then ${sum_complete_count}::float/${count_on_site}::float else 0 end;;
   }
 
   measure: sum_dead_time_intra_minutes_w_assigned{

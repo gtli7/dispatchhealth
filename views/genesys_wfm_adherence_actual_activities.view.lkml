@@ -91,7 +91,7 @@ view: genesys_wfm_adherence_actual_activities {
 
   measure: conformance {
     type: number
-    value_format_name: percent_0
+    value_format_name: percent_2
     sql: coalesce(${conformance_numerator},0)/nullif(${conformance_denominator},0) ;;
   }
 

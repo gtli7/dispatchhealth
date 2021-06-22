@@ -6,10 +6,16 @@ view: queue_targets {
     sql: ${TABLE}."queuename" ;;
   }
 
-  dimension: target_rate {
+  measure: target_rate {
     type: number
     sql: ${TABLE}."target_rate" ;;
   }
+
+  measure: max_target_rate {
+    type: number
+    sql: max(${TABLE}."target_rate") ;;
+  }
+
 
   measure: count {
     type: count

@@ -206,9 +206,7 @@ view: zipcode_summary {
           ${complete_count_ma_percent_stds}+
           ${average_drive_time_minutes_stds}*-1+
           ${population_drg_stds}+
-          ${rank_1_10_propensity_stds}+
-          ${sf_community_broad_density_stds}+
-          ${sf_hospitals_density_stds}
+          ${rank_1_10_propensity_stds}
           ;;
   }
 
