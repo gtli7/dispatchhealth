@@ -205,7 +205,7 @@ view: zipcode_summary {
     sql:  ${medicare_advantage_part_c_drg_percent_stds}+
           ${complete_count_ma_percent_stds}+
           ${average_drive_time_minutes_stds}*-1+
-          ${population_drg_stds}+
+          .5*${population_drg_stds}+
           ${rank_1_10_propensity_stds}+
           ${sf_community_broad_density_stds}
           ;;
