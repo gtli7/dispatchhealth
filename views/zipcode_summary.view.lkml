@@ -1,17 +1,17 @@
 view: zipcode_summary {
   derived_table: {
     sql:
-      select *,  ROW_NUMBER() OVER(PARTITION BY (market)
+           select *,  ROW_NUMBER() OVER(PARTITION BY (market)
                                 ORDER BY zipcode_score DESC) as zipcode_rank
 from
 (select
         *,
-          zipcode_summary."medicare_advantage_part_c_drg_percent_stds"+
-          (zipcode_summary."complete_count_ma_percent_stds")+
-          -1*zipcode_summary."average_drive_time_minutes_stds"+
-          .5*(zipcode_summary."population_drg_stds")+
-          (zipcode_summary."rank_1_10_propensity_stds")+
-          zipcode_summary."sf_community_broad_density_stds" as zipcode_score
+          1.0*medicare_advantage_part_c_drg_percent_stds+
+          1.0*complete_count_ma_percent_stds+
+         -1.0*average_drive_time_minutes_stds+
+          0.5*population_drg_stds+
+          1.0*rank_1_10_propensity_stds+
+          1.0*sf_community_broad_density_stds as zipcode_score
 from looker_scratch.zipcode_summary)lq ;;
   }
 
