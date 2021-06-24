@@ -396,6 +396,8 @@ include: "views/drg_insurance_data.view.lkml"
 include: "drg_insurance_zip_agg.view.lkml"
 include: "views/zipcode_summary.view.lkml"
 include: "views/zipcode_squaremiles.view.lkml"
+include: "wellmed_optum_care_requests.view.lkml"
+include: "views/den_zip_to_office_distances.view.lkml"
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -2377,6 +2379,12 @@ join: ga_pageviews_clone {
   join: tele_shifts_by_market {
     sql_on: ${care_request_flat.on_scene_time} between ${tele_shifts_by_market.shift_start_time} and ${tele_shifts_by_market.shift_end_time}
       and ${care_request_flat.market_id} = ${tele_shifts_by_market.market_id} ;;
+  }
+  join: wellmed_optum_care_requests {
+    sql_on: ${wellmed_optum_care_requests.care_request_id} = ${care_request_flat.care_request_id} ;;
+  }
+  join: den_zip_to_office_distances {
+    sql_on: ${zipcodes.zip} = ${den_zip_to_office_distances.zipcode} ;;
   }
 }
 

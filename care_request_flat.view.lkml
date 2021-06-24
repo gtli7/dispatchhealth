@@ -779,6 +779,15 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
     type: string
     sql: concat(${accept_employee_first_name}, ' ', ${accept_employee_last_name}) ;;
   }
+  dimension: wellmed_optum_tampa {
+    type: yesno
+    sql: ${wellmed_optum_care_requests.care_request_id} is not null ;;
+  }
+
+  dimension: advent_tampa {
+    type: yesno
+    sql: ${wellmed_optum_care_requests.care_request_id} is  null ;;
+  }
 
   dimension: resolved_employee_full_name {
     type: string
@@ -1623,6 +1632,7 @@ measure: count_complete_visits_weekend {
       END
       ;;
   }
+
 
   dimension: followup_results_3_14_30day_bounceback {
   description: "Consolidated followup results from 3, 14 and 30 day results with 30 day followup segmented into separate categories. This returns a single value from the three possible results based on the hierarchy of hospitalization_same, ed_same, Hospitalization_differing, Ed_differing, No_ed_hosptilization, and NULL'"

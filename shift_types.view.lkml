@@ -51,9 +51,15 @@ view: shift_types {
     drill_fields: [id, name]
   }
 
-  dimension: telepresentation {
+  dimension: telepresentation_raw {
     type: yesno
     sql: lower( ${name}) like '%telepresentation%';;
   }
+
+  dimension: telepresentation {
+    type: yesno
+    sql:  case when ${telepresentation_raw} then ${telepresentation_raw} else false end;;
+  }
+
 
 }

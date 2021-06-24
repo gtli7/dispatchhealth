@@ -5,7 +5,7 @@ view: productivity_agg {
 
   derived_table: {
     sql_trigger_value:  SELECT MAX(care_request_id) FROM ${care_request_flat.SQL_TABLE_NAME} where created_date > current_date - interval '2 days';;
-    indexes: ["start", "name_adj"]
+    indexes: ["start", "name_adj", "telepresentation"]
 
     explore_source: shift_teams {
       column: start { field: shift_teams.start_date}
@@ -16,7 +16,6 @@ view: productivity_agg {
       column: count_wmfr_billable { field: care_requests.count_wmfr_billable }
       column: count_smfr_billable { field: care_requests.count_smfr_billable }
       column: complete_count_advanced { field: care_request_flat.complete_count_advanced }
-      column: productivity {}
       column: sum_goal_volume {}
       column: id_adj { field: markets.id_adj }
       column: name_adj { field: markets.name_adj }
@@ -73,6 +72,7 @@ view: productivity_agg {
 
   dimension: telepresentation {
     type: yesno
+    sql: ${TABLE}.telepresentation   ;;
   }
 
 
@@ -215,10 +215,7 @@ view: productivity_agg {
   dimension: complete_count_advanced {
     type: number
   }
-  dimension: productivity {
-    value_format: "0.00"
-    type: number
-  }
+
   dimension: sum_goal_volume {
     type: number
   }
