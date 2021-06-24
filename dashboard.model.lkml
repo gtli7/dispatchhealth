@@ -5223,13 +5223,13 @@ explore: geneysis_wfm_schedules {
 }
 
 explore: genesys_wfm_adherence_actual_activities {
-    sql_always_where: ${genesys_agent_summary.firstwrapupcodename} is not NULL ;;
     join: genesys_user_details {
       sql_on: ${genesys_wfm_adherence_actual_activities.userid} = ${genesys_user_details.id};;
     }
     join: genesys_agent_summary {
       sql_on: ${genesys_agent_summary.userid} = ${genesys_wfm_adherence_actual_activities.userid} and
-        ${genesys_agent_summary.conversationstartdatemt} = ${genesys_wfm_adherence_actual_activities.activitystartdatemt};;
+        ${genesys_agent_summary.conversationstartdatemt} = ${genesys_wfm_adherence_actual_activities.activitystartdatemt} and
+        ${genesys_agent_summary.firstwrapupcodename} is not NULL;;
     }
     join: genesys_conversation_summary {
       sql_on: ${genesys_agent_summary.conversationid} = ${genesys_conversation_summary.conversationid} and
@@ -5296,6 +5296,10 @@ explore: genesys_agent_summary {
 
   join: genesys_user_details {
     sql_on: ${genesys_user_details.id} = ${genesys_agent_summary.userid} ;;
+  }
+
+  join: agents_with_schedules {
+    sql_on: ${genesys_agent_summary.userid} = ${agents_with_schedules.userid} ;;
   }
 
   join: users {
