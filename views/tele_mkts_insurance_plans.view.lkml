@@ -1,23 +1,29 @@
 view: tele_mkts_insurance_plans {
-  sql_table_name: looker_scratch.tele_mkts_insurance_plans ;;
+  derived_table: {
+    sql: select
+          s.id as state_id,
+          s.name as state_name,
+          ips.insurance_plan_id,
+          i.name as insurance_name,
+          i.package_id::int as insurance_package_id,
+          ips.id as insurance_plan_service_line_id,
+          ips.service_line_id,
+          ips.enabled,
+          i.active,
+          left(i.note, 255) as note
+        from insurance_plan_service_lines ips
+        left join insurance_plans i on ips.insurance_plan_id = i.id
+        join states s on i.state_id = s.id
+        where ips.service_line_id = 17 -- Telepres
+        and ((s.name in ('Colorado', 'Oklahoma', 'Texas', 'Virginia') and ips.enabled = 'true')
+          or (s.name = 'Nevada' and i.package_id in ('69455', '70443', '447247', '75708', '136902', '81629')))
+        order by s.name, i.name ;;
+    indexes: ["state_id", "insurance_plan_id", "insurance_package_id", "insurance_plan_service_line_id", "service_line_id"]
+  }
 
   dimension: active {
     type: string
     sql: ${TABLE}."active" ;;
-  }
-
-  dimension_group: created {
-    type: time
-    timeframes: [
-      raw,
-      time,
-      date,
-      week,
-      month,
-      quarter,
-      year
-    ]
-    sql: ${TABLE}."created_at" ;;
   }
 
   dimension: enabled {
@@ -68,6 +74,11 @@ view: tele_mkts_insurance_plans {
   dimension: tele_eligible_plan {
     type: yesno
     sql: ${insurance_plan_id} is not null ;;
+  }
+
+  dimension: cap_payer_tele_10pct {
+    type: yesno
+    sql: ${insurance_package_id} in ('447247', '75708', '136902', '81629') ;;
   }
 
   measure: count {
