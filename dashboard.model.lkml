@@ -398,6 +398,7 @@ include: "views/zipcode_summary.view.lkml"
 include: "views/zipcode_squaremiles.view.lkml"
 include: "wellmed_optum_care_requests.view.lkml"
 include: "views/den_zip_to_office_distances.view.lkml"
+include: "agents_with_schedules.view.lkml"
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
