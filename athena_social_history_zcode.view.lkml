@@ -1,14 +1,14 @@
-view: athena_social_history_zcode {
-  # sql_table_name: athena.patientsocialhistory ;;
-  # drill_fields: [id]
-  derived_table: {
-    sql: SELECT
+# sql_table_name: athena.patientsocialhistory ;;
+# drill_fields: [id]
+derived_table: {
+  sql: SELECT
           ROW_NUMBER() OVER () AS id,
           chart_id,
-          CASE WHEN social_history_key = 'SOCIALHISTORY.LOCAL.91' AND (social_history_answer LIKE 'I Have Housing Today But%' OR
+          CASE  WHEN social_history_key = 'SOCIALHISTORY.LOCAL.91' AND (social_history_answer LIKE 'I Have Housing Today But%' OR
             social_history_answer LIKE 'I Do Not Have Housing%' OR
             social_history_answer LIKE 'Needs %') THEN 'Z59.1'
-            -- TODO - Add remaining logic here
+              --OR
+              --TODO
           ELSE NULL
           END AS z_code
         FROM athena.patientsocialhistory
@@ -18,9 +18,9 @@ view: athena_social_history_zcode {
             --OR
             --TODO - Add additional where clause logic here
       ;;
-    sql_trigger_value: SELECT MAX(chart_id) FROM athena.patientsocialhistory ;;
-    indexes: ["chart_id"]
-  }
+  sql_trigger_value: SELECT MAX(chart_id) FROM athena.patientsocialhistory ;;
+  indexes: ["chart_id"]
+}
 
   dimension: id {
     primary_key: yes
