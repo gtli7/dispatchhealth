@@ -962,6 +962,48 @@ view: care_requests {
     sql: ${billable_est_numeric} ;;
   }
 
+measure: count_billable_est_dtc {
+  type: count_distinct
+  description: "Count of visits occurring through DTC channel attribution"
+  sql: ${id} ;;
+  filters: {
+    field:  billable_est
+    value: "yes"
+  }
+  filters: {
+   field:   channel_attribution.primary_channel_attribution
+   value: "Direct to Consumer"
+  }
+  }
+
+  measure: count_billable_est_community {
+    type: count_distinct
+    description: "Count of visits occurring through community channel attribution"
+    sql: ${id} ;;
+    filters: {
+      field:  billable_est
+      value: "yes"
+    }
+    filters: {
+      field:   channel_attribution.primary_channel_attribution
+      value: "Community"
+    }
+  }
+
+measure: count_billable_est_strategic {
+  type: count_distinct
+  description: "Count of visits occurring through strategic channel attribution"
+  sql: ${id} ;;
+  filters: {
+    field:  billable_est
+    value: "yes"
+  }
+  filters: {
+    field:   channel_attribution.primary_channel_attribution
+    value: "Strategic"
+  }
+}
+
 
   measure: count_billable_est_acute_ems_cost_savings {
     label: "Count Billable Est Excluding Bridge Care and DH Followups"
