@@ -340,6 +340,7 @@ include: "partner_population.view.lkml"
 include: "inbound_not_answered_or_abandoned.view.lkml"
 include: "views/athena_payers.view.lkml"
 include: "athena_patient_social_history.view.lkml"
+include: "athena_social_history_zcode.view.lkml"
 include: "geolocations_stops_by_care_request.view.lkml"
 include: "athena_cpt_codes.view.lkml"
 include: "zizzl_shift_hours.view.lkml"
@@ -890,6 +891,12 @@ join: athena_clinicalencounter {
 join: athena_patient_social_history {
   relationship: one_to_one
   sql_on: ${athena_clinicalencounter.chart_id} = ${athena_patient_social_history.chart_id};;
+}
+
+join: athena_social_history_zcode {
+  relationship: one_to_many
+  sql_on:  ${athena_clinicalencounter.chart_id} = ${athena_patient_social_history.chart_id};;
+  fields: [athena_social_history_zcode.z_code]
 }
 
 join: athena_patient_medical_history {
