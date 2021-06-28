@@ -1,3 +1,5 @@
+view: athena_social_history_zcode {
+
 # sql_table_name: athena.patientsocialhistory ;;
 # drill_fields: [id]
 derived_table: {
@@ -40,5 +42,4 @@ derived_table: {
     type: number
     sql: ${TABLE}."chart_id" ;;
   }
-
 }
