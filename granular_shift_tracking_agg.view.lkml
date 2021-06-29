@@ -182,6 +182,8 @@ view: granular_shift_tracking_agg {
     filters: [invalid_date: "no"]
   }
   measure: avg_drive_time_minutes {
+    label:"Avg Drive Time (Same-site Corrected)"
+
     type: average_distinct
     value_format: "0"
     sql: ${drive_time}*60 ;;
@@ -205,6 +207,7 @@ view: granular_shift_tracking_agg {
 
   }
   measure: avg_on_scene_time_minutes {
+    label:"Avg On-scene Time (Same-site Corrected)"
     type: average_distinct
     value_format: "0"
     sql: ${on_scene_time} *60;;
