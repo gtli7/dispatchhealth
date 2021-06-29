@@ -81,6 +81,7 @@ view: adwords_campaigns_clone {
           when ${campaign_name_lower}  like '%-sat%' then 194
           when ${campaign_name_lower}  like '%-tus%' then 195
           when ${campaign_name_lower}  like '%-orl%' then 196
+          when ${campaign_name_lower}  like concat('%-',lower(${markets.short_name}),'%') then ${markets.id_adj}
           else null end;;
   }
 
