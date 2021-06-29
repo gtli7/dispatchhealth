@@ -340,6 +340,7 @@ include: "partner_population.view.lkml"
 include: "inbound_not_answered_or_abandoned.view.lkml"
 include: "views/athena_payers.view.lkml"
 include: "athena_patient_social_history.view.lkml"
+include: "athena_social_history_zcode.view.lkml"
 include: "geolocations_stops_by_care_request.view.lkml"
 include: "athena_cpt_codes.view.lkml"
 include: "zizzl_shift_hours.view.lkml"
@@ -398,6 +399,7 @@ include: "views/zipcode_summary.view.lkml"
 include: "views/zipcode_squaremiles.view.lkml"
 include: "wellmed_optum_care_requests.view.lkml"
 include: "views/den_zip_to_office_distances.view.lkml"
+include: "agents_with_schedules.view.lkml"
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -889,6 +891,12 @@ join: athena_clinicalencounter {
 join: athena_patient_social_history {
   relationship: one_to_one
   sql_on: ${athena_clinicalencounter.chart_id} = ${athena_patient_social_history.chart_id};;
+}
+
+join: athena_social_history_zcode {
+  relationship: one_to_many
+  sql_on:  ${athena_clinicalencounter.chart_id} = ${athena_patient_social_history.chart_id};;
+  fields: [athena_social_history_zcode.z_code]
 }
 
 join: athena_patient_medical_history {
@@ -5223,13 +5231,13 @@ explore: geneysis_wfm_schedules {
 }
 
 explore: genesys_wfm_adherence_actual_activities {
-    sql_always_where: ${genesys_agent_summary.firstwrapupcodename} is not NULL ;;
     join: genesys_user_details {
       sql_on: ${genesys_wfm_adherence_actual_activities.userid} = ${genesys_user_details.id};;
     }
     join: genesys_agent_summary {
       sql_on: ${genesys_agent_summary.userid} = ${genesys_wfm_adherence_actual_activities.userid} and
-        ${genesys_agent_summary.conversationstartdatemt} = ${genesys_wfm_adherence_actual_activities.activitystartdatemt};;
+        ${genesys_agent_summary.conversationstartdatemt} = ${genesys_wfm_adherence_actual_activities.activitystartdatemt} and
+        ${genesys_agent_summary.firstwrapupcodename} is not NULL;;
     }
     join: genesys_conversation_summary {
       sql_on: ${genesys_agent_summary.conversationid} = ${genesys_conversation_summary.conversationid} and
@@ -5296,6 +5304,10 @@ explore: genesys_agent_summary {
 
   join: genesys_user_details {
     sql_on: ${genesys_user_details.id} = ${genesys_agent_summary.userid} ;;
+  }
+
+  join: agents_with_schedules {
+    sql_on: ${genesys_agent_summary.userid} = ${agents_with_schedules.userid} ;;
   }
 
   join: users {

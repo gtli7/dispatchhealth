@@ -336,7 +336,7 @@ view: athena_document_letters {
     description: "Identifies clinical letters sent to non-pcp's (specialists, etc)"
     hidden: yes
     type: yesno
-    sql:  (upper(${document_subclass}) != 'LETTER_PATIENTCORRESPONDENCE' OR ${document_subclass} IS NULL) and upper(${status}) != 'DELETED' AND upper(${athena_clinicalletter.role}) != 'PRIMARY CARE PROVIDER' ;;
+    sql:  (upper(${document_subclass}) NOT IN ('LETTER_PATIENTCORRESPONDENCE','LETTER_PATIENTCARESUMMARY') OR ${document_subclass} IS NULL) and upper(${status}) != 'DELETED' AND upper(${athena_clinicalletter.role}) != 'PRIMARY CARE PROVIDER' ;;
   }
 
   measure: count_notes_sent_pcp {
