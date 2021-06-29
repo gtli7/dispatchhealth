@@ -27,7 +27,7 @@ view: productivity_agg {
       column: telepresentation { field: shift_types.telepresentation}
       filters: {
         field: shift_teams.start_date
-        value: "365 days ago for 365 days"
+        value: "730 days ago for 730 days"
       }
       filters: {
         field: service_lines.name
