@@ -400,6 +400,7 @@ include: "views/zipcode_squaremiles.view.lkml"
 include: "wellmed_optum_care_requests.view.lkml"
 include: "views/den_zip_to_office_distances.view.lkml"
 include: "agents_with_schedules.view.lkml"
+include: "views/market_target_productivities.view.lkml"
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -5111,9 +5112,7 @@ explore: productivity_agg {
   join: adwords_covid_symptomatic {
     from: adwords_campaigns_clone
     sql_on:${markets.id} =${adwords_covid_symptomatic.market_id_new} and ${adwords_covid_symptomatic.campaign_name_lower} like '%-covid-symptomatic%';;
-}
-
-
+  }
 
   join: market_regions {
     relationship: one_to_one
@@ -5124,6 +5123,10 @@ explore: productivity_agg {
     sql_on:  ${budget_projections_by_market_clone.market_dim_id}=${productivity_agg.id_adj}
              and
             ${budget_projections_by_market_clone.month_month}=${productivity_agg.start_month};;
+  }
+
+  join: market_target_productivities {
+    sql_on: ${markets.short_name_adj_dual} = ${market_target_productivities.market_short} ;;
   }
 
   #join: markets {
