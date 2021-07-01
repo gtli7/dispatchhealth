@@ -207,12 +207,20 @@ view: granular_shift_tracking_agg {
 
   }
   measure: avg_on_scene_time_minutes {
-    label:"Avg On-scene Time (Same-site Corrected)"
+    label:"Avg On-scene Time (Same-site)"
     type: average_distinct
     value_format: "0"
     sql: ${on_scene_time} *60;;
     sql_distinct_key: ${primary_key} ;;
     filters: [invalid_date: "no"]
+
+  }
+
+  measure: avg_on_scene_time_minutes_single {
+    type: number
+    label:"Avg On-scene Time (Single Patient)"
+    value_format: "0"
+    sql: case when ${visits_per_site}>0 then ${avg_on_scene_time_minutes}::float/${visits_per_site}::float  else 0.0 end;;
 
   }
   measure: avg_on_scene_time_minutes_shift {
