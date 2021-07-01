@@ -8,10 +8,9 @@ from
         *,
           2.5*medicare_advantage_part_c_drg_percent_stds+
           2.5*complete_count_ma_percent_stds+
-         -1.0*average_drive_time_minutes_stds+
-         -1.0*average_drive_time_minutes_stds+
+         -2.0*average_drive_time_minutes_stds+
           0.5*population_drg_stds+
-          1.0*complete_count_stds+
+          1.0*rank_1_10_propensity_stds+
           1.0*sf_community_broad_density_stds as zipcode_score
 from looker_scratch.zipcode_summary)lq ;;
   }
