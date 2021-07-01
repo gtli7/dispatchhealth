@@ -138,4 +138,10 @@ view: genesys_conversation_wrapup {
     type: count
     drill_fields: [queuename, username, wrapupcodename]
   }
+
+  measure: count_distinct_username {
+    type: count_distinct
+    sql: ${username} ;;
+    description: "Distinct count of usernames"
+  }
 }
