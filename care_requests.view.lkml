@@ -1004,6 +1004,75 @@ measure: count_billable_est_strategic {
   }
 }
 
+measure: count_billable_est_commercial {
+  description: "Count visits with commercial payor"
+  type: count_distinct
+  sql: ${id} ;;
+  filters: {
+    field: billable_est
+    value: "yes"
+  }
+  filters: {
+    field: insurance_coalese_crosswalk.custom_insurance_grouping
+    value: "(CM)COMMERCIAL"
+  }
+}
+
+  measure: count_billable_est_medicaid {
+    description: "Count visits covered by medicaid"
+    type: count_distinct
+    sql: ${id} ;;
+    filters: {
+      field: billable_est
+      value: "yes"
+    }
+    filters: {
+      field: insurance_coalese_crosswalk.custom_insurance_grouping
+      value: "(MAID)MEDICAID"
+    }
+  }
+
+  measure: count_billable_est_mcare_adv{
+    description: "Count visits covered by MA"
+    type: count_distinct
+    sql: ${id} ;;
+    filters: {
+      field: billable_est
+      value: "yes"
+    }
+    filters: {
+      field: insurance_coalese_crosswalk.custom_insurance_grouping
+      value: "(MA)MEDICARE ADVANTAGE"
+    }
+  }
+
+  measure: count_billable_est_medicare {
+    description: "Count visits covered by medicare"
+    type: count_distinct
+    sql: ${id} ;;
+    filters: {
+      field: billable_est
+      value: "yes"
+    }
+    filters: {
+      field: insurance_coalese_crosswalk.custom_insurance_grouping
+      value: "(MCARE)MEDICARE"
+    }
+  }
+
+  measure: count_billable_est_mgd_medicaid {
+    description: "Count visits covered by managed medicaid"
+    type: count_distinct
+    sql: ${id} ;;
+    filters: {
+      field: billable_est
+      value: "yes"
+    }
+    filters: {
+      field: insurance_coalese_crosswalk.custom_insurance_grouping
+      value: "(MMCD)MANAGED MEDICAID"
+    }
+  }
 
   measure: count_billable_est_acute_ems_cost_savings {
     label: "Count Billable Est Excluding Bridge Care and DH Followups"
