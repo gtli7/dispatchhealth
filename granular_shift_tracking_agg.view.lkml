@@ -24,7 +24,12 @@ view: granular_shift_tracking_agg {
         column: on_route_time_of_day {field: granular_shift_tracking.min_on_route_time_of_day}
         column: on_scene_time_of_day {field: granular_shift_tracking.min_on_scene_time_of_day}
         column: accept_time_of_day {field: granular_shift_tracking.min_accept_time_of_day}
-
+        column: total_savings { field: diversions_by_care_request.total_savings }
+        column: total_savings { field: diversions_by_care_request.total_savings }
+        column: average_on_scene_time_predicted { field: care_request_flat.average_on_scene_time_predicted }
+        column: 30_day_avg_bounceback_rate { field: adt_first_encounter_report.30_day_avg_bounceback_rate }
+        column: 7_day_avg_bounceback_rate { field: adt_first_encounter_report.7_day_avg_bounceback_rate }
+        column: average_net_promoter_score { field: patient_satisfaction.average_net_promoter_score }
         column: address_name_agg {}
         column: shift_type { field: shift_types.name}
         column: telepresentation { field: shift_types.telepresentation}
@@ -47,10 +52,125 @@ view: granular_shift_tracking_agg {
       }
     }
 
+  dimension: total_savings {
+    type: number
+    sql: ${TABLE}.total_savings ;;
+  }
+
+
+  dimension: average_on_scene_time_predicted {
+    type: number
+    sql: ${TABLE}.average_on_scene_time_predicted ;;
+  }
+
+
+
+
+  measure: sum_total_savings {
+    type: sum_distinct
+    sql: ${total_savings} ;;
+    sql_distinct_key: ${primary_key} ;;
+    filters: [complete_count: ">0"]
+
+  }
+
+  measure: avg_total_savings {
+    type: number
+    value_format: "0"
+    sql: case when ${sum_complete_count}> 0 then ${sum_total_savings}::float/${sum_complete_count}::float else 0 end;;
+
+  }
+
+  dimension: net_promoter_score {
+    type: number
+
+    sql: ${TABLE}.average_net_promoter_score ;;
+  }
+
+  dimension:  net_promoter_score_present{
+    type: yesno
+    sql: ${net_promoter_score} is not null ;;
+  }
+
+  dimension: 30_day_bounceback_rate {
+    type: number
+
+    sql: ${TABLE}."30_day_avg_bounceback_rate" ;;
+  }
+
+  dimension: 7_day_bounceback_rate {
+    type: number
+
+    sql: ${TABLE}."7_day_avg_bounceback_rate" ;;
+  }
+
+
+
+  measure: sum_average_on_scene_time_predicted {
+    type: sum_distinct
+    sql: ${average_on_scene_time_predicted}*${complete_count} ;;
+    sql_distinct_key: ${primary_key} ;;
+    filters: [complete_count: ">0"]
+
+  }
+
+  measure: avg_on_scene_time_predicted {
+    type: number
+    sql: case when ${sum_complete_count}> 0 then ${sum_average_on_scene_time_predicted}::float/${sum_complete_count}::float else 0 end::float;;
+    value_format: "0"
+
+  }
+
+  measure: sum_30_day_bounceback_rate {
+    type: sum_distinct
+    sql: ${30_day_bounceback_rate}*${complete_count} ;;
+    sql_distinct_key: ${primary_key} ;;
+    filters: [complete_count: ">0"]
+
+  }
+
+  measure: avg_30_day_bounceback_rate {
+    type: number
+    sql: case when ${sum_complete_count}> 0 then ${sum_30_day_bounceback_rate}::float/${sum_complete_count}::float else 0 end::float/100.0;;
+    value_format: "0%"
+
+  }
+
+  measure: sum_7_day_bounceback_rate{
+    type: sum_distinct
+    sql: ${7_day_bounceback_rate}*${complete_count} ;;
+    sql_distinct_key: ${primary_key} ;;
+    filters: [complete_count: ">0"]
+
+  }
+
+  measure: avg_7_day_bounceback_rate {
+    type: number
+    sql: case when ${sum_complete_count}> 0 then ${sum_7_day_bounceback_rate}::float/${sum_complete_count}::float else 0 end::float/100.0;;
+    value_format: "0%"
+
+  }
+
+
+
+  measure: sum_net_promoter_score {
+    hidden: yes
+    type: sum_distinct
+    sql: ${net_promoter_score}*${complete_count} ;;
+    sql_distinct_key: ${primary_key} ;;
+    filters: [net_promoter_score_present: "yes", complete_count: ">0"]
+    value_format: "0"
+  }
+
+  measure: avg_net_promoter_score {
+    type: number
+    sql: case when ${sum_complete_count_net_promoter_present}> 0 then ${sum_net_promoter_score}::float/${sum_complete_count_net_promoter_present}::float else 0 end;;
+    value_format: "0"
+  }
 
   dimension: invalid_date {
     type: yesno
-    sql: ${shift_date} in('2021-04-20', '2021-06-04') ;;
+    sql: ${shift_date} is null ;;
   }
 
   dimension_group: shift {
@@ -517,6 +637,14 @@ view: granular_shift_tracking_agg {
     sql: ${complete_count};;
     sql_distinct_key: ${primary_key} ;;
     filters: [invalid_date: "no"]
+  }
+
+  measure: sum_complete_count_net_promoter_present{
+    type: sum_distinct
+    value_format: "#,###"
+    sql: ${complete_count};;
+    sql_distinct_key: ${primary_key} ;;
+    filters: [net_promoter_score_present: "yes"]
   }
 
   measure: count_on_sig {}

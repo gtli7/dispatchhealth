@@ -928,6 +928,11 @@ LEFT JOIN ${insurance_coalese.SQL_TABLE_NAME} ic
       value: "No"
     }
   }
+
+  measure: total_savings {
+    type: number
+    sql: coalesce(${diversion_savings_911},0) + coalesce(${diversion_savings_er},0)+ coalesce(${diversion_savings_hospitalization},0)+ coalesce(${diversion_savings_obs},0) ;;
+  }
 #   dimension: 14_day_bounceback_case_rate_calculated {
 #     type: number
 #     sql: ${care_requests.count_billable_est}*${bounceback_multiplier} ;;

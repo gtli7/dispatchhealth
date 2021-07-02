@@ -5377,6 +5377,53 @@ explore: granular_shift_tracking {
     relationship: one_to_one
     sql_on: ${markets.id_adj} = ${market_regions.market_id} ;;
   }
+  join: care_request_flat {
+    sql_on: ${care_request_flat.care_request_id} = ${granular_shift_tracking.care_request_id};;
+  }
+  join: care_requests {
+    sql_on: ${care_request_flat.care_request_id}=${care_requests.id} ;;
+  }
+  join: diversions_by_care_request {
+    relationship: one_to_one
+    sql_on: ${care_requests.id} = ${diversions_by_care_request.care_request_id} ;;
+  }
+  join: adt_first_encounter_report {
+    relationship: one_to_one
+    sql_on: ${care_requests.id} = ${adt_first_encounter_report.care_request_id};;
+  }
+  join: patient_satisfaction {
+    relationship: one_to_one
+    sql_on: ${care_requests.id} = ${patient_satisfaction.care_request_id} ;;
+  }
+  join: risk_assessments {
+    relationship: one_to_many
+    sql_on: ${care_requests.id} = ${risk_assessments.care_request_id} and ${risk_assessments.score} is not null ;;
+  }
+  join: service_lines {
+    relationship: many_to_one
+    sql_on: ${care_requests.service_line_id} =${service_lines.id} ;;
+  }
+
+
+
+  join: shift_team_members {
+    relationship: many_to_one
+    sql_on: ${shift_team_members.shift_team_id} = ${shift_teams.id} ;;
+  }
+
+
+  join: users {
+    relationship: one_to_one
+    sql_on:  ${shift_team_members.user_id} = ${users.id};;
+  }
+
+  join: provider_profiles {
+    relationship: one_to_one
+    sql_on: ${provider_profiles.user_id} = ${users.id} ;;
+  }
+
+
+
 
 
 }
