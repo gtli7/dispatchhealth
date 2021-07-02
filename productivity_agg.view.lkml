@@ -244,4 +244,22 @@ view: productivity_agg {
   dimension: sem_status {
     sql: case when ${adwords_covid.variation_eligible_raw} is not null then ${adwords_covid.variation_eligible_raw}  else 0 end   +  case when ${adwords_covid_symptomatic.variation_eligible_raw} is not null then ${adwords_covid_symptomatic.variation_eligible_raw}  else 0 end   ;;
   }
+
+  measure: sum_weighted_max_productivity {
+    type: sum_distinct
+    sql:  ${market_target_productivities.max_productivity_30day}*${complete_count};;
+    sql_distinct_key: ${primary_key} ;;
+  }
+
+  measure:  weighted_max_productivity{
+    type: number
+    sql: case when ${total_complete_count}>0 then
+    ${sum_weighted_max_productivity}::float/${total_complete_count}::float else 0 end;;
+  }
+  measure: percent_productivity_diff_to_max{
+    label: "Percent Productivity Diff to Max"
+    type: number
+    value_format: "0.00"
+    sql: ${clinical_productivity}-${weighted_max_productivity} ;;
+  }
 }
