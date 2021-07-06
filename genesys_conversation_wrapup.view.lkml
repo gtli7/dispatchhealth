@@ -110,15 +110,15 @@ view: genesys_conversation_wrapup {
 
   dimension: superuser_bool {
     type: yesno
-    sql:  lower(${username}) like '%sabrina wilder%' OR
-          lower(${username}) like '%ashley salvador%' OR
+    sql:
+
           lower(${username}) like '%ellen dameron%' OR
           lower(${username}) like '%maria ibarra%' OR
           lower(${username}) like '%najolie abellard%' OR
           lower(${username}) like '%karen stokes%' OR
           lower(${username}) like '%tiffany alvarado%' OR
           lower(${username}) like '%april balderston%' OR
-          lower(${username}) like '%nichole utsler%';;
+          lower(${username}) like '%tiffany alvarado%';;
     drill_fields: [username]
 
   }
