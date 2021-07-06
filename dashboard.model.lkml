@@ -4348,6 +4348,11 @@ explore: shift_teams
     # fields: []
   }
 
+  join: zizzl_shift_hours_daily {
+    sql_on: ${shift_team_members.user_id} = ${zizzl_shift_hours_daily.user_id}
+            and ${shift_teams.start_date} = ${zizzl_shift_hours_daily.shift_date_date} ;;
+  }
+
   join: shifts_by_cars {
     relationship: many_to_one
     sql_on: ${shift_teams.car_id_start_date_id} = ${shifts_by_cars.car_id_start_date_id} ;;
@@ -5458,12 +5463,7 @@ explore:  on_call_tracking
     sql_on: ${intraday_monitoring_after.market} = ${markets.name} and ${intraday_monitoring_after.created_date}=${on_call_tracking.date_date} and
       ${intraday_monitoring_after.created_hour_timezone} = 13;;
   }
-
-  join: zizzl_shift_hours_daily {
-    sql_on: ${on_call_tracking.date_date} = ${zizzl_shift_hours_daily.start_date} and
-    ${on_call_tracking.market_id} = ${zizzl_shift_hours_daily.market_id} ;;
-  }
-  }
+}
 
   explore: sem_cost_per_complete_derived {
 

@@ -11,6 +11,7 @@ view: productivity_agg {
       column: start { field: shift_teams.start_date}
       column: sum_shift_hours_no_arm_advanced { field:  shift_teams.sum_shift_hours_no_arm_advanced_only}
       column: sum_clinical_hours_no_arm_advanced { field: zizzl_shift_hours.sum_clinical_hours_no_arm_advanced_only }
+      column: sum_clinical_hours_no_arm_advanced_daily { field: zizzl_shift_hours_daily.sum_clinical_hours_no_arm_advanced_only }
       column: complete_count { field: care_request_flat.complete_count }
       column: complete_count_no_arm_advanced { field: care_request_flat.complete_count_no_arm_only }
       column: count_wmfr_billable { field: care_requests.count_wmfr_billable }
@@ -88,6 +89,12 @@ view: productivity_agg {
     type: number
   }
 
+  dimension: sum_clinical_hours_no_arm_advanced_daily {
+    label: "Zizzl Sum Shift Hours Daily (no arm, advanced)"
+    value_format: "0.0"
+    type: number
+  }
+
   dimension: primary_key {
     type: string
     sql: concat(${start_date}, ${name_adj}, ${telepresentation})  ;;
@@ -109,6 +116,13 @@ view: productivity_agg {
     type: sum_distinct
     value_format: "0"
     sql: ${sum_clinical_hours_no_arm_advanced} ;;
+    sql_distinct_key:  ${primary_key} ;;
+  }
+
+  measure: total_clinical_hours_no_arm_advanced_daily {
+    type: sum_distinct
+    value_format: "0"
+    sql: ${sum_clinical_hours_no_arm_advanced_daily} ;;
     sql_distinct_key:  ${primary_key} ;;
   }
 
@@ -188,10 +202,23 @@ view: productivity_agg {
     sql: case when ${total_clinical_hours_no_arm_advanced}>0 then ${total_complete_count_no_arm_advanced}::float/${total_clinical_hours_no_arm_advanced}::float else 0 end ;;
   }
 
+  measure: clinical_productivity_daily {
+    type: number
+    label: "Zizzl Productivity Daily"
+    value_format: "0.00"
+    sql: case when ${total_clinical_hours_no_arm_advanced_daily}>0 then ${total_complete_count_no_arm_advanced}::float/${total_clinical_hours_no_arm_advanced_daily}::float else 0 end ;;
+  }
+
   measure: zizzl_dashboard_productivity_diff {
     type: number
     value_format: "0.00"
     sql: ${clinical_productivity} -${total_productivity} ;;
+  }
+
+  measure: zizzl_dashboard_productivity_diff_daily {
+    type: number
+    value_format: "0.00"
+    sql: ${clinical_productivity_daily} -${total_productivity} ;;
   }
 
   measure: complete_visits_vs_budget {
