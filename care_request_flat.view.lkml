@@ -5380,6 +5380,13 @@ measure: non_screened_escalated_phone_count_funnel_percent {
   }
 
 
+  dimension: potential_tele_p {
+    description: "If the care request could have been a tele-presentation visit based on what occured on-scene"
+    type: yesno
+    sql: NOT ${non_approved_DHMT_solo_visits};;
+  }
+
+
   measure: complete_count_kaiser{
     label: "Complete Count (Kaiser)"
     type: count_distinct
