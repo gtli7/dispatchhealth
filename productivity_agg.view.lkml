@@ -247,7 +247,7 @@ view: productivity_agg {
 
   measure: sum_weighted_max_productivity {
     type: sum_distinct
-    sql:  ${market_target_productivities.max_productivity_30day}*${complete_count};;
+    sql:  ${market_target_productivities.max_productivity_30day}*${complete_count_no_arm_advanced};;
     sql_distinct_key: ${primary_key} ;;
   }
 
