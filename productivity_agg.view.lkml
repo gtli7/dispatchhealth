@@ -215,6 +215,12 @@ view: productivity_agg {
     sql: ${clinical_productivity} -${total_productivity} ;;
   }
 
+  measure: zizzl_dashboard_productivity_diff_daily {
+    type: number
+    value_format: "0.00"
+    sql: ${clinical_productivity_daily} -${total_productivity} ;;
+  }
+
   measure: complete_visits_vs_budget {
     type: number
     value_format: "#,##0"
