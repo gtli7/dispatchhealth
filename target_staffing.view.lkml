@@ -6,6 +6,7 @@ view: target_staffing {
           hrs.market_id,
           hrs.shift_type,
           hrs.dow,
+          hrs.dow_order,
           frac.provider_type,
           hrs.hours * frac.fraction AS target_hours
         FROM looker_scratch.daily_target_hours hrs
@@ -26,6 +27,11 @@ view: target_staffing {
   dimension: dow {
     type: string
     sql: ${TABLE}.dow ;;
+  }
+
+  dimension: dow_order {
+    type: number
+    sql: ${TABLE}.dow_order ;;
   }
 
   dimension: market_id {
@@ -88,6 +94,13 @@ view: target_staffing {
   measure: sum_acute_tele_hours_adj_dual {
     type: sum_distinct
     sql_distinct_key: concat(${dates_rolling.day_date}::varchar, ${markets.name_adj_dual}, ${TABLE}.shift_type);;
+    sql: ${target_hours} ;;
+    filters: [acute_tele_flag: "yes"]
+  }
+
+  measure: sum_acute_tele_hours_adj_dual_by_dow {
+    type: sum_distinct
+    sql_distinct_key: concat(${month_month}, ${dow}, ${markets.name_adj_dual}, ${shift_type});;
     sql: ${target_hours} ;;
     filters: [acute_tele_flag: "yes"]
   }
