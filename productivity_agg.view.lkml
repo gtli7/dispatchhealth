@@ -278,15 +278,21 @@ view: productivity_agg {
     sql_distinct_key: ${primary_key} ;;
   }
 
-  measure:  weighted_max_productivity{
+  measure:  weighted_max_productivity {
     type: number
     sql: case when ${total_complete_count}>0 then
     ${sum_weighted_max_productivity}::float/${total_complete_count}::float else 0 end;;
   }
-  measure: percent_productivity_diff_to_max{
+  measure: percent_productivity_diff_to_max {
     label: "Percent Productivity Diff to Max"
     type: number
     value_format: "0.00"
     sql: ${clinical_productivity}-${weighted_max_productivity} ;;
+  }
+  measure: percent_productivity_diff_to_max_daily {
+    label: "Percent Productivity Diff to Max Daily"
+    type: number
+    value_format: "0.00"
+    sql: ${clinical_productivity_daily}-${weighted_max_productivity} ;;
   }
 }
