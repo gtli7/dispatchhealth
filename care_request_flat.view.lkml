@@ -5381,7 +5381,7 @@ measure: non_screened_escalated_phone_count_funnel_percent {
 
 
   dimension: potential_tele_p {
-    label: "If the care request could have been a tele-presentation visit based on what occured on-scene"
+    description: "If the care request could have been a tele-presentation visit based on what occured on-scene"
     type: yesno
     sql: NOT ${non_approved_DHMT_solo_visits};;
   }
