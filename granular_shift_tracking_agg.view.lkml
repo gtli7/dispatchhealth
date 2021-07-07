@@ -25,7 +25,6 @@ view: granular_shift_tracking_agg {
         column: on_scene_time_of_day {field: granular_shift_tracking.min_on_scene_time_of_day}
         column: accept_time_of_day {field: granular_shift_tracking.min_accept_time_of_day}
         column: total_savings { field: diversions_by_care_request.total_savings }
-        column: total_savings { field: diversions_by_care_request.total_savings }
         column: average_on_scene_time_predicted { field: care_request_flat.average_on_scene_time_predicted }
         column: 30_day_avg_bounceback_rate { field: adt_first_encounter_report.30_day_avg_bounceback_rate }
         column: 7_day_avg_bounceback_rate { field: adt_first_encounter_report.7_day_avg_bounceback_rate }
@@ -74,8 +73,8 @@ view: granular_shift_tracking_agg {
 
   measure: avg_total_rvus {
     type: number
-    sql: case when ${sum_complete_count}> 0 then ${sum_total_rvus}::float/${sum_complete_count}::float else 0 end::float/100.0;;
-    value_format: "0.000"
+    sql: case when ${sum_complete_count_rvu_present}> 0 then ${sum_total_rvus}::float/${sum_complete_count_rvu_present}::float else 0 end::float;;
+    value_format: "0.00"
 
   }
   dimension: 24_hour_chart_closure_rate {
@@ -174,6 +173,11 @@ view: granular_shift_tracking_agg {
   dimension:  net_promoter_score_present{
     type: yesno
     sql: ${net_promoter_score} is not null ;;
+  }
+
+  dimension:  rvu_present{
+    type: yesno
+    sql: ${total_rvus} is not null ;;
   }
 
   dimension: 30_day_bounceback_rate {
@@ -736,6 +740,14 @@ view: granular_shift_tracking_agg {
     sql: ${complete_count};;
     sql_distinct_key: ${primary_key} ;;
     filters: [net_promoter_score_present: "yes"]
+  }
+
+  measure: sum_complete_count_rvu_present{
+    type: sum_distinct
+    value_format: "#,###"
+    sql: ${complete_count};;
+    sql_distinct_key: ${primary_key} ;;
+    filters: [rvu_present: "yes"]
   }
 
   measure: count_on_sig {}
