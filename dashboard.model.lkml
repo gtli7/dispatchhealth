@@ -5430,10 +5430,28 @@ explore: granular_shift_tracking {
     sql_on: ${provider_profiles.user_id} = ${users.id} ;;
   }
 
+  join: athena_appointment {
+    relationship: one_to_one
+    sql_on: ${care_requests.ehr_id} = ${athena_appointment.appointment_char} ;;
+  }
 
+  join: athena_clinicalencounter {
+    relationship: one_to_one
+    sql_on: ${athena_appointment.appointment_id} = ${athena_clinicalencounter.appointment_id} ;;
+  }
+  join: timezones {
+    relationship: many_to_one
+    sql_on: ${timezones.rails_tz} = ${markets.sa_time_zone} ;;
+  }
+  join: athena_claim {
+    relationship: one_to_one
+    sql_on: ${athena_appointment.appointment_id} = ${athena_claim.claim_appointment_id} ;;
+  }
 
-
-
+  join: athena_transaction_summary {
+    relationship: one_to_one
+    sql_on: ${athena_claim.claim_id} = ${athena_transaction_summary.claim_id} ;;
+  }
 }
 explore: granular_shift_tracking_agg {
   join: high_overflow_days {
