@@ -3430,6 +3430,11 @@ explore: markets {
       sql_on: ${insurance_plans.insurance_classification_id} = ${insurance_classifications.id} ;;
     }
 
+    join: tele_mkts_insurance_plans {
+      sql_on: ${insurance_plans.id} = ${tele_mkts_insurance_plans.insurance_plan_id}
+      and ${insurance_plan_service_lines.service_line_id} = ${tele_mkts_insurance_plans.service_line_id} ;;
+    }
+
 #     join: insurance_plans_insurance_networks {
 #       relationship: one_to_one
 #       sql_on: ${insurance_plans.id} = ${insurance_plans_insurance_networks.id} ;;
