@@ -279,6 +279,7 @@ view: productivity_agg {
   }
 
   measure:  weighted_max_productivity {
+    value_format: "0.00"
     type: number
     sql: case when ${total_complete_count}>0 then
     ${sum_weighted_max_productivity}::float/${total_complete_count}::float else 0 end;;

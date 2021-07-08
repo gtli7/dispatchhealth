@@ -159,6 +159,10 @@ view: markets {
     when ${TABLE}.name = 'South Metro Fire Rescue' then 'Denver'
     when ${TABLE}.name in('Dallas', 'Fort Worth') then 'Dallas/Fort Worth'
     when ${TABLE}.name in('Ridgewood', 'Morristown') then 'Ridgewood/Morristown'
+              when ${TABLE}.name in('Tacoma', 'Olympia', 'Seattle') then 'Tacoma/Olympia/Seattle'
+                        when ${TABLE}.name in('Orlando', 'Ocala') then 'Orlando/Ocala'
+
+
       else ${name} end;;
 
   }
@@ -169,6 +173,7 @@ view: markets {
     sql: case when ${TABLE}.name = 'West Metro Fire Rescue' then 'Denver'
           when ${TABLE}.name = 'South Metro Fire Rescue' then 'Denver'
           when ${TABLE}.name in('Tacoma', 'Olympia') then 'Tacoma/Olympia'
+
             else ${name} end;;
 
     }
