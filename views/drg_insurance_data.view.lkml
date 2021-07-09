@@ -94,7 +94,6 @@ view: drg_insurance_data {
 
   dimension: payer_managed_medicaid {
     type: number
-    value_format_name: id
     sql: ${TABLE}."payer_managed_medicaid" ;;
   }
 
@@ -162,10 +161,35 @@ view: drg_insurance_data {
     sql_distinct_key: ${primary_key} ;;
   }
 
+
+  measure: sum_payer_managed_medicaid {
+    type: sum_distinct
+    sql: ${payer_managed_medicaid} ;;
+    sql_distinct_key: ${primary_key} ;;
+  }
+
+  measure: sum_payer_covered {
+    type: number
+    sql: (coalesce(${sum_medicare_advantage_part_c},0)+coalesce(${sum_commercial_fi},0) +coalesce(${sum_payer_managed_medicaid},0))::float ;;
+  }
+
   measure: sum_medicare_advantage_part_c_plus_commercial_fi  {
     type: number
-    sql: ${sum_medicare_advantage_part_c}+${sum_commercial_fi} ;;
+    sql: (coalesce(${sum_medicare_advantage_part_c},0)+coalesce(${sum_commercial_fi},0))::float ;;
   }
+
+  measure: payer_covered_percent  {
+    type: number
+    value_format: "0%"
+    sql: case when ${sum_population}>0 then ${sum_payer_covered}::float/${sum_population}::float  else 0 end;;
+  }
+
+  measure: payer_managed_medicaid_percent  {
+    type: number
+    value_format: "0%"
+    sql: case when ${sum_population}>0 then ${sum_payer_managed_medicaid}::float/${sum_population}::float  else 0 end;;
+  }
+
 
   measure: medicare_advantage_part_c_plus_commercial_fi_percent  {
     type: number
@@ -176,7 +200,7 @@ view: drg_insurance_data {
   measure: medicare_advantage_part_c_percent  {
     type: number
     value_format: "0%"
-    sql:  case when ${sum_population}>0 then ${medicare_advantage_part_c}::float/${sum_population}::float else 0 end ;;
+    sql:  case when ${sum_population}>0 then ${sum_medicare_advantage_part_c}::float/${sum_population}::float else 0 end ;;
   }
 
   measure: commercial_fi_percent  {

@@ -98,12 +98,6 @@ view: on_call_tracking {
       ]
   }
 
-  measure: sum_on_call_zizzl_diff {
-    type: number
-    value_format: "0"
-    sql: case when ${zizzl_shift_hours_daily.total_clinical_hours_no_arm_advanced} - ${sum_hours_prior} > 0 then ${zizzl_shift_hours_daily.total_clinical_hours_no_arm_advanced} - ${sum_hours_prior} else 0 end ;;
-  }
-
 
   measure: count {
     type: count

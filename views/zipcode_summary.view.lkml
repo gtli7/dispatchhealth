@@ -2,7 +2,9 @@ view: zipcode_summary {
   derived_table: {
     sql:
            select *,  ROW_NUMBER() OVER(PARTITION BY (market)
-                                ORDER BY zipcode_score DESC) as zipcode_rank
+                                ORDER BY zipcode_score DESC) as zipcode_rank,
+                                PERCENT_RANK() OVER(PARTITION BY (market)
+                                ORDER BY zipcode_score DESC) as zipcode_percentile
 from
 (select
         *,
@@ -12,7 +14,7 @@ from
           0.5*population_drg_stds+
           1.0*rank_1_10_propensity_stds+
           1.0*sf_community_broad_density_stds as zipcode_score
-from looker_scratch.zipcode_summary)lq ;;
+from looker_scratch.zipcode_summary)lq;;
   }
 
 
@@ -223,6 +225,12 @@ from looker_scratch.zipcode_summary)lq ;;
   dimension: zipcode_rank {
     type: number
     sql:         ${TABLE}.zipcode_rank ;;
+  }
+
+  dimension: zipcode_percentile {
+    value_format: "0%"
+    type: number
+    sql:         ${TABLE}.zipcode_percentile ;;
   }
 
 

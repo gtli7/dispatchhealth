@@ -25,7 +25,6 @@ view: granular_shift_tracking_agg {
         column: on_scene_time_of_day {field: granular_shift_tracking.min_on_scene_time_of_day}
         column: accept_time_of_day {field: granular_shift_tracking.min_accept_time_of_day}
         column: total_savings { field: diversions_by_care_request.total_savings }
-        column: total_savings { field: diversions_by_care_request.total_savings }
         column: average_on_scene_time_predicted { field: care_request_flat.average_on_scene_time_predicted }
         column: 30_day_avg_bounceback_rate { field: adt_first_encounter_report.30_day_avg_bounceback_rate }
         column: 7_day_avg_bounceback_rate { field: adt_first_encounter_report.7_day_avg_bounceback_rate }
@@ -33,9 +32,13 @@ view: granular_shift_tracking_agg {
         column: address_name_agg {}
         column: shift_type { field: shift_types.name}
         column: telepresentation { field: shift_types.telepresentation}
-
+        column: nps_survey_response_rate { field: patient_satisfaction.nps_survey_response_rate }
+        column: 24_hour_chart_closure_rate { field: athena_clinicalencounter.average_24_hour_chart_closure_rate }
         column: market_id { field: markets.id }
         column: market_name_adj { field: markets.name_adj }
+        column: total_rvus { field: athena_transaction_summary.average_total_rvus }
+        column: escalated_on_scene_count { field: care_request_flat.escalated_on_scene_count }
+
         #filters: {
         #  field: granular_shift_tracking.shift_team_id
         #  value: "33772,31634,41532,33082,36386,46166,36840,30460,37166,37821,34306,34790,42828,36961,43881,35109,30390,39859,31480,39126,35205,44160,31620,35445,35968,37615,33353,30370,44389"
@@ -52,18 +55,72 @@ view: granular_shift_tracking_agg {
       }
     }
 
+
+
+  dimension: total_rvus {
+    type: number
+
+    sql: ${TABLE}."total_rvus" ;;
+  }
+
+  measure: sum_total_rvus{
+    type: sum_distinct
+    sql: ${total_rvus}*${complete_count} ;;
+    sql_distinct_key: ${primary_key} ;;
+    filters: [complete_count: ">0"]
+
+  }
+
+  measure: avg_total_rvus {
+    type: number
+    sql: case when ${sum_complete_count_rvu_present}> 0 then ${sum_total_rvus}::float/${sum_complete_count_rvu_present}::float else 0 end::float;;
+    value_format: "0.00"
+
+  }
+  dimension: 24_hour_chart_closure_rate {
+    type: number
+
+    sql: ${TABLE}."24_hour_chart_closure_rate" ;;
+  }
+
+  measure: sum_24_hour_chart_closure_rate{
+    type: sum_distinct
+    sql: ${24_hour_chart_closure_rate}*${complete_count} ;;
+    sql_distinct_key: ${primary_key} ;;
+    filters: [complete_count: ">0"]
+
+  }
+
+  measure: avg_24_hour_chart_closure_rate {
+    type: number
+    sql: case when ${sum_complete_count}> 0 then ${sum_24_hour_chart_closure_rate}::float/${sum_complete_count}::float else 0 end::float/100.0;;
+    value_format: "0%"
+
+  }
+
+  dimension: nps_survey_response_rate {
+    type: number
+
+    sql: ${TABLE}."nps_survey_response_rate" ;;
+  }
+
+  measure: sum_nps_survey_response_rate{
+    type: sum_distinct
+    sql: ${nps_survey_response_rate}*${complete_count} ;;
+    sql_distinct_key: ${primary_key} ;;
+    filters: [complete_count: ">0"]
+
+  }
+
+  measure: avg_nps_survey_response_rate {
+    type: number
+    sql: case when ${sum_complete_count}> 0 then ${sum_nps_survey_response_rate}::float/${sum_complete_count}::float else 0 end::float/100.0;;
+    value_format: "0%"
+  }
   dimension: total_savings {
     type: number
     sql: ${TABLE}.total_savings ;;
   }
-
-
-  dimension: average_on_scene_time_predicted {
-    type: number
-    sql: ${TABLE}.average_on_scene_time_predicted ;;
-  }
-
-
 
 
   measure: sum_total_savings {
@@ -73,6 +130,32 @@ view: granular_shift_tracking_agg {
     filters: [complete_count: ">0"]
 
   }
+
+  dimension: escalated_on_scene_count {
+    type: number
+    sql: ${TABLE}.escalated_on_scene_count ;;
+  }
+
+
+  measure: sum_escalated_on_scene_count {
+    type: sum_distinct
+    sql: ${escalated_on_scene_count} ;;
+    sql_distinct_key: ${primary_key} ;;
+    filters: [complete_count: ">0"]
+
+  }
+
+
+
+  measure: escalated_on_scene_rate {
+    type: number
+    value_format: "0.0%"
+    sql: case when ${sum_complete_count}> 0 then ${sum_escalated_on_scene_count}::float/${sum_complete_count}::float else 0 end;;
+
+  }
+
+
+
 
   measure: avg_total_savings {
     type: number
@@ -92,6 +175,11 @@ view: granular_shift_tracking_agg {
     sql: ${net_promoter_score} is not null ;;
   }
 
+  dimension:  rvu_present{
+    type: yesno
+    sql: ${total_rvus} is not null ;;
+  }
+
   dimension: 30_day_bounceback_rate {
     type: number
 
@@ -102,6 +190,13 @@ view: granular_shift_tracking_agg {
     type: number
 
     sql: ${TABLE}."7_day_avg_bounceback_rate" ;;
+  }
+
+
+  dimension: average_on_scene_time_predicted {
+    type: number
+
+    sql: ${TABLE}."average_on_scene_time_predicted" ;;
   }
 
 
@@ -645,6 +740,14 @@ view: granular_shift_tracking_agg {
     sql: ${complete_count};;
     sql_distinct_key: ${primary_key} ;;
     filters: [net_promoter_score_present: "yes"]
+  }
+
+  measure: sum_complete_count_rvu_present{
+    type: sum_distinct
+    value_format: "#,###"
+    sql: ${complete_count};;
+    sql_distinct_key: ${primary_key} ;;
+    filters: [rvu_present: "yes"]
   }
 
   measure: count_on_sig {}

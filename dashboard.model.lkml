@@ -401,6 +401,9 @@ include: "wellmed_optum_care_requests.view.lkml"
 include: "views/den_zip_to_office_distances.view.lkml"
 include: "agents_with_schedules.view.lkml"
 include: "views/market_target_productivities.view.lkml"
+include: "views/cbsa_zipcode_mapping.view.lkml"
+include: "cbsa_to_market_id_mapping.view.lkml"
+
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -896,7 +899,7 @@ join: athena_patient_social_history {
 
 join: athena_social_history_zcode {
   relationship: one_to_many
-  sql_on:  ${athena_clinicalencounter.chart_id} = ${athena_patient_social_history.chart_id};;
+  sql_on:  ${athena_clinicalencounter.chart_id} = ${athena_social_history_zcode.chart_id};;
   fields: [athena_social_history_zcode.z_code]
 }
 
@@ -3427,6 +3430,11 @@ explore: markets {
       sql_on: ${insurance_plans.insurance_classification_id} = ${insurance_classifications.id} ;;
     }
 
+    join: tele_mkts_insurance_plans {
+      sql_on: ${insurance_plans.id} = ${tele_mkts_insurance_plans.insurance_plan_id}
+      and ${insurance_plan_service_lines.service_line_id} = ${tele_mkts_insurance_plans.service_line_id} ;;
+    }
+
 #     join: insurance_plans_insurance_networks {
 #       relationship: one_to_one
 #       sql_on: ${insurance_plans.id} = ${insurance_plans_insurance_networks.id} ;;
@@ -4346,6 +4354,11 @@ explore: shift_teams
     sql_on: ${shift_team_members.user_id} = ${zizzl_shift_hours.user_id}
       AND ${shift_team_members.shift_team_id} = ${zizzl_shift_hours.shift_team_id};;
     # fields: []
+  }
+
+  join: zizzl_shift_hours_daily {
+    sql_on: ${shift_team_members.user_id} = ${zizzl_shift_hours_daily.user_id}
+            and ${shift_teams.start_date} = ${zizzl_shift_hours_daily.shift_date_date} ;;
   }
 
   join: shifts_by_cars {
@@ -5425,10 +5438,28 @@ explore: granular_shift_tracking {
     sql_on: ${provider_profiles.user_id} = ${users.id} ;;
   }
 
+  join: athena_appointment {
+    relationship: one_to_one
+    sql_on: ${care_requests.ehr_id} = ${athena_appointment.appointment_char} ;;
+  }
 
+  join: athena_clinicalencounter {
+    relationship: one_to_one
+    sql_on: ${athena_appointment.appointment_id} = ${athena_clinicalencounter.appointment_id} ;;
+  }
+  join: timezones {
+    relationship: many_to_one
+    sql_on: ${timezones.rails_tz} = ${markets.sa_time_zone} ;;
+  }
+  join: athena_claim {
+    relationship: one_to_one
+    sql_on: ${athena_appointment.appointment_id} = ${athena_claim.claim_appointment_id} ;;
+  }
 
-
-
+  join: athena_transaction_summary {
+    relationship: one_to_one
+    sql_on: ${athena_claim.claim_id} = ${athena_transaction_summary.claim_id} ;;
+  }
 }
 explore: granular_shift_tracking_agg {
   join: high_overflow_days {
@@ -5458,12 +5489,7 @@ explore:  on_call_tracking
     sql_on: ${intraday_monitoring_after.market} = ${markets.name} and ${intraday_monitoring_after.created_date}=${on_call_tracking.date_date} and
       ${intraday_monitoring_after.created_hour_timezone} = 13;;
   }
-
-  join: zizzl_shift_hours_daily {
-    sql_on: ${on_call_tracking.date_date} = ${zizzl_shift_hours_daily.start_date} and
-    ${on_call_tracking.market_id} = ${zizzl_shift_hours_daily.market_id} ;;
-  }
-  }
+}
 
   explore: sem_cost_per_complete_derived {
 
@@ -5567,7 +5593,6 @@ explore: novel_lift_projects {
 }
 explore: drg_insurance_data {
   join: zipcodes {
-    type: inner
     sql_on: ${drg_insurance_data.zipcode} = ${zipcodes.zip};;
   }
 
@@ -5614,6 +5639,18 @@ explore: drg_insurance_data {
   }
   join: zipcode_squaremiles {
     sql_on: ${drg_insurance_data.zipcode} =${zipcode_squaremiles.zipcode};;
+  }
+
+  join: cbsa_zipcode_mapping {
+    sql_on: ${cbsa_zipcode_mapping.zipcode} = ${drg_insurance_data.zipcode} ;;
+  }
+  join: cbsa_to_market_id_mapping {
+    sql_on: ${cbsa_to_market_id_mapping.cbsa_id}=${cbsa_zipcode_mapping.cbsa_id} ;;
+  }
+
+  join: cbsa_dh_markets {
+    from: markets
+    sql_on: ${cbsa_to_market_id_mapping.market_id} = ${cbsa_dh_markets.id} ;;
   }
 
 
