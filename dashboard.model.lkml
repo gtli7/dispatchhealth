@@ -899,7 +899,7 @@ join: athena_patient_social_history {
 
 join: athena_social_history_zcode {
   relationship: one_to_many
-  sql_on:  ${athena_clinicalencounter.chart_id} = ${athena_patient_social_history.chart_id};;
+  sql_on:  ${athena_clinicalencounter.chart_id} = ${athena_social_history_zcode.chart_id};;
   fields: [athena_social_history_zcode.z_code]
 }
 
