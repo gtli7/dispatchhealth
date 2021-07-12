@@ -401,6 +401,9 @@ include: "wellmed_optum_care_requests.view.lkml"
 include: "views/den_zip_to_office_distances.view.lkml"
 include: "agents_with_schedules.view.lkml"
 include: "views/market_target_productivities.view.lkml"
+include: "views/cbsa_zipcode_mapping.view.lkml"
+include: "cbsa_to_market_id_mapping.view.lkml"
+
 
 datagroup: care_request_datagroup {
   sql_trigger: SELECT max(id) FROM care_requests ;;
@@ -896,7 +899,7 @@ join: athena_patient_social_history {
 
 join: athena_social_history_zcode {
   relationship: one_to_many
-  sql_on:  ${athena_clinicalencounter.chart_id} = ${athena_patient_social_history.chart_id};;
+  sql_on:  ${athena_clinicalencounter.chart_id} = ${athena_social_history_zcode.chart_id};;
   fields: [athena_social_history_zcode.z_code]
 }
 
@@ -5590,7 +5593,6 @@ explore: novel_lift_projects {
 }
 explore: drg_insurance_data {
   join: zipcodes {
-    type: inner
     sql_on: ${drg_insurance_data.zipcode} = ${zipcodes.zip};;
   }
 
@@ -5637,6 +5639,18 @@ explore: drg_insurance_data {
   }
   join: zipcode_squaremiles {
     sql_on: ${drg_insurance_data.zipcode} =${zipcode_squaremiles.zipcode};;
+  }
+
+  join: cbsa_zipcode_mapping {
+    sql_on: ${cbsa_zipcode_mapping.zipcode} = ${drg_insurance_data.zipcode} ;;
+  }
+  join: cbsa_to_market_id_mapping {
+    sql_on: ${cbsa_to_market_id_mapping.cbsa_id}=${cbsa_zipcode_mapping.cbsa_id} ;;
+  }
+
+  join: cbsa_dh_markets {
+    from: markets
+    sql_on: ${cbsa_to_market_id_mapping.market_id} = ${cbsa_dh_markets.id} ;;
   }
 
 
