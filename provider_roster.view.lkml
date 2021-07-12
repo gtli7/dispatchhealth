@@ -132,4 +132,37 @@ view: provider_roster {
     type: count
     drill_fields: [id, last_name, first_name, provider_network.id, provider_network.name]
   }
+
+  dimension: optum_provider_reporting_category {
+    description: "UHC partner profile based on provider roster, market, and payor category"
+    type: string
+    group_label: "Partner Specific Descriptions"
+    sql:  CASE
+          WHEN ${markets.name_adj} = 'Phoenix'
+              AND ${insurance_coalese_crosswalk.insurance_reporting_category} = 'Optum Medical Network'
+              then 'Optum Medical Network Phoenix'
+          WHEN ${markets.name_adj} in ('Reno', 'Las Vegas')
+              AND ${insurance_coalese_crosswalk.insurance_reporting_category} = 'Optum Medical Network'
+              then 'Optum Medical Network Nevada'
+          WHEN ${provider_network.name} in ('The Everett Clinic', 'The Polyclinic - Seattle')
+              then 'Optumcare Washington'
+          WHEN ${provider_network.name} = 'Wellmed Florida Employed'
+              then 'WellMed Tampa'
+          WHEN ${provider_network.name} = 'WellMed - TX'
+              AND ${markets.name_adj} in ('Dallas', 'Fort Worth')
+               then 'WellMed Dallas'
+          WHEN ${provider_network.name} = 'WellMed - TX'
+              AND ${markets.name_adj} = 'Houston'
+              then 'WellMed Houston'
+          WHEN ${provider_network.name} = 'WellMed - TX'
+              AND ${markets.name_adj} = 'San Antonio'
+              then 'WellMed San Antonio'
+          WHEN ${provider_network.name} = 'ProHealth - Connecticut'
+              then 'ProHealth'
+          WHEN ${provider_network.name} = 'American Health Network - Indianapolis'
+              then 'American Health Network'
+          END;;
+  }
+
+
 }
