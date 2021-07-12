@@ -96,7 +96,7 @@ view: tele_mkts_insurance_plans {
     or (${state_name} = 'Massachusetts' and ${insurance_package_id} in ('104428', '122548', '81233', '289647'))
     or (${state_name} = 'Virginia' and ${insurance_package_id} in ('73620', '60678', '47006', '98660', '20995', '133950', '448219', '478635', '74229'))
     or (${state_name} = 'Washington' and ${insurance_package_id} in ('273667', '173728', '173741'))
-    ) and ${enabled} = 'false' ;;
+    ) ;;
   }
 
   measure: count {
