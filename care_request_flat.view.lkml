@@ -6823,6 +6823,21 @@ end  ;;
     sql: lower(${archive_comment}) LIKE '%cancelled by patient%' and lower(${archive_comment}) LIKE '%other%' and not ${covid_resolved} and not ${booked_shaping_placeholder_resolved} ;;
   }
 
+  dimension: resolved_cancelled_by_patient_boolean {
+    type: yesno
+    sql: lower(${archive_comment}) LIKE '%cancelled by patient%' and not ${covid_resolved} and not ${booked_shaping_placeholder_resolved} ;;
+  }
+
+  dimension: resolved_referred_by_phone_boolean {
+    type: yesno
+    sql: lower(${archive_comment}) LIKE '%referred%' and not ${covid_resolved} and not ${booked_shaping_placeholder_resolved} ;;
+  }
+
+  dimension: resolved_unable_to_fulfill_boolean {
+    type: yesno
+    sql: lower(${archive_comment}) LIKE '%unable to fulfill%' and not ${covid_resolved} and not ${booked_shaping_placeholder_resolved} ;;
+  }
+
   measure: cancelled_by_patient_other_resolved_minus_overflow{
     type: count_distinct
     sql: ${care_request_id} ;;

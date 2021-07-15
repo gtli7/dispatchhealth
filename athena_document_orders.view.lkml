@@ -435,6 +435,13 @@ view: athena_document_orders {
     sql: ${clinical_order_type} LIKE '%REFERRAL%' AND ${clinical_order_type} NOT LIKE 'HOME HEALTH%' ;;
   }
 
+  dimension: chronic_care_management_flag {
+    type: yesno
+    description: "Flag indicating referral for CCM was made"
+    group_label: "Referral Flags"
+    sql: ${clinical_order_type} LIKE 'CHRONIC CARE MANAGEMENT%REFERRAL' ;;
+  }
+
 
   measure: aggregated_referrals {
     type: string

@@ -1337,6 +1337,20 @@ measure: count_billable_est_commercial {
     }
   }
 
+  measure: count_ccm_referrals {
+    type: count_distinct
+    description: "Count of completed care requests where a chronic care management referral was made"
+    sql: ${id} ;;
+    filters: {
+      field: athenadwh_referrals.chronic_care_management_referrals_flag
+      value: "yes"
+    }
+    filters: {
+      field: billable_est
+      value: "yes"
+    }
+  }
+
   measure: count_home_health_referrals {
     type: count_distinct
     description: "Count of completed care requests where a home health referral was made"
