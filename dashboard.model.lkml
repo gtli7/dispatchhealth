@@ -1814,6 +1814,11 @@ join: athena_procedurecode {
     sql_on: ${csc_created.genesys_id} = ${agent_tenure.userid} ;;
   }
 
+  join: genesys_user_details {
+    relationship: one_to_one
+    sql_on: ${csc_created.genesys_id} = ${genesys_user_details.id} ;;
+  }
+
   # joining summer_camp for Faye's metrics
   join: summer_camp_teams {
     relationship: one_to_one
