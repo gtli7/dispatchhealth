@@ -3,15 +3,16 @@ view: athena_social_history_zcode {
 # sql_table_name: athena.patientsocialhistory ;;
 # drill_fields: [id]
 derived_table: {
-  sql: SELECT
-          ROW_NUMBER() OVER () AS id,
+  sql:
+    WITH z AS (
+    SELECT
           chart_id,
           CASE WHEN social_history_key = 'SOCIALHISTORY.LOCAL.91' AND (social_history_answer LIKE 'I Have Housing Today But%' OR
             social_history_answer LIKE 'I Do Not Have Housing%' OR
             social_history_answer LIKE 'Needs %') THEN 'Z59.1'
-                WHEN (social_history_key = 'SOCIALHISTORY.LOCAL.145' AND (social_history_answer LIKE 'Y%')) THEN 'Z91.81'
-                WHEN (social_history_key = 'SOCIALHISTORY.LOCAL.146' AND (social_history_answer LIKE 'Y%')) THEN 'Z91.81'
-                WHEN (social_history_key = 'SOCIALHISTORY.LOCAL.147' AND (social_history_answer LIKE 'Y%')) THEN 'Z91.81'
+                WHEN ((social_history_key = 'SOCIALHISTORY.LOCAL.145' AND (social_history_answer LIKE 'Y%')) OR
+                (social_history_key = 'SOCIALHISTORY.LOCAL.146' AND (social_history_answer LIKE 'Y%')) OR
+                (social_history_key = 'SOCIALHISTORY.LOCAL.147' AND (social_history_answer LIKE 'Y%'))) THEN 'Z91.81'
                 WHEN (social_history_key = 'SOCIALHISTORY.LOCAL.161' AND (social_history_answer LIKE 'Less Than Once%')) THEN 'ZSOC1'
                 WHEN (social_history_key = 'SOCIALHISTORY.LOCAL.141' AND (social_history_answer LIKE 'Yes%')) THEN 'ZTRAN1'
                 WHEN (social_history_key = 'SOCIALHISTORY.LOCAL.142' AND (social_history_answer LIKE 'Yes%')) THEN 'Z59.4'
@@ -23,7 +24,7 @@ derived_table: {
           ELSE NULL
           END AS z_code
         FROM athena.patientsocialhistory
-        WHERE (social_history_key = 'SOCIALHISTORY.LOCAL.91' AND (social_history_answer LIKE 'I Have Housing Today But%' OR
+        WHERE ((social_history_key = 'SOCIALHISTORY.LOCAL.91' AND (social_history_answer LIKE 'I Have Housing Today But%' OR
             social_history_answer LIKE 'I Do Not Have Housing%' OR
             social_history_answer LIKE 'Needs %'))
             OR (social_history_key = 'SOCIALHISTORY.LOCAL.145' AND (social_history_answer LIKE 'Y%'))
@@ -36,7 +37,14 @@ derived_table: {
             OR (social_history_key = 'SOCIALHISTORY.LOCAL.85' AND (social_history_answer IN('Phone', 'Utilities (gas or heat)',
                                                                                                   'Medicine or any Healthcare (medical or dental or mental health or vision)',
                                                                                                   'Internet', 'Child care', 'Clothing')))
-            OR (social_history_key = 'SOCIALHISTORY.LOCAL.144' AND (social_history_answer LIKE 'Y%'))
+            OR (social_history_key = 'SOCIALHISTORY.LOCAL.144' AND (social_history_answer LIKE 'Y%')))
+            AND deleted_datetime IS NULL
+    GROUP BY 1,2)
+    SELECT
+      ROW_NUMBER() OVER () AS id,
+      chart_id,
+      z_code
+      FROM z
       ;;
   sql_trigger_value: SELECT MAX(chart_id) FROM athena.patientsocialhistory ;;
   indexes: ["chart_id"]
