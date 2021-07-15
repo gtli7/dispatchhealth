@@ -152,6 +152,11 @@ view: markets {
 
   }
 
+  dimension: name_or_cbsa {
+    type: string
+    sql: case when ${name_adj} is null then ${cbsa_zipcode_mapping.cbsa} else ${name_adj} end;;
+  }
+
   dimension: name_adj_dfw {
     type: string
     description: "Market name where WMFR/SMFR are included as part of Denver and merges Dallas FTW and NJRMOR"
@@ -159,6 +164,8 @@ view: markets {
     when ${TABLE}.name = 'South Metro Fire Rescue' then 'Denver'
     when ${TABLE}.name in('Dallas', 'Fort Worth') then 'Dallas/Fort Worth'
     when ${TABLE}.name in('Ridgewood', 'Morristown') then 'Ridgewood/Morristown'
+        when ${TABLE}.name in('Hartford', 'Springfield') then 'Hartford/Springfield'
+
               when ${TABLE}.name in('Tacoma', 'Olympia', 'Seattle') then 'Tacoma/Olympia/Seattle'
                         when ${TABLE}.name in('Orlando', 'Ocala') then 'Orlando/Ocala'
 
