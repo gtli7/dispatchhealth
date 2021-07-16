@@ -405,6 +405,7 @@ include: "views/cbsa_zipcode_mapping.view.lkml"
 include: "cbsa_to_market_id_mapping.view.lkml"
 include: "agent_tenure.view.lkml"
 include: "agent_current_management_unit.view.lkml"
+include: "views/market_fleet_tracker.view.lkml"
 
 
 datagroup: care_request_datagroup {
@@ -5678,3 +5679,5 @@ explore: zipcode_summary {
     sql_on: ${zipcode_summary.zipcode} = ${sf_accounts.zipcode} ;;
   }
 }
+
+explore: market_fleet_tracker {}
