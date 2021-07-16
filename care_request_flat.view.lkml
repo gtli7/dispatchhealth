@@ -607,6 +607,15 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
     sql: ${TABLE}.reassignment_reason_other_final ;;
   }
 
+  dimension: reassignment_reason_other_grouped {
+    type: string
+    group_label: "Optimizer Details"
+    sql: case when ${reassignment_reason_other_final} ilike '%inappropriate%tele%' or ${reassignment_reason_other_final} ilike '%not appropriate for tele%' then 'Deemed inappropriate for tele'
+        when ${reassignment_reason_other_final} ilike '%no/poor connectivity%' then 'No/poor connectivity'
+        when ${reassignment_reason_other_final} ilike '%patient preference%' or ${reassignment_reason_other_final} ilike '%refused%tele%' or ${reassignment_reason_other_final} ilike '%declined%tele%' then 'Patient preference / declined tele'
+        else 'other' end ;;
+  }
+
   dimension: drive_time_minutes {
     type: number
     group_label: "Care Delivery Times"
