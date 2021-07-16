@@ -14,6 +14,11 @@ view: market_fleet_tracker {
   dimension: in_service {
     type: string
     sql: ${TABLE}."in_service" ;;
+    html: {% if value == 'Yes' %}
+    <p style="color: black; background-color: lightgreen; font-size:100%; text-align:center">{{ rendered_value }}</p>
+    {% elsif value == 'No' %}
+    <p style="color: black; background-color: lightred; font-size:100%; text-align:center">{{ rendered_value }}</p>
+    {% endif %} ;;
   }
 
   dimension_group: in_service {
