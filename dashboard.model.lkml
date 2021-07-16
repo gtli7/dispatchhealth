@@ -404,6 +404,7 @@ include: "views/market_target_productivities.view.lkml"
 include: "views/cbsa_zipcode_mapping.view.lkml"
 include: "cbsa_to_market_id_mapping.view.lkml"
 include: "agent_tenure.view.lkml"
+include: "agent_current_management_unit.view.lkml"
 
 
 datagroup: care_request_datagroup {
@@ -1817,6 +1818,11 @@ join: athena_procedurecode {
   join: genesys_user_details {
     relationship: one_to_one
     sql_on: ${csc_created.genesys_id} = ${genesys_user_details.id} ;;
+  }
+
+  join: agent_current_management_unit {
+    relationship: one_to_one
+    sql_on: ${csc_created.genesys_id} = ${agent_current_management_unit.userid} ;;
   }
 
   # joining summer_camp for Faye's metrics
