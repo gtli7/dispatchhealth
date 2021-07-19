@@ -3547,7 +3547,7 @@ measure: avg_first_on_route_mins {
   dimension: advanced_care_external_referrals {
     description: "Care requests created in dashboard from external referrals to AdvancedCare. Resolved Reasons = 'Other: 👿 AdVC (CARE TEAM - DO NOT USE)'"
     type: yesno
-    sql: ${resolved_reason_full} = 'Other: 👿 AdVC (CARE TEAM - DO NOT USE)' ;;
+    sql: ${resolved_reason_full} in ('Other: 👿 AdVC (CARE TEAM - DO NOT USE)','Other: 👿 AdVC (CARE TEAM AND CLINICAL TEAM - DO NOT USE)') ;;
   }
 
   measure: count_advanced_care_external_referrals {
@@ -3561,7 +3561,7 @@ measure: avg_first_on_route_mins {
   dimension:extended_care_external_referrals {
     description: "Care requests created in dashboard from external referrals to ExtendedCare. Resolved Reason = '👺 ExtC (CARE TEAM - DO NOT USE)'"
     type: yesno
-    sql: ${resolved_reason_full} = '👺 ExtC (CARE TEAM - DO NOT USE)' ;;
+    sql: ${resolved_reason_full} in('Other: 👺 ExtC (CARE TEAM - DO NOT USE)', 'Other: 👺 ExtC (CARE TEAM AND CLINICAL TEAM - DO NOT USE)') ;;
   }
 
   measure: count_extended_care_external_referrals {
