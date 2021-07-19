@@ -18,7 +18,7 @@ view: tele_mkts_insurance_plans {
         and ((s.name in ('Colorado', 'Oklahoma', 'Texas', 'Virginia') and ips.enabled = 'true')
           or (s.name = 'Nevada' and i.package_id in ('69455', '70443')) -- medicaid/medicare
           or (s.name = 'Nevada' and i.package_id in ('447247', '75708', '136902', '81629')) -- capped plans
-          or (s.name = 'Colorado' and i.package_id in ('54360', '81644', '58389', '164536', '58390', '38982', '264985', '56872', '59255', '59346')) -- capped plans
+          or (s.name = 'Colorado' and i.package_id in ('54360', '81644', '58389', '164536', '38982', '264985', '56872', '59255', '59346')) -- capped plans
           or (s.name = 'Oklahoma' and i.package_id in ('406800', '58124', '60678', '47006', '98660', '20995', '133950', '289218')) -- capped plans
           or (s.name = 'Texas' and i.package_id in ('57267', '70603', '397211', '482913', '112439', '2768', '82079', '555051', '38982', '476476', '18782', '205249', '83355', '70075')) -- capped plans
           or (s.name = 'Virginia' and i.package_id in ('73620', '60678', '47006', '98660', '20995', '133950', '448219', '478635', '74229')) -- capped plans
@@ -90,7 +90,7 @@ view: tele_mkts_insurance_plans {
     type: yesno
     sql:(
     (${state_name} = 'Nevada' and ${insurance_package_id} in ('447247', '75708', '136902', '81629'))
-    or (${state_name} = 'Colorado' and ${insurance_package_id} in ('54360', '81644', '58389', '164536', '58390', '38982', '264985', '56872', '59255', '59346'))
+    or (${state_name} = 'Colorado' and ${insurance_package_id} in ('54360', '81644', '58389', '164536', '38982', '264985', '56872', '59255', '59346'))
     or (${state_name} = 'Oklahoma' and ${insurance_package_id} in ('406800', '58124', '60678', '47006', '98660', '20995', '133950', '289218'))
     or (${state_name} = 'Texas' and ${insurance_package_id} in ('57267', '70603', '397211', '482913', '112439', '2768', '82079', '555051', '38982', '476476', '18782', '205249', '83355', '70075'))
     or (${state_name} = 'Massachusetts' and ${insurance_package_id} in ('104428', '122548', '81233', '289647'))
