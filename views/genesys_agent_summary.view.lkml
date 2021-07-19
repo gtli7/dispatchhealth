@@ -131,9 +131,9 @@ view: genesys_agent_summary {
 
   dimension: agent_raw {
     type: string
-    sql: case when ${username} like '%(%' then
+    sql:lower(case when ${username} like '%(%' then
 trim(left(${username}, strpos(${username}, '(') - 1))
-else trim(${username}) end   ;;
+else trim(${username}) end )  ;;
   }
 
 
