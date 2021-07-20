@@ -129,6 +129,16 @@ view: genesys_agent_summary {
     sql: ${TABLE}."username" ;;
   }
 
+  dimension: agent_raw {
+    type: string
+    sql:lower(case when ${username} like '%(%' then
+trim(left(${username}, strpos(${username}, '(') - 1))
+else trim(${username}) end )  ;;
+  }
+
+
+
+
   dimension: wrapupduration {
     type: number
     sql: ${TABLE}."wrapupduration" ;;

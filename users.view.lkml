@@ -277,7 +277,7 @@ view: users {
   }
 
   dimension: genesys_id {
-    type: number
+    type: string
     sql: ${TABLE}.genesys_id ;;
   }
 

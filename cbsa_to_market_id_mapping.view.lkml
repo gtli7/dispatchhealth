@@ -8,6 +8,8 @@ LEFT JOIN public.markets  AS markets ON (billing_cities."market_id") = markets.i
 LEFT JOIN looker_scratch.cbsa_zipcode_mapping  AS cbsa_zipcode_mapping ON (cbsa_zipcode_mapping."zipcode") = (zipcodes."zip")
 where cbsa is not null and cbsa_zipcode_mapping.cbsa_id not in('37980')
 group by 1,2,3;;
+sql_trigger_value: select count(*) from  public.zipcodes ;;
+indexes: ["market_id", "cbsa_id", "cbsa"]
   }
 
 

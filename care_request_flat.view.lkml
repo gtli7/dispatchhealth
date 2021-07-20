@@ -607,6 +607,15 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
     sql: ${TABLE}.reassignment_reason_other_final ;;
   }
 
+  dimension: reassignment_reason_other_grouped {
+    type: string
+    group_label: "Optimizer Details"
+    sql: case when ${reassignment_reason_other_final} ilike '%inappropriate%tele%' or ${reassignment_reason_other_final} ilike '%not appropriate for tele%' then 'Deemed inappropriate for tele'
+        when ${reassignment_reason_other_final} ilike '%no/poor connectivity%' then 'No/poor connectivity'
+        when ${reassignment_reason_other_final} ilike '%patient preference%' or ${reassignment_reason_other_final} ilike '%refused%tele%' or ${reassignment_reason_other_final} ilike '%declined%tele%' then 'Patient preference / declined tele'
+        else 'other' end ;;
+  }
+
   dimension: drive_time_minutes {
     type: number
     group_label: "Care Delivery Times"
@@ -1248,6 +1257,117 @@ on most_recent_eta.care_request_id = cr.id and most_recent_eta.rn=1
       field: complete
       value: "yes"
     }
+  }
+
+  measure: count_change_in_eta {
+    description: "Count of Care Requests w/ ETA Change"
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters: {
+      field: no_change_in_eta
+      value: "no"
+    }
+    filters: {
+      field: care_requests.billable_est
+      value: "yes"
+    }
+  }
+
+# should be removed
+  measure: count_change_in_eta_and_reassigned_reordered_TEST {
+    description: "Count of Care Requests w/ ETA Change"
+    type: count_distinct
+    sql: ${care_request_id} ;;
+    filters: {
+      field: no_change_in_eta
+      value: "no"
+    }
+    filters: {
+      field: reassigned_or_reordered
+      value: "yes"
+    }
+    filters: {
+      field: care_requests.billable_est
+      value: "yes"
+    }
+  }
+
+# This should be removed when touched_billable_visits is verified to work
+  measure: count_OLD_reassigned_reordered_eta_changed_care_requests {
+    description: "Count of care requests that were reassigned, reordered, or ETA changed by CSC"
+    type: number
+    sql: ${count_change_in_eta} + ${count_reassigned_reordered_care_requests};;
+  }
+
+  dimension: reassigned_reordered_eta_changed_care_requests {
+    description: "care requests that were reassigned, reordered, or ETA changed by CSC"
+    type:  yesno
+    sql:  CASE WHEN (
+                    (${reassignment_reason_other_final} IS NOT NULL OR ${reorder_reason} IS NOT NULL)
+                    OR (${most_recent_eta_start_raw}=${eta_range_start_raw} and ${most_recent_eta_end_raw}=${eta_range_end_raw})
+                    )
+                    AND (${care_requests.referred_point_of_care} or ${care_requests.complete_visit}) -- ${care_requests.billable_est} = "yes"
+                    THEN TRUE
+                    ELSE FALSE
+                    END;;
+
+
+                #     -- (${reassigned_or_reordered} = "yes"
+                #     -- OR ${no_change_in_eta} = "no")
+                #     -- AND ${care_requests.billable_est} = "yes"
+                # THEN "yes"
+                # ELSE "no"
+                # END;;
+  }
+
+  # measure: count_CASE_reassigned_reordered_eta_changed_care_requests {
+  #   description: "Count of care requests that were reassigned, reordered, or ETA changed by CSC"
+  #   type:  count_distinct
+  #   sql: ${care_request_id} ;;
+  #   filters: [reassigned_reordered_eta_changed_care_requests:"yes"]
+  # }
+
+
+  # measure: count_reassigned_reordered_eta_changed_care_requests {
+  #   description: "Count of care requests that were reassigned, reordered, or ETA changed by CSC"
+  #   type: count_distinct
+  #   sql: CASE WHEN (
+  #                   (${reassignment_reason_other_final} IS NOT NULL OR ${reorder_reason} IS NOT NULL)
+  #                   OR (${most_recent_eta_start_raw}=${eta_range_start_raw} and ${most_recent_eta_end_raw}=${eta_range_end_raw})
+  #                   -- ${reassigned_or_reordered} = "yes"
+  #                   -- OR ${no_change_in_eta} = "no"
+  #                   )
+  #                   AND (LOWER(${care_request_flat.complete_comment}) like '%referred - point of care%'
+  #                       or (${care_request_flat.complete_date} is not null AND
+  #                           (${care_request_flat.primary_resolved_reason} IS NULL OR
+  #                           UPPER(${care_request_flat.complete_comment}) LIKE '%REFERRED - POINT OF CARE%' OR
+  #                           UPPER(${care_request_flat.primary_resolved_reason}) = 'REFERRED - POINT OF CARE' OR
+  #                           UPPER(${care_request_flat.primary_resolved_reason}) = 'ESCALATED TO ADVANCED' OR
+  #                           UPPER(${care_request_flat.other_resolved_reason}) LIKE '%ESCALATED%')))
+  #                   -- AND ${care_requests.billable_est} = "yes"
+  #             THEN ${care_request_id}
+  #             ELSE NULL
+  #             END;;
+  # }
+
+  measure: touched_billable_visits  {
+    type: yesno
+    sql: ${reassignment_reason_other_final} IS NOT NULL OR ${reorder_reason} IS NOT NULL OR ( ${most_recent_eta_start_raw}=${eta_range_start_raw} and ${most_recent_eta_end_raw}=${eta_range_end_raw}) AND ${care_requests.billable_est} = 'yes' ;;# ${no_change_in_eta} = 'no' ;;
+    # filters: {
+    #   field: care_requests.billable_est
+    #   value: "yes"
+    # }
+  }
+
+  measure: count_touched_billable_visits {
+    type: count_distinct
+    sql: ${care_request_id}
+  }
+
+  measure: count_each_reassigned_or_reordered {
+    description: "Count of each reassignment or reorder"
+    type: count
+    sql: ${reassigned_or_reordered};;
   }
 
 
@@ -3427,7 +3547,7 @@ measure: avg_first_on_route_mins {
   dimension: advanced_care_external_referrals {
     description: "Care requests created in dashboard from external referrals to AdvancedCare. Resolved Reasons = 'Other: 👿 AdVC (CARE TEAM - DO NOT USE)'"
     type: yesno
-    sql: ${resolved_reason_full} = 'Other: 👿 AdVC (CARE TEAM - DO NOT USE)' ;;
+    sql: ${resolved_reason_full} in ('Other: 👿 AdVC (CARE TEAM - DO NOT USE)','Other: 👿 AdVC (CARE TEAM AND CLINICAL TEAM - DO NOT USE)') ;;
   }
 
   measure: count_advanced_care_external_referrals {
@@ -3441,7 +3561,7 @@ measure: avg_first_on_route_mins {
   dimension:extended_care_external_referrals {
     description: "Care requests created in dashboard from external referrals to ExtendedCare. Resolved Reason = '👺 ExtC (CARE TEAM - DO NOT USE)'"
     type: yesno
-    sql: ${resolved_reason_full} = '👺 ExtC (CARE TEAM - DO NOT USE)' ;;
+    sql: ${resolved_reason_full} in('Other: 👺 ExtC (CARE TEAM - DO NOT USE)', 'Other: 👺 ExtC (CARE TEAM AND CLINICAL TEAM - DO NOT USE)') ;;
   }
 
   measure: count_extended_care_external_referrals {

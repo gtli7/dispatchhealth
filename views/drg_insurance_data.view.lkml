@@ -135,7 +135,7 @@ view: drg_insurance_data {
 
   dimension: zipcode {
     type: zipcode
-    sql: ${TABLE}."zipcode" ;;
+    sql: ${TABLE}.zipcode_str;;
   }
 
   dimension: primary_key {
