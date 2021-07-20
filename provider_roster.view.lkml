@@ -146,15 +146,16 @@ view: provider_roster {
               then 'Optum Medical Network Nevada'
           WHEN ${provider_network.name} in ('The Everett Clinic', 'The Polyclinic - Seattle')
               then 'Optumcare Washington'
-          WHEN ${provider_network.name} = 'Wellmed Florida Employed'
+          WHEN ${provider_network.name} in ('Wellmed Florida Employed', 'Optum Florida Employed', 'Optum Florida Contracted')
+              AND ${markets.name_adj} = 'Tampa'
               then 'WellMed Tampa'
           WHEN ${provider_network.name} = 'WellMed - TX'
               AND ${markets.name_adj} in ('Dallas', 'Fort Worth')
                then 'WellMed Dallas'
-          WHEN ${provider_network.name} = 'WellMed - TX'
+          WHEN ${provider_network.name} = 'TBD HOUSTON ROSTER'
               AND ${markets.name_adj} = 'Houston'
               then 'WellMed Houston'
-          WHEN ${provider_network.name} = 'WellMed - TX'
+          WHEN ${provider_network.name} = 'TBD SAN ANTONIO ROSTER'
               AND ${markets.name_adj} = 'San Antonio'
               then 'WellMed San Antonio'
           WHEN ${provider_network.name} = 'ProHealth - Connecticut'
